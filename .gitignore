@@ -5,4 +5,5 @@
 bin/
 lib/
 
+.ant-targets-build.xml
 *.pdf
