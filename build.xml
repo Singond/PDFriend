@@ -1,0 +1,14 @@
+<project name="PDFriend"
+		 xmlns:ivy="antlib:org.apache.ivy.ant">
+	
+	<property name="src" value="src"/>
+	<property name="bin" value="bin"/>
+	<property name="lib" value="lib"/>
+	<property name="dist" value="dist"/>
+	<property file="version.properties"/>
+	
+	<target name="resolve" description="Resolve dependencies with Ivy">
+		<ivy:resolve/>
+		<ivy:retrieve type="bundle" sync="true"/>
+	</target>
+</project>

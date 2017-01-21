@@ -1,5 +1,8 @@
 .classpath
 .project
-*.pdf
 .settings/
+
 bin/
+lib/
+
+*.pdf
