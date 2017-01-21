@@ -3,6 +3,6 @@
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
 		<!-- Available versions 1.8+ and 2.0+ -->
-		<dependency org="org.apache.pdfbox" name="pdfbox" rev="1.8.+"/>
+		<dependency org="org.apache.pdfbox" name="pdfbox" rev="2.0.+"/>
 	</dependencies>
 </ivy-module>
