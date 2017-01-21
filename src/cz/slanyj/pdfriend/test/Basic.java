@@ -1,4 +1,4 @@
-package cz.slanyj.test;
+package cz.slanyj.pdfriend.test;
 
 //import org.apache.pdfbox.*;
 import java.awt.geom.AffineTransform;
