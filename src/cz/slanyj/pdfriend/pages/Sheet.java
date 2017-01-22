@@ -190,7 +190,7 @@ public class Sheet {
 		                    LayerUtility layerUtility) throws IOException {
 		if (orientation == Orientation.RECTO_UP) {
 			imposeVerso(paperContent, layerUtility);
-		} else if (orientation == Orientation.RECTO_UP) {
+		} else if (orientation == Orientation.VERSO_UP) {
 			imposeRecto(paperContent, layerUtility);
 		} else {
 			throw new IllegalStateException("Sheet orientation has not been set correctly.");
