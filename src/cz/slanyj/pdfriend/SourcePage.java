@@ -2,7 +2,6 @@ package cz.slanyj.pdfriend;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
 
 /**
  * A container for a PDPage and its parent PDDocument.
