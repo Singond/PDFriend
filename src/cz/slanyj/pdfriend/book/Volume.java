@@ -1,4 +1,4 @@
-package cz.slanyj.pdfriend.pages;
+package cz.slanyj.pdfriend.book;
 
 /**
  * The whole text block of a document, made by arranging several Signatures

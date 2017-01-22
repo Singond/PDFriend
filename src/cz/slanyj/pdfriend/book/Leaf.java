@@ -1,4 +1,4 @@
-package cz.slanyj.pdfriend.pages;
+package cz.slanyj.pdfriend.book;
 
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
@@ -13,18 +13,18 @@ import org.apache.pdfbox.util.Matrix;
 import cz.slanyj.pdfriend.SourcePage;
 
 /**
- * A single Sheet of the finished document. Consists of two pages,
+ * A single Leaf of the finished document. Consists of two Pages,
  * ie recto (the odd-numbered one) and verso (the even-numbered one).
  * The pages can be of different dimensions, but their centers will
  * be aligned.
  * @author Sorondil
  *
  */
-public class Sheet {
+public class Leaf {
 
-	/** The sheet width (x-direction) */
+	/** The leaf width (x-direction) */
 	private final double width;
-	/** The sheet height (y-direction) */
+	/** The leaf height (y-direction) */
 	private final double height;
 	/** The leading page, ie. odd-numbered */
 	private final Page recto;
@@ -39,34 +39,34 @@ public class Sheet {
 	private FlipDirection flipDirection = FlipDirection.AROUND_Y;
 	
 	/**
-	 * The x-coordinate of the center of this Sheet on the front side
-	 * of the Paper.
+	 * The x-coordinate of the center of this Leaf on the front side
+	 * of the Sheet.
 	 */
 	private double xPosition;
 	/**
-	 * The y-coordinate of the center of this Sheet on the front side
-	 * of the Paper.
+	 * The y-coordinate of the center of this Leaf on the front side
+	 * of the Sheet.
 	 */
 	private double yPosition;
 	/**
-	 * The rotation of this Sheet measured as the angle in radians from the
-	 * y-axis of the Paper to the side of this Sheet, with positive being
-	 * the counter-clockwise direction when viewed from the front of the Paper.
-	 * An angle of 0 means the Sheet is upright (ie. the text is horizontal).
+	 * The rotation of this Leaf measured as the angle in radians from the
+	 * y-axis of the Sheet to the side of this Leaf, with positive being
+	 * the counter-clockwise direction when viewed from the front of the Sheet.
+	 * An angle of 0 means the Leaf is upright (ie. the text is horizontal).
 	 */
 	private double rotation;
 	/**
-	 * The Page on the front surface ("up") of the Paper.
+	 * The Page on the front surface ("up") of the Sheet.
 	 * The default is recto in front.
 	 */
 	private Orientation orientation = Orientation.RECTO_UP;
 	/**
-	 * The position of this Sheet on the front of the Paper as represented
+	 * The position of this Leaf on the front of the Sheet as represented
 	 * by a transformation matrix.
 	 */
 	private AffineTransform frontPosition;
 	/**
-	 * The position of this Sheet on the front of the Paper as represented
+	 * The position of this Leaf on the back of the Sheet as represented
 	 * by a transformation matrix.
 	 */
 	private AffineTransform backPosition;
@@ -78,11 +78,11 @@ public class Sheet {
 	private boolean positionValid = false;
 	
 	/**
-	 * Constructs a new Sheet of the given dimensions.
+	 * Constructs a new Leaf of the given dimensions.
 	 * @param width
 	 * @param height
 	 */
-	public Sheet(double width, double height) {
+	public Leaf(double width, double height) {
 		this.recto = new Page(width, height);
 		this.verso = new Page(width, height);
 		this.width = width;
@@ -135,10 +135,10 @@ public class Sheet {
 	}
 
 	/**
-	 * Gets the position of this Sheet on the front side of the Paper
+	 * Gets the position of this Leaf on the front side of the Sheet
 	 * as a transformation matrix.
 	 * @return An AffineTransform object representing the current values
-	 * of x and y positions, rotation and orientation.
+	 * of x and y positions and rotation.
 	 */
 	public AffineTransform getFrontPosition() {
 		if (positionValid) {
@@ -149,10 +149,10 @@ public class Sheet {
 	}
 	
 	/**
-	 * Gets the position of this Sheet on the front side of the Paper
+	 * Gets the position of this Leaf on the back side of the Sheet
 	 * as a transformation matrix.
 	 * @return An AffineTransform object representing the current values
-	 * of x and y positions, rotation and orientation.
+	 * of x and y positions, rotation and flip direction.
 	 */
 	public AffineTransform getBackPosition() {
 		if (positionValid) {
@@ -178,7 +178,7 @@ public class Sheet {
 	
 	/**
 	 * Returns the position matrix calculated from the current values
-	 * of x and y positions, rotation and orientation.
+	 * of x and y positions and rotation.
 	 */
 	private AffineTransform calculateFrontPositionMatrix() {
 		AffineTransform matrix = new AffineTransform();
@@ -187,13 +187,13 @@ public class Sheet {
 		matrix.translate(xPosition, yPosition);
 		// Apply rotation
 		matrix.rotate(rotation);
-		// Move the center to origin
+		// Move the center of the leaf to origin
 		matrix.translate(-width/2, -height/2);
 		return matrix;
 	}
 	/**
 	 * Returns the position matrix calculated from the current values
-	 * of x and y positions, rotation and orientation.
+	 * of x and y positions, rotation and flip direction.
 	 */
 	private AffineTransform calculateBackPositionMatrix() {
 		AffineTransform matrix = new AffineTransform();
@@ -204,13 +204,13 @@ public class Sheet {
 		matrix.rotate(rotation);
 		// Mirror the page (will be mirored again by Paper)
 		matrix.concatenate(flipDirection.getBackOrientation());
-		// Move the center to origin
+		// Move the center of the leaf to origin
 		matrix.translate(-width/2, -height/2);
 		return matrix;
 	}
 	
 	/**
-	 * Sets the source pages for the recto and verso of this sheet.
+	 * Sets the source pages for the recto and verso of this Leaf.
 	 * @param recto
 	 * @param verso
 	 */
@@ -220,58 +220,57 @@ public class Sheet {
 	}
 
 	/**
-	 * Places the form XObject representing the upper page of this Sheet
+	 * Places the form XObject representing the upper page of this Leaf
 	 * into the given content stream.
 	 * Which page is upper and bottom is determined from the orientation
 	 * property. If it is RECTO_UP, the recto is placed, verso otherwise.
-	 * @param paperContent The content stream of the target Paper page.
-	 * @param layerUtility The layer utility of the target Paper.
+	 * @param sheetContent The content stream of the target Sheet side.
+	 * @param layerUtility The layer utility of the target Sheet.
 	 * @throws IOException 
 	 */
-	public void imposeFront(PDPageContentStream paperContent,
+	public void imposeFront(PDPageContentStream sheetContent,
 		                    LayerUtility layerUtility) throws IOException {
 		if (orientation == Orientation.RECTO_UP) {
-			impose(paperContent, layerUtility, recto, false);
+			impose(sheetContent, layerUtility, recto, false);
 		} else if (orientation == Orientation.VERSO_UP) {
-			impose(paperContent, layerUtility, verso, false);
+			impose(sheetContent, layerUtility, verso, false);
 		} else {
-			throw new IllegalStateException("Sheet orientation has not been set correctly.");
+			throw new IllegalStateException("Leaf orientation has not been set correctly.");
 		}
 	}
 	
 	/**
-	 * Places the form XObject representing the bottom page of this Sheet
+	 * Places the form XObject representing the bottom page of this Leaf
 	 * into the given content stream.
 	 * Which page is upper and bottom is determined from the orientation
 	 * property. If it is RECTO_UP, the verso is placed, recto otherwise.
 	 * This method flips the page vertically before moving it and
-	 * the calling Paper is expected to mirror the final placement again.
-	 * @param paperContent The content stream of the target Paper page.
-	 * @param layerUtility The layer utility of the target Paper.
+	 * the calling Sheet is expected to mirror the final placement again.
+	 * @param sheetContent The content stream of the target Sheet side.
+	 * @param layerUtility The layer utility of the target Sheet.
 	 * @throws IOException 
 	 */
-	public void imposeBack(PDPageContentStream paperContent,
+	public void imposeBack(PDPageContentStream sheetContent,
 		                    LayerUtility layerUtility) throws IOException {
 		if (orientation == Orientation.RECTO_UP) {
-			impose(paperContent, layerUtility, verso, true);
+			impose(sheetContent, layerUtility, verso, true);
 		} else if (orientation == Orientation.VERSO_UP) {
-			impose(paperContent, layerUtility, recto, true);
+			impose(sheetContent, layerUtility, recto, true);
 		} else {
-			throw new IllegalStateException("Sheet orientation has not been set correctly.");
+			throw new IllegalStateException("Leaf orientation has not been set correctly.");
 		}
 	}
 		
 	/**
 	 * Places the form XObject representing the given page into the given
 	 * content stream.
-	 * The content stream should be from the same document as the
-	 * @param paperContent The content stream of the target Paper.
-	 * @param layerUtility The layer utility of the target Paper.
-	 * @param pg Either the recto or verso of this sheet.
+	 * @param sheetContent The content stream of the target Sheet side.
+	 * @param layerUtility The layer utility of the target Sheet.
+	 * @param pg Either the recto or verso of this leaf.
 	 * @param mirror Mirror the page before transforming. Used for back pages.
 	 * @throws IOException 
 	 */
-	private void impose(PDPageContentStream paperContent,
+	private void impose(PDPageContentStream sheetContent,
 	                    LayerUtility layerUtility,
 	                    Page pg,
 	                    boolean isBack) throws IOException {
@@ -281,14 +280,14 @@ public class Sheet {
 		
 		AffineTransform trMatrix = !isBack ? getFrontPosition() : getBackPosition();
 		
-		paperContent.saveGraphicsState();
-		paperContent.transform(new Matrix(trMatrix));
-		paperContent.drawForm(form);
-		paperContent.restoreGraphicsState();
+		sheetContent.saveGraphicsState();
+		sheetContent.transform(new Matrix(trMatrix));
+		sheetContent.drawForm(form);
+		sheetContent.restoreGraphicsState();
 	}
 	
 	public static enum Orientation {
-		/** Recto is on the front page, verso on back */
+		/** Recto is on the front surface, verso on back */
 		RECTO_UP,
 		/** Verso is on the front surface, recto on back */
 		VERSO_UP;
@@ -319,9 +318,9 @@ public class Sheet {
 	 * @throws IOException
 	 */
 	/*public PDPage printRecto(PDDocument doc) throws IOException {
-		PDPage sheet = new PDPage();
+		PDPage leaf = new PDPage();
 		sheet.setMediaBox(new PDRectangle((float) width, (float) height));
-		PDPageContentStream content = new PDPageContentStream(doc, sheet);
+		PDPageContentStream content = new PDPageContentStream(doc, leaf);
 		LayerUtility lu = new LayerUtility(doc);
 		
 	}*/

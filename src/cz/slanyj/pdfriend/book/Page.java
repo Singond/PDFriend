@@ -1,9 +1,9 @@
-package cz.slanyj.pdfriend.pages;
+package cz.slanyj.pdfriend.book;
 
 import cz.slanyj.pdfriend.SourcePage;
 
 /**
- * A document page, ie. one side of a Sheet.
+ * A document page, ie. one side of a Leaf.
  * @author Sorondil
  *
  */
