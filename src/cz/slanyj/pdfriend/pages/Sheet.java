@@ -30,6 +30,13 @@ public class Sheet {
 	private final Page recto;
 	/** The trailing page, ie. even-numbered */
 	private final Page verso;
+	/**
+	 * The flip direction (how the verso is oriented with respect to recto).
+	 * The default is flip around y-axis, ie. the top and bottom edges of
+	 * recto correspond to top and bottom edges of verso, respectively;
+	 * assuming the y-axis is taken as vertical.
+	 */
+	private FlipDirection flipDirection = FlipDirection.AROUND_Y;
 	
 	/**
 	 * The x-coordinate of the center of this Sheet on the front side
@@ -59,7 +66,13 @@ public class Sheet {
 	 */
 	private AffineTransform frontPosition;
 	/**
-	 * A flag to indicate the validity state of the frontPosition matrix.
+	 * The position of this Sheet on the front of the Paper as represented
+	 * by a transformation matrix.
+	 */
+	private AffineTransform backPosition;
+	/**
+	 * A flag to indicate the validity state of the frontPosition and
+	 * backPosition matrices.
 	 * Set to {@code false} to force matrix recalculation on its next usage.
 	 */
 	private boolean positionValid = false;
@@ -112,34 +125,85 @@ public class Sheet {
 		this.orientation = orientation;
 	}
 	
+	public FlipDirection getFlipDirection() {
+		return flipDirection;
+	}
+
+	public void setFlipDirection(FlipDirection flipDirection) {
+		positionValid = false;
+		this.flipDirection = flipDirection;
+	}
+
 	/**
 	 * Gets the position of this Sheet on the front side of the Paper
 	 * as a transformation matrix.
 	 * @return An AffineTransform object representing the current values
 	 * of x and y positions, rotation and orientation.
 	 */
-	public AffineTransform getPosition() {
+	public AffineTransform getFrontPosition() {
 		if (positionValid) {
 			return frontPosition;
 		} else {
-			AffineTransform newMatrix = calculatePositionMatrix();
-			frontPosition = newMatrix;
-			positionValid = true;
-			return newMatrix;
+			return updatePosition()[0];
+		}
+	}
+	
+	/**
+	 * Gets the position of this Sheet on the front side of the Paper
+	 * as a transformation matrix.
+	 * @return An AffineTransform object representing the current values
+	 * of x and y positions, rotation and orientation.
+	 */
+	public AffineTransform getBackPosition() {
+		if (positionValid) {
+			return backPosition;
+		} else {
+			return updatePosition()[1];
 		}
 	}
 
 	/**
+	 * Updates the front and back position matrices and returns them.
+	 * @return An array [frontPosition, backPosition] with freshly
+	 * calculated values.
+	 */
+	private AffineTransform[] updatePosition() {
+		AffineTransform newFrontMatrix = calculateFrontPositionMatrix();
+		frontPosition = newFrontMatrix;
+		AffineTransform newBackMatrix = calculateBackPositionMatrix();
+		backPosition = newBackMatrix;
+		positionValid = true;
+		return new AffineTransform[]{frontPosition, backPosition};
+	}
+	
+	/**
 	 * Returns the position matrix calculated from the current values
 	 * of x and y positions, rotation and orientation.
 	 */
-	private AffineTransform calculatePositionMatrix() {
+	private AffineTransform calculateFrontPositionMatrix() {
 		AffineTransform matrix = new AffineTransform();
 		// The transformations in the reverse order:
 		// Move to final position
 		matrix.translate(xPosition, yPosition);
 		// Apply rotation
 		matrix.rotate(rotation);
+		// Move the center to origin
+		matrix.translate(-width/2, -height/2);
+		return matrix;
+	}
+	/**
+	 * Returns the position matrix calculated from the current values
+	 * of x and y positions, rotation and orientation.
+	 */
+	private AffineTransform calculateBackPositionMatrix() {
+		AffineTransform matrix = new AffineTransform();
+		// The transformations in the reverse order:
+		// Move to final position
+		matrix.translate(xPosition, yPosition);
+		// Apply rotation
+		matrix.rotate(rotation);
+		// Mirror the page (will be mirored again by Paper)
+		matrix.concatenate(flipDirection.getBackOrientation());
 		// Move the center to origin
 		matrix.translate(-width/2, -height/2);
 		return matrix;
@@ -167,9 +231,9 @@ public class Sheet {
 	public void imposeFront(PDPageContentStream paperContent,
 		                    LayerUtility layerUtility) throws IOException {
 		if (orientation == Orientation.RECTO_UP) {
-			imposeRecto(paperContent, layerUtility);
+			impose(paperContent, layerUtility, recto, false);
 		} else if (orientation == Orientation.VERSO_UP) {
-			imposeVerso(paperContent, layerUtility);
+			impose(paperContent, layerUtility, verso, false);
 		} else {
 			throw new IllegalStateException("Sheet orientation has not been set correctly.");
 		}
@@ -180,9 +244,8 @@ public class Sheet {
 	 * into the given content stream.
 	 * Which page is upper and bottom is determined from the orientation
 	 * property. If it is RECTO_UP, the verso is placed, recto otherwise.
-	 * This method does not perform any other coordinate transformation,
-	 * ie. the page will be printed in the exact same position as front
-	 * page. The calling Paper is expected to mirror the placement itself.
+	 * This method flips the page vertically before moving it and
+	 * the calling Paper is expected to mirror the final placement again.
 	 * @param paperContent The content stream of the target Paper page.
 	 * @param layerUtility The layer utility of the target Paper.
 	 * @throws IOException 
@@ -190,56 +253,36 @@ public class Sheet {
 	public void imposeBack(PDPageContentStream paperContent,
 		                    LayerUtility layerUtility) throws IOException {
 		if (orientation == Orientation.RECTO_UP) {
-			imposeVerso(paperContent, layerUtility);
+			impose(paperContent, layerUtility, verso, true);
 		} else if (orientation == Orientation.VERSO_UP) {
-			imposeRecto(paperContent, layerUtility);
+			impose(paperContent, layerUtility, recto, true);
 		} else {
 			throw new IllegalStateException("Sheet orientation has not been set correctly.");
 		}
 	}
-	
-	/**
-	 * Places the form XObject representing the recto page into the given
-	 * content stream.
-	 * @param paperContent The content stream of the target Paper page.
-	 * @param layerUtility The layer utility of the target Paper.
-	 * @throws IOException 
-	 */
-	public void imposeRecto(PDPageContentStream paperContent,
-		                    LayerUtility layerUtility) throws IOException {
-		impose(paperContent, layerUtility, recto);
-	}
-	
-	/**
-	 * Places the form XObject representing the verso page into the given
-	 * content stream.
-	 * @param paperContent The content stream of the target Paper page.
-	 * @param layerUtility The layer utility of the target Paper.
-	 * @throws IOException 
-	 */
-	public void imposeVerso(PDPageContentStream paperContent,
-		                    LayerUtility layerUtility) throws IOException {
-		impose(paperContent, layerUtility, verso);
-	}
-	
+		
 	/**
 	 * Places the form XObject representing the given page into the given
 	 * content stream.
 	 * The content stream should be from the same document as the
 	 * @param paperContent The content stream of the target Paper.
 	 * @param layerUtility The layer utility of the target Paper.
-	 * @param Either the recto or verso of this sheet.
+	 * @param pg Either the recto or verso of this sheet.
+	 * @param mirror Mirror the page before transforming. Used for back pages.
 	 * @throws IOException 
 	 */
 	private void impose(PDPageContentStream paperContent,
 	                    LayerUtility layerUtility,
-	                    Page pg) throws IOException {
+	                    Page pg,
+	                    boolean isBack) throws IOException {
 		PDDocument parent = pg.getSource().getDoc();
 		PDPage page = pg.getSource().getPage();
 		PDFormXObject form = layerUtility.importPageAsForm(parent, page);
 		
+		AffineTransform trMatrix = !isBack ? getFrontPosition() : getBackPosition();
+		
 		paperContent.saveGraphicsState();
-		paperContent.transform(new Matrix(getPosition()));
+		paperContent.transform(new Matrix(trMatrix));
 		paperContent.drawForm(form);
 		paperContent.restoreGraphicsState();
 	}
@@ -249,6 +292,23 @@ public class Sheet {
 		RECTO_UP,
 		/** Verso is on the front surface, recto on back */
 		VERSO_UP;
+	}
+	
+	public static enum FlipDirection {
+		/** Flipped around x-axis */
+		AROUND_X(1, -1),
+		/** Flipped around y-axis */
+		AROUND_Y(-1, 1);
+		
+		private final AffineTransform backOrientation;
+		
+		private FlipDirection(double xScale, double yScale) {
+			backOrientation = AffineTransform.getScaleInstance(xScale, yScale);
+		}
+		
+		public AffineTransform getBackOrientation() {
+			return backOrientation;
+		}
 	}
 	
 	/**

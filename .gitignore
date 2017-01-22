@@ -2,9 +2,10 @@
 .project
 .settings/
 
-bin/
-lib/
-log/
+/bin/
+/lib/
+/log/
+/test/
 
 .ant-targets-build.xml
 *.pdf
