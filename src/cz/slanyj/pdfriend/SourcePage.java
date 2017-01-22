@@ -16,9 +16,14 @@ public class SourcePage {
 	/** The parent document */
 	private final PDDocument doc;
 	
-	public SourcePage(PDPage page, PDDocument doc, PDFormXObject form) {
-		this.page = page;
+	public SourcePage(PDDocument doc, PDPage page) {
 		this.doc = doc;
+		this.page = page;
+	}
+	
+	public SourcePage(PDDocument doc, int pageNumber) {
+		this.doc = doc;
+		this.page = doc.getPage(pageNumber);
 	}
 
 	public PDPage getPage() {
