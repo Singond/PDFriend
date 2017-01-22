@@ -1,5 +1,7 @@
 package cz.slanyj.pdfriend.pages;
 
+import cz.slanyj.pdfriend.SourcePage;
+
 /**
  * A document page, ie. one side of a Sheet.
  * @author Sorondil
@@ -14,12 +16,13 @@ public class Page {
 	/** The page height (y-direction) */
 	private final double height; 
 	
+	/** The source page and its parent */
+	private SourcePage source;
+	
 	public Page(double width, double height) {
 		this.width = width;
 		this.height = height;
 	}
-	
-	
 	
 	public double getWidth() {
 		return width;
@@ -35,5 +38,13 @@ public class Page {
 	 */
 	public int getNumber() {
 		return number;
+	}
+	
+	public SourcePage getSource() {
+		return source;
+	}
+
+	public void setSource(SourcePage page) {
+		this.source = page;
 	}
 }
