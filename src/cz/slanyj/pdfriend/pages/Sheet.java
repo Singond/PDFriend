@@ -50,8 +50,9 @@ public class Sheet {
 	private double rotation;
 	/**
 	 * The Page on the front surface ("up") of the Paper.
+	 * The default is recto in front.
 	 */
-	private Orientation orientation;
+	private Orientation orientation = Orientation.RECTO_UP;
 	/**
 	 * The position of this Sheet on the front of the Paper as represented
 	 * by a transformation matrix.
