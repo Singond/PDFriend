@@ -9,6 +9,6 @@
 	
 	<target name="resolve" description="Resolve dependencies with Ivy">
 		<ivy:resolve/>
-		<ivy:retrieve type="bundle,javadoc" sync="true"/>
+		<ivy:retrieve type="jar,bundle,javadoc" sync="true"/>
 	</target>
 </project>
