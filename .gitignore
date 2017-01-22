@@ -4,6 +4,7 @@
 
 bin/
 lib/
+log/
 
 .ant-targets-build.xml
 *.pdf
