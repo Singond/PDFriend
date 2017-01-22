@@ -157,7 +157,7 @@ public class Sheet {
 	/**
 	 * Places the form XObject representing the upper page of this Sheet
 	 * into the given content stream.
-	 * Which page is upper and lower is determined from the orientation
+	 * Which page is upper and bottom is determined from the orientation
 	 * property. If it is RECTO_UP, the recto is placed, verso otherwise.
 	 * @param paperContent The content stream of the target Paper page.
 	 * @param layerUtility The layer utility of the target Paper.
@@ -169,6 +169,29 @@ public class Sheet {
 			imposeRecto(paperContent, layerUtility);
 		} else if (orientation == Orientation.RECTO_UP) {
 			imposeVerso(paperContent, layerUtility);
+		} else {
+			throw new IllegalStateException("Sheet orientation has not been set correctly.");
+		}
+	}
+	
+	/**
+	 * Places the form XObject representing the bottom page of this Sheet
+	 * into the given content stream.
+	 * Which page is upper and bottom is determined from the orientation
+	 * property. If it is RECTO_UP, the verso is placed, recto otherwise.
+	 * This method does not perform any other coordinate transformation,
+	 * ie. the page will be printed in the exact same position as front
+	 * page. The calling Paper is expected to mirror the placement itself.
+	 * @param paperContent The content stream of the target Paper page.
+	 * @param layerUtility The layer utility of the target Paper.
+	 * @throws IOException 
+	 */
+	public void imposeBack(PDPageContentStream paperContent,
+		                    LayerUtility layerUtility) throws IOException {
+		if (orientation == Orientation.RECTO_UP) {
+			imposeVerso(paperContent, layerUtility);
+		} else if (orientation == Orientation.RECTO_UP) {
+			imposeRecto(paperContent, layerUtility);
 		} else {
 			throw new IllegalStateException("Sheet orientation has not been set correctly.");
 		}
