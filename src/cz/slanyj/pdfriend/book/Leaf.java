@@ -10,6 +10,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
 import org.apache.pdfbox.util.Matrix;
 
+import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.SourcePage;
 
 /**
@@ -231,9 +232,9 @@ public class Leaf {
 	public void imposeFront(PDPageContentStream sheetContent,
 		                    LayerUtility layerUtility) throws IOException {
 		if (orientation == Orientation.RECTO_UP) {
-			impose(sheetContent, layerUtility, recto, false);
+			imposeIfNotEmpty(sheetContent, layerUtility, recto, false);
 		} else if (orientation == Orientation.VERSO_UP) {
-			impose(sheetContent, layerUtility, verso, false);
+			imposeIfNotEmpty(sheetContent, layerUtility, verso, false);
 		} else {
 			throw new IllegalStateException("Leaf orientation has not been set correctly.");
 		}
@@ -253,9 +254,9 @@ public class Leaf {
 	public void imposeBack(PDPageContentStream sheetContent,
 		                    LayerUtility layerUtility) throws IOException {
 		if (orientation == Orientation.RECTO_UP) {
-			impose(sheetContent, layerUtility, verso, true);
+			imposeIfNotEmpty(sheetContent, layerUtility, verso, true);
 		} else if (orientation == Orientation.VERSO_UP) {
-			impose(sheetContent, layerUtility, recto, true);
+			imposeIfNotEmpty(sheetContent, layerUtility, recto, true);
 		} else {
 			throw new IllegalStateException("Leaf orientation has not been set correctly.");
 		}
@@ -285,6 +286,26 @@ public class Leaf {
 		sheetContent.drawForm(form);
 		sheetContent.restoreGraphicsState();
 	}
+	/**
+	 * Places the form XObject representing the given page into the given
+	 * content stream.
+	 * @param sheetContent The content stream of the target Sheet side.
+	 * @param layerUtility The layer utility of the target Sheet.
+	 * @param pg Either the recto or verso of this leaf.
+	 * @param mirror Mirror the page before transforming. Used for back pages.
+	 * @throws IOException 
+	 */
+	private void imposeIfNotEmpty(PDPageContentStream sheetContent,
+	                              LayerUtility layerUtility,
+	                              Page pg,
+	                              boolean isBack) throws IOException {
+		try {
+			impose(sheetContent, layerUtility, pg, isBack);
+		} catch (NullPointerException e) {
+			int page = pg.getNumber();
+			Log.info("Page %d is empty, skipping", page);
+		}
+	}
 	
 	public static enum Orientation {
 		/** Recto is on the front surface, verso on back */
@@ -309,23 +330,4 @@ public class Leaf {
 			return backOrientation;
 		}
 	}
-	
-	/**
-	 * Returns a new page as a child of given document. The page is not
-	 * added to the document automatically.
-	 * @param doc
-	 * @return
-	 * @throws IOException
-	 */
-	/*public PDPage printRecto(PDDocument doc) throws IOException {
-		PDPage leaf = new PDPage();
-		sheet.setMediaBox(new PDRectangle((float) width, (float) height));
-		PDPageContentStream content = new PDPageContentStream(doc, leaf);
-		LayerUtility lu = new LayerUtility(doc);
-		
-	}*/
-	
-	/*public PDPage printVerso(PDDocument doc) {
-		return null;
-	}*/
 }

@@ -76,7 +76,7 @@ public class PrintVolume {
 			SourcePage eight = new SourcePage(source, 7);
 			leaf.setContent(one, two);
 			leaf2.setContent(three, four);
-			leaf3.setContent(five, six);
+			leaf3.setContent(null, six);
 			leaf4.setContent(seven, eight);
 			
 			volume.renderAndSaveDocument(new File("test/printed-volume.pdf"));
