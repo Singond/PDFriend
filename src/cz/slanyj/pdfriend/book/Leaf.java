@@ -18,7 +18,7 @@ import cz.slanyj.pdfriend.SourcePage;
  * ie recto (the odd-numbered one) and verso (the even-numbered one).
  * The pages can be of different dimensions, but their centers will
  * be aligned.
- * @author Sorondil
+ * @author Singon
  *
  */
 public class Leaf {

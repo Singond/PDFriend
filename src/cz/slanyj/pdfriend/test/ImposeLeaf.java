@@ -15,6 +15,12 @@ import cz.slanyj.pdfriend.book.Leaf;
 import cz.slanyj.pdfriend.book.Leaf.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf.Orientation;
 
+/**
+ * A sample leaf.
+ * Assume landscape document of US Letter format (792 x 612 pt).
+ * @author Singon
+ *
+ */
 public class ImposeLeaf {
 
 	public static void main(String[] args) {
@@ -38,7 +44,7 @@ public class ImposeLeaf {
 		
 		try {
 			// Get content
-			PDDocument source = PDDocument.load(new File("test/manual.pdf"));
+			PDDocument source = PDDocument.load(new File("test/document.pdf"));
 			SourcePage one = new SourcePage(source, 0);
 			SourcePage two = new SourcePage(source, 1);
 			leaf.setContent(one, two);

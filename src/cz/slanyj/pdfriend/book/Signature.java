@@ -9,7 +9,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 
 /**
  * A signature of a document, made by folding one or more Sheets.
- * @author Sorondil
+ * @author Singon
  *
  */
 public class Signature {

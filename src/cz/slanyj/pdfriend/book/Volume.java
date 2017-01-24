@@ -9,7 +9,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 /**
  * The whole text block of a document, made by arranging several Signatures
  * in a sequence.
- * @author Sorondil
+ * @author Singon
  *
  */
 public class Volume {

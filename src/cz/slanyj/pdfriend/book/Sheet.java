@@ -13,7 +13,7 @@ import org.apache.pdfbox.util.Matrix;
 
 /**
  * The large sheet of paper upon which Pages from multiple Leaves are laid out.
- * @author Sorondil
+ * @author Singon
  *
  */
 public class Sheet {

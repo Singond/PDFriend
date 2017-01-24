@@ -5,7 +5,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 
 /**
  * A container for a PDPage and its parent PDDocument.
- * @author Sorondil
+ * @author Singon
  *
  */
 public class SourcePage {

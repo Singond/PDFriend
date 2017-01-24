@@ -26,7 +26,7 @@ public class DocMismatch {
 
 			aDoc.addPage(aPage);
 
-			PDDocument toBeImported = PDDocument.load(new File("Fotky.pdf"));
+			PDDocument toBeImported = PDDocument.load(new File(args[0]));
 			LayerUtility layerUtility = new LayerUtility(bDoc);
 			PDFormXObject mountable = layerUtility.importPageAsForm(toBeImported, 0);
 
@@ -45,7 +45,7 @@ public class DocMismatch {
 			// close the imported document
 			toBeImported.close();
 			
-			aDoc.save("mismatched.pdf");
+			aDoc.save("test/mismatched.pdf");
 			aDoc.close();
 		} catch (IOException e) {
 			e.printStackTrace();

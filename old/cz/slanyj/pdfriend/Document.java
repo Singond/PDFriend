@@ -17,7 +17,7 @@ import cz.slanyj.swing.Canvas;
 
 /**
  * A wrapper for a PDDocument.
- * @author Sorondil
+ * @author Singon
  *
  */
 public class Document extends Project<Sheet.Real> /*implements Canvas.CanvasPainter*/ {

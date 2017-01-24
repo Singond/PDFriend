@@ -4,7 +4,7 @@ import cz.slanyj.pdfriend.SourcePage;
 
 /**
  * A document page, ie. one side of a Leaf.
- * @author Sorondil
+ * @author Singon
  *
  */
 public class Page {
