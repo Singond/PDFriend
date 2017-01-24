@@ -137,7 +137,8 @@ public class Leaf {
 
 	/**
 	 * Gets the position of this Leaf on the front side of the Sheet
-	 * as a transformation matrix.
+	 * as a transformation matrix. Performs recalculation if any of the
+	 * prerequisite values has changed.
 	 * @return An AffineTransform object representing the current values
 	 * of x and y positions and rotation.
 	 */
@@ -151,7 +152,8 @@ public class Leaf {
 	
 	/**
 	 * Gets the position of this Leaf on the back side of the Sheet
-	 * as a transformation matrix.
+	 * as a transformation matrix. Performs recalculation if any of the
+	 * prerequisite values has changed.
 	 * @return An AffineTransform object representing the current values
 	 * of x and y positions, rotation and flip direction.
 	 */
@@ -183,7 +185,10 @@ public class Leaf {
 	 */
 	private AffineTransform calculateFrontPositionMatrix() {
 		AffineTransform matrix = new AffineTransform();
-		// The transformations in the reverse order:
+		/*
+		 * The transformations in reverse order
+		 * (ie. their matrices from left to right):
+		 */
 		// Move to final position
 		matrix.translate(xPosition, yPosition);
 		// Apply rotation
@@ -198,12 +203,15 @@ public class Leaf {
 	 */
 	private AffineTransform calculateBackPositionMatrix() {
 		AffineTransform matrix = new AffineTransform();
-		// The transformations in the reverse order:
+		/*
+		 * The transformations in reverse order:
+		 * (ie. their matrices from left to right):
+		 */
 		// Move to final position
 		matrix.translate(xPosition, yPosition);
 		// Apply rotation
 		matrix.rotate(rotation);
-		// Mirror the page (will be mirored again by Paper)
+		// Mirror the page (will be mirored again by Sheet)
 		matrix.concatenate(flipDirection.getBackOrientation());
 		// Move the center of the leaf to origin
 		matrix.translate(-width/2, -height/2);
@@ -307,6 +315,13 @@ public class Leaf {
 		}
 	}
 	
+	/**
+	 * Placement of the Leaf on the Sheet: Either recto up or down.
+	 * This will affect which Page of this Leaf gets printed on the front
+	 * and back of the parent Sheet.
+	 * @author Singon
+	 *
+	 */
 	public static enum Orientation {
 		/** Recto is on the front surface, verso on back */
 		RECTO_UP,
@@ -314,18 +329,32 @@ public class Leaf {
 		VERSO_UP;
 	}
 	
+	/**
+	 * Represents the position of the back page with respect to the
+	 * front page. Exactly speaking, provides the transformation matrix
+	 * necessary to bring a page from position on the front surface to
+	 * its proper position on the back surface (assuming the back
+	 * surface is viewed through the paper from the front side).
+	 */
 	public static enum FlipDirection {
 		/** Flipped around x-axis */
 		AROUND_X(1, -1),
 		/** Flipped around y-axis */
 		AROUND_Y(-1, 1);
 		
+		/** The transformation */
 		private final AffineTransform backOrientation;
 		
 		private FlipDirection(double xScale, double yScale) {
 			backOrientation = AffineTransform.getScaleInstance(xScale, yScale);
 		}
 		
+		/**
+		 * Returns the transformation matrix necessary to bring a page
+		 * from position on the front surface to its proper position
+		 * on the back surface (assuming the back surface is viewed
+		 * through the paper from the front side).
+		 */
 		public AffineTransform getBackOrientation() {
 			return backOrientation;
 		}

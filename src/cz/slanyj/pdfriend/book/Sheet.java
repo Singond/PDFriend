@@ -12,7 +12,7 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.util.Matrix;
 
 /**
- * The large sheet of paper upon which Pages from multiple Leaves are laid out.
+ * A single sheet of paper upon which Pages from multiple Leaves are laid out.
  * @author Singon
  *
  */
