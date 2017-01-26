@@ -1,9 +1,10 @@
 package cz.slanyj.pdfriend.book;
 
 import java.io.IOException;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
+import org.apache.commons.collections4.list.SetUniqueList;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 
@@ -15,14 +16,14 @@ import org.apache.pdfbox.pdmodel.PDPage;
 public class Signature {
 
 	/** The sheets comprising this Signature */
-	private final Set<Sheet> sheets;
+	private final List<Sheet> sheets;
 	
 	public Signature() {
-		this.sheets = new LinkedHashSet<>();
+		this.sheets = SetUniqueList.setUniqueList(new LinkedList<Sheet>());
 	}
 	
-	public void add(Sheet sheet) {
-		sheets.add(sheet);
+	public boolean add(Sheet sheet) {
+		return sheets.add(sheet);
 	}
 	
 	/**

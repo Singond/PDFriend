@@ -2,8 +2,10 @@ package cz.slanyj.pdfriend.book;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 
+import org.apache.commons.collections4.list.SetUniqueList;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 /**
@@ -15,18 +17,18 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 public class Volume {
 
 	/** Signatures in this volume */
-	private LinkedHashSet<Signature> signatures;
+	private List<Signature> signatures;
 	
 	public Volume() {
-		signatures = new LinkedHashSet<>();
+		signatures = SetUniqueList.setUniqueList(new LinkedList<Signature>());
 	}
 	
 	/**
 	 * Inserts the given Signature into this Volume.
 	 * @param signature
 	 */
-	public void add(Signature signature) {
-		signatures.add(signature);
+	public boolean add(Signature signature) {
+		return signatures.add(signature);
 	}
 	
 	/**

@@ -2,8 +2,10 @@ package cz.slanyj.pdfriend.book;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.collections4.list.SetUniqueList;
 import org.apache.pdfbox.multipdf.LayerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -31,7 +33,7 @@ public class Sheet {
 	public Sheet(double width, double height) {
 		this.width = width;
 		this.height = height;
-		this.leaves = new ArrayList<>();
+		this.leaves = SetUniqueList.setUniqueList(new LinkedList<Leaf>());
 	}
 	
 	/**
