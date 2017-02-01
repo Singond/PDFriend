@@ -324,9 +324,16 @@ public class Leaf {
 	 */
 	public static enum Orientation {
 		/** Recto is on the front surface, verso on back */
-		RECTO_UP,
+		RECTO_UP {
+			@Override public Orientation inverse() {return VERSO_UP;}
+		},
 		/** Verso is on the front surface, recto on back */
-		VERSO_UP;
+		VERSO_UP {
+			@Override public Orientation inverse() {return RECTO_UP;}
+		};
+		
+		/** Returns the inverse Orientation */
+		public abstract Orientation inverse();
 	}
 	
 	/**
