@@ -12,6 +12,7 @@ import org.apache.pdfbox.util.Matrix;
 
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.SourcePage;
+import cz.slanyj.pdfriend.book.FlipDirection;
 
 /**
  * A single Leaf of the finished document. Consists of two Pages,
@@ -334,36 +335,5 @@ public class Leaf {
 		
 		/** Returns the inverse Orientation */
 		public abstract Orientation inverse();
-	}
-	
-	/**
-	 * Represents the position of the back page with respect to the
-	 * front page. Exactly speaking, provides the transformation matrix
-	 * necessary to bring a page from position on the front surface to
-	 * its proper position on the back surface (assuming the back
-	 * surface is viewed through the paper from the front side).
-	 */
-	public static enum FlipDirection {
-		/** Flipped around x-axis */
-		AROUND_X(1, -1),
-		/** Flipped around y-axis */
-		AROUND_Y(-1, 1);
-		
-		/** The transformation */
-		private final AffineTransform backOrientation;
-		
-		private FlipDirection(double xScale, double yScale) {
-			backOrientation = AffineTransform.getScaleInstance(xScale, yScale);
-		}
-		
-		/**
-		 * Returns the transformation matrix necessary to bring a page
-		 * from position on the front surface to its proper position
-		 * on the back surface (assuming the back surface is viewed
-		 * through the paper from the front side).
-		 */
-		public AffineTransform getBackOrientation() {
-			return backOrientation;
-		}
 	}
 }

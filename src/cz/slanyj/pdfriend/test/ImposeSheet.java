@@ -6,8 +6,8 @@ import java.io.IOException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import cz.slanyj.pdfriend.SourcePage;
+import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf;
-import cz.slanyj.pdfriend.book.Leaf.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf.Orientation;
 import cz.slanyj.pdfriend.book.Sheet;
 

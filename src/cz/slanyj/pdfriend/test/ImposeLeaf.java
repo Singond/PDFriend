@@ -11,8 +11,8 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.util.Matrix;
 
 import cz.slanyj.pdfriend.SourcePage;
+import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf;
-import cz.slanyj.pdfriend.book.Leaf.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf.Orientation;
 
 /**
