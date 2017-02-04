@@ -16,9 +16,9 @@ import cz.slanyj.pdfriend.book.FlipDirection;
 
 /**
  * A single Leaf of the finished document. Consists of two Pages,
- * ie recto (the odd-numbered one) and verso (the even-numbered one).
- * The pages can be of different dimensions, but their centers will
- * be aligned.
+ * ie. recto (the odd-numbered one) and verso (the even-numbered one).
+ * The Pages are considered to be of the same dimensions as the Leaf.
+ * 
  * @author Singon
  *
  */
@@ -32,6 +32,7 @@ public class Leaf {
 	private final Page recto;
 	/** The trailing page, ie. even-numbered */
 	private final Page verso;
+	
 	/**
 	 * The flip direction (how the verso is oriented with respect to recto).
 	 * The default is flip around y-axis, ie. the top and bottom edges of
@@ -65,11 +66,35 @@ public class Leaf {
 	/**
 	 * The position of this Leaf on the front of the Sheet as represented
 	 * by a transformation matrix.
+	 * Specfically, this matrix moves a page from its initial position
+	 * with lower left corner in [0, 0] into the desired position of the
+	 * front page.
 	 */
 	private AffineTransform frontPosition;
 	/**
-	 * The position of this Leaf on the back of the Sheet as represented
-	 * by a transformation matrix.
+	 * <p>
+	 * The position of this Leaf on the back of the Sheet as represented by
+	 * a transformation matrix. Exactly speaking, this matrix moves a page
+	 * from its initial position with lower left corner in [0, 0] into a
+	 * position as described in detail below:
+	 * </p>
+	 * <p>
+	 * Because this class lacks any notion of the final Sheet dimensions,
+	 * this position cannot be expressed directly in the coordinate system
+	 * of the back side. This is due to the fact that the origins of the
+	 * front-side and back-side coordinate systems of the Sheet are not
+	 * aligned but instead shifted relative to each other by the Sheet width
+	 * or height.
+	 * </p>
+	 * <p>
+	 * In order to avoid this issue, the position for the back page is not
+	 * given as viewed from the <em>back</em> side, but as viewed from the
+	 * <em>front</em> side instead, as if the leaf was transparent. This
+	 * implies the page is mirrored, in addition to any translation and
+	 * rotation. The Sheet is then required to mirror the coordinate system
+	 * before imposing this page. The direction of this flip is determined
+	 * by the {@code Sheet.flipDirection} field.
+	 * </p>
 	 */
 	private AffineTransform backPosition;
 	/**
