@@ -26,9 +26,7 @@ public class ImposeLeaf {
 	public static void main(String[] args) {
 		//Leaf leaf = new Leaf(792, 612);
 		Leaf leaf = new Leaf(792, 612);
-		leaf.setXPosition(306);
-		leaf.setYPosition(396);
-		leaf.setRotation(Math.PI/2);
+		leaf.setAsFrontPosition(new Leaf.Position(306, 396, Math.PI/2));
 		leaf.setOrientation(Orientation.RECTO_UP);
 		leaf.setFlipDirection(FlipDirection.AROUND_Y);
 		

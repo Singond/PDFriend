@@ -21,16 +21,12 @@ public class ImposeSignature {
 
 	public static void main(String[] args) {
 		Leaf leaf = new Leaf(792, 612);
-		leaf.setXPosition(306);
-		leaf.setYPosition(396);
-		leaf.setRotation(Math.PI/2);
+		leaf.setAsFrontPosition(new Leaf.Position(306, 396, Math.PI/2));
 		leaf.setOrientation(Orientation.RECTO_UP);
 		leaf.setFlipDirection(FlipDirection.AROUND_Y);
 		
 		Leaf leaf2 = new Leaf(792, 612);
-		leaf2.setXPosition(918);
-		leaf2.setYPosition(396);
-		leaf2.setRotation(Math.PI/2);
+		leaf2.setAsFrontPosition(new Leaf.Position(918, 396, Math.PI/2));
 		leaf2.setOrientation(Orientation.VERSO_UP);
 		leaf2.setFlipDirection(FlipDirection.AROUND_Y);
 		
@@ -39,18 +35,15 @@ public class ImposeSignature {
 		sheet.addLeaf(leaf2);
 		
 		Leaf leaf3 = new Leaf(792, 612);
-		leaf3.setXPosition(306);
-		leaf3.setYPosition(396);
-		leaf3.setRotation(Math.PI/2);
+		leaf3.setAsFrontPosition(new Leaf.Position(306, 396, Math.PI/2));
 		leaf3.setOrientation(Orientation.RECTO_UP);
 		leaf3.setFlipDirection(FlipDirection.AROUND_Y);
 		
 		Leaf leaf4 = new Leaf(792, 612);
-		leaf4.setXPosition(918);
-		leaf4.setYPosition(396);
-		leaf4.setRotation(Math.PI/2);
+		leaf4.setAsFrontPosition(new Leaf.Position(918, 396, Math.PI/2));
 		leaf4.setOrientation(Orientation.VERSO_UP);
 		leaf4.setFlipDirection(FlipDirection.AROUND_Y);
+		
 		
 		Sheet sheet2 = new Sheet(1224, 792);
 		sheet2.addLeaf(leaf3);

@@ -32,7 +32,6 @@ public class Leaf {
 	private final Page recto;
 	/** The trailing page, ie. even-numbered */
 	private final Page verso;
-	
 	/**
 	 * The flip direction (how the verso is oriented with respect to recto).
 	 * The default is flip around y-axis, ie. the top and bottom edges of
@@ -41,23 +40,6 @@ public class Leaf {
 	 */
 	private FlipDirection flipDirection = FlipDirection.AROUND_Y;
 	
-	/**
-	 * The x-coordinate of the center of this Leaf on the front side
-	 * of the Sheet.
-	 */
-	private double xPosition;
-	/**
-	 * The y-coordinate of the center of this Leaf on the front side
-	 * of the Sheet.
-	 */
-	private double yPosition;
-	/**
-	 * The rotation of this Leaf measured as the angle in radians from the
-	 * y-axis of the Sheet to the side of this Leaf, with positive being
-	 * the counter-clockwise direction when viewed from the front of the Sheet.
-	 * An angle of 0 means the Leaf is upright (ie. the text is horizontal).
-	 */
-	private double rotation;
 	/**
 	 * The Page on the front surface ("up") of the Sheet.
 	 * The default is recto in front.
@@ -98,11 +80,22 @@ public class Leaf {
 	 */
 	private AffineTransform backPosition;
 	/**
-	 * A flag to indicate the validity state of the frontPosition and
-	 * backPosition matrices.
-	 * Set to {@code false} to force matrix recalculation on its next usage.
+	 * Indicates whether the front- and back-position matrices are up to
+	 * date with reference position.
 	 */
 	private boolean positionValid = false;
+	/**
+	 * The position matrix which is used to calculate the front and back
+	 * position matrices. This is either the frontPosition or backPosition,
+	 * as specified by {@code referenceIsFront} field.
+	 */
+	private AffineTransform referencePosition;
+	/**
+	 * Specifies whether the {@code position} matrix refers to the front
+	 * side or back side.
+	 */
+	private boolean referenceIsFront = true;
+		
 	
 	/**
 	 * Constructs a new Leaf of the given dimensions.
@@ -116,39 +109,12 @@ public class Leaf {
 		this.height = height;
 	}
 	
-	public double getXPosition() {
-		return xPosition;
-	}
-
-	public void setXPosition(double xPosition) {
-		positionValid = false;
-		this.xPosition = xPosition;
-	}
-
-	public double getYPosition() {
-		return yPosition;
-	}
-
-	public void setYPosition(double yPosition) {
-		positionValid = false;
-		this.yPosition = yPosition;
-	}
-
-	public double getRotation() {
-		return rotation;
-	}
-
-	public void setRotation(double rotation) {
-		positionValid = false;
-		this.rotation = rotation;
-	}
-
+	
 	public Orientation getOrientation() {
 		return orientation;
 	}
 
 	public void setOrientation(Orientation orientation) {
-		//positionValid = false;
 		this.orientation = orientation;
 	}
 	
@@ -156,17 +122,15 @@ public class Leaf {
 		return flipDirection;
 	}
 
-	public void setFlipDirection(FlipDirection flipDirection) {
+	public void setFlipDirection(FlipDirection flip) {
 		positionValid = false;
-		this.flipDirection = flipDirection;
+		this.flipDirection = flip;
 	}
 
 	/**
 	 * Gets the position of this Leaf on the front side of the Sheet
-	 * as a transformation matrix. Performs recalculation if any of the
-	 * prerequisite values has changed.
-	 * @return An AffineTransform object representing the current values
-	 * of x and y positions and rotation.
+	 * as a transformation matrix.
+	 * @return The internal AffineTransform object.
 	 */
 	public AffineTransform getFrontPosition() {
 		if (positionValid) {
@@ -178,10 +142,8 @@ public class Leaf {
 	
 	/**
 	 * Gets the position of this Leaf on the back side of the Sheet
-	 * as a transformation matrix. Performs recalculation if any of the
-	 * prerequisite values has changed.
-	 * @return An AffineTransform object representing the current values
-	 * of x and y positions, rotation and flip direction.
+	 * as a transformation matrix.
+	 * @return The internal AffineTransform object.
 	 */
 	public AffineTransform getBackPosition() {
 		if (positionValid) {
@@ -190,58 +152,112 @@ public class Leaf {
 			return updatePosition()[1];
 		}
 	}
-
+	
 	/**
-	 * Updates the front and back position matrices and returns them.
-	 * @return An array [frontPosition, backPosition] with freshly
-	 * calculated values.
+	 * Updates the frontPosition and backPosition fields to reflect the
+	 * current referencePosition, taking into account whether that refers
+	 * to the front or the back (the {@code referenceIsFront} field).
 	 */
 	private AffineTransform[] updatePosition() {
-		AffineTransform newFrontMatrix = calculateFrontPositionMatrix();
-		frontPosition = newFrontMatrix;
-		AffineTransform newBackMatrix = calculateBackPositionMatrix();
-		backPosition = newBackMatrix;
-		positionValid = true;
-		return new AffineTransform[]{frontPosition, backPosition};
+		if (referenceIsFront) {
+			return updateFromFrontPosition(referencePosition);
+		} else {
+			return updateFromBackPosition(referencePosition);
+		}
+	}
+
+	/**
+	 * Moves the leaf so that its front position is the one specified by the
+	 * transform. The front page before transformation has its lower left
+	 * corner at [0, 0].
+	 * @param transform
+	 */
+	public void setAsFrontPosition(AffineTransform transform) {
+		positionValid = false;
+		referencePosition = transform;
+		referenceIsFront = true;
+	}
+	/**
+	 * Moves the leaf so that its front position is the one specified.
+	 */
+	public void setAsFrontPosition(Position position) {
+		AffineTransform at = position.asMatrix();
+		at.translate(-width/2, -height/2);
+		setAsFrontPosition(at);
 	}
 	
 	/**
-	 * Returns the position matrix calculated from the current values
-	 * of x and y positions and rotation.
+	 * Moves the leaf so that its back position is the one specified by the
+	 * transform. The back page before transformation has its lower left
+	 * corner at [0, 0].
+	 * @param transform
 	 */
-	private AffineTransform calculateFrontPositionMatrix() {
-		AffineTransform matrix = new AffineTransform();
-		/*
-		 * The transformations in reverse order
-		 * (ie. their matrices from left to right):
-		 */
-		// Move to final position
-		matrix.translate(xPosition, yPosition);
-		// Apply rotation
-		matrix.rotate(rotation);
-		// Move the center of the leaf to origin
-		matrix.translate(-width/2, -height/2);
-		return matrix;
+	public void setAsBackPosition(AffineTransform transform) {
+		positionValid = false;
+		referencePosition = transform;
+		referenceIsFront = false;
 	}
 	/**
-	 * Returns the position matrix calculated from the current values
-	 * of x and y positions, rotation and flip direction.
+	 * Moves the leaf so that its back position is the one specified.
 	 */
-	private AffineTransform calculateBackPositionMatrix() {
-		AffineTransform matrix = new AffineTransform();
-		/*
-		 * The transformations in reverse order:
-		 * (ie. their matrices from left to right):
-		 */
-		// Move to final position
-		matrix.translate(xPosition, yPosition);
-		// Apply rotation
-		matrix.rotate(rotation);
+	public void setAsBackPosition(Position position) {
+		AffineTransform at = position.asMatrix();
+		at.translate(-width/2, -height/2);
+		setAsBackPosition(at);
+	}
+	
+	/**
+	 * Updates the front matrix directly to the given matrix and updates the
+	 * back position matrix accordingly so that the back page occupies the
+	 * same extents as the front page, given the Leaf dimensions.
+	 * @param transform A transformation beginning with a page with lower
+	 * left corner in origin.
+	 * @return Updated transformation matrices in array
+	 * {front-position, back-position}.
+	 */
+	private AffineTransform[] updateFromFrontPosition(AffineTransform transform) {
+		AffineTransform front = new AffineTransform(transform);
+		frontPosition = front;
+		
+		AffineTransform back = new AffineTransform(transform);
+		// Move the leaf back to its original extents
+		back.translate(width/2, height/2);
 		// Mirror the page (will be mirored again by Sheet)
-		matrix.concatenate(flipDirection.getBackOrientation());
+		back.concatenate(flipDirection.getBackOrientation());
 		// Move the center of the leaf to origin
-		matrix.translate(-width/2, -height/2);
-		return matrix;
+		back.translate(-width/2, -height/2);
+		backPosition = back;
+		
+		positionValid = true;
+		return new AffineTransform[]{front, back};
+	}
+	
+	/**
+	 * Updates the back matrix directly to the given matrix and updates the
+	 * front position matrix accordingly so that the front page occupies the
+	 * same extents as the back page, given the Leaf dimensions.
+	 * @param transform A transformation beginning with a page with lower
+	 * left corner in origin.
+	 * @return Updated transformation matrices in array
+	 * {front-position, back-position}.
+	 */
+	private AffineTransform[] updateFromBackPosition(AffineTransform transform) {
+		AffineTransform back = new AffineTransform(transform);
+		backPosition = back;
+		
+		AffineTransform front = new AffineTransform(transform);
+		// Move the leaf back to its original extents
+		front.translate(width/2, height/2);
+		// Mirror the page (will be mirored again by Sheet)
+		// In theory, one should use the inverse of the matrix used in
+		// updateFromFrontPosition, but it is assumed to be self-inverse.
+		front.concatenate(flipDirection.getBackOrientation());
+		// Move the center of the leaf to origin
+		front.translate(-width/2, -height/2);
+		frontPosition = front;
+		
+		positionValid = true;
+		return new AffineTransform[]{front, back};
 	}
 	
 	/**
@@ -360,5 +376,98 @@ public class Leaf {
 		
 		/** Returns the inverse Orientation */
 		public abstract Orientation inverse();
+	}
+	
+	/**
+	 * A simple class representing the position a Leaf on a Sheet.
+	 * This represents the position of the center and the rotation of
+	 * the page in the plane of the Sheet.
+	 * This class is immutable
+	 * @author Singon
+	 *
+	 */
+	public static class Position {
+		
+		/**
+		 * The x-coordinate of the center of the Leaf on the front
+		 * side of the Sheet.
+		 */
+		private final double xPosition;
+		/**
+		 * The y-coordinate of the center of the Leaf on the front
+		 * side of the Sheet.
+		 */
+		private final double yPosition;
+		/**
+		 * The rotation of the Leaf measured as the angle in radians from
+		 * the y-axis of the Sheet to the side of the Leaf, with positive
+		 * being the counter-clockwise direction when viewed from the front
+		 * of the Sheet. An angle of 0 means the Leaf is upright (ie. the
+		 * text is horizontal).
+		 */
+		private final double rotation;
+		/**
+		 * The position as a transformation matrix required to bring
+		 * a page from a position centered on origin to the position
+		 * represented by this Position object.
+		 */
+		private final AffineTransform matrix;
+				
+
+		/**
+		 * Constructs a new Position object representing a page centered at
+		 * [x, y] and rotated by an angle.
+		 */
+		public Position(double x, double y, double rot) {
+			xPosition = x;
+			yPosition = y;
+			rotation = rot;
+			
+			AffineTransform at;
+			at = new AffineTransform();
+			/*
+			 * The transformations in reverse order
+			 * (ie. their matrices from left to right):
+			 */
+			// Move to final position
+			at.translate(xPosition, yPosition);
+			// Apply rotation
+			at.rotate(rotation);
+			matrix = at;
+		}
+		
+		/**
+		 * Constructs a new Position object representing a page centered
+		 * at [x, y] without rotation.
+		 */
+		public Position(double x, double y) {
+			this(x, y, 0);
+		}
+		
+		/**
+		 * Returns the current x-position of the center of this leaf as given
+		 * by its transformation matrix.
+		 * @return
+		 */
+		public final double getXPosition() {
+			return xPosition;
+		}
+
+		public final double getYPosition() {
+			return yPosition;
+		}
+
+		public final double getRotation() {
+			return rotation;
+		}
+		
+		/**
+		 * Returns the position as a transformation matrix required to bring
+		 * a page from a position centered on origin to the position
+		 * represented by this Position object.
+		 */
+		public AffineTransform asMatrix() {
+			return new AffineTransform(matrix);
+		}
 	}
 }
