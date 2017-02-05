@@ -1,11 +1,13 @@
 package cz.slanyj.pdfriend.test;
 
+import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import cz.slanyj.pdfriend.SourcePage;
+import cz.slanyj.pdfriend.book.Field;
 import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf;
 import cz.slanyj.pdfriend.book.Leaf.Orientation;
@@ -31,8 +33,14 @@ public class ImposeSheet {
 		leaf2.setFlipDirection(FlipDirection.AROUND_Y);
 		
 		Sheet sheet = new Sheet(1224, 792);
-		sheet.addLeaf(leaf);
-		sheet.addLeaf(leaf2);
+		
+		AffineTransform at;
+		at = new AffineTransform(-1, 0, 0, 1, 1224, 0);
+		//at.rotate(Math.PI/80);
+		Field field = new Field(sheet, at, Field.Orientation.NEGATIVE);
+		field.addLeaf(leaf);
+		field.addLeaf(leaf2);
+		field.placeLeaves();
 		
 		try {
 			// Get content
