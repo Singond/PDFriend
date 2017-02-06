@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
+
+import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.SourcePage;
 import cz.slanyj.pdfriend.book.Leaf;
 import cz.slanyj.pdfriend.book.Leaf.FlipDirection;
@@ -81,6 +83,7 @@ public class PrintVolume {
 			leaf4.setContent(seven, eight);
 			
 			volume.renderAndSaveDocument(new File("test/printed-volume.pdf"));
+			Log.info("Finished writing document");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
