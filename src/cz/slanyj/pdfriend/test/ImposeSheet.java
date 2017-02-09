@@ -20,17 +20,17 @@ import cz.slanyj.pdfriend.book.Sheet;
 public class ImposeSheet {
 
 	public static void main(String[] args) {
-		Leaf leaf = new Leaf(792, 612);
+		Leaf leaf = new Leaf(612, 792);
 		leaf.setXPosition(306);
 		leaf.setYPosition(396);
-		leaf.setRotation(Math.PI/2);
+		leaf.setRotation(0);
 		leaf.setOrientation(Orientation.RECTO_UP);
 		leaf.setFlipDirection(FlipDirection.AROUND_Y);
 		
-		Leaf leaf2 = new Leaf(792, 612);
+		Leaf leaf2 = new Leaf(612, 792);
 		leaf2.setXPosition(918);
 		leaf2.setYPosition(396);
-		leaf2.setRotation(Math.PI/2);
+		leaf2.setRotation(0);
 		leaf2.setOrientation(Orientation.VERSO_UP);
 		leaf2.setFlipDirection(FlipDirection.AROUND_Y);
 		
@@ -40,7 +40,7 @@ public class ImposeSheet {
 		
 		try {
 			// Get content
-			PDDocument source = PDDocument.load(new File("test/document.pdf"));
+			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
 			SourcePage one = new SourcePage(source, 0);
 			SourcePage two = new SourcePage(source, 1);
 			SourcePage three = new SourcePage(source, 2);
