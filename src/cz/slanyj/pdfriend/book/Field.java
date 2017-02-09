@@ -17,9 +17,12 @@ import org.apache.commons.collections4.list.SetUniqueList;
  */
 public class Field {
 
-	/** Parent Sheet this Field belongs to */
+	/** Parent Sheet this Field belongs to. */
 	private final Sheet sheet;
-	/** Position of this Field on the parent sheet represented by a matrix */
+	/**
+	 * Position of this Field on the parent Sheet, as seen from the front
+	 * of the Sheet, represented by a matrix.
+	 */
 	private final AffineTransform position;
 	/** Orientation of this Field */
 	private final Orientation orientation;
@@ -41,10 +44,13 @@ public class Field {
 	 * and orientation.
 	 * @param parent The parent sheet of this Field
 	 * @param pos The transformation matrix representing the position of this
-	 * Field on the Sheet. This transformation should be composed of only
-	 * rotations and translations. 
+	 * Field on the Sheet, when viewed from the front side of the Sheet. This
+	 * transformation should be composed of only rotations and translations,
+	 * otherwise the page shape will be deformed.
 	 * @param orient The orientation of this Field, ie. either front on front
-	 * (= positive) or front on back (= negative).
+	 * (= positive) or front on back (= negative). In order not to obtain
+	 * mirrored pages, the sign of the orientation should match the sign of
+	 * the determinant of the {@code pos} matrix.
 	 */
 	public Field(Sheet parent, AffineTransform pos, Orientation orient) {
 		sheet = parent;
@@ -67,7 +73,7 @@ public class Field {
 	}
 
 	/**
-	 * Returns a copy of the list of Leaves
+	 * Returns a copy of the list of Leaves.
 	 * @return
 	 */
 	public List<Leaf> getLeaves() {

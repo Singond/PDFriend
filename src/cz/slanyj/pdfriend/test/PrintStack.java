@@ -32,7 +32,7 @@ public class PrintStack {
 		leaf.setFlipDirection(FlipDirection.AROUND_Y);
 		
 		Leaf leaf2 = new Leaf(792, 612);
-		leaf2.setAsFrontPosition(new Leaf.Position(918, 396, Math.PI/2));
+		leaf2.setAsFrontPosition(new Leaf.Position(306, 396, Math.PI/2));
 		leaf2.setOrientation(Orientation.RECTO_UP);
 		leaf2.setFlipDirection(FlipDirection.AROUND_Y);
 		
@@ -44,8 +44,9 @@ public class PrintStack {
 		
 		Stack stack2 = new Stack();
 		Sheet sheet2 = new Sheet(1224, 792);
-		AffineTransform position2 = AffineTransform.getTranslateInstance(792, 0);
-		Field field2 = new Field(sheet2, position1, Field.Orientation.NEGATIVE);
+		AffineTransform position2 = AffineTransform.getTranslateInstance(1224, 0);
+		position2.scale(-1, 1);
+		Field field2 = new Field(sheet2, position2, Field.Orientation.NEGATIVE);
 		stack2.addField(field2);
 		
 		field1.addLeaf(leaf);
@@ -58,6 +59,7 @@ public class PrintStack {
 		
 		Signature signature = new Signature();
 		signature.add(sheet);
+		signature.add(sheet2);
 		
 		try {
 			// Get content
