@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
 	<Appenders>
-		<Console name="Console" target="SYSTEM_OUT">
+		<Console name="Log" target="SYSTEM_OUT">
 			<!--<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>-->
 			<!--<PatternLayout pattern="[%t] %-5level %logger{36} - %msg%n"/>-->
 			<PatternLayout pattern="[%t] %-4level: %msg%n"/>
+		</Console>
+		<!-- Writes the log messages to standard error so that stdout can be piped. --> 
+		<Console name="CommandLineInterface" target="SYSTEM_ERR">
+			<PatternLayout pattern="pdfriend: %msg%n"/>
 		</Console>
 		<RollingFile name="Roll" fileName="log/app.log" filePattern="log/app-%d{yyyy-MM-dd}-%i.log">
 			<PatternLayout pattern="[%t] %-4level: %msg%n"/>
@@ -15,7 +19,7 @@
 	</Appenders>
 	<Loggers>
 		<Root level="debug">
-			<AppenderRef ref="Console"/>
+			<AppenderRef ref="CommandLineInterface"/>
 			<AppenderRef ref="Roll"/>
 		</Root>
 	</Loggers>

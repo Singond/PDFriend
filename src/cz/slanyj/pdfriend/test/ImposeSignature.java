@@ -20,13 +20,13 @@ import cz.slanyj.pdfriend.book.Signature;
 public class ImposeSignature {
 
 	public static void main(String[] args) {
-		Leaf leaf = new Leaf(792, 612);
-		leaf.setAsFrontPosition(new Leaf.Position(306, 396, Math.PI/2));
+		Leaf leaf = new Leaf(612, 792);
+		leaf.setAsFrontPosition(new Leaf.Position(306, 396, 0));
 		leaf.setOrientation(Orientation.RECTO_UP);
 		leaf.setFlipDirection(FlipDirection.AROUND_Y);
 		
-		Leaf leaf2 = new Leaf(792, 612);
-		leaf2.setAsFrontPosition(new Leaf.Position(918, 396, Math.PI/2));
+		Leaf leaf2 = new Leaf(612, 792);
+		leaf2.setAsFrontPosition(new Leaf.Position(918, 396, 0));
 		leaf2.setOrientation(Orientation.VERSO_UP);
 		leaf2.setFlipDirection(FlipDirection.AROUND_Y);
 		
@@ -34,13 +34,13 @@ public class ImposeSignature {
 		sheet.addLeaf(leaf);
 		sheet.addLeaf(leaf2);
 		
-		Leaf leaf3 = new Leaf(792, 612);
-		leaf3.setAsFrontPosition(new Leaf.Position(306, 396, Math.PI/2));
+		Leaf leaf3 = new Leaf(612, 792);
+		leaf3.setAsFrontPosition(new Leaf.Position(306, 396, 0));
 		leaf3.setOrientation(Orientation.RECTO_UP);
 		leaf3.setFlipDirection(FlipDirection.AROUND_Y);
 		
-		Leaf leaf4 = new Leaf(792, 612);
-		leaf4.setAsFrontPosition(new Leaf.Position(918, 396, Math.PI/2));
+		Leaf leaf4 = new Leaf(612, 792);
+		leaf4.setAsFrontPosition(new Leaf.Position(918, 396, 0));
 		leaf4.setOrientation(Orientation.VERSO_UP);
 		leaf4.setFlipDirection(FlipDirection.AROUND_Y);
 		
@@ -55,7 +55,7 @@ public class ImposeSignature {
 		
 		try {
 			// Get content
-			PDDocument source = PDDocument.load(new File("test/document.pdf"));
+			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
 			SourcePage one = new SourcePage(source, 0);
 			SourcePage two = new SourcePage(source, 1);
 			SourcePage three = new SourcePage(source, 2);
