@@ -2,6 +2,7 @@ package cz.slanyj.pdfriend.book;
 
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
+import java.util.ResourceBundle;
 
 import org.apache.pdfbox.multipdf.LayerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -95,7 +96,8 @@ public class Leaf {
 	 * side or back side.
 	 */
 	private boolean referenceIsFront = true;
-		
+	
+	private static ResourceBundle bundle = ResourceBundle.getBundle("Console");
 	
 	/**
 	 * Constructs a new Leaf of the given dimensions.
@@ -176,6 +178,12 @@ public class Leaf {
 		positionValid = false;
 		referencePosition = transform;
 		referenceIsFront = true;
+		// Check sanity
+		if (transform.getDeterminant()==0) {
+			Log.warn(bundle, "leaf_degeneratePosition", this);
+		} else if (transform.getDeterminant()<0) {
+			Log.warn(bundle, "leaf_mirroredFront", this);
+		}
 	}
 	/**
 	 * Moves the leaf so that its front position is the one specified.
@@ -196,6 +204,12 @@ public class Leaf {
 		positionValid = false;
 		referencePosition = transform;
 		referenceIsFront = false;
+		// Check sanity
+		if (transform.getDeterminant()==0) {
+			Log.warn(bundle, "leaf_degeneratePosition", this);
+		} else if (transform.getDeterminant()>0) {
+			Log.warn(bundle, "leaf_mirroredFront", this);
+		}
 	}
 	/**
 	 * Moves the leaf so that its back position is the one specified.
