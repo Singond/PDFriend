@@ -275,6 +275,21 @@ public class Leaf {
 	}
 	
 	/**
+	 * Sets the page numbers for the pages on this Leaf, starting from
+	 * the given number. This is the number which is set to recto page,
+	 * verso is one higher.
+	 * @param first The lowest page number to be applied.
+	 */
+	public void numberPagesFrom(int first) {
+		// Issue warning if recto is being set to even number
+		if (first%2==0) {
+			Log.warn(bundle, "leaf_rectoEven", this);
+		}
+		recto.setNumber(first);
+		verso.setNumber(first+1);
+	}
+	
+	/**
 	 * Sets the source pages for the recto and verso of this Leaf.
 	 * @param recto
 	 * @param verso

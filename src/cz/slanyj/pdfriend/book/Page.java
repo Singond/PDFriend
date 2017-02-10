@@ -40,6 +40,14 @@ public class Page {
 		return number;
 	}
 	
+	/**
+	 * Sets the page number of this page.
+	 * @param n
+	 */
+	public void setNumber(int n) {
+		number = n;
+	}
+	
 	public SourcePage getSource() {
 		return source;
 	}
