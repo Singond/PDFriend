@@ -55,4 +55,9 @@ public class Page {
 	public void setSource(SourcePage page) {
 		this.source = page;
 	}
+	
+	@Override
+	public String toString() {
+		return "Page "+number;
+	}
 }
