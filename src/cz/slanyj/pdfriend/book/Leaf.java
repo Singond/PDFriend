@@ -309,7 +309,7 @@ public class Leaf {
 	 * property. If it is RECTO_UP, the recto is placed, verso otherwise.
 	 * @param sheetContent The content stream of the target Sheet side.
 	 * @param layerUtility The layer utility of the target Sheet.
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public void imposeFront(PDPageContentStream sheetContent,
 		                    LayerUtility layerUtility) throws IOException {
@@ -331,7 +331,7 @@ public class Leaf {
 	 * the calling Sheet is expected to mirror the final placement again.
 	 * @param sheetContent The content stream of the target Sheet side.
 	 * @param layerUtility The layer utility of the target Sheet.
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public void imposeBack(PDPageContentStream sheetContent,
 		                    LayerUtility layerUtility) throws IOException {
@@ -351,7 +351,7 @@ public class Leaf {
 	 * @param layerUtility The layer utility of the target Sheet.
 	 * @param pg Either the recto or verso of this leaf.
 	 * @param mirror Mirror the page before transforming. Used for back pages.
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private void impose(PDPageContentStream sheetContent,
 	                    LayerUtility layerUtility,
@@ -375,7 +375,7 @@ public class Leaf {
 	 * @param layerUtility The layer utility of the target Sheet.
 	 * @param pg Either the recto or verso of this leaf.
 	 * @param mirror Mirror the page before transforming. Used for back pages.
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private void imposeIfNotEmpty(PDPageContentStream sheetContent,
 	                              LayerUtility layerUtility,
@@ -389,6 +389,23 @@ public class Leaf {
 		}
 	}
 	
+	/**
+	 * Creates a new Leaf in the same position and of the same dimensions
+	 * as this Leaf.
+	 * @return A new Leaf object initialized to same dimensions and position.
+	 */
+	public Leaf cloneAsTemplate() {
+		Leaf newLeaf = new Leaf(width, height);
+		if (referenceIsFront) {
+			newLeaf.setAsFrontPosition(referencePosition);
+		} else {
+			newLeaf.setAsBackPosition(referencePosition);
+		}
+		newLeaf.setFlipDirection(getFlipDirection());
+		newLeaf.setOrientation(getOrientation());
+		return newLeaf;
+	}
+
 	@Override
 	public String toString() {
 		return "Leaf "+"[pp. "+recto.getNumber()+"-"+verso.getNumber()+"]";
