@@ -40,11 +40,24 @@ public class Page {
 		return number;
 	}
 	
+	/**
+	 * Sets the page number of this page.
+	 * @param n
+	 */
+	public void setNumber(int n) {
+		number = n;
+	}
+	
 	public SourcePage getSource() {
 		return source;
 	}
 
 	public void setSource(SourcePage page) {
 		this.source = page;
+	}
+	
+	@Override
+	public String toString() {
+		return "Page "+number;
 	}
 }

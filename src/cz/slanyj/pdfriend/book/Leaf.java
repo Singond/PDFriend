@@ -275,6 +275,24 @@ public class Leaf {
 	}
 	
 	/**
+	 * Sets the page numbers for the pages on this Leaf, starting from
+	 * the given number. This is the number which is set to recto page,
+	 * verso is one higher.
+	 * @param number The lowest page number to be applied.
+	 * @return The next available number, ie. number one higher than the
+	 * last number applied.
+	 */
+	public int numberPagesFrom(int number) {
+		// Issue warning if recto is being set to even number
+		if (number%2==0) {
+			Log.warn(bundle, "leaf_rectoEven", this);
+		}
+		recto.setNumber(number++);
+		verso.setNumber(number++);
+		return number;
+	}
+	
+	/**
 	 * Sets the source pages for the recto and verso of this Leaf.
 	 * @param recto
 	 * @param verso
@@ -369,6 +387,11 @@ public class Leaf {
 			int page = pg.getNumber();
 			Log.info("Page %d is empty, skipping", page);
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return "Leaf "+"[pp. "+recto.getNumber()+"-"+verso.getNumber()+"]";
 	}
 	
 	/**
