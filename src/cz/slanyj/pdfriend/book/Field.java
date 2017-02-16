@@ -121,8 +121,15 @@ public class Field {
 	 */
 	public static enum Orientation {
 		/** Front of the Field lies on the front of the Sheet */
-		POSITIVE,
+		POSITIVE {
+			@Override public Orientation inverse() {return NEGATIVE;}
+		},
 		/** Front of the Field lies on the back of the Sheet */
-		NEGATIVE;
+		NEGATIVE {
+			@Override public Orientation inverse() {return POSITIVE;}
+		};
+		
+		/** Returns the inverse of this Orientation */
+		public abstract Orientation inverse();
 	}
 }
