@@ -35,13 +35,13 @@ public class PrintStack {
 		leaf2.setOrientation(Orientation.RECTO_UP);
 		leaf2.setFlipDirection(FlipDirection.AROUND_Y);
 		
-		Stack stack = new Stack();
+		Stack stack = new Stack(1224, 792);
 		Sheet sheet = new Sheet(1224, 792);
 		AffineTransform position1 = new AffineTransform();
 		Field field1 = new Field(sheet, position1, Field.Orientation.POSITIVE);
 		stack.addField(field1);
 		
-		Stack stack2 = new Stack();
+		Stack stack2 = new Stack(1224, 792);
 		Sheet sheet2 = new Sheet(1224, 792);
 		AffineTransform position2 = AffineTransform.getTranslateInstance(1224, 0);
 		position2.scale(-1, 1);

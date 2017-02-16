@@ -88,6 +88,15 @@ public class Field {
 	}
 	
 	/**
+	 * Checks whether a Leaf would lie in the parent Sheet of this Field,
+	 * were it placed into this Field at its current position.
+	 */
+	public boolean isInSheet(Leaf leaf) {
+		// TODO Implement!
+		return true;
+	}
+	
+	/**
 	 * Places all Leaves in this Field into the parent Sheet.
 	 */
 	public void placeLeaves() {

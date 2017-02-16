@@ -1,10 +1,18 @@
 package cz.slanyj.pdfriend.book;
 
+import java.awt.geom.AffineTransform;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import cz.slanyj.pdfriend.book.Field.Orientation;
 
 /**
- * Represents a vertical stack of Fields.
+ * A vertical stack of Fields, ie. a collection of possibly folded sheets
+ * of paper.
+ * The Stack will be rendered into a collection of Sheets upon which Leaves
+ * in proper position and order are placed.
  * @author Singon
  *
  */
@@ -15,10 +23,37 @@ public class Stack {
 	 * numbered from bottom to top, ie the lowest one is 0.
 	 */
 	private final List<Field> fields;
+	/** A list of all Sheets referenced by the Fields */
+	private final List<Sheet> sheets;
+	
+	/**
+	 * The width of this Stack before folding.
+	 * All Sheets rendered by this Stack will use this width.
+	 */
+	private final double width;
+	/**
+	 * The height of this Stack before folding.
+	 * All Sheets rendered by this Stack will use this height.
+	 */
+	private final double height;
 
-	public Stack() {
+	
+	/**
+	 * Constructs a new Stack with a default Field and Sheet.
+	 * @param width The unfolded width of this Stack
+	 * @param height The unfolded height of this Stack
+	 */
+	public Stack(double width, double height) {
+		this.width = width;
+		this.height = height;
+		sheets = new LinkedList<>();
+		Sheet s = new Sheet(width, height);
+		sheets.add(s);
+		Field f = new Field(s, new AffineTransform(), Orientation.POSITIVE);
 		fields = new LinkedList<>();
+		fields.add(f);
 	}
+	
 	
 	public List<Field> getFields() {
 		return fields;
@@ -28,7 +63,39 @@ public class Stack {
 		fields.add(field);
 	}
 	
-	/** Puts the contents of every Field into its corresponding Sheet.*/
+	public double getWidth() {
+		return width;
+	}
+
+	public double getHeight() {
+		return height;
+	}
+
+
+	/**
+	 * Puts a copy of each of the given pages (ie. a new page of the same
+	 * dimensions and at the same position as the original) into every
+	 * Field of this Stack.
+	 * @return A map which assings a sequential index number to each Leaf.
+	 * These indices represent the order the Leaves are to be numbered in.
+	 */
+	public Map<Leaf, Integer> applyToAllFields(List<Leaf> template) {
+		Map<Leaf, Integer> orderMap = new HashMap<>();
+		// The order of the Leaf in the folded Stack
+		int order = 0;
+		for (Field f : fields) {
+			for (Leaf l : template) {
+				if (f.isInSheet(l)) {
+					Leaf nl = l.cloneAsTemplate();
+					orderMap.put(nl, order++);
+					f.addLeaf(nl);
+				}
+			}
+		}
+		return orderMap;
+	}
+	
+	/** Puts the contents of every Field into its corresponding Sheet. */
 	public void placeFields() {
 		for (Field f : fields) {
 			f.placeLeaves();
