@@ -30,35 +30,17 @@ public class PrintStack {
 		leaf.setOrientation(Orientation.RECTO_UP);
 		leaf.setFlipDirection(FlipDirection.AROUND_Y);
 		
-		Leaf leaf2 = new Leaf(612, 792);
-		leaf2.setAsFrontPosition(new Leaf.Position(306, 396, 0));
-		leaf2.setOrientation(Orientation.RECTO_UP);
-		leaf2.setFlipDirection(FlipDirection.AROUND_Y);
+		List<Leaf> template = new ArrayList<>();
+		template.add(leaf);
 		
 		Stack stack = new Stack(1224, 792);
-		Sheet sheet = new Sheet(1224, 792);
-		AffineTransform position1 = new AffineTransform();
-		Field field1 = new Field(sheet, position1, Field.Orientation.POSITIVE);
-		stack.addField(field1);
-		
 		Stack stack2 = new Stack(1224, 792);
-		Sheet sheet2 = new Sheet(1224, 792);
-		AffineTransform position2 = AffineTransform.getTranslateInstance(1224, 0);
-		position2.scale(-1, 1);
-		Field field2 = new Field(sheet2, position2, Field.Orientation.NEGATIVE);
-		stack2.addField(field2);
-		
-		field1.addLeaf(leaf);
-		field2.addLeaf(leaf2);
 		
 		List<Stack.Manipulation> mm = new ArrayList<Stack.Manipulation>();
 		mm.add(new Stack.Join(stack2, Stack.Join.Placement.TOP));
 		stack.performManipulations(mm);
-		stack.placeFields();
 		
-		Signature signature = new Signature();
-		signature.add(sheet);
-		signature.add(sheet2);
+		Signature signature = stack.buildSignature(template);
 		
 		try {
 			// Get content
@@ -68,7 +50,6 @@ public class PrintStack {
 			SourcePage three = new SourcePage(source, 2);
 			SourcePage four = new SourcePage(source, 3);
 			leaf.setContent(one, two);
-			leaf2.setContent(three, four);
 			
 			PDDocument doc = new PDDocument();
 			signature.renderAllSheets(doc);

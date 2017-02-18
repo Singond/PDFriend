@@ -55,14 +55,6 @@ public class Stack {
 	}
 	
 	
-	public List<Field> getFields() {
-		return fields;
-	}
-	
-	public void addField(Field field) {
-		fields.add(field);
-	}
-	
 	public double getWidth() {
 		return width;
 	}
@@ -71,7 +63,6 @@ public class Stack {
 		return height;
 	}
 
-
 	/**
 	 * Puts a copy of each of the given pages (ie. a new page of the same
 	 * dimensions and at the same position as the original) into every
@@ -79,7 +70,7 @@ public class Stack {
 	 * @return A map which assings a sequential index number to each Leaf.
 	 * These indices represent the order the Leaves are to be numbered in.
 	 */
-	public Map<Leaf, Integer> applyToAllFields(List<Leaf> template) {
+	/*public Map<Leaf, Integer> applyToAllFields(List<Leaf> template) {
 		Map<Leaf, Integer> orderMap = new HashMap<>();
 		// The order of the Leaf in the folded Stack
 		int order = 0;
@@ -93,15 +84,44 @@ public class Stack {
 			}
 		}
 		return orderMap;
-	}
+	}*/
 	
 	/** Puts the contents of every Field into its corresponding Sheet. */
-	public void placeFields() {
+	/*public void placeFields() {
 		for (Field f : fields) {
 			f.placeLeaves();
 		}
-	}
+	}*/
 
+	
+	/**
+	 * Assembles Fields on all Sheets into the final Signature.
+	 * @param A template of Leaves to be placed into all Sheets.
+	 */
+	public Signature buildSignature(List<Leaf> template) {
+		Signature signature = new Signature();
+		Order<Leaf> orderMap = new Order<>();
+		/** The order of the Leaf in the folded Stack */
+		for (Field f : fields) {
+			for (Leaf l : template) {
+				if (f.isInSheet(l)) {
+					Leaf nl = l.cloneAsTemplate();
+					orderMap.addNext(nl);
+					f.addLeaf(nl);
+				}
+			}
+		}
+		// Place the fields into their sheets
+		for (Field f : fields) {
+			f.placeLeaves();
+		}
+		for (Sheet s : sheets) {
+			signature.add(s);
+		}
+		signature.setLeafOrder(orderMap);
+		return signature;
+	}
+	
 	/**
 	 * Performs a manipulation on this Stack.
 	 * @param manipulation An object representing the manipulation.
@@ -161,8 +181,10 @@ public class Stack {
 			List<Field> joined = other.fields;
 			if (placement == Placement.TOP) {
 				stack.fields.addAll(joined);
+				stack.sheets.addAll(other.sheets);
 			} else if (placement == Placement.BOTTOM) {
 				stack.fields.addAll(0, joined);
+				stack.sheets.addAll(0, other.sheets);
 			}
 		}
 
