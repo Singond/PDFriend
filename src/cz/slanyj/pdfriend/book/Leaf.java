@@ -2,6 +2,7 @@ package cz.slanyj.pdfriend.book;
 
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.pdfbox.multipdf.LayerUtility;
@@ -300,6 +301,21 @@ public class Leaf {
 	public void setContent(SourcePage recto, SourcePage verso) {
 		this.recto.setSource(recto);
 		this.verso.setSource(verso);
+	}
+	/**
+	 * Sets the source pages for the recto and verso of this Leaf.
+	 * This variant selects the source page from the given list using
+	 * this Page's page number, assuming the pages in the list are sorted
+	 * in ascending order starting with page number one.
+	 * This assumes the page numbers have already been set for this Leaf.
+	 * @param pagesList A list of source pages sorted in ascending order
+	 * starting with page number one. Note that while page numbers are
+	 * indexed from one, the indices in the list are standard zero-based,
+	 * ie. page 1 is placed at index 0 in the list.
+	 */
+	public void setContent(List<SourcePage> pagesList) {
+		this.recto.setSource(pagesList);
+		this.verso.setSource(pagesList);
 	}
 
 	/**
