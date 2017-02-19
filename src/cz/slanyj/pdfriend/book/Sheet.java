@@ -37,8 +37,8 @@ public class Sheet {
 	}
 	
 	/**
-	 * Returns a copy of the list of Leaves
-	 * @return
+	 * Provides access to the Leaves in this Sheet.
+	 * @return A shallow copy of the internal list of Leaves.
 	 */
 	public List<Leaf> getLeaves() {
 		return new ArrayList<>(leaves);
