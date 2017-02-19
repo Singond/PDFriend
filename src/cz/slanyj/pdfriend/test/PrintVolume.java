@@ -6,7 +6,7 @@ import java.io.IOException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 import cz.slanyj.pdfriend.Log;
-import cz.slanyj.pdfriend.SourcePage;
+import cz.slanyj.pdfriend.SourceDocument;
 import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf;
 import cz.slanyj.pdfriend.book.Leaf.Orientation;
@@ -27,11 +27,13 @@ public class PrintVolume {
 		leaf.setAsFrontPosition(new Leaf.Position(306, 396, 0));
 		leaf.setOrientation(Orientation.RECTO_UP);
 		leaf.setFlipDirection(FlipDirection.AROUND_Y);
+		leaf.numberPagesFrom(1);
 		
 		Leaf leaf2 = new Leaf(612, 792);
 		leaf2.setAsFrontPosition(new Leaf.Position(918, 396, 0));
 		leaf2.setOrientation(Orientation.VERSO_UP);
 		leaf2.setFlipDirection(FlipDirection.AROUND_Y);
+		leaf2.numberPagesFrom(3);
 		
 		Sheet sheet = new Sheet(1224, 792);
 		sheet.addLeaf(leaf);
@@ -41,11 +43,13 @@ public class PrintVolume {
 		leaf3.setAsFrontPosition(new Leaf.Position(306, 396, 0));
 		leaf3.setOrientation(Orientation.RECTO_UP);
 		leaf3.setFlipDirection(FlipDirection.AROUND_Y);
+		leaf3.numberPagesFrom(5);
 		
 		Leaf leaf4 = new Leaf(612, 792);
 		leaf4.setAsFrontPosition(new Leaf.Position(918, 396, 0));
 		leaf4.setOrientation(Orientation.VERSO_UP);
 		leaf4.setFlipDirection(FlipDirection.AROUND_Y);
+		leaf4.numberPagesFrom(7);
 		
 		Sheet sheet2 = new Sheet(1224, 792);
 		sheet2.addLeaf(leaf3);
@@ -61,18 +65,8 @@ public class PrintVolume {
 		try {
 			// Get content
 			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
-			SourcePage one = new SourcePage(source, 0);
-			SourcePage two = new SourcePage(source, 1);
-			SourcePage three = new SourcePage(source, 2);
-			SourcePage four = new SourcePage(source, 3);
-			SourcePage five = new SourcePage(source, 4);
-			SourcePage six = new SourcePage(source, 5);
-			SourcePage seven = new SourcePage(source, 6);
-			SourcePage eight = new SourcePage(source, 7);
-			leaf.setContent(one, two);
-			leaf2.setContent(three, four);
-			leaf3.setContent(five, six);
-			leaf4.setContent(seven, eight);
+			SourceDocument sourceDoc = new SourceDocument(source);
+			volume.setSource(sourceDoc.getAllPages());
 			
 			volume.renderAndSaveDocument(new File("test/printed-volume.pdf"));
 			Log.info("Finished writing document");
