@@ -47,6 +47,9 @@ public class Page {
 	 * @param n
 	 */
 	public void setNumber(int n) {
+		if (n < 1) {
+			throw new IllegalArgumentException("Page number must be greater than one");
+		}
 		number = n;
 	}
 	
