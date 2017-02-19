@@ -1,11 +1,8 @@
 package cz.slanyj.pdfriend.book;
 
 import java.awt.geom.AffineTransform;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
 import cz.slanyj.pdfriend.book.Field.Orientation;
 
 /**
