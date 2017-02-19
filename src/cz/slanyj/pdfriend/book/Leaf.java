@@ -284,12 +284,12 @@ public class Leaf {
 	 * last number applied.
 	 */
 	public int numberPagesFrom(int number) {
+		recto.setNumber(number++);
+		verso.setNumber(number++);
 		// Issue warning if recto is being set to even number
 		if (number%2==0) {
 			Log.warn(bundle, "leaf_rectoEven", this);
 		}
-		recto.setNumber(number++);
-		verso.setNumber(number++);
 		return number;
 	}
 	
@@ -424,7 +424,7 @@ public class Leaf {
 
 	@Override
 	public String toString() {
-		return "Leaf "+"[pp. "+recto.getNumber()+"-"+verso.getNumber()+"]";
+		return "Leaf "+recto.getNumber()+"-"+verso.getNumber();
 	}
 	
 	/**
