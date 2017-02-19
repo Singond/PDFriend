@@ -1,6 +1,7 @@
 package cz.slanyj.pdfriend.book;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +32,19 @@ public class Signature {
 	}
 	
 	
+	/**
+	 * Provides access to the Sheets in this Signature.
+	 * @return A shallow copy of the internal list of Sheets.
+	 */
+	public List<Sheet> getSheets() {
+		return new ArrayList<>(sheets);
+	}
+	
+	/**
+	 * Adds a Sheet to this Signature (optional operation).
+	 * @param sheet The Sheet to be added.
+	 * @return False if the Sheet is already present in this Signature.
+	 */
 	public boolean add(Sheet sheet) {
 		return sheets.add(sheet);
 	}
