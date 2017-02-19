@@ -4,12 +4,15 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
-import cz.slanyj.pdfriend.SourcePage;
+
+import cz.slanyj.pdfriend.SourceDocument;
 import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf;
 import cz.slanyj.pdfriend.book.Leaf.Orientation;
+import cz.slanyj.pdfriend.book.Order;
 import cz.slanyj.pdfriend.book.Sheet;
 import cz.slanyj.pdfriend.book.Signature;
+import cz.slanyj.pdfriend.book.Volume;
 
 /**
  * A sample signature of two sheets.
@@ -52,22 +55,17 @@ public class ImposeSignature {
 		Signature signature = new Signature();
 		signature.add(sheet);
 		signature.add(sheet2);
+		signature.setLeafOrder(new Order<Leaf>());
+		signature.numberPagesFrom(25);
+		
+		Volume volume = new Volume();
+		volume.add(signature);
 		
 		try {
 			// Get content
 			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
-			SourcePage one = new SourcePage(source, 0);
-			SourcePage two = new SourcePage(source, 1);
-			SourcePage three = new SourcePage(source, 2);
-			SourcePage four = new SourcePage(source, 3);
-			SourcePage five = new SourcePage(source, 4);
-			SourcePage six = new SourcePage(source, 5);
-			SourcePage seven = new SourcePage(source, 6);
-			SourcePage eight = new SourcePage(source, 7);
-			leaf.setContent(one, two);
-			leaf2.setContent(three, four);
-			leaf3.setContent(five, six);
-			leaf4.setContent(seven, eight);
+			SourceDocument sourceDoc = new SourceDocument(source);
+			volume.setSource(sourceDoc.getAllPages());
 			
 			PDDocument doc = new PDDocument();
 			signature.renderAllSheets(doc);

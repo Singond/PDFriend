@@ -41,4 +41,10 @@ public class Order<T> {
 	public boolean hasElement(T t) {
 		return orderMap.containsKey(t);
 	}
+	
+	/** Returns the number of elements in this order. */
+	/* This should equal to the next available index. */
+	public int size() {
+		return index;
+	}
 }
