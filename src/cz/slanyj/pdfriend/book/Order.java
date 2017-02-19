@@ -36,4 +36,9 @@ public class Order<T> {
 	public int indexOf(T t) {
 		return orderMap.get(t);
 	}
+	
+	/** Returns true if the element is present in this order. */ 
+	public boolean hasElement(T t) {
+		return orderMap.containsKey(t);
+	}
 }
