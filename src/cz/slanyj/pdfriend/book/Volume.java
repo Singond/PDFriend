@@ -8,6 +8,8 @@ import java.util.List;
 import org.apache.commons.collections4.list.SetUniqueList;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
+import cz.slanyj.pdfriend.SourcePage;
+
 /**
  * The whole text block of a document, made by arranging several Signatures
  * in a sequence.
@@ -16,7 +18,9 @@ import org.apache.pdfbox.pdmodel.PDDocument;
  */
 public class Volume {
 
-	/** Signatures in this volume */
+	/**
+	 * Signatures sorted in their proper order in the finished volume.
+	 */
 	private List<Signature> signatures;
 	
 	public Volume() {
@@ -29,6 +33,17 @@ public class Volume {
 	 */
 	public boolean add(Signature signature) {
 		return signatures.add(signature);
+	}
+	
+	/**
+	 * Sets the source document to provide contents for all Leaves in
+	 * this Volume.
+	 */
+	public void setSource(List<SourcePage> pagesList) {
+		signatures.stream()
+			.flatMap(sig -> sig.getSheets().stream())
+			.flatMap(sh -> sh.getLeaves().stream())
+			.forEach(l->l.setContent(pagesList));
 	}
 	
 	/**
