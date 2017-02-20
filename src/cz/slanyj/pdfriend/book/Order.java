@@ -25,7 +25,7 @@ public class Order<T> {
 	 */
 	public void addNext(T t) {
 		// Place the Leaf in the order only if it is not present yet
-		boolean wasPresent = orderMap.putIfAbsent(t, index++)==null;
+		boolean wasPresent = orderMap.putIfAbsent(t, index++)!=null;
 		if (wasPresent) {
 			throw new UnsupportedOperationException
 				("The element has already been added to this Order object: "+t);
