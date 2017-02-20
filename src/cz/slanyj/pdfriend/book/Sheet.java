@@ -36,6 +36,7 @@ public class Sheet {
 		this.leaves = SetUniqueList.setUniqueList(new LinkedList<Leaf>());
 	}
 	
+	
 	/**
 	 * Provides access to the Leaves in this Sheet.
 	 * @return A shallow copy of the internal list of Leaves.
@@ -49,6 +50,16 @@ public class Sheet {
 	 */
 	public void addLeaf(Leaf leaf) {
 		leaves.add(leaf);
+	}
+	
+	/**
+	 * A clone method.
+	 * Creates a new blank Sheet with the same dimensions as this one.
+	 * The Leaves are not copied, the new Sheet is empty.
+	 * @return A new Sheet instance with dimensions of this Sheet.
+	 */
+	public Sheet cloneBlank() {
+		return new Sheet(this.width, this.height);
 	}
 	
 	/**
