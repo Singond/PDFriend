@@ -59,37 +59,6 @@ public class Stack {
 	public double getHeight() {
 		return height;
 	}
-
-	/**
-	 * Puts a copy of each of the given pages (ie. a new page of the same
-	 * dimensions and at the same position as the original) into every
-	 * Field of this Stack.
-	 * @return A map which assings a sequential index number to each Leaf.
-	 * These indices represent the order the Leaves are to be numbered in.
-	 */
-	/*public Map<Leaf, Integer> applyToAllFields(List<Leaf> template) {
-		Map<Leaf, Integer> orderMap = new HashMap<>();
-		// The order of the Leaf in the folded Stack
-		int order = 0;
-		for (Field f : fields) {
-			for (Leaf l : template) {
-				if (f.isInSheet(l)) {
-					Leaf nl = l.cloneAsTemplate();
-					orderMap.put(nl, order++);
-					f.addLeaf(nl);
-				}
-			}
-		}
-		return orderMap;
-	}*/
-	
-	/** Puts the contents of every Field into its corresponding Sheet. */
-	/*public void placeFields() {
-		for (Field f : fields) {
-			f.placeLeaves();
-		}
-	}*/
-
 	
 	/**
 	 * Assembles Fields on all Sheets into the final Signature.
