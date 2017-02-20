@@ -59,10 +59,14 @@ public class Signature {
 	/**
 	 * Assigns Page numbers to all Pages.
 	 * Issues page numbers sequentially starting from the given number,
-	 * while respecting the leaf order given as argument.
+	 * while respecting the leaf order given as argument. Pages with order
+	 * specified in the argument will be placed in this order and the
+	 * remaining, unordered, pages (if any) will be placed to the end in
+	 * the order they are encountered.
 	 * @param number The number to number pages from. The recto of the first
 	 * Leaf in current order will receive this page number.
-	 * @param order The Leaf order to be used.
+	 * @param order The Leaf order to be used. To ensure correct results,
+	 * it should contain all Leaves in this Signature.
 	 * @return The next available page number, ie. the number of last page
 	 * plus one.
 	 * @throw {@code NullPointerException} when Leaf order is null.
@@ -71,8 +75,9 @@ public class Signature {
 		if (order == null) {
 			throw new NullPointerException("The leaf order cannot be null");
 		}
-		int leaves = sheets.stream()
+		int nextPage = sheets.stream()
 			.flatMap(s -> s.getLeaves().stream())
+			// Sort by order and put unordered Leaves to the end
 			.sorted((x,y) -> {
 				if (order.hasElement(x) && order.hasElement(y)) {
 					return order.indexOf(x) - order.indexOf(y);
@@ -81,22 +86,26 @@ public class Signature {
 				}
 			})
 			.mapToInt(new ToIntFunction<Leaf>() {
-				private int leaves = number;
+				// Apply the numbers sequentially
+				private int page = number;
 				@Override
 				public int applyAsInt(Leaf l) {
-					l.numberPagesFrom(leaves);
-					leaves += 2;
-					return leaves;
+					l.numberPagesFrom(page);
+					page += 2;
+					return page;
 				}
 			})
+			// Get the next available page number (used as return value)
 			.reduce(0, Integer::max);
-		return (int) (number + 2*leaves);
+		return (int) (nextPage);
 	}
 	/**
 	 * Assigns Page numbers to all Pages.
 	 * Issues page numbers sequentially starting from the given number,
 	 * while respecting the leaf order given by current value of the
-	 * {@code leafOrder} field.
+	 * {@code leafOrder} field. Pages with order specified in the argument
+	 * will be placed in this order and the remaining, unordered, pages
+	 * (if any) will be placed to the end in the order they are encountered.
 	 * @param number The number to number pages from. The recto of the first
 	 * Leaf in current order will receive this page number.
 	 * @return The next available page number, ie. the number of last page

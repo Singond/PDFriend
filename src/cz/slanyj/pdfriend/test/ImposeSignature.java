@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
+import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.SourceDocument;
 import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf;
@@ -56,7 +57,8 @@ public class ImposeSignature {
 		signature.add(sheet);
 		signature.add(sheet2);
 		signature.setLeafOrder(new Order<Leaf>());
-		signature.numberPagesFrom(25);
+		int next = signature.numberPagesFrom(25);
+		Log.debug("Next page is %d", next);
 		
 		Volume volume = new Volume();
 		volume.add(signature);
