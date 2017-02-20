@@ -184,6 +184,7 @@ public class Leaf {
 			Log.warn(bundle, "leaf_degeneratePosition", this);
 		} else if (transform.getDeterminant()<0) {
 			Log.warn(bundle, "leaf_mirroredFront", this);
+			Log.debug(bundle, "leaf_mirroredFront_detail", this);
 		}
 	}
 	/**
@@ -209,7 +210,8 @@ public class Leaf {
 		if (transform.getDeterminant()==0) {
 			Log.warn(bundle, "leaf_degeneratePosition", this);
 		} else if (transform.getDeterminant()>0) {
-			Log.warn(bundle, "leaf_mirroredFront", this);
+			Log.warn(bundle, "leaf_mirroredBack", this);
+			Log.debug(bundle, "leaf_mirroredBack_detail", this);
 		}
 	}
 	/**
