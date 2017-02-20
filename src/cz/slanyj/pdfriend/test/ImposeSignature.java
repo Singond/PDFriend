@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
+import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.SourceDocument;
 import cz.slanyj.pdfriend.book.FlipDirection;
@@ -75,6 +76,7 @@ public class ImposeSignature {
 			// Save
 			doc.save(new File("test/imposed-signature.pdf"));
 			doc.close();
+			Log.info(Bundle.console, "printDone", "imposed-signature.pdf");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
