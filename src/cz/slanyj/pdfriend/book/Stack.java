@@ -3,6 +3,9 @@ package cz.slanyj.pdfriend.book;
 import java.awt.geom.AffineTransform;
 import java.util.LinkedList;
 import java.util.List;
+
+import cz.slanyj.pdfriend.Bundle;
+import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.book.Field.Orientation;
 
 /**
@@ -121,7 +124,7 @@ public class Stack {
 	}
 
 	/**
-	 * Stacks two Stacks on top of each other.
+	 * Stacks two existing Stacks on top of each other.
 	 * @author Singon
 	 *
 	 */
@@ -132,6 +135,13 @@ public class Stack {
 		/** The placement of the other stack */
 		private final Placement placement;
 
+		/**
+		 * Creates a new Join object which represents stacking another
+		 * Stack on top or bottom of this one.
+		 * @param other The Stack to be joined with this one.
+		 * @param placement Specifies whether the other Stack should be
+		 * placed to top or bottom of this Stack.
+		 */
 		public Join(Stack other, Placement placement) {
 			this.other = other;
 			this.placement = placement;
@@ -157,6 +167,44 @@ public class Stack {
 		/** Represents the top or bottom of the Stack */
 		public static enum Placement {
 			TOP, BOTTOM;
+		}
+	}
+	
+	/**
+	 * Stacks a number of identical copies of this Stack into one.
+	 * Each Stack has its own set of Sheets.
+	 * @author Singon
+	 */
+	public static class Gather implements Manipulation {
+		
+		/**
+		 * The number of copies in the finished stack
+		 * (ie. number of new stacks plus one).
+		 */
+		private final int copies;
+		
+		/**
+		 * Creates a new Stack manipulation object, which stacks a given
+		 * number of copies of this Stack on top of each other.
+		 * @param n The number of copies of this Stack in the finished
+		 * Stack (thus the number of newly created copies will be n-1).
+		 * @throw IllegalArgumentException when n is less than one.
+		 */
+		public Gather(int n) {
+			if (n < 1) {
+				throw new IllegalArgumentException
+					("Number of copies must be at least one.");
+			} else if (n ==1) {
+				Log.warn(Bundle.console, "stack_gatherOne");
+			}
+			copies = n;
+		}
+		
+		public void manipulate(Stack stack) {
+			for (int i=0; i<copies; i++) {
+				
+				//stack.fields.add
+			}
 		}
 	}
 }
