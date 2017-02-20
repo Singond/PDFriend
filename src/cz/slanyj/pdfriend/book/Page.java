@@ -12,7 +12,7 @@ import cz.slanyj.pdfriend.SourcePage;
 public class Page {
 
 	/** The page number in the final document */
-	private int number;
+	private int number = 1;
 	/** The page width (x-direction) */
 	private final double width;
 	/** The page height (y-direction) */
