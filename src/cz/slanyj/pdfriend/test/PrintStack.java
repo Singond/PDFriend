@@ -6,12 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
-import cz.slanyj.pdfriend.SourcePage;
+
+import cz.slanyj.pdfriend.Log;
+import cz.slanyj.pdfriend.SourceDocument;
 import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf;
+import cz.slanyj.pdfriend.book.Order;
 import cz.slanyj.pdfriend.book.Leaf.Orientation;
 import cz.slanyj.pdfriend.book.Signature;
 import cz.slanyj.pdfriend.book.Stack;
+import cz.slanyj.pdfriend.book.Volume;
 
 /**
  * A sample signature of two sheets.
@@ -33,27 +37,29 @@ public class PrintStack {
 		Stack stack = new Stack(1224, 792);
 		Stack stack2 = new Stack(1224, 792);
 		
+//		Stack copy = stack.copy();
+		
 		List<Stack.Manipulation> mm = new ArrayList<Stack.Manipulation>();
 		mm.add(new Stack.Join(stack2, Stack.Join.Placement.TOP));
 		stack.performManipulations(mm);
 		
-		Signature signature = stack.buildSignature(template);
+		Stack copy = stack.copy();
+		
+		Signature signature = copy.buildSignature(template);
+		signature.setLeafOrder(new Order<Leaf>());
+		signature.numberPagesFrom(1);
+		
+		Volume volume = new Volume();
+		volume.add(signature);
 		
 		try {
 			// Get content
 			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
-			SourcePage one = new SourcePage(source, 0);
-			SourcePage two = new SourcePage(source, 1);
-			SourcePage three = new SourcePage(source, 2);
-			SourcePage four = new SourcePage(source, 3);
-			leaf.setContent(one, two);
-			
-			PDDocument doc = new PDDocument();
-			signature.renderAllSheets(doc);
-			
-			// Save
-			doc.save(new File("test/printed-stack.pdf"));
-			doc.close();
+			SourceDocument sourceDoc = new SourceDocument(source);
+			volume.setSource(sourceDoc.getAllPages());
+				
+			volume.renderAndSaveDocument(new File("test/printed-stack.pdf"));
+			Log.info("Finished printing stack");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

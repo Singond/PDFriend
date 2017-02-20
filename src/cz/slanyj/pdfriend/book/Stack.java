@@ -1,8 +1,10 @@
 package cz.slanyj.pdfriend.book;
 
 import java.awt.geom.AffineTransform;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
@@ -39,19 +41,30 @@ public class Stack {
 
 	
 	/**
-	 * Constructs a new Stack with a default Field and Sheet.
-	 * @param width The unfolded width of this Stack
-	 * @param height The unfolded height of this Stack
+	 * Constructs a new Stack, optionally with a default Field and Sheet.
+	 * @param width The unfolded width of this Stack.
+	 * @param height The unfolded height of this Stack.
+	 * @param initialize Whether to create default Field and Sheet.
 	 */
-	public Stack(double width, double height) {
+	public Stack(double width, double height, boolean initialize) {
 		this.width = width;
 		this.height = height;
 		sheets = new LinkedList<>();
-		Sheet s = new Sheet(width, height);
-		sheets.add(s);
-		Field f = new Field(s, new AffineTransform(), Orientation.POSITIVE);
 		fields = new LinkedList<>();
-		fields.add(f);
+		if (initialize) {
+			Sheet s = new Sheet(width, height);
+			sheets.add(s);
+			Field f = new Field(s, new AffineTransform(), Orientation.POSITIVE);
+			fields.add(f);
+		}
+	}
+	/**
+	 * Constructs a new Stack with a default Field and Sheet.
+	 * @param width The unfolded width of this Stack.
+	 * @param height The unfolded height of this Stack.
+	 */
+	public Stack(double width, double height) {
+		this(width, height, true);
 	}
 	
 	
@@ -61,6 +74,58 @@ public class Stack {
 
 	public double getHeight() {
 		return height;
+	}
+	
+	/**
+	 * Performs a partial-depth clone of this Stack by copying the graph
+	 * of Fields down to the level of Sheets, while preserving their
+	 * relations. The clone doesn't reach into Sheets, meaning the Sheets
+	 * are copied blank, without Leaves.
+	 * In order for this method to work correctly, all Sheets referenced
+	 * by Fields must be present in the {@code sheets} list.
+	 */
+	public Stack copy() {
+		/**
+		 * Helper class to clone Sheets and keep correspondence between
+		 * the clones and the originals, so that each original is not
+		 * cloned twice.
+		 * The Sheets are cloned blank, ie. without any Leaves.
+		 * @author Singon
+		 *
+		 */
+		class SheetCloner {
+			/** The map of clones corresponding to originals */
+			private Map<Sheet, Sheet> clones = new HashMap<>();
+			
+			/**
+			 * For a given original Sheet, returns its single clone,
+			 * creating one if it doesn't exist.
+			 * On subsequent invocations for the same Sheet, it doesn't
+			 * create a new object, returning always the first and only
+			 * copy instead.
+			 */
+			Sheet cloneSheet(Sheet s) {
+				if (clones.containsKey(s)) {
+					return clones.get(s);
+				} else {
+					Sheet sheetClone = s.cloneBlank();
+					clones.put(s, sheetClone);
+					return sheetClone;
+				}
+			}
+		}
+		
+		// Do the clone
+		Stack clone = new Stack(width, height, false);
+		SheetCloner cloner = new SheetCloner();
+		for (Field f : fields) {
+			Sheet parentClone = cloner.cloneSheet(f.getSheet());
+			clone.fields.add(new Field(f, parentClone));
+		}
+		for (Sheet s : sheets) {
+			clone.sheets.add(cloner.cloneSheet(s));
+		}
+		return clone;
 	}
 	
 	/**
