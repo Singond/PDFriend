@@ -58,6 +58,19 @@ public class Field {
 		orientation = orient;
 		leaves = SetUniqueList.setUniqueList(new LinkedList<Leaf>());
 	}
+	/**
+	 * A copy constructor.
+	 * Creates a new Field which is a copy of the original with the same
+	 * position and orientation. The new Field is created in the Sheet
+	 * given in argument. This does not copy any Leaves placed in the Field.
+	 * @param original The Field to be copied.
+	 * @param parent The parent Sheet of the newly created Field.
+	 * @return A new Field object with the same position and orientation
+	 * as the original.
+	 */
+	public Field(Field original, Sheet parent) {
+		this(parent, original.position, original.orientation);
+	}
 	
 	
 	public AffineTransform getPosition() {
@@ -68,6 +81,7 @@ public class Field {
 		return orientation;
 	}
 
+	/** Returns the Sheet this Field belongs to. */
 	public Sheet getSheet() {
 		return sheet;
 	}
