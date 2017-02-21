@@ -228,11 +228,6 @@ public class Stack {
 				stack.sheets.addAll(0, other.sheets);
 			}
 		}
-
-		/** Represents the top or bottom of the Stack */
-		public static enum Placement {
-			TOP, BOTTOM;
-		}
 	}
 	
 	/**
@@ -247,7 +242,31 @@ public class Stack {
 		 * (ie. number of new stacks plus one).
 		 */
 		private final int copies;
+		/**
+		 * Placement of copies, either top or bottom.
+		 * Should make no difference, anyway.
+		 */
+		private final Placement placement;
 		
+		/**
+		 * Creates a new Stack manipulation object, which stacks a given
+		 * number of copies of this Stack on top or bottom of each other.
+		 * @param n The number of copies of this Stack in the finished
+		 * Stack (thus the number of newly created copies will be n-1).
+		 * @param placement Where to put the copies, either top or bottom
+		 * of the initial Stack.
+		 * @throw IllegalArgumentException when n is less than one.
+		 */
+		public Gather(int n, Placement placement) {
+			if (n < 1) {
+				throw new IllegalArgumentException
+					("Number of copies must be at least one.");
+			} else if (n ==1) {
+				Log.warn(Bundle.console, "stack_gatherOne");
+			}
+			this.copies = n;
+			this.placement = placement;
+		}
 		/**
 		 * Creates a new Stack manipulation object, which stacks a given
 		 * number of copies of this Stack on top of each other.
@@ -256,14 +275,9 @@ public class Stack {
 		 * @throw IllegalArgumentException when n is less than one.
 		 */
 		public Gather(int n) {
-			if (n < 1) {
-				throw new IllegalArgumentException
-					("Number of copies must be at least one.");
-			} else if (n ==1) {
-				Log.warn(Bundle.console, "stack_gatherOne");
-			}
-			copies = n;
+			this(n, Placement.TOP);
 		}
+		
 		
 		public void manipulate(Stack stack) {
 			for (int i=0; i<copies; i++) {
@@ -271,5 +285,10 @@ public class Stack {
 				//stack.fields.add
 			}
 		}
+	}
+	
+	/** Represents the top or bottom of the Stack */
+	public static enum Placement {
+		TOP, BOTTOM;
 	}
 }

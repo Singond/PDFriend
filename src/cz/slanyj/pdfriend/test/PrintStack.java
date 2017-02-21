@@ -40,7 +40,7 @@ public class PrintStack {
 //		Stack copy = stack.copy();
 		
 		List<Stack.Manipulation> mm = new ArrayList<Stack.Manipulation>();
-		mm.add(new Stack.Join(stack2, Stack.Join.Placement.TOP));
+		mm.add(new Stack.Join(stack2, Stack.Placement.TOP));
 		stack.performManipulations(mm);
 		
 		Stack copy = stack.copy();
