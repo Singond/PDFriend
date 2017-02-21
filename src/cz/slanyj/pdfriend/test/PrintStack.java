@@ -37,15 +37,14 @@ public class PrintStack {
 		Stack stack = new Stack(1224, 792);
 		Stack stack2 = new Stack(1224, 792);
 		
-//		Stack copy = stack.copy();
-		
 		List<Stack.Manipulation> mm = new ArrayList<Stack.Manipulation>();
-		mm.add(new Stack.Join(stack2, Stack.Placement.TOP));
+		//mm.add(new Stack.Join(stack2, Stack.Placement.TOP));
+		mm.add(new Stack.Gather(3));
 		stack.performManipulations(mm);
 		
 		Stack copy = stack.copy();
 		
-		Signature signature = copy.buildSignature(template);
+		Signature signature = stack.buildSignature(template);
 		signature.setLeafOrder(new Order<Leaf>());
 		signature.numberPagesFrom(1);
 		

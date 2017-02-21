@@ -280,9 +280,19 @@ public class Stack {
 		
 		
 		public void manipulate(Stack stack) {
-			for (int i=0; i<copies; i++) {
-				
-				//stack.fields.add
+			Stack original = stack.copy();
+			if (placement == Placement.TOP) {
+				for (int i=0; i<copies-1; i++) {
+					Stack copy = original.copy();
+					stack.sheets.addAll(copy.sheets);
+					stack.fields.addAll(copy.fields);
+				}
+			} else {
+				for (int i=0; i<copies-1; i++) {
+					Stack copy = original.copy();
+					stack.sheets.addAll(0, copy.sheets);
+					stack.fields.addAll(0, copy.fields);
+				}
 			}
 		}
 	}
