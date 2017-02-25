@@ -7,7 +7,7 @@ import java.awt.geom.AffineTransform;
  * @author Singon
  *
  */
-public class Transformations {
+public abstract class Transformations {
 
 	/**
 	 * Returns a new AffineTransform representing transformation by axial
