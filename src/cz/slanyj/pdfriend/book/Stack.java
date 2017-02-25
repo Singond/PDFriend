@@ -4,11 +4,14 @@ import java.awt.geom.AffineTransform;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
+import cz.slanyj.pdfriend.geometry.Transformations;
 import cz.slanyj.pdfriend.book.Field.Orientation;
+import cz.slanyj.pdfriend.geometry.Line;
 
 /**
  * A vertical stack of Fields, ie. a collection of possibly folded sheets
@@ -294,6 +297,74 @@ public class Stack {
 					stack.fields.addAll(0, copy.fields);
 				}
 			}
+		}
+	}
+	
+	/**
+	 * Folds the Stack along a given axis.
+	 * @author Singon
+	 */
+	public static class Fold implements Manipulation {
+
+		/** The axis of the fold. */
+		private final Line axis;
+		/** Direction of folding. */
+		private final Direction direction;
+		
+		public Fold(Line axis, Direction dir) {
+			if (dir == null)
+				throw new IllegalArgumentException("Fold direction cannot be null");
+			this.axis = axis;
+			this.direction = dir;
+		}
+		
+		@Override
+		public void manipulate(Stack stack) {
+			// In order not to modify the original while iterated, make a copy
+			final Stack copy = stack.copy();
+			AffineTransform position = Transformations.mirror(axis);
+			
+			if (direction == Direction.OVER) {
+				// Iterate backwards, place new Fields to top of the Stack
+				int end = copy.fields.size();
+				ListIterator<Field> iter = copy.fields.listIterator(end);
+				while (iter.hasPrevious()) {
+					Field f = iter.previous();
+					position.concatenate(f.getPosition());
+					Field folded = new Field(f.getSheet(),
+					                         position,
+					                         f.getOrientation().inverse());
+					stack.fields.add(folded);
+				}
+			} else if (direction == Direction.UNDER) {
+				// Iterate forward, place new Fields to the bottom of Stack
+				for (Field f : copy.fields) {
+					position.concatenate(f.getPosition());
+					Field folded = new Field(f.getSheet(),
+					                         position,
+					                         f.getOrientation().inverse());
+					stack.fields.add(0, folded);
+				}
+			} else {
+				assert false : direction;
+			}
+		}
+		
+		/**
+		 * Specifies the direction of folding.
+		 * The Stack is assumed to be fixed in the origin and the newly
+		 * created Fields can be placed either to top or to bottom. 
+		 * @author Singon
+		 */
+		private static enum Direction {
+			/**
+			 * The origin stays in position and Fields are folded on top.
+			 */
+			OVER,
+			/**
+			 * The origin stays in position and Fields are folded to bottom.
+			 */
+			UNDER;
 		}
 	}
 	
