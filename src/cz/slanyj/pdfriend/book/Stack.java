@@ -15,10 +15,20 @@ import cz.slanyj.pdfriend.book.Field.Orientation;
 import cz.slanyj.pdfriend.geometry.Line;
 
 /**
- * A vertical stack of Fields, ie. a collection of possibly folded sheets
- * of paper.
- * The Stack will be rendered into a collection of Sheets upon which Leaves
- * in proper position and order are placed.
+ * <p>A vertical stack of Fields, ie. a collection of possibly folded
+ * sheets of paper. Here, each Field represents a single layer of such stack.
+ * Multiple Fields may belong to the same Sheet; such as when the Sheet has
+ * been folded in half.</p>
+ * <p>The sheets can be manipulated, ie. folded and stacked to simulate these
+ * procedures in real-world print production.
+ * Once the Stack has been manipulated, Leaves can be placed into it.
+ * This involves taking a pattern of Leaves (most usually, a single Leaf)
+ * and applying it into each layer of the stack (ie. each Field), in the
+ * order the layers are encountered when going from bottom to top.</p>
+ * <p>The Stack is finally rendered into a Signature which contains Sheets
+ * and properly imposed Leaves, which, when printed, folded and stacked
+ * as specified in the manipulation phase and trimmed, will yield a section
+ * of a book with sequentially arranged pages.</p>
  * @author Singon
  *
  */
@@ -133,17 +143,22 @@ public class Stack {
 	}
 	
 	/**
-	 * Assembles Fields on all Sheets into the final Signature.
-	 * @param A template of Leaves to be placed into all Sheets.
+	 * Assembles Fields on all Sheets into the final Signature,
+	 * placing the given pattern of Leaves into each Field in the order
+	 * from bottom (Field 0) to top.
+	 * The Leaves are placed verso-up so that the first page is on the
+	 * outside face of the Stack when folded.
+	 * @param pattern A pattern of Leaves to be placed into all Sheets.
 	 */
-	public Signature buildSignature(List<Leaf> template) {
+	public Signature buildSignature(List<Leaf> pattern) {
 		Signature signature = new Signature();
 		Order<Leaf> orderMap = new Order<>();
 		/** The order of the Leaf in the folded Stack */
 		for (Field f : fields) {
-			for (Leaf l : template) {
+			for (Leaf l : pattern) {
 				if (f.isInSheet(l)) {
 					Leaf nl = l.cloneAsTemplate();
+					nl.setOrientation(Leaf.Orientation.VERSO_UP);
 					orderMap.addNext(nl);
 					f.addLeaf(nl);
 				}
