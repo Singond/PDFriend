@@ -16,6 +16,8 @@ import cz.slanyj.pdfriend.book.Leaf.Orientation;
 import cz.slanyj.pdfriend.book.Signature;
 import cz.slanyj.pdfriend.book.Stack;
 import cz.slanyj.pdfriend.book.Volume;
+import cz.slanyj.pdfriend.geometry.Line;
+import cz.slanyj.pdfriend.geometry.Point;
 
 /**
  * A sample signature of two sheets.
@@ -38,8 +40,11 @@ public class PrintStack {
 		Stack stack2 = new Stack(1224, 792);
 		
 		List<Stack.Manipulation> mm = new ArrayList<Stack.Manipulation>();
-		mm.add(new Stack.Join(stack2, Stack.Placement.TOP));
-		mm.add(new Stack.Gather(2));
+		//mm.add(new Stack.Join(stack2, Stack.Placement.TOP));
+		//mm.add(new Stack.Gather(2));
+		//Line axis = new Line(new Point(612, 0), Math.PI/2);
+		Line axis = new Line(new Point(612, 0), new Point(612, 1));
+		mm.add(new Stack.Fold(axis, Stack.Fold.Direction.OVER));
 		stack.performManipulations(mm);
 		
 		Stack copy = stack.copy();

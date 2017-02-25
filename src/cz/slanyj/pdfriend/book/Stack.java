@@ -356,7 +356,7 @@ public class Stack {
 		 * created Fields can be placed either to top or to bottom. 
 		 * @author Singon
 		 */
-		private static enum Direction {
+		public static enum Direction {
 			/**
 			 * The origin stays in position and Fields are folded on top.
 			 */
