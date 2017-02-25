@@ -1,4 +1,4 @@
-package cz.slanyj.pdfriend;
+package cz.slanyj.pdfriend.geometry;
 
 import java.awt.geom.AffineTransform;
 
@@ -12,17 +12,30 @@ public class Transformations {
 	/**
 	 * Returns a new AffineTransform representing transformation by axial
 	 * symmetry in the given axis.
-	 * @param xTrace The x-coordinate of the intersection of the axis with
-	 * the x-axis.
-	 * @param yTrace The y-coordinate of the intersection of the axis with
-	 * the y-axis.
+	 * @param axis The axis of symmetry.
+	 * @return A new AffineTransform object representing the symmetry.
+	 */
+	public static AffineTransform mirror(Line axis) {
+		if (axis.isParallelToX()) {
+			return mirrorParallelToX(axis.getYIntercept());
+		} else if (axis.isParallelToY()) {
+			return mirrorParallelToY(axis.getXIntercept());
+		} else {
+			return mirrorGeneral(axis);
+		}
+	}
+	
+	/**
+	 * Returns a new AffineTransform representing transformation by axial
+	 * symmetry in the given axis.
+	 * @param axis The axis of symmetry.
 	 * @return A new AffineTransform object.
 	 */
-	public static AffineTransform mirror(double xTrace, double yTrace) {
-		double x = xTrace;
-		double y = yTrace;
-		double xx = Math.pow(xTrace, 2);
-		double yy = Math.pow(yTrace, 2);
+	private static AffineTransform mirrorGeneral(Line axis) {
+		double x = axis.getXIntercept();
+		double y = axis.getYIntercept();
+		double xx = Math.pow(x, 2);
+		double yy = Math.pow(y, 2);
 		// Elements of the transformation matrix
 		double t11 = (xx - yy)/(xx + yy);
 		double t12 = (-2*x*y)/(xx + yy);
@@ -39,7 +52,7 @@ public class Transformations {
 	 * @param yTrace The y-coordinate of the axis of symmetry.
 	 * @return A new AffineTransform object.
 	 */
-	public static AffineTransform mirrorParallelToX(double yTrace) {
+	private static AffineTransform mirrorParallelToX(double yTrace) {
 		return new AffineTransform(1, 0, 0, -1, 0, 2*yTrace);
 	}
 	
@@ -49,7 +62,7 @@ public class Transformations {
 	 * @param xTrace The x-coordinate of the axis of symmetry.
 	 * @return A new AffineTransform object.
 	 */
-	public static AffineTransform mirrorParallelToY(double xTrace) {
+	private static AffineTransform mirrorParallelToY(double xTrace) {
 		return new AffineTransform(-1, 0, 0, 1, 2*xTrace, 0);
 	}
 }
