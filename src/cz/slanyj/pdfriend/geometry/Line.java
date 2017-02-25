@@ -11,6 +11,8 @@ public class Line {
 	private final double a;
 	private final double b;
 	private final double c;
+	/** Norm of the normal vector */
+	private final double norm;
 	
 	/**
 	 * Constructs a new line in x-y plane by specifying the coefficients
@@ -23,6 +25,8 @@ public class Line {
 		this.a = a;
 		this.b = b;
 		this.c = c;
+		// Precalculate
+		norm = Math.sqrt(a*a + b*b);
 	}
 	
 	/**
@@ -37,6 +41,8 @@ public class Line {
 		this.a = v;
 		this.b = -u;
 		this.c = u*a.getY() - v*a.getX();
+		// Precalculate
+		norm = Math.sqrt(this.a*this.a + this.b*this.b);
 	}
 	
 	/**
@@ -45,6 +51,14 @@ public class Line {
 	 */
 	public boolean liesOnLine(Point p) {
 		return (a*p.getX() + b*p.getY() + c) == 0;
+	}
+	
+	/**
+	 * Returns the distance of the given point from this line.
+	 * @param p The point whose distance is to be measured.
+	 */
+	public double distanceFrom(Point p) {
+		return Math.abs(a*p.getX() + b*p.getY() + c)/norm;
 	}
 	
 	/**
