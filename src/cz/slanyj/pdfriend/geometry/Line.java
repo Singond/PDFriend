@@ -12,7 +12,7 @@ public class Line {
 	private final double b;
 	private final double c;
 	/** Norm of the normal vector */
-	private final double norm;
+	private double norm;
 	
 	/**
 	 * Constructs a new line in x-y plane by specifying the coefficients
@@ -25,8 +25,7 @@ public class Line {
 		this.a = a;
 		this.b = b;
 		this.c = c;
-		// Precalculate
-		norm = Math.sqrt(a*a + b*b);
+		init();
 	}
 	
 	/**
@@ -41,8 +40,31 @@ public class Line {
 		this.a = v;
 		this.b = -u;
 		this.c = u*a.getY() - v*a.getX();
+		init();
+	}
+	
+	/**
+	 * Constructs a new line from its point and angle.
+	 * @param p Point on the line.
+	 * @param angle The angle (in radians) of this line measured counter-clockwise
+	 * from x-axis.
+	 */
+	public Line(Point p, double angle) {
+		// The unit direction vector [u, v]
+		final double u = Math.cos(angle);
+		final double v = Math.sin(angle);
+		this.a = v;
+		this.b = -u;
+		this.c = u*p.getY() - v*p.getX();
+		init();
+	}
+	
+	/**
+	 * Initializes the object.
+	 */
+	private void init() {
 		// Precalculate
-		norm = Math.sqrt(this.a*this.a + this.b*this.b);
+		norm = Math.sqrt(a*a + b*b);
 	}
 	
 	/**
@@ -59,6 +81,20 @@ public class Line {
 	 */
 	public double distanceFrom(Point p) {
 		return Math.abs(a*p.getX() + b*p.getY() + c)/norm;
+	}
+	
+	/**
+	 * @return True if this Line is parallel to x.
+	 */
+	public boolean isParallelToX() {
+		return a == 0;
+	}
+	
+	/**
+	 * @return True if this Line is parallel to y.
+	 */
+	public boolean isParallelToY() {
+		return b == 0;
 	}
 	
 	/**
