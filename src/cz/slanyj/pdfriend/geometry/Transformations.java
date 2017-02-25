@@ -1,4 +1,4 @@
-package cz.slanyj.pdfriend;
+package cz.slanyj.pdfriend.geometry;
 
 import java.awt.geom.AffineTransform;
 
