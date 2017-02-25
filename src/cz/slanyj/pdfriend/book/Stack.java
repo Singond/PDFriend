@@ -1,6 +1,7 @@
 package cz.slanyj.pdfriend.book;
 
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -320,31 +321,35 @@ public class Stack {
 		
 		@Override
 		public void manipulate(Stack stack) {
-			// In order not to modify the original while iterated, make a copy
-			final Stack copy = stack.copy();
+			int fieldCount = stack.fields.size();
+			// The folded part of the stack
+			List<Field> foldedStack = new ArrayList<>(fieldCount);
 			AffineTransform position = Transformations.mirror(axis);
 			
 			if (direction == Direction.OVER) {
 				// Iterate backwards, place new Fields to top of the Stack
-				int end = copy.fields.size();
-				ListIterator<Field> iter = copy.fields.listIterator(end);
+				int end = fieldCount;
+				ListIterator<Field> iter = stack.fields.listIterator(end);
 				while (iter.hasPrevious()) {
 					Field f = iter.previous();
 					position.concatenate(f.getPosition());
 					Field folded = new Field(f.getSheet(),
 					                         position,
 					                         f.getOrientation().inverse());
-					stack.fields.add(folded);
+					foldedStack.add(folded);
 				}
+				iter = null;
+				stack.fields.addAll(foldedStack);
 			} else if (direction == Direction.UNDER) {
 				// Iterate forward, place new Fields to the bottom of Stack
-				for (Field f : copy.fields) {
+				for (Field f : stack.fields) {
 					position.concatenate(f.getPosition());
 					Field folded = new Field(f.getSheet(),
 					                         position,
 					                         f.getOrientation().inverse());
-					stack.fields.add(0, folded);
+					foldedStack.add(0, folded);
 				}
+				stack.fields.addAll(0, foldedStack);
 			} else {
 				assert false : direction;
 			}
