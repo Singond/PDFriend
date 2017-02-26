@@ -41,8 +41,7 @@ public class PrintStack {
 		
 		List<Stack.Manipulation> mm = new ArrayList<Stack.Manipulation>();
 		//mm.add(new Stack.Join(stack2, Stack.Placement.TOP));
-		//mm.add(new Stack.Gather(2));
-		//Line axis = new Line(new Point(612, 0), Math.PI/2);
+		mm.add(new Stack.Gather(3));
 		Line axis = new Line(new Point(612, 0), new Point(612, 1));
 		mm.add(new Stack.Fold(axis, Stack.Fold.Direction.OVER));
 		stack.performManipulations(mm);
@@ -50,7 +49,6 @@ public class PrintStack {
 		Stack copy = stack.copy();
 		
 		Signature signature = stack.buildSignature(template);
-		signature.setLeafOrder(new Order<Leaf>());
 		signature.numberPagesFrom(1);
 		
 		Volume volume = new Volume();
