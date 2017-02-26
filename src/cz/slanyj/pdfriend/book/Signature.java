@@ -148,4 +148,9 @@ public class Signature {
 			renderSheet(s, doc);
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return "Signature@" + hashCode();
+	}
 }

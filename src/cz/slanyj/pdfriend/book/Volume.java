@@ -77,4 +77,9 @@ public class Volume {
 		PDDocument doc = renderDocument();
 		saveDocument(doc, target);
 	}
+	
+	@Override
+	public String toString() {
+		return "Volume@" + hashCode();
+	}
 }

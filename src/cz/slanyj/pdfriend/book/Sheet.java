@@ -106,4 +106,9 @@ public class Sheet {
 		content.close();
 		return leaf;
 	}
+	
+	@Override
+	public String toString() {
+		return "Sheet@" + hashCode();
+	}
 }
