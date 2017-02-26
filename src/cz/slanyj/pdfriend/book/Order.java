@@ -47,4 +47,9 @@ public class Order<T> {
 	public int size() {
 		return index;
 	}
+	
+	@Override
+	public String toString() {
+		return orderMap.toString();
+	}
 }
