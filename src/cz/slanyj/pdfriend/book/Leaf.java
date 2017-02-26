@@ -12,6 +12,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
 import org.apache.pdfbox.util.Matrix;
 
+import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.SourcePage;
 import cz.slanyj.pdfriend.book.FlipDirection;
@@ -375,6 +376,7 @@ public class Leaf {
 	                    LayerUtility layerUtility,
 	                    Page pg,
 	                    boolean isBack) throws IOException {
+		Log.verbose(Bundle.console, "leaf_imposingPage", pg);
 		PDDocument parent = pg.getSource().getDoc();
 		PDPage page = pg.getSource().getPage();
 		PDFormXObject form = layerUtility.importPageAsForm(parent, page);

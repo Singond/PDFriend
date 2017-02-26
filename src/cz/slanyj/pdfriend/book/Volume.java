@@ -8,6 +8,8 @@ import java.util.List;
 import org.apache.commons.collections4.list.SetUniqueList;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
+import cz.slanyj.pdfriend.Bundle;
+import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.SourcePage;
 
 /**
@@ -50,6 +52,7 @@ public class Volume {
 	 * Renders this Volume as a new PDDocument.
 	 */
 	public PDDocument renderDocument() throws IOException {
+		Log.info(Bundle.console, "volume_rendering", this);
 		PDDocument document = new PDDocument();
 		for (Signature s : signatures) {
 			s.renderAllSheets(document);
@@ -61,6 +64,7 @@ public class Volume {
 	 * Saves the given document as a new file.
 	 */
 	private void saveDocument(PDDocument doc, File target) throws IOException {
+		Log.info(Bundle.console, "volume_saving", this, target.getAbsoluteFile());
 		doc.save(target);
 		doc.close();
 	}
