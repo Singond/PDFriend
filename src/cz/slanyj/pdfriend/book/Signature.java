@@ -10,6 +10,9 @@ import org.apache.commons.collections4.list.SetUniqueList;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 
+import cz.slanyj.pdfriend.Bundle;
+import cz.slanyj.pdfriend.Log;
+
 /**
  * A signature of a document, made by folding one or more Sheets.
  * @author Singon
@@ -72,6 +75,7 @@ public class Signature {
 	 * @throw {@code NullPointerException} when Leaf order is null.
 	 */
 	public int numberPagesFrom(int number, Order<Leaf> order) {
+		Log.verbose(Bundle.console, "signature_numbering", this, number);
 		if (order == null) {
 			throw new NullPointerException("The leaf order cannot be null");
 		}
@@ -127,6 +131,7 @@ public class Signature {
 	 * @param doc
 	 */
 	private void renderSheet(Sheet sheet, PDDocument doc) throws IOException {
+		Log.verbose(Bundle.console, "signature_renderingSheet", sheet);
 		PDPage front = sheet.renderFront(doc);
 		doc.addPage(front);
 		PDPage back = sheet.renderBack(doc);
@@ -138,8 +143,14 @@ public class Signature {
 	 * each as two new pages (recto first, verso second).
 	 */
 	public void renderAllSheets(PDDocument doc) throws IOException {
+		Log.verbose(Bundle.console, "signature_rendering", this);
 		for (Sheet s : sheets) {
 			renderSheet(s, doc);
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return "Signature@" + hashCode();
 	}
 }

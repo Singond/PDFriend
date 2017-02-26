@@ -3,11 +3,14 @@ package cz.slanyj.pdfriend;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Log {
 	public static final Logger logger = LogManager.getLogger(Log.class.getName());
+	
+	public static final Level VERBOSE = Level.forName("VERBOSE", 450);
 	
 	private static Locale locale;
 	
@@ -88,6 +91,19 @@ public class Log {
 		logger.info(formatFrom(bnd, key, objects));
 	}
 	
+	public static void verbose(String msg) {
+		logger.log(VERBOSE, msg);
+	}
+	public static void verbose(ResourceBundle bnd, String key) {
+		logger.log(VERBOSE, getFrom(bnd, key));
+	}
+	public static void verbose(String msg, Object... objects) {
+		logger.log(VERBOSE, format(msg, objects));
+	}
+	public static void verbose(ResourceBundle bnd, String key, Object... objects) {
+		logger.log(VERBOSE, formatFrom(bnd, key, objects));
+	}
+	
 	public static void debug(String msg) {
 		logger.debug(msg);
 	}
@@ -118,6 +134,7 @@ public class Log {
 	public static void main(String[] args) {
 		trace("Testing log4j configuration. This is trace level.");
 		debug("Testing log4j configuration. This is debug level.");
+		verbose("Testing log4j configuration. This is verbose level.");
 		info ("Testing log4j configuration. This is info level.");
 		warn ("Testing log4j configuration. This is warn level.");
 		error("Testing log4j configuration. This is error level.");

@@ -13,6 +13,9 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.util.Matrix;
 
+import cz.slanyj.pdfriend.Bundle;
+import cz.slanyj.pdfriend.Log;
+
 /**
  * A single sheet of paper upon which Pages from multiple Leaves are laid out.
  * @author Singon
@@ -70,6 +73,7 @@ public class Sheet {
 	 * @throws IOException
 	 */
 	public PDPage renderFront(PDDocument doc) throws IOException {
+		Log.verbose(Bundle.console, "sheet_renderingFront", this);
 		PDPage leaf = new PDPage();
 		leaf.setMediaBox(new PDRectangle((float) width, (float) height));
 		PDPageContentStream content = new PDPageContentStream(doc, leaf);
@@ -88,6 +92,7 @@ public class Sheet {
 	 * @throws IOException
 	 */
 	public PDPage renderBack(PDDocument doc) throws IOException {
+		Log.verbose(Bundle.console, "sheet_renderingBack", this);
 		PDPage leaf = new PDPage();
 		leaf.setMediaBox(new PDRectangle((float) width, (float) height));
 		PDPageContentStream content = new PDPageContentStream(doc, leaf);
@@ -100,5 +105,10 @@ public class Sheet {
 		}
 		content.close();
 		return leaf;
+	}
+	
+	@Override
+	public String toString() {
+		return "Sheet@" + hashCode();
 	}
 }
