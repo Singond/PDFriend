@@ -24,7 +24,7 @@ import cz.slanyj.pdfriend.geometry.Line;
  * Once the Stack has been manipulated, Leaves can be placed into it.
  * This involves taking a pattern of Leaves (most usually, a single Leaf)
  * and applying it into each layer of the stack (ie. each Field), in the
- * order the layers are encountered when going from bottom to top.</p>
+ * order the layers are encountered when going from top to bottom.</p>
  * <p>The Stack is finally rendered into a Signature which contains Sheets
  * and properly imposed Leaves, which, when printed, folded and stacked
  * as specified in the manipulation phase and trimmed, will yield a section
@@ -36,7 +36,7 @@ public class Stack {
 
 	/**
 	 * The list of Sheet Fields represented by this Stack. The fields are
-	 * numbered from bottom to top, ie the lowest one is 0.
+	 * numbered from top to bottom, ie the topmost one is 0.
 	 */
 	private final List<Field> fields;
 	/** A list of all Sheets referenced by the Fields */
@@ -146,8 +146,9 @@ public class Stack {
 	 * Assembles Fields on all Sheets into the final Signature,
 	 * placing the given pattern of Leaves into each Field in the order
 	 * from bottom (Field 0) to top.
-	 * The Leaves are placed verso-up so that the first page is on the
-	 * outside face of the Stack when folded.
+	 * The Leaves are placed recto-up onto the Field. If the Stack is to
+	 * be filled in reverse order, ie. from bottom to top, it must be
+	 * flipped first.
 	 * @param pattern A pattern of Leaves to be placed into all Sheets.
 	 */
 	public Signature buildSignature(List<Leaf> pattern) {
@@ -158,7 +159,7 @@ public class Stack {
 			for (Leaf l : pattern) {
 				if (f.isInSheet(l)) {
 					Leaf nl = l.cloneAsTemplate();
-					nl.setOrientation(Leaf.Orientation.VERSO_UP);
+					//nl.setOrientation(Leaf.Orientation.RECTO_UP);
 					orderMap.addNext(nl);
 					f.addLeaf(nl);
 				}
@@ -240,11 +241,13 @@ public class Stack {
 			/** The fields to be joined */
 			List<Field> joined = other.fields;
 			if (placement == Placement.TOP) {
-				stack.fields.addAll(joined);
-				stack.sheets.addAll(other.sheets);
-			} else if (placement == Placement.BOTTOM) {
 				stack.fields.addAll(0, joined);
 				stack.sheets.addAll(0, other.sheets);
+			} else if (placement == Placement.BOTTOM) {
+				stack.fields.addAll(joined);
+				stack.sheets.addAll(other.sheets);
+			} else {
+				assert false : placement;
 			}
 		}
 	}
@@ -280,7 +283,7 @@ public class Stack {
 			if (n < 1) {
 				throw new IllegalArgumentException
 					("Number of copies must be at least one.");
-			} else if (n ==1) {
+			} else if (n == 1) {
 				Log.warn(Bundle.console, "stack_gatherOne");
 			}
 			this.copies = n;
@@ -294,7 +297,7 @@ public class Stack {
 		 * @throw IllegalArgumentException when n is less than one.
 		 */
 		public Gather(int n) {
-			this(n, Placement.TOP);
+			this(n, Placement.BOTTOM);
 		}
 		
 		
@@ -303,15 +306,17 @@ public class Stack {
 			if (placement == Placement.TOP) {
 				for (int i=0; i<copies-1; i++) {
 					Stack copy = original.copy();
+					stack.sheets.addAll(0, copy.sheets);
+					stack.fields.addAll(0, copy.fields);
+				}
+			} else if (placement == Placement.BOTTOM) {
+				for (int i=0; i<copies-1; i++) {
+					Stack copy = original.copy();
 					stack.sheets.addAll(copy.sheets);
 					stack.fields.addAll(copy.fields);
 				}
 			} else {
-				for (int i=0; i<copies-1; i++) {
-					Stack copy = original.copy();
-					stack.sheets.addAll(0, copy.sheets);
-					stack.fields.addAll(0, copy.fields);
-				}
+				assert false: placement;
 			}
 		}
 	}
@@ -341,8 +346,8 @@ public class Stack {
 			List<Field> foldedStack = new ArrayList<>(fieldCount);
 			AffineTransform position = Transformations.mirror(axis);
 			
-			if (direction == Direction.OVER) {
-				// Iterate backwards, place new Fields to top of the Stack
+			if (direction == Direction.UNDER) {
+				// Iterate backwards, place new Fields to bottom of Stack
 				int end = fieldCount;
 				ListIterator<Field> iter = stack.fields.listIterator(end);
 				while (iter.hasPrevious()) {
@@ -355,8 +360,8 @@ public class Stack {
 				}
 				iter = null;
 				stack.fields.addAll(foldedStack);
-			} else if (direction == Direction.UNDER) {
-				// Iterate forward, place new Fields to the bottom of Stack
+			} else if (direction == Direction.OVER) {
+				// Iterate forward, place new Fields to the top of Stack
 				for (Field f : stack.fields) {
 					position.concatenate(f.getPosition());
 					Field folded = new Field(f.getSheet(),
