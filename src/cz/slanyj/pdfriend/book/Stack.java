@@ -13,6 +13,7 @@ import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.geometry.Transformations;
 import cz.slanyj.pdfriend.book.Field.Orientation;
 import cz.slanyj.pdfriend.geometry.Line;
+import cz.slanyj.pdfriend.geometry.Point;
 
 /**
  * <p>A vertical stack of Fields, ie. a collection of possibly folded
@@ -391,6 +392,71 @@ public class Stack {
 			 */
 			UNDER;
 		}
+	}
+	
+	/**
+	 * Turns this Stack over so that bottom becomes top and for each Field,
+	 * what was front side now becomes the back side.
+	 * @author Singon
+	 *
+	 */
+	public static class Flip implements Manipulation {
+
+		/** The axis of flip. */
+		private final Line axis;
+		
+		/**
+		 * Constructs a new Flip object which flips the Stack about the
+		 * given axis of rotation.
+		 */
+		public Flip(Line axis) {
+			this.axis = axis;
+		}
+		
+		/**
+		 * Returns a new instance which flips the stack parallel to y-axis.
+		 * @param width Reference width of the current extents of the stack.
+		 * The axis will be placed into half this width in order to keep
+		 * an area of this width (with one corner in origin) within its
+		 * original extents.
+		 * @return
+		 */
+		public static Flip horizontal(double width) {
+			Line axis = new Line(new Point(width/2, 0), Math.PI/2);
+			return new Flip(axis);
+		}
+		
+		/**
+		 * Returns a new instance which flips the stack parallel to x-axis.
+		 * @param width Reference height of the current extents of the stack.
+		 * The axis will be placed into half this height in order to keep
+		 * an area of this height (with one corner in origin) within its
+		 * original extents.
+		 * @return
+		 */
+		public static Flip vertical(double height) {
+			Line axis = new Line(new Point(0, height/2), 0);
+			return new Flip(axis);
+		}
+		
+		@Override
+		public void manipulate(Stack stack) {
+			// The original Fields stored in a new list
+			List<Field> orig = new ArrayList<>(stack.fields);
+			AffineTransform flip = Transformations.mirror(axis);
+			// Reverse the order of the fields, changing their orientation
+			stack.fields.clear();
+			ListIterator<Field> iter = orig.listIterator(orig.size());
+			while(iter.hasPrevious()) {
+				Field f = iter.previous();
+				AffineTransform position = f.getPosition();
+				position.concatenate(flip);
+				Orientation ornt = f.getOrientation().inverse();
+				Sheet sheet = f.getSheet();
+				stack.fields.add(new Field(sheet, position, ornt));
+			}
+		}
+		
 	}
 	
 	/** Represents the top or bottom of the Stack */

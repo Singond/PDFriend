@@ -77,8 +77,12 @@ public class Field {
 	}
 	
 	
+	/**
+	 * Returns the position of this Field.
+	 * @return A copy of the internal transformation matrix.
+	 */
 	public AffineTransform getPosition() {
-		return position;
+		return new AffineTransform(position);
 	}
 
 	public Orientation getOrientation() {
@@ -91,8 +95,7 @@ public class Field {
 	}
 
 	/**
-	 * Returns a copy of the list of Leaves.
-	 * @return
+	 * @return A copy of the list of Leaves.
 	 */
 	public List<Leaf> getLeaves() {
 		return new ArrayList<>(leaves);

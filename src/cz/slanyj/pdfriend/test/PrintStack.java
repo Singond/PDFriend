@@ -15,6 +15,7 @@ import cz.slanyj.pdfriend.book.Order;
 import cz.slanyj.pdfriend.book.Leaf.Orientation;
 import cz.slanyj.pdfriend.book.Signature;
 import cz.slanyj.pdfriend.book.Stack;
+import cz.slanyj.pdfriend.book.Stack.Flip;
 import cz.slanyj.pdfriend.book.Volume;
 import cz.slanyj.pdfriend.geometry.Line;
 import cz.slanyj.pdfriend.geometry.Point;
@@ -41,9 +42,10 @@ public class PrintStack {
 		
 		List<Stack.Manipulation> mm = new ArrayList<Stack.Manipulation>();
 		//mm.add(new Stack.Join(stack2, Stack.Placement.TOP));
-		mm.add(new Stack.Gather(3));
+		mm.add(new Stack.Gather(6));
 		Line axis = new Line(new Point(612, 0), new Point(612, 1));
-		mm.add(new Stack.Fold(axis, Stack.Fold.Direction.OVER));
+		mm.add(new Stack.Fold(axis, Stack.Fold.Direction.UNDER));
+		mm.add(Flip.horizontal(612));
 		stack.performManipulations(mm);
 		
 		Stack copy = stack.copy();
