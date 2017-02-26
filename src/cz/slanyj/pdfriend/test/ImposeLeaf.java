@@ -11,8 +11,8 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.util.Matrix;
 
 import cz.slanyj.pdfriend.SourcePage;
+import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf;
-import cz.slanyj.pdfriend.book.Leaf.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf.Orientation;
 
 /**
@@ -26,9 +26,7 @@ public class ImposeLeaf {
 	public static void main(String[] args) {
 		//Leaf leaf = new Leaf(612, 792);
 		Leaf leaf = new Leaf(612, 792);
-		leaf.setXPosition(306);
-		leaf.setYPosition(396);
-		leaf.setRotation(0);
+		leaf.setAsFrontPosition(new Leaf.Position(306, 396, 0));
 		leaf.setOrientation(Orientation.RECTO_UP);
 		leaf.setFlipDirection(FlipDirection.AROUND_Y);
 		

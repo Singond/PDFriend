@@ -2,12 +2,15 @@ package cz.slanyj.pdfriend.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+
+import cz.slanyj.pdfriend.SourceDocument;
 import cz.slanyj.pdfriend.SourcePage;
+import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf;
-import cz.slanyj.pdfriend.book.Leaf.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf.Orientation;
 import cz.slanyj.pdfriend.book.Sheet;
 
@@ -21,16 +24,12 @@ public class ImposeSheet {
 
 	public static void main(String[] args) {
 		Leaf leaf = new Leaf(612, 792);
-		leaf.setXPosition(306);
-		leaf.setYPosition(396);
-		leaf.setRotation(0);
+		leaf.setAsFrontPosition(new Leaf.Position(306, 396, 0));
 		leaf.setOrientation(Orientation.RECTO_UP);
 		leaf.setFlipDirection(FlipDirection.AROUND_Y);
 		
 		Leaf leaf2 = new Leaf(612, 792);
-		leaf2.setXPosition(918);
-		leaf2.setYPosition(396);
-		leaf2.setRotation(0);
+		leaf2.setAsFrontPosition(new Leaf.Position(918, 396, 0));
 		leaf2.setOrientation(Orientation.VERSO_UP);
 		leaf2.setFlipDirection(FlipDirection.AROUND_Y);
 		
@@ -41,12 +40,12 @@ public class ImposeSheet {
 		try {
 			// Get content
 			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
-			SourcePage one = new SourcePage(source, 0);
-			SourcePage two = new SourcePage(source, 1);
-			SourcePage three = new SourcePage(source, 2);
-			SourcePage four = new SourcePage(source, 3);
-			leaf.setContent(one, two);
-			leaf2.setContent(three, four);
+			SourceDocument sourceDoc = new SourceDocument(source);
+			leaf.numberPagesFrom(1);
+			leaf2.numberPagesFrom(3);
+			List<SourcePage> sps = sourceDoc.getAllPages();
+			leaf.setContent(sps);
+			leaf2.setContent(sps);
 			
 			PDDocument doc = new PDDocument();
 			PDPage sheetFront = sheet.renderFront(doc);

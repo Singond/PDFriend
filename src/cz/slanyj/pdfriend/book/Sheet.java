@@ -2,8 +2,10 @@ package cz.slanyj.pdfriend.book;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.collections4.list.SetUniqueList;
 import org.apache.pdfbox.multipdf.LayerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -31,12 +33,13 @@ public class Sheet {
 	public Sheet(double width, double height) {
 		this.width = width;
 		this.height = height;
-		this.leaves = new ArrayList<>();
+		this.leaves = SetUniqueList.setUniqueList(new LinkedList<Leaf>());
 	}
 	
+	
 	/**
-	 * Returns a copy of the list of Leaves
-	 * @return
+	 * Provides access to the Leaves in this Sheet.
+	 * @return A shallow copy of the internal list of Leaves.
 	 */
 	public List<Leaf> getLeaves() {
 		return new ArrayList<>(leaves);
@@ -47,6 +50,16 @@ public class Sheet {
 	 */
 	public void addLeaf(Leaf leaf) {
 		leaves.add(leaf);
+	}
+	
+	/**
+	 * A clone method.
+	 * Creates a new blank Sheet with the same dimensions as this one.
+	 * The Leaves are not copied, the new Sheet is empty.
+	 * @return A new Sheet instance with dimensions of this Sheet.
+	 */
+	public Sheet cloneBlank() {
+		return new Sheet(this.width, this.height);
 	}
 	
 	/**

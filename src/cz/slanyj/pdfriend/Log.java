@@ -1,6 +1,7 @@
 package cz.slanyj.pdfriend;
 
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,23 +9,48 @@ import org.apache.logging.log4j.Logger;
 public class Log {
 	public static final Logger logger = LogManager.getLogger(Log.class.getName());
 	
+	private static Locale locale;
+	
 	static {
-		
+		locale = Locale.US;
 	}
 	
+	/** Formats a string using the locale currently set in this class. */
 	private static String format(String msg, Object... objects) {
-		return String.format(Locale.US, msg, objects);
+		return String.format(locale, msg, objects);
+	}
+	
+	/** Gets a string from the given resource bundle. */
+	private static String getFrom(ResourceBundle bundle, String key) {
+		return bundle.getString(key);
+	}
+	
+	/**
+	 * Gets a string from a given resource bundle and formats it using
+	 * the current locale in this class.
+	 */
+	private static String formatFrom(ResourceBundle bundle, String key, Object... objects) {
+		return format(getFrom(bundle, key), objects);
 	}
 	
 	public static void fatal(String msg) {
 		logger.fatal(msg);
 	}
+	public static void fatal(ResourceBundle bnd, String key) {
+		logger.fatal(getFrom(bnd, key));
+	}
 	public static void fatal(String msg, Object... objects) {
 		logger.fatal(format(msg, objects));
+	}
+	public static void fatal(ResourceBundle bnd, String key, Object... objects) {
+		logger.fatal(formatFrom(bnd, key, objects));
 	}
 	
 	public static void error(String msg) {
 		logger.error(msg);
+	}
+	public static void error(ResourceBundle bnd, String key) {
+		logger.error(getFrom(bnd, key));
 	}
 	public static void error(String msg, Throwable e) {
 		logger.error(msg, e);
@@ -32,33 +58,60 @@ public class Log {
 	public static void error(String msg, Object... objects) {
 		logger.error(format(msg, objects));
 	}
+	public static void error(ResourceBundle bnd, String key, Object... objects) {
+		logger.error(formatFrom(bnd, key, objects));
+	}
 	
 	public static void warn(String msg) {
 		logger.warn(msg);
 	}
+	public static void warn(ResourceBundle bnd, String key) {
+		logger.warn(getFrom(bnd, key));
+	}
 	public static void warn(String msg, Object... objects) {
 		logger.warn(format(msg, objects));
+	}
+	public static void warn(ResourceBundle bnd, String key, Object... objects) {
+		logger.warn(formatFrom(bnd, key, objects));
 	}
 	
 	public static void info(String msg) {
 		logger.info(msg);
 	}
+	public static void info(ResourceBundle bnd, String key) {
+		logger.info(getFrom(bnd, key));
+	}
 	public static void info(String msg, Object... objects) {
 		logger.info(format(msg, objects));
+	}
+	public static void info(ResourceBundle bnd, String key, Object... objects) {
+		logger.info(formatFrom(bnd, key, objects));
 	}
 	
 	public static void debug(String msg) {
 		logger.debug(msg);
 	}
+	public static void debug(ResourceBundle bnd, String key) {
+		logger.debug(getFrom(bnd, key));
+	}
 	public static void debug(String msg, Object... objects) {
 		logger.debug(format(msg, objects));
+	}
+	public static void debug(ResourceBundle bnd, String key, Object... objects) {
+		logger.debug(formatFrom(bnd, key, objects));
 	}
 	
 	public static void trace(String msg) {
 		logger.trace(msg);
 	}
+	public static void trace(ResourceBundle bnd, String key) {
+		logger.trace(getFrom(bnd, key));
+	}
 	public static void trace(String msg, Object... objects) {
 		logger.trace(format(msg, objects));
+	}
+	public static void trace(ResourceBundle bnd, String key, Object... objects) {
+		logger.trace(formatFrom(bnd, key, objects));
 	}
 	
 	/** Test the log */

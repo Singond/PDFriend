@@ -2,9 +2,13 @@ package cz.slanyj.pdfriend.book;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 
+import org.apache.commons.collections4.list.SetUniqueList;
 import org.apache.pdfbox.pdmodel.PDDocument;
+
+import cz.slanyj.pdfriend.SourcePage;
 
 /**
  * The whole text block of a document, made by arranging several Signatures
@@ -14,19 +18,32 @@ import org.apache.pdfbox.pdmodel.PDDocument;
  */
 public class Volume {
 
-	/** Signatures in this volume */
-	private LinkedHashSet<Signature> signatures;
+	/**
+	 * Signatures sorted in their proper order in the finished volume.
+	 */
+	private List<Signature> signatures;
 	
 	public Volume() {
-		signatures = new LinkedHashSet<>();
+		signatures = SetUniqueList.setUniqueList(new LinkedList<Signature>());
 	}
 	
 	/**
 	 * Inserts the given Signature into this Volume.
 	 * @param signature
 	 */
-	public void add(Signature signature) {
-		signatures.add(signature);
+	public boolean add(Signature signature) {
+		return signatures.add(signature);
+	}
+	
+	/**
+	 * Sets the source document to provide contents for all Leaves in
+	 * this Volume.
+	 */
+	public void setSource(List<SourcePage> pagesList) {
+		signatures.stream()
+			.flatMap(sig -> sig.getSheets().stream())
+			.flatMap(sh -> sh.getLeaves().stream())
+			.forEach(l->l.setContent(pagesList));
 	}
 	
 	/**
