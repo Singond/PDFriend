@@ -40,12 +40,13 @@ public class PrintStack {
 		Stack stack = new Stack(1224, 1584);
 		
 		List<Stack.Manipulation> mm = new ArrayList<Stack.Manipulation>();
+		mm.add(new Stack.Gather(2));
 		Line axis2 = new Line(new Point(0, 792), 0);
 		mm.add(new Stack.Fold(axis2, Stack.Fold.Direction.UNDER));
 		Line axis = new Line(new Point(612, 0), Math.PI/2);
 		mm.add(new Stack.Fold(axis, Stack.Fold.Direction.UNDER));
 		mm.add(Flip.horizontal(612));
-		mm.add(new Stack.Gather(2));
+		//mm.add(new Stack.Gather(2));
 		stack.performManipulations(mm);
 		
 		Stack copy = stack.copy();
