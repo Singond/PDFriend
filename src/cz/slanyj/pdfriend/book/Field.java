@@ -24,6 +24,15 @@ public class Field {
 	 * of the Sheet, represented by a matrix.
 	 */
 	private final AffineTransform position;
+	/*
+	 * If mirroring the coordinates was considered swapping the front and
+	 * back sides, the Orientation could actually be easily calculated from
+	 * the transformation's determinant.
+	 * However, this convention was not adopted and orientation is thus
+	 * specified as a separate value. This allows full freedom in positio-
+	 * ning Fields on the Sheet, allowing them to be placed in mirrored
+	 * position, as useless as it might seem.
+	 */
 	/** Orientation of this Field */
 	private final Orientation orientation;
 	
@@ -33,12 +42,7 @@ public class Field {
 	 */
 	private final List<Leaf> leaves;
 	
-	/*
-	 * If mirroring the coordinates was considered swapping the front and
-	 * back sides, the Orientation could actually be easily calculated from
-	 * the transformation's determinant.
-	 * However, this convention was not adopted.
-	 */
+	
 	/**
 	 * Constructs a new Field in the given Sheet, with the specified position
 	 * and orientation.
