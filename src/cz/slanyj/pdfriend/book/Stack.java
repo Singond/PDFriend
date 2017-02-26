@@ -345,7 +345,7 @@ public class Stack {
 			int fieldCount = stack.fields.size();
 			// The folded part of the stack
 			List<Field> foldedStack = new ArrayList<>(fieldCount);
-			AffineTransform position = Transformations.mirror(axis);
+			AffineTransform fold = Transformations.mirror(axis);
 			
 			if (direction == Direction.UNDER) {
 				// Iterate backwards, place new Fields to bottom of Stack
@@ -353,6 +353,7 @@ public class Stack {
 				ListIterator<Field> iter = stack.fields.listIterator(end);
 				while (iter.hasPrevious()) {
 					Field f = iter.previous();
+					AffineTransform position = new AffineTransform(fold);
 					position.concatenate(f.getPosition());
 					Field folded = new Field(f.getSheet(),
 					                         position,
@@ -364,6 +365,7 @@ public class Stack {
 			} else if (direction == Direction.OVER) {
 				// Iterate forward, place new Fields to the top of Stack
 				for (Field f : stack.fields) {
+					AffineTransform position = new AffineTransform(fold);
 					position.concatenate(f.getPosition());
 					Field folded = new Field(f.getSheet(),
 					                         position,

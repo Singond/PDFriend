@@ -37,13 +37,12 @@ public class PrintStack {
 		List<Leaf> template = new ArrayList<>();
 		template.add(leaf);
 		
-		Stack stack = new Stack(1224, 792);
-		Stack stack2 = new Stack(1224, 792);
+		Stack stack = new Stack(1224, 1584);
 		
 		List<Stack.Manipulation> mm = new ArrayList<Stack.Manipulation>();
-		//mm.add(new Stack.Join(stack2, Stack.Placement.TOP));
-		mm.add(new Stack.Gather(4));
-		Line axis = new Line(new Point(612, 0), new Point(612, 1));
+		Line axis2 = new Line(new Point(0, 792), 0);
+		mm.add(new Stack.Fold(axis2, Stack.Fold.Direction.UNDER));
+		Line axis = new Line(new Point(612, 0), Math.PI/2);
 		mm.add(new Stack.Fold(axis, Stack.Fold.Direction.UNDER));
 		mm.add(Flip.horizontal(612));
 		mm.add(new Stack.Gather(2));
