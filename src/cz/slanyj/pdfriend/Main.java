@@ -1,5 +1,7 @@
 package cz.slanyj.pdfriend;
 
+import cz.slanyj.pdfriend.cli.Impose;
+
 /**
  * The main class; this executes PDFriend.
  * This is the branching point for the application, ie. when a subcommand
@@ -48,6 +50,9 @@ public class Main {
 	
 	private static void subcommand(String cmd, String[] args) {
 		switch (cmd) {
+			case "impose":
+				Impose.main(args);
+				break;
 			default:
 				Log.error(Bundle.console, "unknownCommand", cmd);
 				System.exit(1);
