@@ -55,4 +55,11 @@ public class SourceDocument {
 		double height = sourceDoc.getPage(0).getMediaBox().getHeight();
 		return new double[]{width, height};
 	}
+	
+	/**
+	 * Returns the number of pages in the document.
+	 */
+	public int getPageCount() {
+		return sourceDoc.getNumberOfPages();
+	}
 }
