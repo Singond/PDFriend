@@ -3,6 +3,8 @@
 .settings/
 
 /bin/
+/build/
+/dist/
 /lib/
 /log/
 /test/
