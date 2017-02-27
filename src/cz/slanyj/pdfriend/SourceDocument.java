@@ -45,4 +45,14 @@ public class SourceDocument {
 		}
 		return list;
 	}
+	
+	/**
+	 * Returns the dimensions of the first page in the document.
+	 */
+	// TODO Take the dimensions from the largest extent instead?
+	public double[] getPageDimensions() {
+		double width = sourceDoc.getPage(0).getMediaBox().getWidth();
+		double height = sourceDoc.getPage(0).getMediaBox().getHeight();
+		return new double[]{width, height};
+	}
 }
