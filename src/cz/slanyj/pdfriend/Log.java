@@ -1,5 +1,6 @@
 package cz.slanyj.pdfriend;
 
+import java.io.File;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -11,7 +12,12 @@ public class Log {
 	
 	static {
 		locale = Locale.US;
-		System.setProperty("logFile", "log");
+		File appDir = Util.getApplicationDir();
+		if (appDir != null) {
+			System.setProperty("logFile", appDir.getAbsolutePath());
+		} else {
+			System.setProperty("logFile", "logs");
+		}
 	}
 	
 	public static final Logger logger = LogManager.getLogger(Log.class.getName());
