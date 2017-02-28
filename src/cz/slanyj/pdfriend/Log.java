@@ -8,15 +8,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Log {
+	
+	static {
+		locale = Locale.US;
+		System.setProperty("logFile", "log");
+	}
+	
 	public static final Logger logger = LogManager.getLogger(Log.class.getName());
 	
 	public static final Level VERBOSE = Level.forName("VERBOSE", 450);
 	
 	private static Locale locale;
-	
-	static {
-		locale = Locale.US;
-	}
 	
 	/** Formats a string using the locale currently set in this class. */
 	private static String format(String msg, Object... objects) {

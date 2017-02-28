@@ -10,7 +10,8 @@
 		<Console name="CommandLineInterface" target="SYSTEM_ERR">
 			<PatternLayout pattern="pdfriend: %msg%n"/>
 		</Console>
-		<RollingFile name="Roll" fileName="log/app.log" filePattern="log/app-%d{yyyy-MM-dd}-%i.log">
+		<!-- Set logFile system property from inside application before initializing log4j. -->
+		<RollingFile name="Roll" fileName="${sys:logFile}/app.log" filePattern="log/app-%d{yyyy-MM-dd}-%i.log">
 			<PatternLayout pattern="[%t] %-4level: %msg%n"/>
 			<Policies>
 				<TimeBasedTriggeringPolicy/>
