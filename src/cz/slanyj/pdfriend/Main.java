@@ -24,6 +24,8 @@ public class Main {
 	 * treat it as a console subcommand.
 	 */
 	public static void main(String[] args) {
+		Log.debug("The current directory is %s", Util.getWorkingDir());
+		
 		if (args.length <= 0) {
 			// GUI (to be added later). For now, just print usage.
 			usage();
@@ -48,6 +50,11 @@ public class Main {
 		System.exit(0);
 	}
 	
+	/**
+	 * Executes a pdfriend subcommand.
+	 * @param cmd The subcommand.
+	 * @param args Its command-line arguments.
+	 */
 	private static void subcommand(String cmd, String[] args) {
 		switch (cmd) {
 			case "impose":

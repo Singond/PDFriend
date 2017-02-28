@@ -35,7 +35,9 @@
 	        description="Package into minimal Java archive">
 		<jar destfile="dist/pdfriend-minimal.jar"
 		     manifest="build/MANIFEST.MF">
-			<fileset dir="build/classes"/>
+			<fileset dir="build/classes">
+				<exclude name="cz/slanyj/pdfriend/test/"/>
+			</fileset>
 			<fileset dir="etc"/>
 			<fileset dir="loc"/>
 		</jar>
@@ -46,7 +48,9 @@
 	        description="Package into a standalone Java archive, ie. with all libraries">
 		<jar destfile="dist/pdfriend-standalone.jar"
 		     manifest="build/MANIFEST.MF">
-			<fileset dir="build/classes"/>
+			<fileset dir="build/classes">
+				<exclude name="cz/slanyj/pdfriend/test/"/>
+			</fileset>
 			<fileset dir="etc"/>
 			<fileset dir="loc"/>
 			<!-- Unzip the contents of libraries to speed up loading -->
