@@ -48,6 +48,11 @@ public class Main {
 		System.exit(0);
 	}
 	
+	/**
+	 * Executes a pdfriend subcommand.
+	 * @param cmd The subcommand.
+	 * @param args Its command-line arguments.
+	 */
 	private static void subcommand(String cmd, String[] args) {
 		switch (cmd) {
 			default:
