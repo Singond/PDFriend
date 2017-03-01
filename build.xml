@@ -30,16 +30,21 @@
 		</manifest>
 	</target>
 	
+	<union id="jar-contents">
+		<fileset dir="build/classes">
+			<exclude name="cz/slanyj/pdfriend/test/"/>
+		</fileset>
+		<fileset dir="etc"/>
+		<fileset dir="loc"/>
+		<file file="version.properties"/>
+	</union>
+	
 	<target name="jar-mini"
 	        depends="compile, manifest"
 	        description="Package into minimal Java archive">
 		<jar destfile="dist/pdfriend-minimal.jar"
 		     manifest="build/MANIFEST.MF">
-			<fileset dir="build/classes">
-				<exclude name="cz/slanyj/pdfriend/test/"/>
-			</fileset>
-			<fileset dir="etc"/>
-			<fileset dir="loc"/>
+			<resources refid="jar-contents"/>
 		</jar>
 	</target>
 	
@@ -48,11 +53,7 @@
 	        description="Package into a standalone Java archive, ie. with all libraries">
 		<jar destfile="dist/pdfriend-standalone.jar"
 		     manifest="build/MANIFEST.MF">
-			<fileset dir="build/classes">
-				<exclude name="cz/slanyj/pdfriend/test/"/>
-			</fileset>
-			<fileset dir="etc"/>
-			<fileset dir="loc"/>
+			<resources refid="jar-contents"/>
 			<!-- Unzip the contents of libraries to speed up loading -->
             <zipfileset excludes="META-INF/*.SF" src="lib/bcmail-jdk15on-1.54.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="lib/bcpkix-jdk15on-1.54.jar"/>
