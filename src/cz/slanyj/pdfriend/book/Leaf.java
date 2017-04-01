@@ -18,8 +18,9 @@ import cz.slanyj.pdfriend.SourcePage;
 import cz.slanyj.pdfriend.book.FlipDirection;
 
 /**
- * A single Leaf of the finished document. Consists of two Pages,
- * ie. recto (the odd-numbered one) and verso (the even-numbered one).
+ * A single Leaf of a bound book. Each of its two sides is represented
+ * by a Page object or its subclass. These two sides are called
+ * recto (the odd-numbered one) and verso (the even-numbered one).
  * The Pages are considered to be of the same dimensions as the Leaf.
  * 
  * @author Singon

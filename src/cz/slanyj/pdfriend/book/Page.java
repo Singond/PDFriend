@@ -5,7 +5,9 @@ import java.util.List;
 import cz.slanyj.pdfriend.SourcePage;
 
 /**
- * A document page, ie. one side of a Leaf.
+ * A page of a document, ie. one side of a Leaf.
+ * This is the simplest type of Page which corresponds to one page of
+ * the source document.
  * @author Singon
  *
  */
