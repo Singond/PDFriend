@@ -6,10 +6,10 @@ import java.io.IOException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 import cz.slanyj.pdfriend.Log;
-import cz.slanyj.pdfriend.SourceDocument;
 import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf;
 import cz.slanyj.pdfriend.book.Leaf.Orientation;
+import cz.slanyj.pdfriend.format.SourceDocument;
 import cz.slanyj.pdfriend.book.Sheet;
 import cz.slanyj.pdfriend.book.Signature;
 import cz.slanyj.pdfriend.book.Volume;

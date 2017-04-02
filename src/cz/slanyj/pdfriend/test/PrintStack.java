@@ -8,7 +8,6 @@ import java.util.List;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 import cz.slanyj.pdfriend.Log;
-import cz.slanyj.pdfriend.SourceDocument;
 import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf;
 import cz.slanyj.pdfriend.book.Order;
@@ -16,6 +15,7 @@ import cz.slanyj.pdfriend.book.Leaf.Orientation;
 import cz.slanyj.pdfriend.book.Signature;
 import cz.slanyj.pdfriend.book.Stack;
 import cz.slanyj.pdfriend.book.Stack.Flip;
+import cz.slanyj.pdfriend.format.SourceDocument;
 import cz.slanyj.pdfriend.book.Volume;
 import cz.slanyj.pdfriend.geometry.Line;
 import cz.slanyj.pdfriend.geometry.Point;

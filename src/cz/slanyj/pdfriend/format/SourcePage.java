@@ -1,4 +1,4 @@
-package cz.slanyj.pdfriend;
+package cz.slanyj.pdfriend.format;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;

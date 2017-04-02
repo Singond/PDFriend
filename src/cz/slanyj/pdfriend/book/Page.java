@@ -2,7 +2,7 @@ package cz.slanyj.pdfriend.book;
 
 import java.util.List;
 
-import cz.slanyj.pdfriend.SourcePage;
+import cz.slanyj.pdfriend.format.SourcePage;
 
 /**
  * A page of a document, ie. one side of a Leaf.

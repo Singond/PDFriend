@@ -14,8 +14,8 @@ import org.apache.pdfbox.util.Matrix;
 
 import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
-import cz.slanyj.pdfriend.SourcePage;
 import cz.slanyj.pdfriend.book.FlipDirection;
+import cz.slanyj.pdfriend.format.SourcePage;
 
 /**
  * A single Leaf of a bound book. Each of its two sides is represented

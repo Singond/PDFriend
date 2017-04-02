@@ -1,4 +1,4 @@
-package cz.slanyj.pdfriend;
+package cz.slanyj.pdfriend.format;
 
 import java.util.ArrayList;
 import java.util.Iterator;

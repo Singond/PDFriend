@@ -10,7 +10,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 
 import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
-import cz.slanyj.pdfriend.SourcePage;
+import cz.slanyj.pdfriend.format.SourcePage;
 
 /**
  * The whole text block of a document, made by arranging several Signatures
