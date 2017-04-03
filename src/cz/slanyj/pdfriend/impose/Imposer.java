@@ -8,7 +8,7 @@ package cz.slanyj.pdfriend.impose;
  * @author Singon
  *
  */
-public interface Imposer {
+public interface Imposer extends SourcePageVisitor<Void, Void> {
 
 	/**
 	 * Renders a the given target sheet into the document.

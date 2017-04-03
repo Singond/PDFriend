@@ -4,6 +4,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 
 import cz.slanyj.pdfriend.impose.SourcePage;
+import cz.slanyj.pdfriend.impose.SourcePageVisitor;
 
 /**
  * A container for a PDPage and its parent PDDocument.
@@ -33,5 +34,10 @@ public class PDFSourcePage implements SourcePage {
 
 	public PDDocument getDoc() {
 		return doc;
+	}
+	
+	@Override
+	public <T, P> T invite(SourcePageVisitor<T, P> visitor, P param) {
+		return visitor.visit(this);
 	}
 }

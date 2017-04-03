@@ -7,4 +7,5 @@ package cz.slanyj.pdfriend.impose;
  */
 public interface SourcePage {
 	
+	public <T, P> T invite(SourcePageVisitor<T, P> visitor, P param);
 }
