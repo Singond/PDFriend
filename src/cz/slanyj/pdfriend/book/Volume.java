@@ -10,7 +10,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 
 import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
-import cz.slanyj.pdfriend.format.SourcePage;
+import cz.slanyj.pdfriend.impose.formats.PDFSourcePage;
 
 /**
  * The whole text block of a document, made by arranging several Signatures
@@ -41,7 +41,7 @@ public class Volume {
 	 * Sets the source document to provide contents for all Leaves in
 	 * this Volume.
 	 */
-	public void setSource(List<SourcePage> pagesList) {
+	public void setSource(List<PDFSourcePage> pagesList) {
 		signatures.stream()
 			.flatMap(sig -> sig.getSheets().stream())
 			.flatMap(sh -> sh.getLeaves().stream())

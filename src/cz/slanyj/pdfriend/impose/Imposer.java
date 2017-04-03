@@ -1,4 +1,4 @@
-package cz.slanyj.pdfriend.format;
+package cz.slanyj.pdfriend.impose;
 
 /**
  * An interface for objects which build the final document by placing

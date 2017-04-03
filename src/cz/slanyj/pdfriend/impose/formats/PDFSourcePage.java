@@ -1,26 +1,28 @@
-package cz.slanyj.pdfriend.format;
+package cz.slanyj.pdfriend.impose.formats;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+
+import cz.slanyj.pdfriend.impose.SourcePage;
 
 /**
  * A container for a PDPage and its parent PDDocument.
  * @author Singon
  *
  */
-public class SourcePage {
+public class PDFSourcePage implements SourcePage {
 	
 	/** The page */
 	private final PDPage page;
 	/** The parent document */
 	private final PDDocument doc;
 	
-	public SourcePage(PDDocument doc, PDPage page) {
+	public PDFSourcePage(PDDocument doc, PDPage page) {
 		this.doc = doc;
 		this.page = page;
 	}
 	
-	public SourcePage(PDDocument doc, int pageNumber) {
+	public PDFSourcePage(PDDocument doc, int pageNumber) {
 		this.doc = doc;
 		this.page = doc.getPage(pageNumber);
 	}

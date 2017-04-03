@@ -2,7 +2,7 @@ package cz.slanyj.pdfriend.book;
 
 import java.util.List;
 
-import cz.slanyj.pdfriend.format.SourcePage;
+import cz.slanyj.pdfriend.impose.formats.PDFSourcePage;
 
 /**
  * A page of a document, ie. one side of a Leaf.
@@ -21,7 +21,7 @@ public class Page {
 	private final double height; 
 	
 	/** The source page and its parent */
-	private SourcePage source;
+	private PDFSourcePage source;
 	
 	public Page(double width, double height) {
 		this.width = width;
@@ -56,7 +56,7 @@ public class Page {
 		number = n;
 	}
 	
-	public SourcePage getSource() {
+	public PDFSourcePage getSource() {
 		return source;
 	}
 
@@ -64,7 +64,7 @@ public class Page {
 	 * Sets the page of a source document for this Page directly.
 	 * @param page
 	 */
-	public void setSource(SourcePage page) {
+	public void setSource(PDFSourcePage page) {
 		this.source = page;
 	}
 	/**
@@ -78,7 +78,7 @@ public class Page {
 	 * indexed from one, the indices in the list are standard zero-based,
 	 * ie. page 1 is placed at index 0 in the list.
 	 */
-	public void setSource(List<SourcePage> pagesList) {
+	public void setSource(List<PDFSourcePage> pagesList) {
 		this.source = pagesList.get(number-1);
 	}
 	

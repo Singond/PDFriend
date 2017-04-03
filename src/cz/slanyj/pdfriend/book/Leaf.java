@@ -15,7 +15,7 @@ import org.apache.pdfbox.util.Matrix;
 import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.book.FlipDirection;
-import cz.slanyj.pdfriend.format.SourcePage;
+import cz.slanyj.pdfriend.impose.formats.PDFSourcePage;
 
 /**
  * A single Leaf of a bound book. Each of its two sides is represented
@@ -302,7 +302,7 @@ public class Leaf {
 	 * @param recto
 	 * @param verso
 	 */
-	public void setContent(SourcePage recto, SourcePage verso) {
+	public void setContent(PDFSourcePage recto, PDFSourcePage verso) {
 		this.recto.setSource(recto);
 		this.verso.setSource(verso);
 	}
@@ -317,7 +317,7 @@ public class Leaf {
 	 * indexed from one, the indices in the list are standard zero-based,
 	 * ie. page 1 is placed at index 0 in the list.
 	 */
-	public void setContent(List<SourcePage> pagesList) {
+	public void setContent(List<PDFSourcePage> pagesList) {
 		this.recto.setSource(pagesList);
 		this.verso.setSource(pagesList);
 	}

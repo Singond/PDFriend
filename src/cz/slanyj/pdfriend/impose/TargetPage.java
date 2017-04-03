@@ -1,6 +1,8 @@
-package cz.slanyj.pdfriend.format;
+package cz.slanyj.pdfriend.impose;
 
 import java.awt.geom.AffineTransform;
+
+import cz.slanyj.pdfriend.impose.formats.PDFSourcePage;
 
 /**
  * A wrapper object representing a single input page in an output page,
@@ -11,16 +13,16 @@ import java.awt.geom.AffineTransform;
 public class TargetPage {
 
 	/** The input page (a page from the input docoument). */
-	private final SourcePage sourcePage;
+	private final PDFSourcePage sourcePage;
 	/** The position on the output page. */
 	private final AffineTransform position;
 	
-	public TargetPage(SourcePage page, AffineTransform position) {
+	public TargetPage(PDFSourcePage page, AffineTransform position) {
 		this.sourcePage = page;
 		this.position = position;
 	}
 
-	public SourcePage getSourcePage() {
+	public PDFSourcePage getSourcePage() {
 		return sourcePage;
 	}
 

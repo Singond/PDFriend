@@ -15,10 +15,10 @@ import cz.slanyj.pdfriend.book.Leaf.Orientation;
 import cz.slanyj.pdfriend.book.Signature;
 import cz.slanyj.pdfriend.book.Stack;
 import cz.slanyj.pdfriend.book.Stack.Flip;
-import cz.slanyj.pdfriend.format.SourceDocument;
 import cz.slanyj.pdfriend.book.Volume;
 import cz.slanyj.pdfriend.geometry.Line;
 import cz.slanyj.pdfriend.geometry.Point;
+import cz.slanyj.pdfriend.impose.formats.PDFSourceDocument;
 
 /**
  * A sample signature of two sheets.
@@ -60,7 +60,7 @@ public class PrintStack {
 		try {
 			// Get content
 			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
-			SourceDocument sourceDoc = new SourceDocument(source);
+			PDFSourceDocument sourceDoc = new PDFSourceDocument(source);
 			volume.setSource(sourceDoc.getAllPages());
 				
 			volume.renderAndSaveDocument(new File("test/printed-stack.pdf"));

@@ -10,7 +10,7 @@ import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf;
 import cz.slanyj.pdfriend.book.Leaf.Orientation;
-import cz.slanyj.pdfriend.format.SourceDocument;
+import cz.slanyj.pdfriend.impose.formats.PDFSourceDocument;
 import cz.slanyj.pdfriend.book.Order;
 import cz.slanyj.pdfriend.book.Sheet;
 import cz.slanyj.pdfriend.book.Signature;
@@ -67,7 +67,7 @@ public class ImposeSignature {
 		try {
 			// Get content
 			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
-			SourceDocument sourceDoc = new SourceDocument(source);
+			PDFSourceDocument sourceDoc = new PDFSourceDocument(source);
 			volume.setSource(sourceDoc.getAllPages());
 			
 			PDDocument doc = new PDDocument();

@@ -10,8 +10,8 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf;
 import cz.slanyj.pdfriend.book.Leaf.Orientation;
-import cz.slanyj.pdfriend.format.SourceDocument;
-import cz.slanyj.pdfriend.format.SourcePage;
+import cz.slanyj.pdfriend.impose.formats.PDFSourceDocument;
+import cz.slanyj.pdfriend.impose.formats.PDFSourcePage;
 import cz.slanyj.pdfriend.book.Sheet;
 
 /**
@@ -40,10 +40,10 @@ public class ImposeSheet {
 		try {
 			// Get content
 			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
-			SourceDocument sourceDoc = new SourceDocument(source);
+			PDFSourceDocument sourceDoc = new PDFSourceDocument(source);
 			leaf.numberPagesFrom(1);
 			leaf2.numberPagesFrom(3);
-			List<SourcePage> sps = sourceDoc.getAllPages();
+			List<PDFSourcePage> sps = sourceDoc.getAllPages();
 			leaf.setContent(sps);
 			leaf2.setContent(sps);
 			

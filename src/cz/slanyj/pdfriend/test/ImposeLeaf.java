@@ -13,7 +13,7 @@ import org.apache.pdfbox.util.Matrix;
 import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf;
 import cz.slanyj.pdfriend.book.Leaf.Orientation;
-import cz.slanyj.pdfriend.format.SourcePage;
+import cz.slanyj.pdfriend.impose.formats.PDFSourcePage;
 
 /**
  * A sample leaf.
@@ -43,8 +43,8 @@ public class ImposeLeaf {
 		try {
 			// Get content
 			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
-			SourcePage one = new SourcePage(source, 0);
-			SourcePage two = new SourcePage(source, 1);
+			PDFSourcePage one = new PDFSourcePage(source, 0);
+			PDFSourcePage two = new PDFSourcePage(source, 1);
 			leaf.setContent(one, two);
 			
 			// Impose

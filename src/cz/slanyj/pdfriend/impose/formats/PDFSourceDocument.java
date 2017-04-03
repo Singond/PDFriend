@@ -1,4 +1,4 @@
-package cz.slanyj.pdfriend.format;
+package cz.slanyj.pdfriend.impose.formats;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -7,7 +7,9 @@ import java.util.List;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 
-public class SourceDocument {
+import cz.slanyj.pdfriend.impose.SourceDocument;
+
+public class PDFSourceDocument implements SourceDocument<PDFSourcePage> {
 
 	/** The source PDDocument. */
 	private final PDDocument sourceDoc;
@@ -17,7 +19,7 @@ public class SourceDocument {
 	 * Constructs a new SourceDocument with the given PDDocument as source.
 	 * @param source The source PDDocument.
 	 */
-	public SourceDocument(PDDocument source) {
+	public PDFSourceDocument(PDDocument source) {
 		this.sourceDoc = source;
 	}
 	
@@ -28,19 +30,21 @@ public class SourceDocument {
 	 * @param pageNumber
 	 * @return The page wrapped in SourcePage object.
 	 */
-	public SourcePage getPage(int pageNumber) {
-		return new SourcePage(sourceDoc, pageNumber);
+	@Override
+	public PDFSourcePage getPage(int pageNumber) {
+		return new PDFSourcePage(sourceDoc, pageNumber);
 	}
 	
 	/**
 	 * Returns a list of all Pages in this document in proper order.
 	 * @return A new ArrayList with the Pages.
 	 */
-	public List<SourcePage> getAllPages() {
-		List<SourcePage> list = new ArrayList<>();
+	@Override
+	public List<PDFSourcePage> getAllPages() {
+		List<PDFSourcePage> list = new ArrayList<>();
 		Iterator<PDPage> pages = sourceDoc.getPages().iterator();
 		while (pages.hasNext()) {
-			SourcePage sp = new SourcePage(sourceDoc, pages.next());
+			PDFSourcePage sp = new PDFSourcePage(sourceDoc, pages.next());
 			list.add(sp);
 		}
 		return list;

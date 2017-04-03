@@ -1,4 +1,4 @@
-package cz.slanyj.pdfriend.format;
+package cz.slanyj.pdfriend.impose;
 
 import java.util.Collection;
 import java.util.HashSet;
