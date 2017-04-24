@@ -21,5 +21,10 @@ public abstract class Content {
 		this.position = position;
 	}
 	
-	
+	/**
+	 * Invite a ContentVisitor
+	 * @param T Return type for the visitor.
+	 * @param P Parameter type for the visitor.
+	 */
+	public abstract <T, P> T invite(ContentVisitor<T, P> visitor, P param);
 }
