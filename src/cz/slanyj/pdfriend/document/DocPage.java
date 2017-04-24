@@ -12,9 +12,9 @@ import java.util.HashSet;
 public class DocPage {
 
 	/** The width of the output. */
-	private final double width;
+	private double width;
 	/** The height of the output. */
-	private final double height;
+	private double height;
 	/** A collection of all pages along with their positions. */
 	private final Collection<Content> content;
 
