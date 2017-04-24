@@ -12,6 +12,22 @@ public abstract class Content {
 
 	/** The position on the output page. */
 	private AffineTransform position;
+	
+	/**
+	 * Creates a new Content in the given position.
+	 * @param position
+	 */
+	public Content(AffineTransform position) {
+		this.position = position;
+	}
+	
+	/**
+	 * Creates a new Content in the default position
+	 * (where position is the identity matrix).
+	 */
+	public Content() {
+		this(new AffineTransform());
+	}
 
 	public AffineTransform getPosition() {
 		return position;
