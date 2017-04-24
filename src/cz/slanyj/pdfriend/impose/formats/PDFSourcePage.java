@@ -11,6 +11,7 @@ import cz.slanyj.pdfriend.impose.SourcePageVisitor;
  * @author Singon
  *
  */
+@Deprecated
 public class PDFSourcePage implements SourcePage {
 	
 	/** The page */

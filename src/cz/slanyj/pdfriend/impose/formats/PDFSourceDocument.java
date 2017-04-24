@@ -9,6 +9,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 
 import cz.slanyj.pdfriend.impose.SourceDocument;
 
+@Deprecated
 public class PDFSourceDocument implements SourceDocument<PDFSourcePage> {
 
 	/** The source PDDocument. */
