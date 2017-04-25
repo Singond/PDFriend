@@ -11,7 +11,7 @@ import java.util.HashSet;
  * @author Singon
  *
  */
-public abstract class DocPage {
+public class DocPage {
 
 	/** The width of the output. */
 	private final double width;

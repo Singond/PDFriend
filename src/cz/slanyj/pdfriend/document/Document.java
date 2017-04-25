@@ -11,7 +11,7 @@ import java.util.List;
  * @author Singon
  *
  */
-public abstract class Document {
+public class Document {
 
 	/** The list of pages comprising this document. */
 	private final List<DocPage> pages;
