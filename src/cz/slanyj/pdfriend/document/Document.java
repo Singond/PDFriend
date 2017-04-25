@@ -71,8 +71,8 @@ public class Document {
 			pages = new ArrayList<>();
 		};
 		/**
-		 * Constructs a new Document.Builder initialized from an
-		 * existing Document object. 
+		 * Constructs a new Document.Builder initialized from an existing
+		 * Document object.
 		 */
 		public Builder(Document doc) {
 			pages = new ArrayList<>(doc.pages);

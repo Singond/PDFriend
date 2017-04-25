@@ -1,7 +1,9 @@
 package cz.slanyj.pdfriend.document;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * A page in the output document.
@@ -52,5 +54,58 @@ public class DocPage {
 	 */
 	public Collection<Content> getPages() {
 		return new HashSet<>(content);
+	}
+	
+	public static class Builder {
+		
+		private double width;
+		private double height;
+		private List<Content> content;
+
+
+		/**
+		 * Constructs an empty DocPage.Builder. The size of the page
+		 * is roughly equivalent to a A4 page format.
+		 */
+		public Builder() {
+			width = 595;
+			height = 842;
+		};
+		/**
+		 * Constructs a new Document.Builder initialized from an
+		 * existing Document object.
+		 */
+		public Builder(DocPage doc) {
+			content = new ArrayList<>(doc.content);
+		}
+
+
+		public double getWidth() {
+			return width;
+		}
+
+		public void setWidth(double width) {
+			this.width = width;
+		}
+
+		public double getHeight() {
+			return height;
+		}
+
+		public void setHeight(double height) {
+			this.height = height;
+		}
+
+		public List<Content> getContent() {
+			return content;
+		}
+
+		public void setContent(List<Content> content) {
+			this.content = content;
+		}
+
+		public void addContent(Content content) {
+			this.content.add(content);
+		}
 	}
 }
