@@ -6,15 +6,17 @@ import java.util.HashSet;
 /**
  * A page in the output document.
  * This is a part of the uniform document interface shared between modules.
+ * If the used implementation of Content is immutable, this DocPage
+ * itself is immutable.
  * @author Singon
  *
  */
-public class DocPage {
+public abstract class DocPage {
 
 	/** The width of the output. */
-	private double width;
+	private final double width;
 	/** The height of the output. */
-	private double height;
+	private final double height;
 	/** A collection of all pages along with their positions. */
 	private final Collection<Content> content;
 

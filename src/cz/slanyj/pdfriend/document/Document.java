@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Represents an output document.
  * This is a part of the uniform document interface shared between modules.
- * If the implementation of Content used is immutable, this document
+ * If the used implementation of Content is immutable, this document
  * itself is immutable.
  * @author Singon
  *
