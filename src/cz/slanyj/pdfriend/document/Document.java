@@ -6,16 +6,25 @@ import java.util.List;
 /**
  * Represents an output document.
  * This is a part of the uniform document interface shared between modules.
+ * If the implementation of Content used is immutable, this document
+ * itself is immutable.
  * @author Singon
  *
  */
 public abstract class Document {
 
+	/** The list of pages comprising this document. */
 	private final List<DocPage> pages;
+	/** Number of pages */
+	private final int length;
 	
-	
-	public Document() {
-		pages = new ArrayList<>();
+	/**
+	 * Constructs a new document composed of the given pages.
+	 * @param pages
+	 */
+	public Document(List<DocPage> pages) {
+		this.pages = new ArrayList<>(pages);
+		this.length = pages.size();
 	}
 	
 
@@ -35,4 +44,13 @@ public abstract class Document {
 	public DocPage getPage(int index) {
 		return pages.get(index);
 	}
+
+	/**
+	 * Returns the number of pages in this document.
+	 * @return
+	 */
+	public int getLength() {
+		return length;
+	}
+	
 }
