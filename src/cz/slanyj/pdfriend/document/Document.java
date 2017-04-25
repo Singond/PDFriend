@@ -53,4 +53,68 @@ public class Document {
 		return length;
 	}
 	
+	
+	/**
+	 * Mutable class for constructing Document objects easily and incrementally. 
+	 * @author Singon
+	 *
+	 */
+	public static class Builder {
+		
+		/** The list of pages in the future document. */
+		private List<DocPage> pages;
+		
+		/**
+		 * Constructs an empty Document.Builder.
+		 */
+		public Builder() {
+			pages = new ArrayList<>();
+		};
+		/**
+		 * Constructs a new Document.Builder initialized from an
+		 * existing Document object. 
+		 */
+		public Builder(Document doc) {
+			pages = new ArrayList<>(doc.pages);
+		}
+		
+		/**
+		 * Adds a page at the specified position in the document,
+		 * shifting any subsequent pages right.
+		 * @param page
+		 * @param index
+		 */
+		public void addPage(DocPage page, int index) {
+			pages.add(index, page);
+		}
+		
+		/**
+		 * Adds a page to the end of the document.
+		 */
+		public void addPage(DocPage page) {
+			pages.add(page);
+		}
+		
+		/**
+		 * Removes the first occurenceof the given page from the list.
+		 */
+		public void removePage(DocPage page) {
+			pages.remove(page);
+		}
+		
+		/**
+		 * Provides direct access to the internal list of pages.
+		 * @return The internal list itself.
+		 */
+		public List<DocPage> getPages() {
+			return pages;
+		}
+		
+		/**
+		 * Creates a new Document instance from this builder.
+		 */
+		public Document build() {
+			return new Document(pages);
+		}
+	}
 }
