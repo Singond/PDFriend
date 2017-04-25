@@ -11,7 +11,7 @@ import java.awt.geom.AffineTransform;
 public abstract class Content {
 
 	/** The position on the output page. */
-	private AffineTransform position;
+	private final AffineTransform position;
 	
 	/**
 	 * Creates a new Content in the given position.
@@ -29,12 +29,12 @@ public abstract class Content {
 		this(new AffineTransform());
 	}
 
+	/**
+	 * Gets the position of this piece of content as a transformation matrix.
+	 * @return A defensive copy of the transformation matrix.
+	 */
 	public AffineTransform getPosition() {
-		return position;
-	}
-
-	public void setPosition(AffineTransform position) {
-		this.position = position;
+		return new AffineTransform(position);
 	}
 	
 	/**
