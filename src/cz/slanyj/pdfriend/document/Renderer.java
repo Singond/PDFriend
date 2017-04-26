@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 /**
- * Converts the virtual document into a concrete document.
- * The type of the output document depends on the Renderer subclass.
+ * Converts the virtual document into a document of a specific file format.
+ * The file format of the output document depends on the Renderer subclass.
  * @author Singon
  *
  */
