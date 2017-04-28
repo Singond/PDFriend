@@ -56,27 +56,35 @@ public class DocPage {
 		return new HashSet<>(content);
 	}
 	
+	
+	/**
+	 * A builder class for DocPage.
+	 * Enables building a new DocPage incrementally.
+	 */
 	public static class Builder {
-		
 		private double width;
 		private double height;
 		private List<Content> content;
 
 
 		/**
-		 * Constructs an empty DocPage.Builder. The size of the page
-		 * is roughly equivalent to a A4 page format.
+		 * Constructs a new DocPage.Builder with a default page size.
+		 * The default size of the page is 595x842 pt, which is roughly
+		 * equivalent to an A4 page. These dimensions can be changed any time.
 		 */
 		public Builder() {
 			width = 595;
 			height = 842;
+			content = new ArrayList<>();
 		};
 		/**
-		 * Constructs a new Document.Builder initialized from an
-		 * existing Document object.
+		 * Constructs a new DocPage.Builder initialized from an existing
+		 * DocPage object.
 		 */
-		public Builder(DocPage doc) {
-			content = new ArrayList<>(doc.content);
+		public Builder(DocPage page) {
+			width = page.width;
+			height = page.height;
+			content = new ArrayList<>(page.content);
 		}
 
 

@@ -15,8 +15,7 @@ public class Document {
 
 	/** The list of pages comprising this document. */
 	private final List<DocPage> pages;
-	/** Number of pages */
-	private final int length;
+	
 	
 	/**
 	 * Constructs a new document composed of the given pages.
@@ -24,10 +23,9 @@ public class Document {
 	 */
 	public Document(List<DocPage> pages) {
 		this.pages = new ArrayList<>(pages);
-		this.length = pages.size();
 	}
 	
-
+	
 	/**
 	 * Returns a list of all pages in this document.
 	 * @return A defensive copy of the list of pages.
@@ -50,7 +48,7 @@ public class Document {
 	 * @return
 	 */
 	public int getLength() {
-		return length;
+		return pages.size();
 	}
 	
 	
