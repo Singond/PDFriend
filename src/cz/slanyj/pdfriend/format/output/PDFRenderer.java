@@ -1,7 +1,7 @@
 package cz.slanyj.pdfriend.format.output;
 
 import java.awt.geom.AffineTransform;
-
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.pdfbox.multipdf.LayerUtility;
@@ -17,14 +17,14 @@ import cz.slanyj.pdfriend.document.AContentVisitor;
 import cz.slanyj.pdfriend.document.Content;
 import cz.slanyj.pdfriend.document.DocPage;
 import cz.slanyj.pdfriend.document.Document;
-import cz.slanyj.pdfriend.document.NoException;
 import cz.slanyj.pdfriend.document.Renderer;
+import cz.slanyj.pdfriend.document.RenderingException;
 import cz.slanyj.pdfriend.format.content.PDFPage;
 
-public class PDFRenderer extends Renderer {
+public class PDFRenderer extends Renderer<PDDocument> {
 
 	@Override
-	public byte[] render(Document document) {
+	public PDDocument render(Document document) throws RenderingException {
 		PDDocument targetDoc = new PDDocument();
 		LayerUtility lutil = new LayerUtility(targetDoc);
 		DocumentController docCtrl = new DocumentController(targetDoc, lutil);
@@ -32,11 +32,24 @@ public class PDFRenderer extends Renderer {
 		for (DocPage pg : document.getPages()) {
 			renderPage(pg, docCtrl);
 		}
-		return null;
+		return targetDoc;
+	}
+	
+	@Override
+	public byte[] renderRaw(Document document) throws RenderingException {
+		PDDocument doc = render(document);
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		try {
+    		doc.save(bytes);
+    		doc.close();
+		} catch (IOException e) {
+			throw new RenderingException("Error when converting the PDDocument to a byte array", e);
+		}
+		return bytes.toByteArray();
 	}
 
-	
-	private PDPage renderPage(DocPage page, DocumentController docCtrl) {
+
+	private PDPage renderPage(DocPage page, DocumentController docCtrl) throws RenderingException {
 		//Log.verbose(Bundle.console, "sheet_renderingFront", this);
 		PDPage targetPage = new PDPage();
 		targetPage.setMediaBox(new PDRectangle((float) page.getWidth(), (float) page.getHeight()));
@@ -56,10 +69,15 @@ public class PDFRenderer extends Renderer {
 		return targetPage;
 	}
 	
-	private static class ContentRenderer extends AContentVisitor<Void, PageController, NoException> {
+	/**
+	 * A Content Visitor providing the actual imposing logic.
+	 * @author Singon
+	 *
+	 */
+	private static class ContentRenderer extends AContentVisitor<Void, PageController, RenderingException> {
 		
 		@Override
-		public Void visit(PDFPage source, PageController controller) {
+		public Void visit(PDFPage source, PageController controller) throws RenderingException {
 			LayerUtility layerUtility = controller.doc.layerUtility;
 			PDPageContentStream content = controller.cs;
 			AffineTransform trMatrix = source.getPosition();
@@ -73,8 +91,7 @@ public class PDFRenderer extends Renderer {
 			} catch (IOException e) {
 				Log.error("An I/O Exception occured when imposing PDFPage %s onto target page %s.",
 				          source, controller.page);
-				e.printStackTrace();
-				// TODO Rethrow as RenderingException
+				throw new RenderingException(e);
 			}
 			
 			return null;
