@@ -19,6 +19,7 @@ import cz.slanyj.pdfriend.document.Content;
 import cz.slanyj.pdfriend.document.ContentVisitor;
 import cz.slanyj.pdfriend.document.DocPage;
 import cz.slanyj.pdfriend.document.Document;
+import cz.slanyj.pdfriend.document.NoException;
 import cz.slanyj.pdfriend.document.Renderer;
 import cz.slanyj.pdfriend.format.content.PDFPage;
 
@@ -57,7 +58,7 @@ public class PDFRenderer extends Renderer {
 		return targetPage;
 	}
 	
-	private static class ContentRenderer implements ContentVisitor<Void, PageController> {
+	private static class ContentRenderer implements ContentVisitor<Void, PageController, NoException> {
 		
 		@Override
 		public Void visit(PDFPage source, PageController controller) {

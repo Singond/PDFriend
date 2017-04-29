@@ -41,6 +41,7 @@ public abstract class Content {
 	 * Invite a ContentVisitor
 	 * @param T Return type for the visitor.
 	 * @param P Parameter type for the visitor.
+	 * @param <E> Exception type thrown by the visitor.
 	 */
-	public abstract <T, P> T invite(ContentVisitor<T, P> visitor, P param);
+	public abstract <T, P, E extends Throwable> T invite(ContentVisitor<T, P, E> visitor, P param) throws E;
 }

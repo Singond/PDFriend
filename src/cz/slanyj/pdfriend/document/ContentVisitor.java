@@ -9,9 +9,10 @@ import cz.slanyj.pdfriend.format.content.PDFPage;
  *
  * @param <T> Return type of the visitor.
  * @param <P> Parameter type for the vistor.
+ * @param <E> Exception type thrown by the visitor.
  */
-public interface ContentVisitor<T, P> {
+public interface ContentVisitor<T, P, E extends Throwable> {
 
-	public T visit(Content c, P param);
-	public T visit(PDFPage c, P param);
+	public T visit(Content c, P param) throws E;
+	public T visit(PDFPage c, P param) throws E;
 }
