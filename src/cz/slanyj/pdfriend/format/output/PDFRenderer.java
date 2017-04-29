@@ -12,11 +12,9 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
 import org.apache.pdfbox.util.Matrix;
 
-import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
-import cz.slanyj.pdfriend.book.Leaf;
+import cz.slanyj.pdfriend.document.AContentVisitor;
 import cz.slanyj.pdfriend.document.Content;
-import cz.slanyj.pdfriend.document.ContentVisitor;
 import cz.slanyj.pdfriend.document.DocPage;
 import cz.slanyj.pdfriend.document.Document;
 import cz.slanyj.pdfriend.document.NoException;
@@ -58,7 +56,7 @@ public class PDFRenderer extends Renderer {
 		return targetPage;
 	}
 	
-	private static class ContentRenderer implements ContentVisitor<Void, PageController, NoException> {
+	private static class ContentRenderer extends AContentVisitor<Void, PageController, NoException> {
 		
 		@Override
 		public Void visit(PDFPage source, PageController controller) {
@@ -80,11 +78,6 @@ public class PDFRenderer extends Renderer {
 			}
 			
 			return null;
-		}
-		
-		@Override
-		public Void visit(Content c, PageController v) {
-			throw new UnsupportedOperationException();
 		}
 	}
 	

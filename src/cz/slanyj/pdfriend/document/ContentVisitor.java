@@ -13,6 +13,5 @@ import cz.slanyj.pdfriend.format.content.PDFPage;
  */
 public interface ContentVisitor<T, P, E extends Throwable> {
 
-	public T visit(Content c, P param) throws E;
 	public T visit(PDFPage c, P param) throws E;
 }
