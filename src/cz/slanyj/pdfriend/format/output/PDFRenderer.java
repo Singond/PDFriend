@@ -64,7 +64,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 			}
 			content.close();
 		} catch (IOException e) {
-			// TODO Rethrow
+			throw new RenderingException("Error when writing the output stream for page "+targetPage, e);
 		}
 		return targetPage;
 	}
@@ -91,7 +91,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 			} catch (IOException e) {
 				Log.error("An I/O Exception occured when imposing PDFPage %s onto target page %s.",
 				          source, controller.page);
-				throw new RenderingException(e);
+				throw new RenderingException("Error when writing the contents of page "+source, e);
 			}
 			
 			return null;
