@@ -1,5 +1,7 @@
 package cz.slanyj.pdfriend.document;
 
+import cz.slanyj.pdfriend.format.content.PDFPage;
+
 /**
  * A Visitor class for the Content type.
  * 
@@ -11,4 +13,5 @@ package cz.slanyj.pdfriend.document;
 public interface ContentVisitor<T, P> {
 
 	public T visit(Content c, P param);
+	public T visit(PDFPage c, P param);
 }
