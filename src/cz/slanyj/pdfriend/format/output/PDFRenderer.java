@@ -12,6 +12,7 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
 import org.apache.pdfbox.util.Matrix;
 
+import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.document.AContentVisitor;
 import cz.slanyj.pdfriend.document.Content;
@@ -25,6 +26,8 @@ public class PDFRenderer extends Renderer<PDDocument> {
 
 	@Override
 	public PDDocument render(VirtualDocument document) throws RenderingException {
+		Log.verbose(Bundle.console, "render-doc-start", document);
+		
 		PDDocument targetDoc = new PDDocument();
 		LayerUtility lutil = new LayerUtility(targetDoc);
 		DocumentController docCtrl = new DocumentController(targetDoc, lutil);
@@ -50,7 +53,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 
 
 	private PDPage renderPage(VirtualPage page, DocumentController docCtrl) throws RenderingException {
-		//Log.verbose(Bundle.console, "sheet_renderingFront", this);
+		Log.verbose(Bundle.console, "render-page-start", page);
 		PDPage targetPage = new PDPage();
 		targetPage.setMediaBox(new PDRectangle((float) page.getWidth(), (float) page.getHeight()));
 		ContentRenderer contentRndr = new ContentRenderer();
@@ -59,6 +62,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 			PDPageContentStream content = new PDPageContentStream(docCtrl.doc, targetPage);
 			PageController pageCtrl = new PageController(docCtrl, targetPage, content);
 			
+			Log.debug(Bundle.console, "render-page-content", page);
 			for (Content c : page.getContent()) {
 				c.invite(contentRndr, pageCtrl);
 			}

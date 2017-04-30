@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import cz.slanyj.pdfriend.Log;
+
 /**
  * A page in the output document.
  * This is a part of the uniform document interface shared between modules.
@@ -121,6 +123,8 @@ public class VirtualPage {
 		 * @return A new instance of VirtualPage.
 		 */
 		public VirtualPage build() {
+			Log.verbose("Building VirtualPage [%.0f x %.0f] with %d pieces of content",
+			            width, height, content.size());
 			return new VirtualPage(width, height, content);
 		}
 	}

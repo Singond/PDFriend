@@ -3,6 +3,8 @@ package cz.slanyj.pdfriend.document;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.slanyj.pdfriend.Log;
+
 /**
  * Represents an output document.
  * This is a part of the uniform document interface shared between modules.
@@ -112,6 +114,7 @@ public class VirtualDocument {
 		 * Creates a new Document instance from this builder.
 		 */
 		public VirtualDocument build() {
+			Log.verbose("Building VirtualDocument %d pages long", pages.size());
 			return new VirtualDocument(pages);
 		}
 	}
