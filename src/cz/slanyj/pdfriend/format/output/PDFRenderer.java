@@ -33,7 +33,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 		DocumentController docCtrl = new DocumentController(targetDoc, lutil);
 		
 		for (VirtualPage pg : document.getPages()) {
-			renderPage(pg, docCtrl);
+			targetDoc.addPage(renderPage(pg, docCtrl));
 		}
 		return targetDoc;
 	}
