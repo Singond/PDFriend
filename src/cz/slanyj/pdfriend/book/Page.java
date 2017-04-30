@@ -2,12 +2,12 @@ package cz.slanyj.pdfriend.book;
 
 import java.util.List;
 
-import cz.slanyj.pdfriend.impose.formats.PDFSourcePage;
+import cz.slanyj.pdfriend.document.VirtualPage;
 
 /**
  * A page of a document, ie. one side of a Leaf.
  * This is the simplest type of Page which corresponds to one page of
- * the source document.
+ * the virtual document.
  * @author Singon
  *
  */
@@ -20,8 +20,8 @@ public class Page {
 	/** The page height (y-direction) */
 	private final double height; 
 	
-	/** The source page and its parent */
-	private PDFSourcePage source;
+	/** The page of a virtual document represented by this Page object. */
+	private VirtualPage source;
 	
 	public Page(double width, double height) {
 		this.width = width;
@@ -56,20 +56,22 @@ public class Page {
 		number = n;
 	}
 	
-	public PDFSourcePage getSource() {
+	public VirtualPage getSource() {
 		return source;
 	}
 
 	/**
-	 * Sets the page of a source document for this Page directly.
+	 * Sets the page of a virtual source document as the content ("source")
+	 * of this Page directly.
 	 * @param page
 	 */
-	public void setSource(PDFSourcePage page) {
+	public void setSource(VirtualPage page) {
 		this.source = page;
 	}
 	/**
-	 * Sets the page of a source document for this Page.
-	 * This variant selects the source page from the given list using
+	 * Sets the page of a virtual source document as the content ("source")
+	 * of this Page.
+	 * This variant selects the source page from the given document using
 	 * this Page's page number, assuming the pages in the list are sorted
 	 * in ascending order starting with page number one.
 	 * This assumes the page number has already been set for this Page.
@@ -78,7 +80,7 @@ public class Page {
 	 * indexed from one, the indices in the list are standard zero-based,
 	 * ie. page 1 is placed at index 0 in the list.
 	 */
-	public void setSource(List<PDFSourcePage> pagesList) {
+	public void setSource(List<VirtualPage> pagesList) {
 		this.source = pagesList.get(number-1);
 	}
 	
