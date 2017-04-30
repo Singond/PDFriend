@@ -115,5 +115,13 @@ public class VirtualPage {
 		public void addContent(Content content) {
 			this.content.add(content);
 		}
+		
+		/**
+		 * Builds the VirtualPage.
+		 * @return A new instance of VirtualPage.
+		 */
+		public VirtualPage build() {
+			return new VirtualPage(width, height, content);
+		}
 	}
 }
