@@ -47,6 +47,19 @@ public class PDFPage extends Content {
 		return doc;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @return A shallow copy of this PDFPage in the position given
+	 * by transforming the original position by {@code transform}.
+	 */
+	@Override
+	public Content transform(AffineTransform transform) {
+		AffineTransform newPosition = new AffineTransform(position);
+		newPosition.preConcatenate(transform);
+		return new PDFPage(doc, page, newPosition);
+	}
+	
 	@Override
 	public <T, P, E extends Throwable> T invite(ContentVisitor<T, P, E> visitor, P param) throws E {
 		return visitor.visit(this, param);
