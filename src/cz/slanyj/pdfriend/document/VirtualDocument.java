@@ -7,6 +7,7 @@ import cz.slanyj.pdfriend.Log;
 
 /**
  * Represents an output document.
+ * Pages in this document are indexed from 1.
  * This is a part of the uniform document interface shared between modules.
  * If the used implementation of Content is immutable, this document
  * itself is immutable.
@@ -15,7 +16,11 @@ import cz.slanyj.pdfriend.Log;
  */
 public class VirtualDocument {
 
-	/** The list of pages comprising this document. */
+	/**
+	 * The list of pages comprising this document.
+	 * Note that the document pages are numbered from one, therefore their
+	 * numbers do not correspond to their indices in this internal list!
+	 */
 	private final List<VirtualPage> pages;
 	
 	
@@ -30,6 +35,8 @@ public class VirtualDocument {
 	
 	/**
 	 * Returns a list of all pages in this document.
+	 * Note that the document pages are numbered from one, therefore their
+	 * numbers do not correspond to their indices in this internal list!
 	 * @return A defensive copy of the list of pages.
 	 */
 	public List<VirtualPage> getPages() {
@@ -38,11 +45,11 @@ public class VirtualDocument {
 
 	/**
 	 * Returns a specific page of the document.
-	 * @param index The number of the page, starting from zero.
+	 * @param index The number of the page, starting from number one.
 	 * @return The document page.
 	 */
 	public VirtualPage getPage(int index) {
-		return pages.get(index);
+		return pages.get(index-1);
 	}
 
 	/**
@@ -82,10 +89,10 @@ public class VirtualDocument {
 		 * Adds a page at the specified position in the document,
 		 * shifting any subsequent pages right.
 		 * @param page
-		 * @param index
+		 * @param index Page number in the document, starting from number 1.
 		 */
 		public void addPage(VirtualPage page, int index) {
-			pages.add(index, page);
+			pages.add(index-1, page);
 		}
 		
 		/**
@@ -96,7 +103,7 @@ public class VirtualDocument {
 		}
 		
 		/**
-		 * Removes the first occurenceof the given page from the list.
+		 * Removes the first occurence of the given page from the list.
 		 */
 		public void removePage(VirtualPage page) {
 			pages.remove(page);
@@ -104,6 +111,8 @@ public class VirtualDocument {
 		
 		/**
 		 * Provides direct access to the internal list of pages.
+		 * Note that the document pages are numbered from one, therefore their
+		 * numbers do not correspond to their indices in this internal list!
 		 * @return The internal list itself.
 		 */
 		public List<VirtualPage> getPages() {
