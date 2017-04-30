@@ -39,6 +39,7 @@ public class Page {
 	/**
 	 * Returns the page number of this page.
 	 * @return
+	 * @throws IllegalStateException if the page number has not been set yet.
 	 */
 	public int getNumber() {
 		if (number < 1) {
@@ -50,6 +51,7 @@ public class Page {
 	/**
 	 * Sets the page number of this page.
 	 * @param n
+	 * @throws IllegalArgumentException if the page number is lower than 1.
 	 */
 	public void setNumber(int n) {
 		if (n < 1) {
