@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
+import cz.slanyj.pdfriend.document.Content;
 import cz.slanyj.pdfriend.document.RenderingException;
 import cz.slanyj.pdfriend.document.VirtualDocument;
 import cz.slanyj.pdfriend.document.VirtualPage;
@@ -25,7 +26,8 @@ public class RenderPDF {
 			VirtualPage.Builder pg1 = new VirtualPage.Builder();
 			pg1.setWidth(612);
 			pg1.setHeight(792);
-			pg1.addContent(new PDFPage(source, source.getPage(0), AffineTransform.getRotateInstance(0.06)));
+			Content src1 = new PDFPage(source, source.getPage(0), AffineTransform.getRotateInstance(0.06));
+			pg1.addContent(src1.transform(AffineTransform.getTranslateInstance(15, -30)));
 			doc.addPage(pg1.build());
 			VirtualPage.Builder pg2 = new VirtualPage.Builder();
 			pg2.setWidth(612);
