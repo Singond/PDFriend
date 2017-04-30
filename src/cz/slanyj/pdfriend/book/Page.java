@@ -13,8 +13,8 @@ import cz.slanyj.pdfriend.document.VirtualPage;
  */
 public class Page {
 
-	/** The page number in the final document */
-	private int number = 1;
+	/** The page number in the bound document */
+	private int number = -1;
 	/** The page width (x-direction) */
 	private final double width;
 	/** The page height (y-direction) */
@@ -41,6 +41,9 @@ public class Page {
 	 * @return
 	 */
 	public int getNumber() {
+		if (number < 1) {
+			throw new IllegalStateException("Page number has not been set for this page yet");
+		}
 		return number;
 	}
 	
@@ -84,8 +87,16 @@ public class Page {
 		this.source = pagesList.get(number-1);
 	}
 	
+	/**
+	 * Question mark in the output means that page number has not yet
+	 * been set for this Page.
+	 */
 	@Override
 	public String toString() {
-		return "Page "+number;
+		if (number < 1) {
+			return "Page ?";
+		} else {
+			return "Page "+number;
+		}
 	}
 }
