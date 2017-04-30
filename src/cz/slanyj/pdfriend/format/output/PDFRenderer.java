@@ -15,8 +15,8 @@ import org.apache.pdfbox.util.Matrix;
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.document.AContentVisitor;
 import cz.slanyj.pdfriend.document.Content;
-import cz.slanyj.pdfriend.document.DocPage;
-import cz.slanyj.pdfriend.document.Document;
+import cz.slanyj.pdfriend.document.VirtualPage;
+import cz.slanyj.pdfriend.document.VirtualDocument;
 import cz.slanyj.pdfriend.document.Renderer;
 import cz.slanyj.pdfriend.document.RenderingException;
 import cz.slanyj.pdfriend.format.content.PDFPage;
@@ -24,19 +24,19 @@ import cz.slanyj.pdfriend.format.content.PDFPage;
 public class PDFRenderer extends Renderer<PDDocument> {
 
 	@Override
-	public PDDocument render(Document document) throws RenderingException {
+	public PDDocument render(VirtualDocument document) throws RenderingException {
 		PDDocument targetDoc = new PDDocument();
 		LayerUtility lutil = new LayerUtility(targetDoc);
 		DocumentController docCtrl = new DocumentController(targetDoc, lutil);
 		
-		for (DocPage pg : document.getPages()) {
+		for (VirtualPage pg : document.getPages()) {
 			renderPage(pg, docCtrl);
 		}
 		return targetDoc;
 	}
 	
 	@Override
-	public byte[] renderRaw(Document document) throws RenderingException {
+	public byte[] renderRaw(VirtualDocument document) throws RenderingException {
 		PDDocument doc = render(document);
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 		try {
@@ -49,7 +49,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 	}
 
 
-	private PDPage renderPage(DocPage page, DocumentController docCtrl) throws RenderingException {
+	private PDPage renderPage(VirtualPage page, DocumentController docCtrl) throws RenderingException {
 		//Log.verbose(Bundle.console, "sheet_renderingFront", this);
 		PDPage targetPage = new PDPage();
 		targetPage.setMediaBox(new PDRectangle((float) page.getWidth(), (float) page.getHeight()));

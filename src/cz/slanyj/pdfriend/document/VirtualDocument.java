@@ -11,17 +11,17 @@ import java.util.List;
  * @author Singon
  *
  */
-public class Document {
+public class VirtualDocument {
 
 	/** The list of pages comprising this document. */
-	private final List<DocPage> pages;
+	private final List<VirtualPage> pages;
 	
 	
 	/**
 	 * Constructs a new document composed of the given pages.
 	 * @param pages
 	 */
-	public Document(List<DocPage> pages) {
+	public VirtualDocument(List<VirtualPage> pages) {
 		this.pages = new ArrayList<>(pages);
 	}
 	
@@ -30,7 +30,7 @@ public class Document {
 	 * Returns a list of all pages in this document.
 	 * @return A defensive copy of the list of pages.
 	 */
-	public List<DocPage> getPages() {
+	public List<VirtualPage> getPages() {
 		return new ArrayList<>(pages);
 	}
 
@@ -39,7 +39,7 @@ public class Document {
 	 * @param index The number of the page, starting from zero.
 	 * @return The document page.
 	 */
-	public DocPage getPage(int index) {
+	public VirtualPage getPage(int index) {
 		return pages.get(index);
 	}
 
@@ -60,7 +60,7 @@ public class Document {
 	public static class Builder {
 		
 		/** The list of pages in the future document. */
-		private List<DocPage> pages;
+		private List<VirtualPage> pages;
 		
 		/**
 		 * Constructs an empty Document.Builder.
@@ -72,7 +72,7 @@ public class Document {
 		 * Constructs a new Document.Builder initialized from an existing
 		 * Document object.
 		 */
-		public Builder(Document doc) {
+		public Builder(VirtualDocument doc) {
 			pages = new ArrayList<>(doc.pages);
 		}
 		
@@ -82,21 +82,21 @@ public class Document {
 		 * @param page
 		 * @param index
 		 */
-		public void addPage(DocPage page, int index) {
+		public void addPage(VirtualPage page, int index) {
 			pages.add(index, page);
 		}
 		
 		/**
 		 * Adds a page to the end of the document.
 		 */
-		public void addPage(DocPage page) {
+		public void addPage(VirtualPage page) {
 			pages.add(page);
 		}
 		
 		/**
 		 * Removes the first occurenceof the given page from the list.
 		 */
-		public void removePage(DocPage page) {
+		public void removePage(VirtualPage page) {
 			pages.remove(page);
 		}
 		
@@ -104,15 +104,15 @@ public class Document {
 		 * Provides direct access to the internal list of pages.
 		 * @return The internal list itself.
 		 */
-		public List<DocPage> getPages() {
+		public List<VirtualPage> getPages() {
 			return pages;
 		}
 		
 		/**
 		 * Creates a new Document instance from this builder.
 		 */
-		public Document build() {
-			return new Document(pages);
+		public VirtualDocument build() {
+			return new VirtualDocument(pages);
 		}
 	}
 }

@@ -13,7 +13,7 @@ import java.util.List;
  * @author Singon
  *
  */
-public class DocPage {
+public class VirtualPage {
 
 	/** The width of the output. */
 	private final double width;
@@ -33,7 +33,7 @@ public class DocPage {
 	 * @param pages The content of the sheet, ie. a collection of pages
 	 * along with their positions.
 	 */
-	public DocPage(double width, double height, Collection<Content> content) {
+	public VirtualPage(double width, double height, Collection<Content> content) {
 		this.width = width;
 		this.height = height;
 		this.content = new HashSet<>(content);
@@ -81,7 +81,7 @@ public class DocPage {
 		 * Constructs a new DocPage.Builder initialized from an existing
 		 * DocPage object.
 		 */
-		public Builder(DocPage page) {
+		public Builder(VirtualPage page) {
 			width = page.width;
 			height = page.height;
 			content = new ArrayList<>(page.content);

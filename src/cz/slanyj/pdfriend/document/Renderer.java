@@ -18,20 +18,20 @@ public abstract class Renderer<T> {
 	 * Renders the given virtual document into a real document.
 	 * @return The new document object.
 	 */
-	public abstract T render(Document document) throws RenderingException;
+	public abstract T render(VirtualDocument document) throws RenderingException;
 	
 	/**
 	 * Renders the given virtual document into a real document.
 	 * @return The document as a byte stream suitable for saving.
 	 */
-	public abstract byte[] renderRaw(Document document) throws RenderingException;
+	public abstract byte[] renderRaw(VirtualDocument document) throws RenderingException;
 	
 	/**
 	 * Renders the virtual document into a real document and saves
 	 * it to the given file.
 	 * @throws IOException if an I/O error occurs writing to or creating the file.
 	 */
-	public void renderAndSave(Document document, File output) throws RenderingException, IOException {
+	public void renderAndSave(VirtualDocument document, File output) throws RenderingException, IOException {
 		byte[] data = renderRaw(document);
 		Files.write(output.toPath(), data);
 	}
