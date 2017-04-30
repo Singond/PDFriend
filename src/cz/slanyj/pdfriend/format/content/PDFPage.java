@@ -30,6 +30,9 @@ public class PDFPage extends Content {
 		this.doc = doc;
 		this.page = page;
 	}
+	/**
+	 * @param pageNumber The index of the desired page (numbered from 0).
+	 */
 	public PDFPage(PDDocument doc, int pageNumber) {
 		super();
 		this.doc = doc;
