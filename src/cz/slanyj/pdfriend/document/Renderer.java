@@ -5,25 +5,34 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 /**
- * Converts the virtual document into a concrete document.
- * The type of the output document depends on the Renderer subclass.
+ * Converts the virtual document into a document of a specific file format.
+ * The file format of the output document depends on the Renderer subclass.
+ * @param <T> Type of the output document.
+ * 
  * @author Singon
  *
  */
-public abstract class Renderer {
+public abstract class Renderer<T> {
 
 	/**
 	 * Renders the given virtual document into a real document.
+	 * @return The new document object.
 	 */
-	public abstract byte[] render(Document document);
+	public abstract T render(Document document) throws RenderingException;
+	
+	/**
+	 * Renders the given virtual document into a real document.
+	 * @return The document as a byte stream suitable for saving.
+	 */
+	public abstract byte[] renderRaw(Document document) throws RenderingException;
 	
 	/**
 	 * Renders the virtual document into a real document and saves
 	 * it to the given file.
 	 * @throws IOException if an I/O error occurs writing to or creating the file.
 	 */
-	public void renderAndSave(Document document, File output) throws IOException {
-		byte[] data = render(document);
+	public void renderAndSave(Document document, File output) throws RenderingException, IOException {
+		byte[] data = renderRaw(document);
 		Files.write(output.toPath(), data);
 	}
 }

@@ -1,4 +1,4 @@
-package cz.slanyj.pdfriend.formats;
+package cz.slanyj.pdfriend.format.content;
 
 import java.awt.geom.AffineTransform;
 
@@ -45,7 +45,7 @@ public class PDFPage extends Content {
 	}
 	
 	@Override
-	public <T, P> T invite(ContentVisitor<T, P> visitor, P param) {
+	public <T, P, E extends Throwable> T invite(ContentVisitor<T, P, E> visitor, P param) throws E {
 		return visitor.visit(this, param);
 	}
 }

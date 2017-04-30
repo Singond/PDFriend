@@ -52,7 +52,7 @@ public class DocPage {
 	 * Returns the content of the sheet as a collection of all imposed pages.
 	 * @return A shallow copy of the internal collection of target pages.
 	 */
-	public Collection<Content> getPages() {
+	public Collection<Content> getContent() {
 		return new HashSet<>(content);
 	}
 	
