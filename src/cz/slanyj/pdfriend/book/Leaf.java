@@ -15,6 +15,8 @@ import org.apache.pdfbox.util.Matrix;
 import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.book.FlipDirection;
+import cz.slanyj.pdfriend.document.VirtualDocument;
+import cz.slanyj.pdfriend.document.VirtualPage;
 import cz.slanyj.pdfriend.impose.formats.PDFSourcePage;
 
 /**
@@ -298,28 +300,42 @@ public class Leaf {
 	}
 	
 	/**
-	 * Sets the source pages for the recto and verso of this Leaf.
-	 * @param recto
-	 * @param verso
-	 */
-	public void setContent(PDFSourcePage recto, PDFSourcePage verso) {
-		this.recto.setSource(recto);
-		this.verso.setSource(verso);
-	}
-	/**
-	 * Sets the source pages for the recto and verso of this Leaf.
-	 * This variant selects the source page from the given list using
+	 * Sets the page of a virtual source document as the content ("source")
+	 * of the Pages of this Leaf.
+	 * This variant selects the source page from the given page list using
 	 * this Page's page number, assuming the pages in the list are sorted
-	 * in ascending order starting with page number one.
-	 * This assumes the page numbers have already been set for this Leaf.
+	 * in ascending order with page of list index 0 having page number 1.
+	 * This assumes the page number has already been set for both recto
+	 * and verso of this Leaf.
 	 * @param pagesList A list of source pages sorted in ascending order
 	 * starting with page number one. Note that while page numbers are
 	 * indexed from one, the indices in the list are standard zero-based,
 	 * ie. page 1 is placed at index 0 in the list.
+	 * @throws IllegalStateException if the page number has not been set yet
+	 * for any of the Pages of this Leaf.
 	 */
-	public void setContent(List<PDFSourcePage> pagesList) {
-		this.recto.setSource(pagesList);
-		this.verso.setSource(pagesList);
+	public void setSourceFrom(List<VirtualPage> pagesList) {
+		this.recto.setSourceFrom(pagesList);
+		this.verso.setSourceFrom(pagesList);
+	}
+	/**
+	 * Sets the page of a virtual source document as the content ("source")
+	 * of this Page.
+	 * This variant selects the source page from the given document using
+	 * this Page's page number, assuming the pages in the document are
+	 * numbered from one.
+	 * This assumes the page number has already been set for both recto
+	 * and verso of this Leaf.
+	 * @param document A virtual source document with page number from one.
+	 * Note that while pages in a VirtualDocument are indexed from one,
+	 * the indices in the list are standard zero-based, ie. page 1 is placed
+	 * at index 0 in the list.
+	 * @throws IllegalStateException if the page number has not been set yet
+	 * for any of the Pages of this Leaf.
+	 */
+	public void setSourceFrom(VirtualDocument document) {
+		this.recto.setSourceFrom(document);
+		this.verso.setSourceFrom(document);
 	}
 
 	/**
