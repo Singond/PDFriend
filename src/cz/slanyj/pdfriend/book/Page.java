@@ -87,7 +87,7 @@ public class Page {
 	 * ie. page 1 is placed at index 0 in the list.
 	 * @throws IllegalStateException if the page number has not been set yet.
 	 */
-	public void setSource(List<VirtualPage> pagesList) {
+	public void setSourceFrom(List<VirtualPage> pagesList) {
 		this.source = pagesList.get(getNumber()-1);
 	}
 	/**
@@ -103,7 +103,7 @@ public class Page {
 	 * at index 0 in the list.
 	 * @throws IllegalStateException if the page number has not been set yet.
 	 */
-	public void setSource(VirtualDocument document) {
+	public void setSourceFrom(VirtualDocument document) {
 		this.source = document.getPage(getNumber());
 	}
 	
