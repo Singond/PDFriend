@@ -122,6 +122,9 @@ public class Leaf {
 	}
 
 	public void setOrientation(Orientation orientation) {
+		if (orientation == null) {
+			throw new IllegalArgumentException("Leaf orientation must not be null");
+		}
 		this.orientation = orientation;
 	}
 	
@@ -457,16 +460,27 @@ public class Leaf {
 	 */
 	public static enum Orientation {
 		/** Recto is on the front surface, verso on back */
-		RECTO_UP {
+		RECTO_UP ("recto-up") {
 			@Override public Orientation inverse() {return VERSO_UP;}
 		},
 		/** Verso is on the front surface, recto on back */
-		VERSO_UP {
+		VERSO_UP ("verso-up") {
 			@Override public Orientation inverse() {return RECTO_UP;}
 		};
 		
+		private String name;
+		
+		private Orientation(String name) {
+			this.name = name;
+		}
+		
 		/** Returns the inverse Orientation */
 		public abstract Orientation inverse();
+		
+		@Override
+		public String toString() {
+			return name;
+		}
 	}
 	
 	/**
