@@ -79,7 +79,7 @@ public class Page {
 	 * of this Page.
 	 * This variant selects the source page from the given page list using
 	 * this Page's page number, assuming the pages in the list are sorted
-	 * in ascending order with page of index 0 having number 1.
+	 * in ascending order with page of list index 0 having page number 1.
 	 * This assumes the page number has already been set for this Page.
 	 * @param pagesList A list of source pages sorted in ascending order
 	 * starting with page number one. Note that while page numbers are
