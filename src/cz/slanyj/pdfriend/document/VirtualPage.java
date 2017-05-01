@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
 
 /**
@@ -110,10 +111,24 @@ public class VirtualPage {
 			return content;
 		}
 
+		/**
+		 * Overwrites the content of this to-be page with the given list
+		 * of content elements.
+		 * <p><b>Warning:</b> This removes all previously set content
+		 * in this page!</p>
+		 * @param content
+		 */
 		public void setContent(List<Content> content) {
+			if (!this.content.isEmpty()) {
+				Log.warn(Bundle.console, "vpage_overwritingContent", Builder.this);
+			}
 			this.content = content;
 		}
 
+		/**
+		 * Adds a single piece of content.
+		 * @param content
+		 */
 		public void addContent(Content content) {
 			this.content.add(content);
 		}
