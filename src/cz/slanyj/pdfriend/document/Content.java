@@ -62,9 +62,9 @@ public abstract class Content {
 	 * @author Singon
 	 * 
 	 */
-	protected class Movable {
+	public final class Movable {
 		/** Matrix accumulating the transformations */
-		private final AffineTransform transform = new AffineTransform();
+		private final AffineTransform transform = new AffineTransform(position);
 		
 		public AffineTransform getTransform() {
 			return transform;
