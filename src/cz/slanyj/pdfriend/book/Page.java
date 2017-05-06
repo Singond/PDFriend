@@ -1,7 +1,9 @@
 package cz.slanyj.pdfriend.book;
 
+import java.util.Collection;
 import java.util.List;
 
+import cz.slanyj.pdfriend.document.Content;
 import cz.slanyj.pdfriend.document.VirtualDocument;
 import cz.slanyj.pdfriend.document.VirtualPage;
 
@@ -105,6 +107,20 @@ public class Page {
 	 */
 	public void setSourceFrom(VirtualDocument document) {
 		this.source = document.getPage(getNumber());
+	}
+	
+	/**
+	 * Returns the content of this page collected from its VirtualPage(s)
+	 * as a collection of transformable pieces of content.
+	 * <p>This is the main interface for retrieveing this Page's content.
+	 * It intentionally returns a collection of Content instead of
+	 * a VirtualPage, because the representation of content as VirtualPages
+	 * should remain an implementation detail. This is to enable subclasses
+	 * use more than one VirtualPage.</p> 
+	 * @return The collection of Content obtained from the source page.
+	 */
+	public Collection<Content.Movable> getContent() {
+		return source.getMovableContent();
 	}
 	
 	/**
