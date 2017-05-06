@@ -15,6 +15,7 @@ import org.apache.pdfbox.util.Matrix;
 
 import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
+import cz.slanyj.pdfriend.document.VirtualPage;
 
 /**
  * A single sheet of paper upon which Pages from multiple Leaves are laid out.
@@ -84,6 +85,25 @@ public class Sheet {
 		content.close();
 		return leaf;
 	}
+	/**
+	 * Prints the front side of this Sheet onto a new virtual page.
+	 * The page is not added to any document automatically.
+	 * @return A new VirtualPage object with the front side of this Sheet.
+	 */
+	public VirtualPage renderFront() {
+		Log.verbose(Bundle.console, "sheet_renderingFront", this);
+		/** Front side of this sheet compiled into page */
+		VirtualPage.Builder paper = new VirtualPage.Builder();
+		paper.setWidth(width);
+		paper.setHeight(height);
+		for (Leaf leaf : leaves) {
+			/** The page to be imposed */
+			Page page = leaf.getFrontPage();
+			// TODO Impose
+		}
+		return paper.build();
+	}
+	
 	/**
 	 * Returns the back side of this Sheet printed onto a new PDF page.
 	 * The page is not added to its parent document automatically.
