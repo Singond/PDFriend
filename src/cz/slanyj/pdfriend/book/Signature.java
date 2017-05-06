@@ -132,7 +132,7 @@ public class Signature {
 	 * @param i
 	 * @param doc
 	 */
-	private void renderSheet(Sheet sheet, VirtualDocument.Builder doc) throws IOException {
+	private void renderSheet(Sheet sheet, VirtualDocument.Builder doc) {
 		Log.verbose(Bundle.console, "signature_renderingSheet", sheet);
 		VirtualPage front = sheet.renderFront();
 		doc.addPage(front);
@@ -144,7 +144,7 @@ public class Signature {
 	 * Renders all Sheets in this signature into the given document,
 	 * each as two new pages (recto first, verso second).
 	 */
-	public void renderAllSheets(VirtualDocument.Builder doc) throws IOException {
+	public void renderAllSheets(VirtualDocument.Builder doc) {
 		Log.verbose(Bundle.console, "signature_rendering", this);
 		for (Sheet s : sheets) {
 			renderSheet(s, doc);
