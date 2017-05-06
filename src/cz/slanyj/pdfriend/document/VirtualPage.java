@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
@@ -52,11 +53,23 @@ public class VirtualPage {
 	}
 
 	/**
-	 * Returns the content of the sheet as a collection of all imposed pages.
-	 * @return A shallow copy of the internal collection of target pages.
+	 * Returns the content of the sheet as a collection of all content elements.
+	 * @return A shallow copy of the internal collection of content elements.
 	 */
 	public Collection<Content> getContent() {
 		return new HashSet<>(content);
+	}
+	
+	/**
+	 * Returns the content of the sheet as a collection of all content
+	 * elements, wrapped in a builder object to facilitate transforming.
+	 * @return A shallow copy of the internal collection of content
+	 * elements, each converted to a new Content.Movable.
+	 */
+	public Collection<Content.Movable> getMovableContent() {
+		return content.stream()
+		              .map(c -> c.new Movable())
+		              .collect(Collectors.toSet());
 	}
 	
 	
