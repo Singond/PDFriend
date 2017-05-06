@@ -350,16 +350,16 @@ public class Leaf {
 	 * @param layerUtility The layer utility of the target Sheet.
 	 * @throws IOException
 	 */
-	public void imposeFront(PDPageContentStream sheetContent,
-		                    LayerUtility layerUtility) throws IOException {
-		if (orientation == Orientation.RECTO_UP) {
-			imposeIfNotEmpty(sheetContent, layerUtility, recto, false);
-		} else if (orientation == Orientation.VERSO_UP) {
-			imposeIfNotEmpty(sheetContent, layerUtility, verso, false);
-		} else {
-			throw new IllegalStateException("Leaf orientation has not been set correctly.");
-		}
-	}
+//	public void imposeFront(PDPageContentStream sheetContent,
+//		                    LayerUtility layerUtility) throws IOException {
+//		if (orientation == Orientation.RECTO_UP) {
+//			imposeIfNotEmpty(sheetContent, layerUtility, recto, false);
+//		} else if (orientation == Orientation.VERSO_UP) {
+//			imposeIfNotEmpty(sheetContent, layerUtility, verso, false);
+//		} else {
+//			throw new IllegalStateException("Leaf orientation has not been set correctly.");
+//		}
+//	}
 	
 	/**
 	 * Places the form XObject representing the bottom page of this Leaf
@@ -372,60 +372,88 @@ public class Leaf {
 	 * @param layerUtility The layer utility of the target Sheet.
 	 * @throws IOException
 	 */
-	public void imposeBack(PDPageContentStream sheetContent,
-		                    LayerUtility layerUtility) throws IOException {
+//	public void imposeBack(PDPageContentStream sheetContent,
+//		                    LayerUtility layerUtility) throws IOException {
+//		if (orientation == Orientation.RECTO_UP) {
+//			imposeIfNotEmpty(sheetContent, layerUtility, verso, true);
+//		} else if (orientation == Orientation.VERSO_UP) {
+//			imposeIfNotEmpty(sheetContent, layerUtility, recto, true);
+//		} else {
+//			throw new IllegalStateException("Leaf orientation has not been set correctly.");
+//		}
+//	}
+		
+	/**
+	 * Places the form XObject representing the given page into the given
+	 * content stream.
+	 * @param sheetContent The content stream of the target Sheet side.
+	 * @param layerUtility The layer utility of the target Sheet.
+	 * @param pg Either the recto or verso of this leaf.
+	 * @param mirror Mirror the page before transforming. Used for back pages.
+	 * @throws IOException
+	 */
+//	private void impose(PDPageContentStream sheetContent,
+//	                    LayerUtility layerUtility,
+//	                    Page pg,
+//	                    boolean isBack) throws IOException {
+//		Log.verbose(Bundle.console, "leaf_imposingPage", pg);
+//		PDDocument parent = pg.getSource().getDoc();
+//		PDPage page = pg.getSource().getPage();
+//		PDFormXObject form = layerUtility.importPageAsForm(parent, page);
+//		
+//		AffineTransform trMatrix = !isBack ? getFrontPosition() : getBackPosition();
+//		
+//		sheetContent.saveGraphicsState();
+//		sheetContent.transform(new Matrix(trMatrix));
+//		sheetContent.drawForm(form);
+//		sheetContent.restoreGraphicsState();
+//	}
+	/**
+	 * Places the form XObject representing the given page into the given
+	 * content stream.
+	 * @param sheetContent The content stream of the target Sheet side.
+	 * @param layerUtility The layer utility of the target Sheet.
+	 * @param pg Either the recto or verso of this leaf.
+	 * @param mirror Mirror the page before transforming. Used for back pages.
+	 * @throws IOException
+	 */
+//	private void imposeIfNotEmpty(PDPageContentStream sheetContent,
+//	                              LayerUtility layerUtility,
+//	                              Page pg,
+//	                              boolean isBack) throws IOException {
+//		try {
+//			impose(sheetContent, layerUtility, pg, isBack);
+//		} catch (NullPointerException e) {
+//			int page = pg.getNumber();
+//			Log.info("Page %d is empty, skipping", page);
+//		}
+//	}
+	
+	/**
+	 * Returns the page which lies on the front side of the parent Sheet.
+	 * @return The recto if the orientation is RECTO_UP, verso otherwise.
+	 */
+	public Page getFrontPage() {
 		if (orientation == Orientation.RECTO_UP) {
-			imposeIfNotEmpty(sheetContent, layerUtility, verso, true);
+			return recto;
 		} else if (orientation == Orientation.VERSO_UP) {
-			imposeIfNotEmpty(sheetContent, layerUtility, recto, true);
+			return verso;
 		} else {
-			throw new IllegalStateException("Leaf orientation has not been set correctly.");
+			throw new AssertionError("Should never reach this point. Bad value of orientation: " + orientation);
 		}
 	}
-		
+	
 	/**
-	 * Places the form XObject representing the given page into the given
-	 * content stream.
-	 * @param sheetContent The content stream of the target Sheet side.
-	 * @param layerUtility The layer utility of the target Sheet.
-	 * @param pg Either the recto or verso of this leaf.
-	 * @param mirror Mirror the page before transforming. Used for back pages.
-	 * @throws IOException
+	 * Returns the page which lies on the back side of the parent Sheet.
+	 * @return The verso if the orientation is RECTO_UP, recto otherwise.
 	 */
-	private void impose(PDPageContentStream sheetContent,
-	                    LayerUtility layerUtility,
-	                    Page pg,
-	                    boolean isBack) throws IOException {
-		Log.verbose(Bundle.console, "leaf_imposingPage", pg);
-		PDDocument parent = pg.getSource().getDoc();
-		PDPage page = pg.getSource().getPage();
-		PDFormXObject form = layerUtility.importPageAsForm(parent, page);
-		
-		AffineTransform trMatrix = !isBack ? getFrontPosition() : getBackPosition();
-		
-		sheetContent.saveGraphicsState();
-		sheetContent.transform(new Matrix(trMatrix));
-		sheetContent.drawForm(form);
-		sheetContent.restoreGraphicsState();
-	}
-	/**
-	 * Places the form XObject representing the given page into the given
-	 * content stream.
-	 * @param sheetContent The content stream of the target Sheet side.
-	 * @param layerUtility The layer utility of the target Sheet.
-	 * @param pg Either the recto or verso of this leaf.
-	 * @param mirror Mirror the page before transforming. Used for back pages.
-	 * @throws IOException
-	 */
-	private void imposeIfNotEmpty(PDPageContentStream sheetContent,
-	                              LayerUtility layerUtility,
-	                              Page pg,
-	                              boolean isBack) throws IOException {
-		try {
-			impose(sheetContent, layerUtility, pg, isBack);
-		} catch (NullPointerException e) {
-			int page = pg.getNumber();
-			Log.info("Page %d is empty, skipping", page);
+	public Page getBackPage() {
+		if (orientation == Orientation.RECTO_UP) {
+			return verso;
+		} else if (orientation == Orientation.VERSO_UP) {
+			return recto;
+		} else {
+			throw new AssertionError("Should never reach this point. Bad value of orientation: " + orientation);
 		}
 	}
 	
