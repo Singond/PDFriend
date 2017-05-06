@@ -10,6 +10,10 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 
 import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
+import cz.slanyj.pdfriend.document.RenderingException;
+import cz.slanyj.pdfriend.document.VirtualDocument;
+import cz.slanyj.pdfriend.document.VirtualPage;
+import cz.slanyj.pdfriend.format.output.PDFRenderer;
 import cz.slanyj.pdfriend.impose.formats.PDFSourcePage;
 
 /**
@@ -41,23 +45,26 @@ public class Volume {
 	 * Sets the source document to provide contents for all Leaves in
 	 * this Volume.
 	 */
-	public void setSource(List<PDFSourcePage> pagesList) {
+	public void setSource(List<VirtualPage> pagesList) {
 		signatures.stream()
 			.flatMap(sig -> sig.getSheets().stream())
 			.flatMap(sh -> sh.getLeaves().stream())
-			.forEach(l->l.setContent(pagesList));
+			.forEach(l -> {
+				l.getFrontPage().setSourceFrom(pagesList);
+				l.getBackPage().setSourceFrom(pagesList);
+			});
 	}
 	
 	/**
 	 * Renders this Volume as a new PDDocument.
 	 */
-	public PDDocument renderDocument() throws IOException {
+	public VirtualDocument renderDocument() {
 		Log.info(Bundle.console, "volume_rendering", this);
-		PDDocument document = new PDDocument();
+		VirtualDocument.Builder document = new VirtualDocument.Builder();
 		for (Signature s : signatures) {
 			s.renderAllSheets(document);
 		}
-		return document;
+		return document.build();
 	}
 	
 	/**
@@ -72,9 +79,11 @@ public class Volume {
 	/**
 	 * Renders this Volume and saves it as a new PDF file.
 	 * @throws IOException 
+	 * @throws RenderingException 
 	 */
-	public void renderAndSaveDocument(File target) throws IOException {
-		PDDocument doc = renderDocument();
+	public void renderAndSaveDocument(File target) throws RenderingException, IOException {
+		VirtualDocument thisDoc = renderDocument();
+		PDDocument doc = new PDFRenderer().render(thisDoc);
 		saveDocument(doc, target);
 	}
 	
