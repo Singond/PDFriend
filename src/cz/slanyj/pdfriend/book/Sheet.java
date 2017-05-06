@@ -1,5 +1,6 @@
 package cz.slanyj.pdfriend.book;
 
+import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -73,18 +74,19 @@ public class Sheet {
 	 * @return A new PDPage object.
 	 * @throws IOException
 	 */
-	public PDPage renderFront(PDDocument doc) throws IOException {
-		Log.verbose(Bundle.console, "sheet_renderingFront", this);
-		PDPage leaf = new PDPage();
-		leaf.setMediaBox(new PDRectangle((float) width, (float) height));
-		PDPageContentStream content = new PDPageContentStream(doc, leaf);
-		LayerUtility lu = new LayerUtility(doc);
-		for (Leaf l : leaves) {
-			l.imposeFront(content, lu);
-		}
-		content.close();
-		return leaf;
-	}
+//	public PDPage renderFront(PDDocument doc) throws IOException {
+//		Log.verbose(Bundle.console, "sheet_renderingFront", this);
+//		PDPage leaf = new PDPage();
+//		leaf.setMediaBox(new PDRectangle((float) width, (float) height));
+//		PDPageContentStream content = new PDPageContentStream(doc, leaf);
+//		LayerUtility lu = new LayerUtility(doc);
+//		for (Leaf l : leaves) {
+//			l.imposeFront(content, lu);
+//		}
+//		content.close();
+//		return leaf;
+//	}
+	
 	/**
 	 * Prints the front side of this Sheet onto a new virtual page.
 	 * The page is not added to any document automatically.
@@ -99,7 +101,9 @@ public class Sheet {
 		for (Leaf leaf : leaves) {
 			/** The page to be imposed */
 			Page page = leaf.getFrontPage();
-			// TODO Impose
+			page.getContent().stream()
+			                 .peek(cm -> cm.getTransform().preConcatenate(leaf.getFrontPosition()))
+			                 .forEach(cm -> paper.addContent(cm.transformed()));
 		}
 		return paper.build();
 	}
@@ -111,20 +115,44 @@ public class Sheet {
 	 * @return A new PDPage object.
 	 * @throws IOException
 	 */
-	public PDPage renderBack(PDDocument doc) throws IOException {
-		Log.verbose(Bundle.console, "sheet_renderingBack", this);
-		PDPage leaf = new PDPage();
-		leaf.setMediaBox(new PDRectangle((float) width, (float) height));
-		PDPageContentStream content = new PDPageContentStream(doc, leaf);
-		LayerUtility lu = new LayerUtility(doc);
-		// Mirror the whole layout to produce the back side
-		content.transform(Matrix.getTranslateInstance((float) width, 0));
-		content.transform(Matrix.getScaleInstance(-1, 1));
-		for (Leaf l : leaves) {
-			l.imposeBack(content, lu);
+//	public PDPage renderBack(PDDocument doc) throws IOException {
+//		Log.verbose(Bundle.console, "sheet_renderingBack", this);
+//		PDPage leaf = new PDPage();
+//		leaf.setMediaBox(new PDRectangle((float) width, (float) height));
+//		PDPageContentStream content = new PDPageContentStream(doc, leaf);
+//		LayerUtility lu = new LayerUtility(doc);
+//		// Mirror the whole layout to produce the back side
+//		content.transform(Matrix.getTranslateInstance((float) width, 0));
+//		content.transform(Matrix.getScaleInstance(-1, 1));
+//		for (Leaf l : leaves) {
+//			l.imposeBack(content, lu);
+//		}
+//		content.close();
+//		return leaf;
+//	}
+	
+	/**
+	 * Prints the back side of this Sheet onto a new virtual page.
+	 * The page is not added to any document automatically.
+	 * @return A new VirtualPage object with the front side of this Sheet.
+	 */
+	public VirtualPage renderBack() {
+		Log.verbose(Bundle.console, "sheet_renderingFront", this);
+		/** Front side of this sheet compiled into page */
+		VirtualPage.Builder paper = new VirtualPage.Builder();
+		paper.setWidth(width);
+		paper.setHeight(height);
+		final AffineTransform backside = AffineTransform.getTranslateInstance(width, 0);
+		backside.concatenate(AffineTransform.getScaleInstance(-1,  1));
+		for (Leaf leaf : leaves) {
+			/** The page to be imposed */
+			Page page = leaf.getBackPage();
+			page.getContent().stream()
+			                 .peek(cm -> cm.getTransform().preConcatenate(backside))
+			                 .peek(cm -> cm.getTransform().preConcatenate(leaf.getBackPosition()))
+			                 .forEach(cm -> paper.addContent(cm.transformed()));
 		}
-		content.close();
-		return leaf;
+		return paper.build();
 	}
 	
 	@Override
