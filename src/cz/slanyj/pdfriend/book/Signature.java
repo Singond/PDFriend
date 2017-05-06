@@ -12,6 +12,8 @@ import org.apache.pdfbox.pdmodel.PDPage;
 
 import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
+import cz.slanyj.pdfriend.document.VirtualDocument;
+import cz.slanyj.pdfriend.document.VirtualPage;
 
 /**
  * A signature of a document, made by folding one or more Sheets.
@@ -130,11 +132,11 @@ public class Signature {
 	 * @param i
 	 * @param doc
 	 */
-	private void renderSheet(Sheet sheet, PDDocument doc) throws IOException {
+	private void renderSheet(Sheet sheet, VirtualDocument.Builder doc) throws IOException {
 		Log.verbose(Bundle.console, "signature_renderingSheet", sheet);
-		PDPage front = sheet.renderFront(doc);
+		VirtualPage front = sheet.renderFront();
 		doc.addPage(front);
-		PDPage back = sheet.renderBack(doc);
+		VirtualPage back = sheet.renderBack();
 		doc.addPage(back);
 	}
 	
@@ -142,7 +144,7 @@ public class Signature {
 	 * Renders all Sheets in this signature into the given document,
 	 * each as two new pages (recto first, verso second).
 	 */
-	public void renderAllSheets(PDDocument doc) throws IOException {
+	public void renderAllSheets(VirtualDocument.Builder doc) throws IOException {
 		Log.verbose(Bundle.console, "signature_rendering", this);
 		for (Sheet s : sheets) {
 			renderSheet(s, doc);
