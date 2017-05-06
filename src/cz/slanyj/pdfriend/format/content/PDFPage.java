@@ -54,7 +54,7 @@ public class PDFPage extends Content {
 	 * by transforming the original position by {@code transform}.
 	 */
 	@Override
-	public Content transform(AffineTransform transform) {
+	public PDFPage transform(AffineTransform transform) {
 		AffineTransform newPosition = new AffineTransform(position);
 		newPosition.preConcatenate(transform);
 		return new PDFPage(doc, page, newPosition);
