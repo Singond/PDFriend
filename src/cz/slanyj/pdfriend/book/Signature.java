@@ -1,15 +1,11 @@
 package cz.slanyj.pdfriend.book;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.ToIntFunction;
 
 import org.apache.commons.collections4.list.SetUniqueList;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-
 import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.document.VirtualDocument;

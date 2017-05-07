@@ -14,7 +14,6 @@ import cz.slanyj.pdfriend.document.RenderingException;
 import cz.slanyj.pdfriend.document.VirtualDocument;
 import cz.slanyj.pdfriend.document.VirtualPage;
 import cz.slanyj.pdfriend.format.process.PDFRenderer;
-import cz.slanyj.pdfriend.impose.formats.PDFSourcePage;
 
 /**
  * The whole text block of a document, made by arranging several Signatures

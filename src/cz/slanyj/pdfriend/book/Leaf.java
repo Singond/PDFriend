@@ -1,23 +1,13 @@
 package cz.slanyj.pdfriend.book;
 
 import java.awt.geom.AffineTransform;
-import java.io.IOException;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.apache.pdfbox.multipdf.LayerUtility;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
-import org.apache.pdfbox.util.Matrix;
-
-import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.document.VirtualDocument;
 import cz.slanyj.pdfriend.document.VirtualPage;
-import cz.slanyj.pdfriend.impose.formats.PDFSourcePage;
 
 /**
  * A single Leaf of a bound book. Each of its two sides is represented

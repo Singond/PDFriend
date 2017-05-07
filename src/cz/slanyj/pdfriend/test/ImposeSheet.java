@@ -7,8 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-
 import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf;
 import cz.slanyj.pdfriend.book.Leaf.Orientation;
@@ -17,8 +15,6 @@ import cz.slanyj.pdfriend.document.VirtualDocument;
 import cz.slanyj.pdfriend.document.VirtualPage;
 import cz.slanyj.pdfriend.format.content.PDFPage;
 import cz.slanyj.pdfriend.format.process.PDFRenderer;
-import cz.slanyj.pdfriend.impose.formats.PDFSourceDocument;
-import cz.slanyj.pdfriend.impose.formats.PDFSourcePage;
 import cz.slanyj.pdfriend.book.Sheet;
 
 /**

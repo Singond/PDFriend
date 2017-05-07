@@ -3,13 +3,10 @@ package cz.slanyj.pdfriend.test;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf;
 import cz.slanyj.pdfriend.book.Leaf.Orientation;
-import cz.slanyj.pdfriend.impose.formats.PDFSourceDocument;
 import cz.slanyj.pdfriend.book.Sheet;
 import cz.slanyj.pdfriend.book.Signature;
 import cz.slanyj.pdfriend.book.Volume;
