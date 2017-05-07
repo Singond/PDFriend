@@ -2,6 +2,8 @@ package cz.slanyj.pdfriend.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -10,6 +12,11 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf;
 import cz.slanyj.pdfriend.book.Leaf.Orientation;
+import cz.slanyj.pdfriend.document.RenderingException;
+import cz.slanyj.pdfriend.document.VirtualDocument;
+import cz.slanyj.pdfriend.document.VirtualPage;
+import cz.slanyj.pdfriend.format.content.PDFPage;
+import cz.slanyj.pdfriend.format.output.PDFRenderer;
 import cz.slanyj.pdfriend.impose.formats.PDFSourceDocument;
 import cz.slanyj.pdfriend.impose.formats.PDFSourcePage;
 import cz.slanyj.pdfriend.book.Sheet;
@@ -40,23 +47,34 @@ public class ImposeSheet {
 		try {
 			// Get content
 			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
-			PDFSourceDocument sourceDoc = new PDFSourceDocument(source);
+			VirtualPage one = new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 0)));
+			VirtualPage two = new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 1)));
+			VirtualPage three = new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 2)));
+			VirtualPage four = new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 3)));
 			leaf.numberPagesFrom(1);
 			leaf2.numberPagesFrom(3);
-			List<PDFSourcePage> sps = sourceDoc.getAllPages();
-			leaf.setContent(sps);
-			leaf2.setContent(sps);
+			List<VirtualPage> pgs = new ArrayList<>();
+			pgs.add(one);
+			pgs.add(two);
+			pgs.add(three);
+			pgs.add(four);
+			leaf.setSourceFrom(pgs);
+			leaf2.setSourceFrom(pgs);
 			
-			PDDocument doc = new PDDocument();
-			PDPage sheetFront = sheet.renderFront(doc);
-			PDPage sheetBack = sheet.renderBack(doc);
+			// Build document model
+			VirtualDocument.Builder doc = new VirtualDocument.Builder();
+			VirtualPage sheetFront = sheet.renderFront();
+			VirtualPage sheetBack = sheet.renderBack();
 			doc.addPage(sheetFront);
 			doc.addPage(sheetBack);
 			
-			// Save
-			doc.save(new File("test/imposed-sheet.pdf"));
-			doc.close();
+			// Render and save
+			PDDocument output = new PDFRenderer().render(doc.build());
+			output.save(new File("test/imposed-sheet.pdf"));
+			output.close();
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (RenderingException e) {
 			e.printStackTrace();
 		}
 	}
