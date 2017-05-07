@@ -42,7 +42,7 @@ public class Volume {
 	}
 	
 	/**
-	 * Sets the source document to provide contents for all Leaves in
+	 * Uses a list of VirtualPages to provide contents for all Leaves in
 	 * this Volume.
 	 */
 	public void setSource(List<VirtualPage> pagesList) {
@@ -52,6 +52,20 @@ public class Volume {
 			.forEach(l -> {
 				l.getFrontPage().setSourceFrom(pagesList);
 				l.getBackPage().setSourceFrom(pagesList);
+			});
+	}
+	
+	/**
+	 * Uses a VirtualDocument to provide contents for all Leaves in
+	 * this Volume.
+	 */
+	public void setSource(VirtualDocument document) {
+		signatures.stream()
+			.flatMap(sig -> sig.getSheets().stream())
+			.flatMap(sh -> sh.getLeaves().stream())
+			.forEach(l -> {
+				l.getFrontPage().setSourceFrom(document);
+				l.getBackPage().setSourceFrom(document);
 			});
 	}
 	
