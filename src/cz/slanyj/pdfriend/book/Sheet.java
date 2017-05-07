@@ -60,26 +60,6 @@ public class Sheet {
 	}
 	
 	/**
-	 * Returns the front side of this Sheet printed onto a new PDF page.
-	 * The page is not added to its parent document automatically.
-	 * @param doc The parent document of the future page.
-	 * @return A new PDPage object.
-	 * @throws IOException
-	 */
-//	public PDPage renderFront(PDDocument doc) throws IOException {
-//		Log.verbose(Bundle.console, "sheet_renderingFront", this);
-//		PDPage leaf = new PDPage();
-//		leaf.setMediaBox(new PDRectangle((float) width, (float) height));
-//		PDPageContentStream content = new PDPageContentStream(doc, leaf);
-//		LayerUtility lu = new LayerUtility(doc);
-//		for (Leaf l : leaves) {
-//			l.imposeFront(content, lu);
-//		}
-//		content.close();
-//		return leaf;
-//	}
-	
-	/**
 	 * Prints the front side of this Sheet onto a new virtual page.
 	 * The page is not added to any document automatically.
 	 * @return A new VirtualPage object with the front side of this Sheet.
@@ -99,29 +79,6 @@ public class Sheet {
 		}
 		return paper.build();
 	}
-	
-	/**
-	 * Returns the back side of this Sheet printed onto a new PDF page.
-	 * The page is not added to its parent document automatically.
-	 * @param doc The parent document of the future page.
-	 * @return A new PDPage object.
-	 * @throws IOException
-	 */
-//	public PDPage renderBack(PDDocument doc) throws IOException {
-//		Log.verbose(Bundle.console, "sheet_renderingBack", this);
-//		PDPage leaf = new PDPage();
-//		leaf.setMediaBox(new PDRectangle((float) width, (float) height));
-//		PDPageContentStream content = new PDPageContentStream(doc, leaf);
-//		LayerUtility lu = new LayerUtility(doc);
-//		// Mirror the whole layout to produce the back side
-//		content.transform(Matrix.getTranslateInstance((float) width, 0));
-//		content.transform(Matrix.getScaleInstance(-1, 1));
-//		for (Leaf l : leaves) {
-//			l.imposeBack(content, lu);
-//		}
-//		content.close();
-//		return leaf;
-//	}
 	
 	/**
 	 * Prints the back side of this Sheet onto a new virtual page.
