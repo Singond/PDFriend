@@ -18,7 +18,7 @@ import cz.slanyj.pdfriend.document.RenderingException;
 import cz.slanyj.pdfriend.document.VirtualDocument;
 import cz.slanyj.pdfriend.document.VirtualPage;
 import cz.slanyj.pdfriend.format.content.PDFPage;
-import cz.slanyj.pdfriend.format.output.PDFRenderer;
+import cz.slanyj.pdfriend.format.process.PDFRenderer;
 import cz.slanyj.pdfriend.impose.formats.PDFSourcePage;
 
 /**
