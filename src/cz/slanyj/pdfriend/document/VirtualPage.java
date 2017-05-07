@@ -28,10 +28,10 @@ public class VirtualPage {
 
 
 	/**
-	 * Creates a new instance of TargetSheet with the given dimensions
+	 * Creates a new instance of VirtualSheet with the given dimensions
 	 * and content.
 	 * The content (given as a collection of pages), is defensively copied
-	 * into an internal collection. 
+	 * into an internal collection.
 	 * @param width The width of the output sheet.
 	 * @param height The height of the output sheet.
 	 * @param pages The content of the sheet, ie. a collection of pages
@@ -41,6 +41,22 @@ public class VirtualPage {
 		this.width = width;
 		this.height = height;
 		this.content = new HashSet<>(content);
+	}
+	
+	/**
+	 * Creates a new instance of VirtualSheet with the given dimensions
+	 * and content.
+	 * The content (given as a collection of pages), is defensively copied
+	 * into an internal collection.
+	 * @param width The width of the output sheet.
+	 * @param height The height of the output sheet.
+	 * @param pages The only content of the sheet, ie. a single piece of content.
+	 */
+	public VirtualPage(double width, double height, Content content) {
+		this.width = width;
+		this.height = height;
+		this.content = new HashSet<>();
+		this.content.add(content);
 	}
 
 
