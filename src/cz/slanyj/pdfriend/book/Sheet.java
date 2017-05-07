@@ -1,20 +1,14 @@
 package cz.slanyj.pdfriend.book;
 
-import java.io.IOException;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.collections4.list.SetUniqueList;
-import org.apache.pdfbox.multipdf.LayerUtility;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.util.Matrix;
-
 import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
+import cz.slanyj.pdfriend.document.VirtualPage;
 
 /**
  * A single sheet of paper upon which Pages from multiple Leaves are laid out.
@@ -66,45 +60,48 @@ public class Sheet {
 	}
 	
 	/**
-	 * Returns the front side of this Sheet printed onto a new PDF page.
-	 * The page is not added to its parent document automatically.
-	 * @param doc The parent document of the future page.
-	 * @return A new PDPage object.
-	 * @throws IOException
+	 * Prints the front side of this Sheet onto a new virtual page.
+	 * The page is not added to any document automatically.
+	 * @return A new VirtualPage object with the front side of this Sheet.
 	 */
-	public PDPage renderFront(PDDocument doc) throws IOException {
+	public VirtualPage renderFront() {
 		Log.verbose(Bundle.console, "sheet_renderingFront", this);
-		PDPage leaf = new PDPage();
-		leaf.setMediaBox(new PDRectangle((float) width, (float) height));
-		PDPageContentStream content = new PDPageContentStream(doc, leaf);
-		LayerUtility lu = new LayerUtility(doc);
-		for (Leaf l : leaves) {
-			l.imposeFront(content, lu);
+		/** Front side of this sheet compiled into page */
+		VirtualPage.Builder paper = new VirtualPage.Builder();
+		paper.setWidth(width);
+		paper.setHeight(height);
+		for (Leaf leaf : leaves) {
+			/** The page to be imposed */
+			Page page = leaf.getFrontPage();
+			page.getContent().stream()
+			                 .peek(cm -> cm.getTransform().preConcatenate(leaf.getFrontPosition()))
+			                 .forEach(cm -> paper.addContent(cm.transformed()));
 		}
-		content.close();
-		return leaf;
+		return paper.build();
 	}
+	
 	/**
-	 * Returns the back side of this Sheet printed onto a new PDF page.
-	 * The page is not added to its parent document automatically.
-	 * @param doc The parent document of the future page.
-	 * @return A new PDPage object.
-	 * @throws IOException
+	 * Prints the back side of this Sheet onto a new virtual page.
+	 * The page is not added to any document automatically.
+	 * @return A new VirtualPage object with the front side of this Sheet.
 	 */
-	public PDPage renderBack(PDDocument doc) throws IOException {
-		Log.verbose(Bundle.console, "sheet_renderingBack", this);
-		PDPage leaf = new PDPage();
-		leaf.setMediaBox(new PDRectangle((float) width, (float) height));
-		PDPageContentStream content = new PDPageContentStream(doc, leaf);
-		LayerUtility lu = new LayerUtility(doc);
-		// Mirror the whole layout to produce the back side
-		content.transform(Matrix.getTranslateInstance((float) width, 0));
-		content.transform(Matrix.getScaleInstance(-1, 1));
-		for (Leaf l : leaves) {
-			l.imposeBack(content, lu);
+	public VirtualPage renderBack() {
+		Log.verbose(Bundle.console, "sheet_renderingFront", this);
+		/** Front side of this sheet compiled into page */
+		VirtualPage.Builder paper = new VirtualPage.Builder();
+		paper.setWidth(width);
+		paper.setHeight(height);
+		final AffineTransform backside = AffineTransform.getTranslateInstance(width, 0);
+		backside.concatenate(AffineTransform.getScaleInstance(-1,  1));
+		for (Leaf leaf : leaves) {
+			/** The page to be imposed */
+			Page page = leaf.getBackPage();
+			page.getContent().stream()
+			                 .peek(cm -> cm.getTransform().preConcatenate(leaf.getBackPosition()))
+			                 .peek(cm -> cm.getTransform().preConcatenate(backside))
+			                 .forEach(cm -> paper.addContent(cm.transformed()));
 		}
-		content.close();
-		return leaf;
+		return paper.build();
 	}
 	
 	@Override

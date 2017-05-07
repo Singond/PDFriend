@@ -7,7 +7,6 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 
 import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
-import cz.slanyj.pdfriend.SourceDocument;
 import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf;
 import cz.slanyj.pdfriend.book.Leaf.Orientation;
@@ -15,6 +14,11 @@ import cz.slanyj.pdfriend.book.Order;
 import cz.slanyj.pdfriend.book.Sheet;
 import cz.slanyj.pdfriend.book.Signature;
 import cz.slanyj.pdfriend.book.Volume;
+import cz.slanyj.pdfriend.document.ImportException;
+import cz.slanyj.pdfriend.document.RenderingException;
+import cz.slanyj.pdfriend.document.VirtualDocument;
+import cz.slanyj.pdfriend.format.process.PDFImporter;
+import cz.slanyj.pdfriend.format.process.PDFRenderer;
 
 /**
  * A sample signature of two sheets.
@@ -66,18 +70,23 @@ public class ImposeSignature {
 		
 		try {
 			// Get content
-			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
-			SourceDocument sourceDoc = new SourceDocument(source);
-			volume.setSource(sourceDoc.getAllPages());
+			File src = new File("test/lorem-letter.pdf");
+			VirtualDocument doc = new PDFImporter(src).importDocument();
+			volume.setSource(doc);
 			
-			PDDocument doc = new PDDocument();
-			signature.renderAllSheets(doc);
+			VirtualDocument.Builder outDoc = new VirtualDocument.Builder();
+			signature.renderAllSheets(outDoc);
 			
-			// Save
-			doc.save(new File("test/imposed-signature.pdf"));
-			doc.close();
+			// Render and save
+			PDDocument output = new PDFRenderer().render(outDoc.build());
+			output.save(new File("test/imposed-signature.pdf"));
+			output.close();
 			Log.info(Bundle.console, "printDone", "imposed-signature.pdf");
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ImportException e) {
+			e.printStackTrace();
+		} catch (RenderingException e) {
 			e.printStackTrace();
 		}
 	}

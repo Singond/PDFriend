@@ -1,25 +1,18 @@
 package cz.slanyj.pdfriend.book;
 
 import java.awt.geom.AffineTransform;
-import java.io.IOException;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.apache.pdfbox.multipdf.LayerUtility;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
-import org.apache.pdfbox.util.Matrix;
-
-import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
-import cz.slanyj.pdfriend.SourcePage;
 import cz.slanyj.pdfriend.book.FlipDirection;
+import cz.slanyj.pdfriend.document.VirtualDocument;
+import cz.slanyj.pdfriend.document.VirtualPage;
 
 /**
- * A single Leaf of the finished document. Consists of two Pages,
- * ie. recto (the odd-numbered one) and verso (the even-numbered one).
+ * A single Leaf of a bound book. Each of its two sides is represented
+ * by a Page object or its subclass. These two sides are called
+ * recto (the odd-numbered one) and verso (the even-numbered one).
  * The Pages are considered to be of the same dimensions as the Leaf.
  * 
  * @author Singon
@@ -119,6 +112,9 @@ public class Leaf {
 	}
 
 	public void setOrientation(Orientation orientation) {
+		if (orientation == null) {
+			throw new IllegalArgumentException("Leaf orientation must not be null");
+		}
 		this.orientation = orientation;
 	}
 	
@@ -297,115 +293,69 @@ public class Leaf {
 	}
 	
 	/**
-	 * Sets the source pages for the recto and verso of this Leaf.
-	 * @param recto
-	 * @param verso
-	 */
-	public void setContent(SourcePage recto, SourcePage verso) {
-		this.recto.setSource(recto);
-		this.verso.setSource(verso);
-	}
-	/**
-	 * Sets the source pages for the recto and verso of this Leaf.
-	 * This variant selects the source page from the given list using
+	 * Sets the page of a virtual source document as the content ("source")
+	 * of the Pages of this Leaf.
+	 * This variant selects the source page from the given page list using
 	 * this Page's page number, assuming the pages in the list are sorted
-	 * in ascending order starting with page number one.
-	 * This assumes the page numbers have already been set for this Leaf.
+	 * in ascending order with page of list index 0 having page number 1.
+	 * This assumes the page number has already been set for both recto
+	 * and verso of this Leaf.
 	 * @param pagesList A list of source pages sorted in ascending order
 	 * starting with page number one. Note that while page numbers are
 	 * indexed from one, the indices in the list are standard zero-based,
 	 * ie. page 1 is placed at index 0 in the list.
+	 * @throws IllegalStateException if the page number has not been set yet
+	 * for any of the Pages of this Leaf.
 	 */
-	public void setContent(List<SourcePage> pagesList) {
-		this.recto.setSource(pagesList);
-		this.verso.setSource(pagesList);
+	public void setSourceFrom(List<VirtualPage> pagesList) {
+		this.recto.setSourceFrom(pagesList);
+		this.verso.setSourceFrom(pagesList);
 	}
-
 	/**
-	 * Places the form XObject representing the upper page of this Leaf
-	 * into the given content stream.
-	 * Which page is upper and bottom is determined from the orientation
-	 * property. If it is RECTO_UP, the recto is placed, verso otherwise.
-	 * @param sheetContent The content stream of the target Sheet side.
-	 * @param layerUtility The layer utility of the target Sheet.
-	 * @throws IOException
+	 * Sets the page of a virtual source document as the content ("source")
+	 * of this Page.
+	 * This variant selects the source page from the given document using
+	 * this Page's page number, assuming the pages in the document are
+	 * numbered from one.
+	 * This assumes the page number has already been set for both recto
+	 * and verso of this Leaf.
+	 * @param document A virtual source document with page number from one.
+	 * Note that while pages in a VirtualDocument are indexed from one,
+	 * the indices in the list are standard zero-based, ie. page 1 is placed
+	 * at index 0 in the list.
+	 * @throws IllegalStateException if the page number has not been set yet
+	 * for any of the Pages of this Leaf.
 	 */
-	public void imposeFront(PDPageContentStream sheetContent,
-		                    LayerUtility layerUtility) throws IOException {
+	public void setSourceFrom(VirtualDocument document) {
+		this.recto.setSourceFrom(document);
+		this.verso.setSourceFrom(document);
+	}
+	
+	/**
+	 * Returns the page which lies on the front side of the parent Sheet.
+	 * @return The recto if the orientation is RECTO_UP, verso otherwise.
+	 */
+	public Page getFrontPage() {
 		if (orientation == Orientation.RECTO_UP) {
-			imposeIfNotEmpty(sheetContent, layerUtility, recto, false);
+			return recto;
 		} else if (orientation == Orientation.VERSO_UP) {
-			imposeIfNotEmpty(sheetContent, layerUtility, verso, false);
+			return verso;
 		} else {
-			throw new IllegalStateException("Leaf orientation has not been set correctly.");
+			throw new AssertionError("Should never reach this point. Bad value of orientation: " + orientation);
 		}
 	}
 	
 	/**
-	 * Places the form XObject representing the bottom page of this Leaf
-	 * into the given content stream.
-	 * Which page is upper and bottom is determined from the orientation
-	 * property. If it is RECTO_UP, the verso is placed, recto otherwise.
-	 * This method flips the page vertically before moving it and
-	 * the calling Sheet is expected to mirror the final placement again.
-	 * @param sheetContent The content stream of the target Sheet side.
-	 * @param layerUtility The layer utility of the target Sheet.
-	 * @throws IOException
+	 * Returns the page which lies on the back side of the parent Sheet.
+	 * @return The verso if the orientation is RECTO_UP, recto otherwise.
 	 */
-	public void imposeBack(PDPageContentStream sheetContent,
-		                    LayerUtility layerUtility) throws IOException {
+	public Page getBackPage() {
 		if (orientation == Orientation.RECTO_UP) {
-			imposeIfNotEmpty(sheetContent, layerUtility, verso, true);
+			return verso;
 		} else if (orientation == Orientation.VERSO_UP) {
-			imposeIfNotEmpty(sheetContent, layerUtility, recto, true);
+			return recto;
 		} else {
-			throw new IllegalStateException("Leaf orientation has not been set correctly.");
-		}
-	}
-		
-	/**
-	 * Places the form XObject representing the given page into the given
-	 * content stream.
-	 * @param sheetContent The content stream of the target Sheet side.
-	 * @param layerUtility The layer utility of the target Sheet.
-	 * @param pg Either the recto or verso of this leaf.
-	 * @param mirror Mirror the page before transforming. Used for back pages.
-	 * @throws IOException
-	 */
-	private void impose(PDPageContentStream sheetContent,
-	                    LayerUtility layerUtility,
-	                    Page pg,
-	                    boolean isBack) throws IOException {
-		Log.verbose(Bundle.console, "leaf_imposingPage", pg);
-		PDDocument parent = pg.getSource().getDoc();
-		PDPage page = pg.getSource().getPage();
-		PDFormXObject form = layerUtility.importPageAsForm(parent, page);
-		
-		AffineTransform trMatrix = !isBack ? getFrontPosition() : getBackPosition();
-		
-		sheetContent.saveGraphicsState();
-		sheetContent.transform(new Matrix(trMatrix));
-		sheetContent.drawForm(form);
-		sheetContent.restoreGraphicsState();
-	}
-	/**
-	 * Places the form XObject representing the given page into the given
-	 * content stream.
-	 * @param sheetContent The content stream of the target Sheet side.
-	 * @param layerUtility The layer utility of the target Sheet.
-	 * @param pg Either the recto or verso of this leaf.
-	 * @param mirror Mirror the page before transforming. Used for back pages.
-	 * @throws IOException
-	 */
-	private void imposeIfNotEmpty(PDPageContentStream sheetContent,
-	                              LayerUtility layerUtility,
-	                              Page pg,
-	                              boolean isBack) throws IOException {
-		try {
-			impose(sheetContent, layerUtility, pg, isBack);
-		} catch (NullPointerException e) {
-			int page = pg.getNumber();
-			Log.info("Page %d is empty, skipping", page);
+			throw new AssertionError("Should never reach this point. Bad value of orientation: " + orientation);
 		}
 	}
 	
@@ -440,16 +390,27 @@ public class Leaf {
 	 */
 	public static enum Orientation {
 		/** Recto is on the front surface, verso on back */
-		RECTO_UP {
+		RECTO_UP ("recto-up") {
 			@Override public Orientation inverse() {return VERSO_UP;}
 		},
 		/** Verso is on the front surface, recto on back */
-		VERSO_UP {
+		VERSO_UP ("verso-up") {
 			@Override public Orientation inverse() {return RECTO_UP;}
 		};
 		
+		private String name;
+		
+		private Orientation(String name) {
+			this.name = name;
+		}
+		
 		/** Returns the inverse Orientation */
 		public abstract Orientation inverse();
+		
+		@Override
+		public String toString() {
+			return name;
+		}
 	}
 	
 	/**

@@ -5,18 +5,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-
 import cz.slanyj.pdfriend.Log;
-import cz.slanyj.pdfriend.SourceDocument;
 import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf;
-import cz.slanyj.pdfriend.book.Order;
 import cz.slanyj.pdfriend.book.Leaf.Orientation;
 import cz.slanyj.pdfriend.book.Signature;
 import cz.slanyj.pdfriend.book.Stack;
 import cz.slanyj.pdfriend.book.Stack.Flip;
 import cz.slanyj.pdfriend.book.Volume;
+import cz.slanyj.pdfriend.document.ImportException;
+import cz.slanyj.pdfriend.document.RenderingException;
+import cz.slanyj.pdfriend.document.VirtualDocument;
+import cz.slanyj.pdfriend.format.process.PDFImporter;
 import cz.slanyj.pdfriend.geometry.Line;
 import cz.slanyj.pdfriend.geometry.Point;
 
@@ -49,8 +49,6 @@ public class PrintStack {
 		//mm.add(new Stack.Gather(2));
 		stack.performManipulations(mm);
 		
-		Stack copy = stack.copy();
-		
 		Signature signature = stack.buildSignature(template);
 		signature.numberPagesFrom(1);
 		
@@ -59,13 +57,17 @@ public class PrintStack {
 		
 		try {
 			// Get content
-			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
-			SourceDocument sourceDoc = new SourceDocument(source);
-			volume.setSource(sourceDoc.getAllPages());
+			File srcFile = new File("test/lorem-letter.pdf");
+			VirtualDocument source = new PDFImporter(srcFile).importDocument();
+			volume.setSource(source);
 				
 			volume.renderAndSaveDocument(new File("test/printed-stack.pdf"));
 			Log.info("Finished printing stack");
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ImportException e) {
+			e.printStackTrace();
+		} catch (RenderingException e) {
 			e.printStackTrace();
 		}
 	}
