@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
 
 /**
@@ -26,10 +28,10 @@ public class VirtualPage {
 
 
 	/**
-	 * Creates a new instance of TargetSheet with the given dimensions
+	 * Creates a new instance of VirtualSheet with the given dimensions
 	 * and content.
 	 * The content (given as a collection of pages), is defensively copied
-	 * into an internal collection. 
+	 * into an internal collection.
 	 * @param width The width of the output sheet.
 	 * @param height The height of the output sheet.
 	 * @param pages The content of the sheet, ie. a collection of pages
@@ -39,6 +41,22 @@ public class VirtualPage {
 		this.width = width;
 		this.height = height;
 		this.content = new HashSet<>(content);
+	}
+	
+	/**
+	 * Creates a new instance of VirtualSheet with the given dimensions
+	 * and content.
+	 * The content (given as a collection of pages), is defensively copied
+	 * into an internal collection.
+	 * @param width The width of the output sheet.
+	 * @param height The height of the output sheet.
+	 * @param pages The only content of the sheet, ie. a single piece of content.
+	 */
+	public VirtualPage(double width, double height, Content content) {
+		this.width = width;
+		this.height = height;
+		this.content = new HashSet<>();
+		this.content.add(content);
 	}
 
 
@@ -51,11 +69,23 @@ public class VirtualPage {
 	}
 
 	/**
-	 * Returns the content of the sheet as a collection of all imposed pages.
-	 * @return A shallow copy of the internal collection of target pages.
+	 * Returns the content of the sheet as a collection of all content elements.
+	 * @return A shallow copy of the internal collection of content elements.
 	 */
 	public Collection<Content> getContent() {
 		return new HashSet<>(content);
+	}
+	
+	/**
+	 * Returns the content of the sheet as a collection of all content
+	 * elements, wrapped in a builder object to facilitate transforming.
+	 * @return A shallow copy of the internal collection of content
+	 * elements, each converted to a new Content.Movable.
+	 */
+	public Collection<Content.Movable> getMovableContent() {
+		return content.stream()
+		              .map(c -> c.new Movable())
+		              .collect(Collectors.toSet());
 	}
 	
 	
@@ -110,10 +140,24 @@ public class VirtualPage {
 			return content;
 		}
 
+		/**
+		 * Overwrites the content of this to-be page with the given list
+		 * of content elements.
+		 * <p><b>Warning:</b> This removes all previously set content
+		 * in this page!</p>
+		 * @param content
+		 */
 		public void setContent(List<Content> content) {
+			if (!this.content.isEmpty()) {
+				Log.warn(Bundle.console, "vpage_overwritingContent", Builder.this);
+			}
 			this.content = content;
 		}
 
+		/**
+		 * Adds a single piece of content.
+		 * @param content
+		 */
 		public void addContent(Content content) {
 			this.content.add(content);
 		}

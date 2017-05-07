@@ -1,4 +1,4 @@
-package cz.slanyj.pdfriend.format.output;
+package cz.slanyj.pdfriend.format.process;
 
 import java.awt.geom.AffineTransform;
 import java.io.ByteArrayOutputStream;

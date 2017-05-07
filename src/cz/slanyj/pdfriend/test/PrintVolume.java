@@ -3,16 +3,17 @@ package cz.slanyj.pdfriend.test;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf;
 import cz.slanyj.pdfriend.book.Leaf.Orientation;
-import cz.slanyj.pdfriend.impose.formats.PDFSourceDocument;
 import cz.slanyj.pdfriend.book.Sheet;
 import cz.slanyj.pdfriend.book.Signature;
 import cz.slanyj.pdfriend.book.Volume;
+import cz.slanyj.pdfriend.document.ImportException;
+import cz.slanyj.pdfriend.document.RenderingException;
+import cz.slanyj.pdfriend.document.VirtualDocument;
+import cz.slanyj.pdfriend.format.process.PDFImporter;
 
 /**
  * A sample volume of two signatures.
@@ -64,13 +65,15 @@ public class PrintVolume {
 		
 		try {
 			// Get content
-			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
-			PDFSourceDocument sourceDoc = new PDFSourceDocument(source);
-			volume.setSource(sourceDoc.getAllPages());
-			
+			VirtualDocument source = new PDFImporter(new File("test/lorem-letter.pdf")).importDocument();
+			volume.setSource(source);
 			volume.renderAndSaveDocument(new File("test/printed-volume.pdf"));
 			Log.info("Finished writing document");
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ImportException e) {
+			e.printStackTrace();
+		} catch (RenderingException e) {
 			e.printStackTrace();
 		}
 	}
