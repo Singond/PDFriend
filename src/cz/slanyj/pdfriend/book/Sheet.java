@@ -148,8 +148,8 @@ public class Sheet {
 			/** The page to be imposed */
 			Page page = leaf.getBackPage();
 			page.getContent().stream()
-			                 .peek(cm -> cm.getTransform().preConcatenate(backside))
 			                 .peek(cm -> cm.getTransform().preConcatenate(leaf.getBackPosition()))
+			                 .peek(cm -> cm.getTransform().preConcatenate(backside))
 			                 .forEach(cm -> paper.addContent(cm.transformed()));
 		}
 		return paper.build();
