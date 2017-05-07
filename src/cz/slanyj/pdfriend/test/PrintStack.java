@@ -16,6 +16,10 @@ import cz.slanyj.pdfriend.book.Signature;
 import cz.slanyj.pdfriend.book.Stack;
 import cz.slanyj.pdfriend.book.Stack.Flip;
 import cz.slanyj.pdfriend.book.Volume;
+import cz.slanyj.pdfriend.document.ImportException;
+import cz.slanyj.pdfriend.document.RenderingException;
+import cz.slanyj.pdfriend.document.VirtualDocument;
+import cz.slanyj.pdfriend.format.process.PDFImporter;
 import cz.slanyj.pdfriend.geometry.Line;
 import cz.slanyj.pdfriend.geometry.Point;
 import cz.slanyj.pdfriend.impose.formats.PDFSourceDocument;
@@ -59,13 +63,17 @@ public class PrintStack {
 		
 		try {
 			// Get content
-			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
-			PDFSourceDocument sourceDoc = new PDFSourceDocument(source);
-			volume.setSource(sourceDoc.getAllPages());
+			File srcFile = new File("test/lorem-letter.pdf");
+			VirtualDocument source = new PDFImporter(srcFile).importDocument();
+			volume.setSource(source);
 				
 			volume.renderAndSaveDocument(new File("test/printed-stack.pdf"));
 			Log.info("Finished printing stack");
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ImportException e) {
+			e.printStackTrace();
+		} catch (RenderingException e) {
 			e.printStackTrace();
 		}
 	}
