@@ -95,13 +95,14 @@ public class Leaf {
 	private static ResourceBundle bundle = ResourceBundle.getBundle("Console");
 	
 	/**
-	 * Constructs a new Leaf of the given dimensions.
+	 * Constructs a new Leaf of the given dimensions with one empty
+	 * SinglePage on each side.
 	 * @param width
 	 * @param height
 	 */
 	public Leaf(double width, double height) {
-		this.recto = new Page(width, height);
-		this.verso = new Page(width, height);
+		this.recto = new SinglePage(width, height);
+		this.verso = new SinglePage(width, height);
 		this.width = width;
 		this.height = height;
 	}
