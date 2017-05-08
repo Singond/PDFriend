@@ -82,7 +82,9 @@ public class Volume {
 	
 	/**
 	 * Saves the given document as a new file.
+	 * @deprecated Output to VirtualDocument and render that.
 	 */
+	@Deprecated
 	private void saveDocument(PDDocument doc, File target) throws IOException {
 		Log.info(Bundle.console, "volume_saving", this, target.getAbsoluteFile());
 		doc.save(target);
@@ -91,9 +93,11 @@ public class Volume {
 	
 	/**
 	 * Renders this Volume and saves it as a new PDF file.
-	 * @throws IOException 
-	 * @throws RenderingException 
+	 * @throws IOException
+	 * @throws RenderingException
+	 * @deprecated Output to VirtualDocument and render that.
 	 */
+	@Deprecated
 	public void renderAndSaveDocument(File target) throws RenderingException, IOException {
 		VirtualDocument thisDoc = renderDocument();
 		PDDocument doc = new PDFRenderer().render(thisDoc);
