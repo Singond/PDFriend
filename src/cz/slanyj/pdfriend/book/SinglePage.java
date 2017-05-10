@@ -48,9 +48,9 @@ public class SinglePage extends Page {
 	 * ie. page 1 is placed at index 0 in the list.
 	 * @throws IllegalStateException if the page number has not been set yet.
 	 */
-	public void setSourceFrom(List<VirtualPage> pagesList) {
-		this.source = pagesList.get(getNumber()-1);
-	}
+//	public void setSourceFrom(List<VirtualPage> pagesList) {
+//		this.source = pagesList.get(getNumber()-1);
+//	}
 	/**
 	 * Sets the page of a virtual source document as the content ("source")
 	 * of this Page.
@@ -64,9 +64,9 @@ public class SinglePage extends Page {
 	 * at index 0 in the list.
 	 * @throws IllegalStateException if the page number has not been set yet.
 	 */
-	public void setSourceFrom(VirtualDocument document) {
-		this.source = document.getPage(getNumber());
-	}
+//	public void setSourceFrom(VirtualDocument document) {
+//		this.source = document.getPage(getNumber());
+//	}
 	
 	/**
 	 * Returns the content of this page collected from its VirtualPage(s)

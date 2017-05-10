@@ -308,10 +308,10 @@ public class Leaf {
 	 * @throws IllegalStateException if the page number has not been set yet
 	 * for any of the Pages of this Leaf.
 	 */
-	public void setSourceFrom(List<VirtualPage> pagesList) {
-		this.recto.setSourceFrom(pagesList);
-		this.verso.setSourceFrom(pagesList);
-	}
+//	public void setSourceFrom(List<VirtualPage> pagesList) {
+//		this.recto.setSourceFrom(pagesList);
+//		this.verso.setSourceFrom(pagesList);
+//	}
 	/**
 	 * Sets the page of a virtual source document as the content ("source")
 	 * of this Page.
@@ -327,10 +327,10 @@ public class Leaf {
 	 * @throws IllegalStateException if the page number has not been set yet
 	 * for any of the Pages of this Leaf.
 	 */
-	public void setSourceFrom(VirtualDocument document) {
-		this.recto.setSourceFrom(document);
-		this.verso.setSourceFrom(document);
-	}
+//	public void setSourceFrom(VirtualDocument document) {
+//		this.recto.setSourceFrom(document);
+//		this.verso.setSourceFrom(document);
+//	}
 	
 	/**
 	 * Returns the page which lies on the front side of the parent Sheet.

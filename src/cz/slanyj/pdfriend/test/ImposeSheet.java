@@ -16,6 +16,7 @@ import cz.slanyj.pdfriend.document.VirtualPage;
 import cz.slanyj.pdfriend.format.content.PDFPage;
 import cz.slanyj.pdfriend.format.process.PDFRenderer;
 import cz.slanyj.pdfriend.book.Sheet;
+import cz.slanyj.pdfriend.book.SinglePage;
 
 /**
  * A sample sheet.
@@ -49,13 +50,16 @@ public class ImposeSheet {
 			VirtualPage four = new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 3)));
 			leaf.numberPagesFrom(1);
 			leaf2.numberPagesFrom(3);
-			List<VirtualPage> pgs = new ArrayList<>();
-			pgs.add(one);
-			pgs.add(two);
-			pgs.add(three);
-			pgs.add(four);
-			leaf.setSourceFrom(pgs);
-			leaf2.setSourceFrom(pgs);
+//			List<VirtualPage> pgs = new ArrayList<>();
+//			pgs.add(one);
+//			pgs.add(two);
+//			pgs.add(three);
+//			pgs.add(four);
+			((SinglePage) leaf.getFrontPage()).setSource(one);
+			((SinglePage) leaf.getBackPage()).setSource(two);
+			((SinglePage) leaf2.getFrontPage()).setSource(three);
+			((SinglePage) leaf2.getBackPage()).setSource(four);
+//			leaf2.setSourceFrom(pgs);
 			
 			// Build document model
 			VirtualDocument.Builder doc = new VirtualDocument.Builder();

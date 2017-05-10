@@ -13,6 +13,7 @@ import cz.slanyj.pdfriend.book.Leaf.Orientation;
 import cz.slanyj.pdfriend.book.Order;
 import cz.slanyj.pdfriend.book.Sheet;
 import cz.slanyj.pdfriend.book.Signature;
+import cz.slanyj.pdfriend.book.SinglePage;
 import cz.slanyj.pdfriend.book.Volume;
 import cz.slanyj.pdfriend.document.ImportException;
 import cz.slanyj.pdfriend.document.RenderingException;
@@ -72,7 +73,15 @@ public class ImposeSignature {
 			// Get content
 			File src = new File("test/lorem-letter.pdf");
 			VirtualDocument doc = new PDFImporter(src).importDocument();
-			volume.setSource(doc);
+			((SinglePage) leaf.getFrontPage()).setSource(doc.getPage(1));
+			((SinglePage) leaf.getBackPage()).setSource(doc.getPage(2));
+			((SinglePage) leaf2.getFrontPage()).setSource(doc.getPage(3));
+			((SinglePage) leaf2.getBackPage()).setSource(doc.getPage(4));
+			((SinglePage) leaf3.getFrontPage()).setSource(doc.getPage(5));
+			((SinglePage) leaf3.getBackPage()).setSource(doc.getPage(6));
+			((SinglePage) leaf4.getFrontPage()).setSource(doc.getPage(7));
+			((SinglePage) leaf4.getBackPage()).setSource(doc.getPage(8));
+//			volume.setSource(doc);
 			
 			VirtualDocument.Builder outDoc = new VirtualDocument.Builder();
 			signature.renderAllSheets(outDoc);

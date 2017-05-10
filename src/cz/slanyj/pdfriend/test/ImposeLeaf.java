@@ -8,6 +8,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.book.Leaf;
 import cz.slanyj.pdfriend.book.Leaf.Orientation;
+import cz.slanyj.pdfriend.book.SinglePage;
 import cz.slanyj.pdfriend.document.RenderingException;
 import cz.slanyj.pdfriend.document.VirtualDocument;
 import cz.slanyj.pdfriend.document.VirtualPage;
@@ -33,8 +34,8 @@ public class ImposeLeaf {
 			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
 			VirtualPage one = new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 0)));
 			VirtualPage two = new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 1)));
-			leaf.getFrontPage().setSource(one);
-			leaf.getBackPage().setSource(two);
+			((SinglePage) leaf.getFrontPage()).setSource(one);
+			((SinglePage) leaf.getBackPage()).setSource(two);
 			
 			// Impose
 			VirtualDocument.Builder doc = new VirtualDocument.Builder();

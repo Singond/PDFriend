@@ -44,29 +44,29 @@ public class Volume {
 	 * Uses a list of VirtualPages to provide contents for all Leaves in
 	 * this Volume.
 	 */
-	public void setSource(List<VirtualPage> pagesList) {
-		signatures.stream()
-			.flatMap(sig -> sig.getSheets().stream())
-			.flatMap(sh -> sh.getLeaves().stream())
-			.forEach(l -> {
-				l.getFrontPage().setSourceFrom(pagesList);
-				l.getBackPage().setSourceFrom(pagesList);
-			});
-	}
+//	public void setSource(List<VirtualPage> pagesList) {
+//		signatures.stream()
+//			.flatMap(sig -> sig.getSheets().stream())
+//			.flatMap(sh -> sh.getLeaves().stream())
+//			.forEach(l -> {
+//				l.getFrontPage().setSourceFrom(pagesList);
+//				l.getBackPage().setSourceFrom(pagesList);
+//			});
+//	}
 	
 	/**
 	 * Uses a VirtualDocument to provide contents for all Leaves in
 	 * this Volume.
 	 */
-	public void setSource(VirtualDocument document) {
-		signatures.stream()
-			.flatMap(sig -> sig.getSheets().stream())
-			.flatMap(sh -> sh.getLeaves().stream())
-			.forEach(l -> {
-				l.getFrontPage().setSourceFrom(document);
-				l.getBackPage().setSourceFrom(document);
-			});
-	}
+//	public void setSource(VirtualDocument document) {
+//		signatures.stream()
+//			.flatMap(sig -> sig.getSheets().stream())
+//			.flatMap(sh -> sh.getLeaves().stream())
+//			.forEach(l -> {
+//				l.getFrontPage().setSourceFrom(document);
+//				l.getBackPage().setSourceFrom(document);
+//			});
+//	}
 	
 	/**
 	 * Renders this Volume as a new PDDocument.
