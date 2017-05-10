@@ -5,10 +5,11 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
-import cz.slanyj.pdfriend.book.FlipDirection;
-import cz.slanyj.pdfriend.book.Leaf;
-import cz.slanyj.pdfriend.book.Leaf.Orientation;
-import cz.slanyj.pdfriend.book.SinglePage;
+
+import cz.slanyj.pdfriend.book.model.FlipDirection;
+import cz.slanyj.pdfriend.book.model.Leaf;
+import cz.slanyj.pdfriend.book.model.SinglePage;
+import cz.slanyj.pdfriend.book.model.Leaf.Orientation;
 import cz.slanyj.pdfriend.document.RenderingException;
 import cz.slanyj.pdfriend.document.VirtualDocument;
 import cz.slanyj.pdfriend.document.VirtualPage;

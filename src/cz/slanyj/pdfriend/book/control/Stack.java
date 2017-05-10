@@ -1,4 +1,4 @@
-package cz.slanyj.pdfriend.book;
+package cz.slanyj.pdfriend.book.control;
 
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
@@ -11,7 +11,10 @@ import java.util.Map;
 import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.geometry.Transformations;
-import cz.slanyj.pdfriend.book.Layer.Orientation;
+import cz.slanyj.pdfriend.book.control.Layer.Orientation;
+import cz.slanyj.pdfriend.book.model.Leaf;
+import cz.slanyj.pdfriend.book.model.Sheet;
+import cz.slanyj.pdfriend.book.model.Signature;
 import cz.slanyj.pdfriend.geometry.Line;
 import cz.slanyj.pdfriend.geometry.Point;
 
@@ -235,7 +238,7 @@ public class Stack {
 
 		/**
 		 * Performs the stacking
-		 * @see cz.slanyj.pdfriend.book.Stack.Join
+		 * @see cz.slanyj.pdfriend.book.control.Stack.Join
 		 */
 		@Override
 		public void manipulate(Stack stack) {

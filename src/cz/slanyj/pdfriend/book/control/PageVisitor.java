@@ -1,4 +1,6 @@
-package cz.slanyj.pdfriend.book;
+package cz.slanyj.pdfriend.book.control;
+
+import cz.slanyj.pdfriend.book.model.SinglePage;
 
 /**
  * A Visitor for Page objects.

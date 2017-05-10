@@ -1,6 +1,8 @@
-package cz.slanyj.pdfriend.book;
+package cz.slanyj.pdfriend.book.model;
 
 import java.util.Collection;
+
+import cz.slanyj.pdfriend.book.control.PageVisitor;
 import cz.slanyj.pdfriend.document.Content;
 
 /**

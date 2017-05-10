@@ -1,4 +1,4 @@
-package cz.slanyj.pdfriend.book;
+package cz.slanyj.pdfriend.book.model;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -8,6 +8,7 @@ import java.util.function.ToIntFunction;
 import org.apache.commons.collections4.list.SetUniqueList;
 import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
+import cz.slanyj.pdfriend.book.control.Order;
 import cz.slanyj.pdfriend.document.VirtualDocument;
 import cz.slanyj.pdfriend.document.VirtualPage;
 

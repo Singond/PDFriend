@@ -1,4 +1,4 @@
-package cz.slanyj.pdfriend.book;
+package cz.slanyj.pdfriend.book.model;
 
 import java.awt.geom.AffineTransform;
 

@@ -1,11 +1,10 @@
-package cz.slanyj.pdfriend.book;
+package cz.slanyj.pdfriend.book.model;
 
 import java.awt.geom.AffineTransform;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import cz.slanyj.pdfriend.Log;
-import cz.slanyj.pdfriend.book.FlipDirection;
 import cz.slanyj.pdfriend.document.VirtualDocument;
 import cz.slanyj.pdfriend.document.VirtualPage;
 

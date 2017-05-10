@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.IOException;
 
 import cz.slanyj.pdfriend.Log;
-import cz.slanyj.pdfriend.book.FlipDirection;
-import cz.slanyj.pdfriend.book.Leaf;
-import cz.slanyj.pdfriend.book.Leaf.Orientation;
-import cz.slanyj.pdfriend.book.Sheet;
-import cz.slanyj.pdfriend.book.Signature;
-import cz.slanyj.pdfriend.book.Volume;
+import cz.slanyj.pdfriend.book.model.FlipDirection;
+import cz.slanyj.pdfriend.book.model.Leaf;
+import cz.slanyj.pdfriend.book.model.Sheet;
+import cz.slanyj.pdfriend.book.model.Signature;
+import cz.slanyj.pdfriend.book.model.Volume;
+import cz.slanyj.pdfriend.book.model.Leaf.Orientation;
 import cz.slanyj.pdfriend.document.ImportException;
 import cz.slanyj.pdfriend.document.RenderingException;
 import cz.slanyj.pdfriend.document.VirtualDocument;
