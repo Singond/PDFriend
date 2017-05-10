@@ -58,7 +58,7 @@ public abstract class Page {
 	/**
 	 * Returns the content of this page collected from its VirtualPage(s)
 	 * as a collection of transformable pieces of content.
-	 * <p>This is the main interface for retrieveing this Page's content.
+	 * <p>This is the main interface for retrieving this Page's content.
 	 * It intentionally returns a collection of Content instead of
 	 * a VirtualPage, because the representation of content as VirtualPages
 	 * should remain an implementation detail. This is to enable subclasses
