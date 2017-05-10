@@ -84,6 +84,14 @@ public class SinglePage extends Page {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <R, P, E extends Throwable> R invite(PageVisitor<R, P, E> visitor, P param) throws E {
+		return visitor.visit(this, param);
+	}
+	
+	/**
 	 * Question mark in the output means that page number has not yet
 	 * been set for this Page.
 	 */

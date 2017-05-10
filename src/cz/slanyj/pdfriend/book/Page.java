@@ -68,6 +68,14 @@ public abstract class Page {
 	public abstract Collection<Content.Movable> getContent();
 	
 	/**
+	 * Invites a PageVisitor.
+	 * @param <R> Return type of the visitor.
+	 * @param <P> Parameter type for the vistor.
+	 * @param <E> Exception type thrown by the visitor.
+	 */
+	public abstract <R, P, E extends Throwable> R invite(PageVisitor<R, P, E> visitor, P param) throws E;
+	
+	/**
 	 * Question mark in the output means that page number has not yet
 	 * been set for this Page.
 	 */
