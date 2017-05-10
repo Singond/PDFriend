@@ -332,6 +332,20 @@ public class Leaf {
 //	}
 	
 	/**
+	 * Returns the recto of this Leaf.
+	 */
+	public Page getRecto() {
+		return recto;
+	}
+	
+	/**
+	 * Returns the verso of this Leaf.
+	 */
+	public Page getVerso() {
+		return verso;
+	}
+	
+	/**
 	 * Returns the page which lies on the front side of the parent Sheet.
 	 * @return The recto if the orientation is RECTO_UP, verso otherwise.
 	 */
