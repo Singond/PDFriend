@@ -18,4 +18,10 @@ public interface SourceProvider {
 	 * @param pages
 	 */
 	public void setSourceTo(List<Page> pages);
+	
+	/**
+	 * Set one or more VirtualPages as the source of the given Page. 
+	 * @param page
+	 */
+	public void setSourceTo(Page page);
 }

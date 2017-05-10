@@ -41,6 +41,11 @@ public class SequentialSourceProvider implements SourceProvider, PageVisitor<Voi
 	}
 	
 	@Override
+	public void setSourceTo(Page page) {
+		page.invite(this, null);
+	}
+	
+	@Override
 	public Void visit(SinglePage p, Void param) throws NoException {
 		p.setSource(sourcePages.poll());
 		return null;
