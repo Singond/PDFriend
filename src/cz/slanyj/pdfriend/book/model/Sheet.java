@@ -2,6 +2,7 @@ package cz.slanyj.pdfriend.book.model;
 
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -102,6 +103,39 @@ public class Sheet {
 			                 .forEach(cm -> paper.addContent(cm.transformed()));
 		}
 		return paper.build();
+	}
+	
+	public Iterator<Leaf> leafIterator() {
+		return leaves.iterator();
+	}
+	
+	public Iterator<Page> pageIterator() {
+		return new Iterator<Page>() {
+			/** The current Leaf object */
+			private Leaf currentLeaf;
+			/** Iterator for Leaves */
+			private final Iterator<Leaf> leafIterator = leafIterator();
+			/** The last page returned was recto */
+			private boolean isRecto;
+
+			@Override
+			public boolean hasNext() {
+				return leafIterator.hasNext() || isRecto;
+			}
+
+			@Override
+			public Page next() {
+				if (isRecto) {
+					isRecto = false;
+					return currentLeaf.getVerso();
+				} else {
+					Leaf next = leafIterator.next();
+					currentLeaf = next;
+					isRecto = true;
+					return next.getRecto();
+				}
+			}
+		};
 	}
 	
 	@Override
