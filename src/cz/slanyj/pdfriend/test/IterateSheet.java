@@ -46,14 +46,12 @@ public class IterateSheet {
 		sheet.addLeaf(leaf3);
 		sheet.addLeaf(leaf4);
 		
-		Iterator<Leaf> li = sheet.leafIterator();
-		while (li.hasNext()) {
-			System.out.println(li.next().toString());
+		for (Leaf l : sheet.leaves()) {
+			System.out.println(l);
 		}
 		
-		Iterator<Page> pi = sheet.pageIterator();
-		while (pi.hasNext()) {
-			System.out.println(pi.next().toString());
+		for (Page p : sheet.pages()) {
+			System.out.println(p);
 		}
 	}
 

@@ -138,6 +138,24 @@ public class Sheet {
 		};
 	}
 	
+	public Iterable<Leaf> leaves() {
+		return new Iterable<Leaf>() {
+			@Override
+			public Iterator<Leaf> iterator() {
+				return leafIterator();
+			}
+		};
+	}
+	
+	public Iterable<Page> pages() {
+		return new Iterable<Page>() {
+			@Override
+			public Iterator<Page> iterator() {
+				return pageIterator();
+			}
+		};
+	}
+	
 	@Override
 	public String toString() {
 		return "Sheet@" + hashCode();
