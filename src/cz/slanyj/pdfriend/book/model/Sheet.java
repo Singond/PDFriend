@@ -105,10 +105,19 @@ public class Sheet {
 		return paper.build();
 	}
 	
+	/**
+	 * Iterates through the leaves.
+	 * @return A new Iterator object starting at the first Leaf.
+	 */
 	public Iterator<Leaf> leafIterator() {
 		return leaves.iterator();
 	}
 	
+	/**
+	 * Iterates through the pages in the order of the Leaves with recto
+	 * pages coming right before verso pages from the same Leaf.
+	 * @return A new Iterator object starting at the first Page.
+	 */
 	public Iterator<Page> pageIterator() {
 		return new Iterator<Page>() {
 			/** The current Leaf object */
@@ -138,6 +147,11 @@ public class Sheet {
 		};
 	}
 	
+	/**
+	 * Wraps this object to iterate through the leaves.
+	 * @see {@link #leafIterator}
+	 * @return This object wrapped as an Iterable<Leaf>.
+	 */
 	public Iterable<Leaf> leaves() {
 		return new Iterable<Leaf>() {
 			@Override
@@ -147,6 +161,11 @@ public class Sheet {
 		};
 	}
 	
+	/**
+	 * Wraps this object to iterate through the pages.
+	 * @see {@link #pageIterator}
+	 * @return This object wrapped as an Iterable<Page>.
+	 */
 	public Iterable<Page> pages() {
 		return new Iterable<Page>() {
 			@Override
