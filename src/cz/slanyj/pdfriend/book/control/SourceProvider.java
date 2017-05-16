@@ -1,11 +1,13 @@
 package cz.slanyj.pdfriend.book.control;
 
-import java.util.List;
-
 import cz.slanyj.pdfriend.book.model.Page;
 
 /**
- * Given a list of Pages, puts VirtualPages as their source.
+ * Puts VirtualPages into Page objects as their source.
+ * Each SourceProvider is expected to visit the target Pages sequentially,
+ * but the order in which source VirtualPages are inserted into them
+ * (ie. which VirtualPage will be sourced into which Page)
+ * is implementation-specific and will differ for each subclass.
  * 
  * @author Singon
  *
@@ -13,11 +15,11 @@ import cz.slanyj.pdfriend.book.model.Page;
 public interface SourceProvider {
 
 	/**
-	 * For each Page from the given list, set one or more VirtualPages
-	 * as its source. 
+	 * For each Page from the given iterable container, set one or more
+	 * VirtualPages as its source.
 	 * @param pages
 	 */
-	public void setSourceTo(List<Page> pages);
+	public void setSourceTo(Iterable<Page> pages);
 	
 	/**
 	 * Set one or more VirtualPages as the source of the given Page. 

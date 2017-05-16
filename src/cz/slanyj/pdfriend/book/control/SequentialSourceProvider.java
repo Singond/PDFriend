@@ -1,7 +1,6 @@
 package cz.slanyj.pdfriend.book.control;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 import cz.slanyj.pdfriend.book.model.Page;
@@ -34,7 +33,7 @@ public class SequentialSourceProvider implements SourceProvider, PageVisitor<Voi
 	}
 
 	@Override
-	public void setSourceTo(List<Page> pages) {
+	public void setSourceTo(Iterable<Page> pages) {
 		for (Page p : pages) {
 			p.invite(this, null);
 		}
