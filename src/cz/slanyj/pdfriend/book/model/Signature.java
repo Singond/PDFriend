@@ -1,13 +1,16 @@
 package cz.slanyj.pdfriend.book.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.ToIntFunction;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.list.SetUniqueList;
 import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
+import cz.slanyj.pdfriend.book.control.BookUtils;
 import cz.slanyj.pdfriend.book.control.Order;
 import cz.slanyj.pdfriend.document.VirtualDocument;
 import cz.slanyj.pdfriend.document.VirtualPage;
@@ -121,6 +124,61 @@ public class Signature {
 		} else {
 			return numberPagesFrom(number, leafOrder);
 		}
+	}
+	
+	/**
+	 * Iterates through the leaves in the currently set order.
+	 * @return A new Iterator object starting at the first Leaf.
+	 */
+	public Iterator<Leaf> leafIterator() {
+		Order<Leaf> order;
+		if (leafOrder == null) {
+			throw new IllegalStateException("No leaf order has been set for "+this);
+		} else {
+			order = leafOrder;
+		}
+		
+		List<Leaf> sheetList = sheets.stream()
+				.flatMap(s -> s.getLeaves().stream())
+				// Sort by order and put unordered Leaves to the end
+				.sorted((x, y) -> {
+					if (order.hasElement(x) && order.hasElement(y)) {
+						return order.indexOf(x) - order.indexOf(y);
+					} else {
+						return 1;
+					}
+				})
+				.collect(Collectors.toList());
+		return sheetList.iterator();
+	}
+	
+	/**
+	 * Wraps this object to iterate through all Leaves in the current order.
+	 * @see {@link #leafIterator}
+	 * @return This object wrapped as an Iterable<Leaf>.
+	 */
+	public Iterable<Leaf> leaves() {
+		return new Iterable<Leaf>() {
+			@Override
+			public Iterator<Leaf> iterator() {
+				return leafIterator();
+			}
+		};
+	}
+	
+	/**
+	 * Wraps this object to iterate through the pages in the order of the
+	 * Leaves and with the recto of each Leaf coming right before its verso.
+	 * @see {@link #leafIterator}
+	 * @return This object wrapped as an Iterable<Page>.
+	 */
+	public Iterable<Page> pages() {
+		return new Iterable<Page>() {
+			@Override
+			public Iterator<Page> iterator() {
+				return BookUtils.pageIterator(leafIterator());
+			}
+		};
 	}
 	
 	/**
