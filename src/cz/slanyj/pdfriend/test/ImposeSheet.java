@@ -2,10 +2,7 @@ package cz.slanyj.pdfriend.test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 import cz.slanyj.pdfriend.book.model.FlipDirection;
@@ -51,16 +48,10 @@ public class ImposeSheet {
 			VirtualPage four = new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 3)));
 			leaf.numberPagesFrom(1);
 			leaf2.numberPagesFrom(3);
-//			List<VirtualPage> pgs = new ArrayList<>();
-//			pgs.add(one);
-//			pgs.add(two);
-//			pgs.add(three);
-//			pgs.add(four);
 			((SinglePage) leaf.getFrontPage()).setSource(one);
 			((SinglePage) leaf.getBackPage()).setSource(two);
 			((SinglePage) leaf2.getFrontPage()).setSource(three);
 			((SinglePage) leaf2.getBackPage()).setSource(four);
-//			leaf2.setSourceFrom(pgs);
 			
 			// Build document model
 			VirtualDocument.Builder doc = new VirtualDocument.Builder();

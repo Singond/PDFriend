@@ -8,11 +8,11 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.book.control.Order;
+import cz.slanyj.pdfriend.book.control.SequentialSourceProvider;
 import cz.slanyj.pdfriend.book.model.FlipDirection;
 import cz.slanyj.pdfriend.book.model.Leaf;
 import cz.slanyj.pdfriend.book.model.Sheet;
 import cz.slanyj.pdfriend.book.model.Signature;
-import cz.slanyj.pdfriend.book.model.SinglePage;
 import cz.slanyj.pdfriend.book.model.Volume;
 import cz.slanyj.pdfriend.book.model.Leaf.Orientation;
 import cz.slanyj.pdfriend.document.ImportException;
@@ -73,15 +73,7 @@ public class ImposeSignature {
 			// Get content
 			File src = new File("test/lorem-letter.pdf");
 			VirtualDocument doc = new PDFImporter(src).importDocument();
-			((SinglePage) leaf.getFrontPage()).setSource(doc.getPage(1));
-			((SinglePage) leaf.getBackPage()).setSource(doc.getPage(2));
-			((SinglePage) leaf2.getFrontPage()).setSource(doc.getPage(3));
-			((SinglePage) leaf2.getBackPage()).setSource(doc.getPage(4));
-			((SinglePage) leaf3.getFrontPage()).setSource(doc.getPage(5));
-			((SinglePage) leaf3.getBackPage()).setSource(doc.getPage(6));
-			((SinglePage) leaf4.getFrontPage()).setSource(doc.getPage(7));
-			((SinglePage) leaf4.getBackPage()).setSource(doc.getPage(8));
-//			volume.setSource(doc);
+			new SequentialSourceProvider(doc).setSourceTo(volume.pages());
 			
 			VirtualDocument.Builder outDoc = new VirtualDocument.Builder();
 			signature.renderAllSheets(outDoc);

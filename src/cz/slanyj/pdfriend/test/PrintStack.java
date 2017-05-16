@@ -5,18 +5,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-
 import cz.slanyj.pdfriend.Log;
+import cz.slanyj.pdfriend.book.control.SequentialSourceProvider;
 import cz.slanyj.pdfriend.book.control.Stack;
 import cz.slanyj.pdfriend.book.control.Stack.Flip;
 import cz.slanyj.pdfriend.book.model.FlipDirection;
 import cz.slanyj.pdfriend.book.model.Leaf;
 import cz.slanyj.pdfriend.book.model.Signature;
-import cz.slanyj.pdfriend.book.model.SinglePage;
 import cz.slanyj.pdfriend.book.model.Volume;
 import cz.slanyj.pdfriend.book.model.Leaf.Orientation;
-import cz.slanyj.pdfriend.book.model.Page;
 import cz.slanyj.pdfriend.document.ImportException;
 import cz.slanyj.pdfriend.document.RenderingException;
 import cz.slanyj.pdfriend.document.VirtualDocument;
@@ -64,10 +61,7 @@ public class PrintStack {
 			// Get content
 			File srcFile = new File("test/lorem-letter.pdf");
 			VirtualDocument source = new PDFImporter(srcFile).importDocument();
-			int page = 1;
-			for (Page p : signature.pages()) {
-				((SinglePage) p).setSource(source.getPage(page++));
-			}
+			new SequentialSourceProvider(source).setSourceTo(volume.pages());
 			VirtualDocument output = volume.renderDocument();
 			new PDFRenderer().renderAndSave(output, new File("test/printed-stack.pdf"));
 			Log.info("Finished printing stack");

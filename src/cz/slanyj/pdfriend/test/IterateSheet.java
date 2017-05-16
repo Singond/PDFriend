@@ -1,6 +1,5 @@
 package cz.slanyj.pdfriend.test;
 
-import java.util.Iterator;
 import cz.slanyj.pdfriend.book.model.FlipDirection;
 import cz.slanyj.pdfriend.book.model.Leaf;
 import cz.slanyj.pdfriend.book.model.Sheet;
