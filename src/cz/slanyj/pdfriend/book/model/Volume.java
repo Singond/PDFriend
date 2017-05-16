@@ -2,6 +2,7 @@ package cz.slanyj.pdfriend.book.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,6 +39,112 @@ public class Volume {
 	 */
 	public boolean add(Signature signature) {
 		return signatures.add(signature);
+	}
+	
+	/**
+	 * Iterates through the Leaves in this Volume in the order of the
+	 * Signatures, and on the level of Signature in the current order
+	 * in that Signature.
+	 * @return A new Iterator object starting at the first Leaf.
+	 */
+	public Iterator<Leaf> leafIterator() {
+		return new Iterator<Leaf>() {
+			/** Iterator through Signatures, will not change. */
+			private final Iterator<Signature> signatureIterator = signatures.iterator();
+			/**
+			 * Iterator through Pages of a Signature. Will be new for every Page.
+			 */
+			private Iterator<Leaf> leafIterator;
+			/**
+			 * Signifies whether hasNext() has been called since the last call to next().
+			 */
+			private boolean nextReady = false;
+
+			@Override
+			public boolean hasNext() {
+				nextReady = true;
+				if (leafIterator != null && leafIterator.hasNext()) { // The null check is for initialization
+					return true;
+				} else if (signatureIterator.hasNext()) {
+					leafIterator = signatureIterator.next().leafIterator();
+					return hasNext();
+				} else {
+					return false;
+				}
+			}
+
+			@Override
+			public Leaf next() {
+				if (!nextReady) {
+					hasNext();
+				}
+				return leafIterator.next();
+			}
+		};
+	}
+	
+	/**
+	 * Iterates through the pages in the order of the Leaves with recto
+	 * pages coming right before verso pages from the same Leaf.
+	 * @return A new Iterator object starting at the first Page.
+	 */
+	public Iterator<Page> pageIterator() {
+		return new Iterator<Page>() {
+			/** The current Leaf object */
+			private Leaf currentLeaf;
+			/** Iterator for Leaves */
+			private final Iterator<Leaf> leafIterator = leafIterator();
+			/** The last page returned was recto */
+			private boolean isRecto;
+
+			@Override
+			public boolean hasNext() {
+				return leafIterator.hasNext() || isRecto;
+			}
+
+			@Override
+			public Page next() {
+				if (isRecto) {
+					isRecto = false;
+					return currentLeaf.getVerso();
+				} else {
+					Leaf next = leafIterator.next();
+					currentLeaf = next;
+					isRecto = true;
+					return next.getRecto();
+				}
+			}
+		};
+	}
+	
+	/**
+	 * Wraps this object to iterate through the Leaves in the order
+	 * specified in leafIterator().
+	 * @see {@link #leafIterator}
+	 * @return This object wrapped as an Iterable<Leaf>.
+	 */
+	public Iterable<Leaf> leaves() {
+		return new Iterable<Leaf>() {
+			@Override
+			public Iterator<Leaf> iterator() {
+				return leafIterator();
+			}
+		};
+	}
+	
+	/**
+	 * Wraps this object to iterate through the pages in the order
+	 * specified in leafIterator() and pageIterator().
+	 * @see {@link #pageIterator}
+	 * @return This object wrapped as an Iterable<Page>.
+	 */
+	public Iterable<Page> pages() {
+		return new Iterable<Page>() {
+			@Override
+			public Iterator<Page> iterator() {
+				return pageIterator();
+			}
+		};
 	}
 	
 	/**
