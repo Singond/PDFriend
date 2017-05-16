@@ -11,6 +11,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 
 import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
+import cz.slanyj.pdfriend.book.control.BookUtils;
 import cz.slanyj.pdfriend.document.RenderingException;
 import cz.slanyj.pdfriend.document.VirtualDocument;
 import cz.slanyj.pdfriend.document.VirtualPage;
@@ -84,40 +85,6 @@ public class Volume {
 	}
 	
 	/**
-	 * Iterates through the pages in the order of the Leaves with recto
-	 * pages coming right before verso pages from the same Leaf.
-	 * @return A new Iterator object starting at the first Page.
-	 */
-	public Iterator<Page> pageIterator() {
-		return new Iterator<Page>() {
-			/** The current Leaf object */
-			private Leaf currentLeaf;
-			/** Iterator for Leaves */
-			private final Iterator<Leaf> leafIterator = leafIterator();
-			/** The last page returned was recto */
-			private boolean isRecto;
-
-			@Override
-			public boolean hasNext() {
-				return leafIterator.hasNext() || isRecto;
-			}
-
-			@Override
-			public Page next() {
-				if (isRecto) {
-					isRecto = false;
-					return currentLeaf.getVerso();
-				} else {
-					Leaf next = leafIterator.next();
-					currentLeaf = next;
-					isRecto = true;
-					return next.getRecto();
-				}
-			}
-		};
-	}
-	
-	/**
 	 * Wraps this object to iterate through the Leaves in the order
 	 * specified in leafIterator().
 	 * @see {@link #leafIterator}
@@ -133,16 +100,16 @@ public class Volume {
 	}
 	
 	/**
-	 * Wraps this object to iterate through the pages in the order
-	 * specified in leafIterator() and pageIterator().
-	 * @see {@link #pageIterator}
+	 * Wraps this object to iterate through the pages in the order of the
+	 * Leaves and with the recto of each Leaf coming right before its verso.
+	 * @see {@link #leafIterator}
 	 * @return This object wrapped as an Iterable<Page>.
 	 */
 	public Iterable<Page> pages() {
 		return new Iterable<Page>() {
 			@Override
 			public Iterator<Page> iterator() {
-				return pageIterator();
+				return BookUtils.pageIterator(leafIterator());
 			}
 		};
 	}
