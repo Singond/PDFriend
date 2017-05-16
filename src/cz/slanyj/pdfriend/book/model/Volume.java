@@ -69,7 +69,8 @@ public class Volume {
 //	}
 	
 	/**
-	 * Renders this Volume as a new PDDocument.
+	 * Renders this Volume as a new VirtualDocument.
+	 * @return a new VirtualDocument instance
 	 */
 	public VirtualDocument renderDocument() {
 		Log.info(Bundle.console, "volume_rendering", this);

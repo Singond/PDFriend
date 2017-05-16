@@ -125,30 +125,90 @@ public class Signature {
 		}
 	}
 	
+	/**
+	 * Iterates through the leaves in the currently set order.
+	 * @return A new Iterator object starting at the first Leaf.
+	 */
 	public Iterator<Leaf> leafIterator() {
-		Order<Leaf> order = leafOrder;
+		Order<Leaf> order;
+		if (leafOrder == null) {
+			throw new IllegalStateException("No leaf order has been set for "+this);
+		} else {
+			order = leafOrder;
+		}
+		
 		List<Leaf> sheetList = sheets.stream()
-		                             .flatMap(s -> s.getLeaves().stream())
-		                             // Sort by order and put unordered Leaves to the end
-		                             .sorted((x,y) -> {
-		                            	 if (order.hasElement(x) && order.hasElement(y)) {
-		                            		 return order.indexOf(x) - order.indexOf(y);
-		                            	 } else {
-		                            		 return 1;
-		                            	 }
-		                             })
-		                             .collect(Collectors.toList());
+				.flatMap(s -> s.getLeaves().stream())
+				// Sort by order and put unordered Leaves to the end
+				.sorted((x, y) -> {
+					if (order.hasElement(x) && order.hasElement(y)) {
+						return order.indexOf(x) - order.indexOf(y);
+					} else {
+						return 1;
+					}
+				})
+				.collect(Collectors.toList());
 		return sheetList.iterator();
 	}
 	
 	/**
-	 * 
+	 * Wraps this object to iterate through all leaves in the current order.
+	 * @see {@link #leafIterator}
+	 * @return This object wrapped as an Iterable<Leaf>.
 	 */
 	public Iterable<Leaf> leaves() {
 		return new Iterable<Leaf>() {
 			@Override
 			public Iterator<Leaf> iterator() {
 				return leafIterator();
+			}
+		};
+	}
+	
+	/**
+	 * Iterates through the pages in the order of the Leaves with recto
+	 * pages coming right before verso pages from the same Leaf.
+	 * @return A new Iterator object starting at the first Page.
+	 */
+	public Iterator<Page> pageIterator() {
+		return new Iterator<Page>() {
+			/** The current Leaf object */
+			private Leaf currentLeaf;
+			/** Iterator for Leaves */
+			private final Iterator<Leaf> leafIterator = leafIterator();
+			/** The last page returned was recto */
+			private boolean isRecto;
+
+			@Override
+			public boolean hasNext() {
+				return leafIterator.hasNext() || isRecto;
+			}
+
+			@Override
+			public Page next() {
+				if (isRecto) {
+					isRecto = false;
+					return currentLeaf.getVerso();
+				} else {
+					Leaf next = leafIterator.next();
+					currentLeaf = next;
+					isRecto = true;
+					return next.getRecto();
+				}
+			}
+		};
+	}
+	
+	/**
+	 * Wraps this object to iterate through the pages.
+	 * @see {@link #pageIterator}
+	 * @return This object wrapped as an Iterable<Page>.
+	 */
+	public Iterable<Page> pages() {
+		return new Iterable<Page>() {
+			@Override
+			public Iterator<Page> iterator() {
+				return pageIterator();
 			}
 		};
 	}
