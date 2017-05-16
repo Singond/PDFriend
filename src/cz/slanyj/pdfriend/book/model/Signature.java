@@ -1,9 +1,11 @@
 package cz.slanyj.pdfriend.book.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.ToIntFunction;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.list.SetUniqueList;
 import cz.slanyj.pdfriend.Bundle;
@@ -121,6 +123,34 @@ public class Signature {
 		} else {
 			return numberPagesFrom(number, leafOrder);
 		}
+	}
+	
+	public Iterator<Leaf> leafIterator() {
+		Order<Leaf> order = leafOrder;
+		List<Leaf> sheetList = sheets.stream()
+		                             .flatMap(s -> s.getLeaves().stream())
+		                             // Sort by order and put unordered Leaves to the end
+		                             .sorted((x,y) -> {
+		                            	 if (order.hasElement(x) && order.hasElement(y)) {
+		                            		 return order.indexOf(x) - order.indexOf(y);
+		                            	 } else {
+		                            		 return 1;
+		                            	 }
+		                             })
+		                             .collect(Collectors.toList());
+		return sheetList.iterator();
+	}
+	
+	/**
+	 * 
+	 */
+	public Iterable<Leaf> leaves() {
+		return new Iterable<Leaf>() {
+			@Override
+			public Iterator<Leaf> iterator() {
+				return leafIterator();
+			}
+		};
 	}
 	
 	/**
