@@ -152,20 +152,6 @@ public class Signature {
 	}
 	
 	/**
-	 * Wraps this object to iterate through all leaves in the current order.
-	 * @see {@link #leafIterator}
-	 * @return This object wrapped as an Iterable<Leaf>.
-	 */
-	public Iterable<Leaf> leaves() {
-		return new Iterable<Leaf>() {
-			@Override
-			public Iterator<Leaf> iterator() {
-				return leafIterator();
-			}
-		};
-	}
-	
-	/**
 	 * Iterates through the pages in the order of the Leaves with recto
 	 * pages coming right before verso pages from the same Leaf.
 	 * @return A new Iterator object starting at the first Page.
@@ -195,6 +181,20 @@ public class Signature {
 					isRecto = true;
 					return next.getRecto();
 				}
+			}
+		};
+	}
+	
+	/**
+	 * Wraps this object to iterate through all leaves in the current order.
+	 * @see {@link #leafIterator}
+	 * @return This object wrapped as an Iterable<Leaf>.
+	 */
+	public Iterable<Leaf> leaves() {
+		return new Iterable<Leaf>() {
+			@Override
+			public Iterator<Leaf> iterator() {
+				return leafIterator();
 			}
 		};
 	}
