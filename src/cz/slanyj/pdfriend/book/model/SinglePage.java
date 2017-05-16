@@ -1,11 +1,8 @@
 package cz.slanyj.pdfriend.book.model;
 
 import java.util.Collection;
-import java.util.List;
-
 import cz.slanyj.pdfriend.book.control.PageVisitor;
 import cz.slanyj.pdfriend.document.Content;
-import cz.slanyj.pdfriend.document.VirtualDocument;
 import cz.slanyj.pdfriend.document.VirtualPage;
 
 /**
@@ -36,38 +33,6 @@ public class SinglePage extends Page {
 	public void setSource(VirtualPage page) {
 		this.source = page;
 	}
-	/**
-	 * Sets the page of a virtual source document as the content ("source")
-	 * of this Page.
-	 * This variant selects the source page from the given page list using
-	 * this Page's page number, assuming the pages in the list are sorted
-	 * in ascending order with page of list index 0 having page number 1.
-	 * This assumes the page number has already been set for this Page.
-	 * @param pagesList A list of source pages sorted in ascending order
-	 * starting with page number one. Note that while page numbers are
-	 * indexed from one, the indices in the list are standard zero-based,
-	 * ie. page 1 is placed at index 0 in the list.
-	 * @throws IllegalStateException if the page number has not been set yet.
-	 */
-//	public void setSourceFrom(List<VirtualPage> pagesList) {
-//		this.source = pagesList.get(getNumber()-1);
-//	}
-	/**
-	 * Sets the page of a virtual source document as the content ("source")
-	 * of this Page.
-	 * This variant selects the source page from the given document using
-	 * this Page's page number, assuming the pages in the document are
-	 * numbered from one.
-	 * This assumes the page number has already been set for this Page.
-	 * @param document A virtual source document with page number from one.
-	 * Note that while pages in a VirtualDocument are indexed from one,
-	 * the indices in the list are standard zero-based, ie. page 1 is placed
-	 * at index 0 in the list.
-	 * @throws IllegalStateException if the page number has not been set yet.
-	 */
-//	public void setSourceFrom(VirtualDocument document) {
-//		this.source = document.getPage(getNumber());
-//	}
 	
 	/**
 	 * Returns the content of this page collected from its VirtualPage(s)
