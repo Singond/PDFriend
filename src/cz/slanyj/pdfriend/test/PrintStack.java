@@ -36,9 +36,6 @@ public class PrintStack {
 		leaf.setOrientation(Orientation.RECTO_UP);
 		leaf.setFlipDirection(FlipDirection.AROUND_Y);
 		
-		List<Leaf> template = new ArrayList<>();
-		template.add(leaf);
-		
 		Stack stack = new Stack(1224, 1584);
 		
 		List<Stack.Manipulation> mm = new ArrayList<Stack.Manipulation>();
@@ -51,7 +48,7 @@ public class PrintStack {
 		//mm.add(new Stack.Gather(2));
 		stack.performManipulations(mm);
 		
-		Signature signature = stack.buildSignature(template);
+		Signature signature = stack.buildSignature(leaf);
 		signature.numberPagesFrom(1);
 		
 		Volume volume = new Volume();

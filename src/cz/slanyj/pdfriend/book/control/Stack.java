@@ -148,25 +148,23 @@ public class Stack {
 	
 	/**
 	 * Assembles Layers on all Sheets into the final Signature,
-	 * placing the given pattern of Leaves into each Layer in the order
+	 * placing the given Leaf into each Layer in the order
 	 * from bottom (Layer 0) to top.
 	 * The Leaves are placed recto-up onto the Layer. If the Stack is to
 	 * be filled in reverse order, ie. from bottom to top, it must be
 	 * flipped first.
 	 * @param pattern A pattern of Leaves to be placed into all Sheets.
 	 */
-	public Signature buildSignature(List<Leaf> pattern) {
+	public Signature buildSignature(Leaf leaf) {
 		Signature signature = new Signature();
 		Order<Leaf> orderMap = new Order<>();
 		/** The order of the Leaf in the folded Stack */
 		for (Layer lr : layers) {
-			for (Leaf l : pattern) {
-				if (lr.isInSheet(l)) {
-					Leaf nl = l.cloneAsTemplate();
-					//nl.setOrientation(Leaf.Orientation.RECTO_UP);
-					orderMap.addNext(nl);
-					lr.addLeaf(nl);
-				}
+			if (lr.isInSheet(leaf)) {
+				Leaf nl = leaf.cloneAsTemplate();
+				//nl.setOrientation(Leaf.Orientation.RECTO_UP);
+				orderMap.addNext(nl);
+				lr.addLeaf(nl);
 			}
 		}
 		// Place the layers into their sheets
