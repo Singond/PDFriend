@@ -88,6 +88,9 @@ public class Leaf {
 	 */
 	private boolean referenceIsFront = true;
 	
+	private int instanceNumber;
+	
+	private static int nextInstanceNumber = 1;
 	private static ResourceBundle bundle = ResourceBundle.getBundle("Console");
 	
 	/**
@@ -101,6 +104,7 @@ public class Leaf {
 		this.verso = new SinglePage(width, height);
 		this.width = width;
 		this.height = height;
+		this.instanceNumber = nextInstanceNumber++;
 	}
 	
 	
@@ -350,7 +354,8 @@ public class Leaf {
 
 	@Override
 	public String toString() {
-		return "Leaf "+recto.getNumber()+"-"+verso.getNumber();
+//		return "Leaf "+recto.getNumber()+"-"+verso.getNumber();
+		return "Leaf "+instanceNumber;
 	}
 	
 	/**
