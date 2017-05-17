@@ -13,6 +13,7 @@ import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.Out;
 import com.github.singond.pdfriend.Util;
 import com.github.singond.pdfriend.Version;
+import com.github.singond.pdfriend.cli.parsing.GlobalOptions;
 
 /**
  * The root of the command-line interface.
@@ -22,31 +23,12 @@ import com.github.singond.pdfriend.Version;
  *
  */
 public class Console {
+	/** Container of global options */
+	private final GlobalOptions global = new GlobalOptions();
+	/** Logger */
 	private static ExtendedLogger logger = Log.logger(Console.class);
-
-	/* Root options */
 	
-	/** Print version info and exit */
-	@Parameter(names={"-V", "--version"}, description="Print version info and exit", order=0)
-	private boolean version = false;
-	
-	/** Print help info and exit */
-	@Parameter(names={"-h", "-?", "--help"}, description="Print this help page and exit", order=1)
-	private boolean help = false;
-	
-	/** Set Log4j to VERBOSE level */
-	@Parameter(names={"-v", "--verbose"}, description="Verbose output", order=4)
-	private boolean verbose = false;
-	
-	/** Set Log4j to DEBUG level */
-	@Parameter(names={"-vv", "--debug"}, description="Extra verbose output, used for debugging", order=5)
-	private boolean debug = false;
-	
-	/** Set Log4j to WARN level */
-	@Parameter(names={"-q", "--quiet"}, description="Be less verbose than normal, display only warnings", order=6)
-	private boolean quiet = false;
-	
-	/* Subcommands (ie. modules) */
+	/** Subcommands (ie. modules) */
 	private final Map<String, SubCommand> subcommands = new HashMap<>();
 	{
 		subcommands.put("impose", new Impose());
@@ -59,7 +41,7 @@ public class Console {
 	public void execute(String[] args) {
 		/* Parse the CLI arguments */
 		JCommander.Builder jcbuilder = JCommander.newBuilder()
-				.addObject(this)
+				.addObject(global)
 				.acceptUnknownOptions(false);
 		// Register subcommands with the parser
 		for (Map.Entry<String, SubCommand> cmd : subcommands.entrySet()) {
@@ -68,7 +50,7 @@ public class Console {
 		JCommander jcommander = jcbuilder.build();
 		jcommander.parse(args);
 		// Set verbosity level as early as possible
-		setVerbosity(quiet, verbose, debug);
+		setVerbosity(global.quiet(), global.verbose(), global.debug());
 		SubCommand subcommand = subcommands.get(jcommander.getParsedCommand());
 		subcommand.postParse();
 		
@@ -79,13 +61,13 @@ public class Console {
 		logger.debug("PDFriend arguments: " + Arrays.toString(args));
 		
 		// Display version and exit (--version)
-		if (version) {
+		if (global.version()) {
 			version();
 			System.exit(0);
 		}
 		
 		// Display help and exit (--help)
-		if (help) {
+		if (global.help()) {
 			help(jcommander);
 			System.exit(0);
 		}
