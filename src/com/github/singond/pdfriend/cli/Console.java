@@ -3,13 +3,13 @@ package com.github.singond.pdfriend.cli;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.Level;
 
 import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.Out;
@@ -27,15 +27,39 @@ import com.github.singond.pdfriend.cli.parsing.GlobalOptions;
 public class Console {
 	/** Container of global options */
 	private final GlobalOptions global = new GlobalOptions();
-	/** Logger */
-	private static ExtendedLogger logger = Log.logger(Console.class);
 	/** Pattern to split the argument array at. This must be one element. */
 	private static final String SUBCOMMAND_DELIMITER = "+";
+	/**
+	 * The instance of JCommander used to handle the first section,
+	 * which is the only one expected to contain global options.
+	 * Keep this instance as a reference to be used when generating help
+	 * text.
+	 */
+	private final JCommander mainParser;
+	/** The subcommands object used with mainParser */
+	private final SubCommands mainSubCommands;
+	/** Logger */
+	private static ExtendedLogger logger = Log.logger(Console.class);
 	
 	/** Subcommands (ie. modules) */
+	@SuppressWarnings("serial")
 	private static class SubCommands extends HashMap<String, SubCommand> {{
 		put("impose", new Impose());
 	}}
+	
+	/**
+	 * Constructs a new Console object.
+	 */
+	public Console() {
+		SubCommands subcmds = new SubCommands();
+		JCommander.Builder globalParserBldr = JCommander.newBuilder()
+				.addObject(global);
+		for (Map.Entry<String, SubCommand> cmd : subcmds.entrySet()) {
+			globalParserBldr.addCommand(cmd.getKey(), cmd.getValue());
+		}
+		mainSubCommands = subcmds;
+		mainParser = globalParserBldr.build();
+	}
 	
 	/**
 	 * Run PDFriend in command-line mode.
@@ -46,8 +70,15 @@ public class Console {
 		/** Parsed subcommands */
 		List<SubCommand> subcommands = new ArrayList<>(splitArgs.size());
 		
-		parseGlobalArguments(splitArgs.get(0), global);
-		parseSubCommands(splitArgs, subcommands);
+		Iterator<List<String>> iter = splitArgs.iterator();
+		if (iter.hasNext()) {
+			SubCommand scmd = parseGlobalAndSubcommand(iter.next(), global);
+			subcommands.add(scmd);
+		}
+		while (iter.hasNext()) {
+			SubCommand scmd = parseSubCommand(iter.next());
+			subcommands.add(scmd);
+		}
 
 		// Set verbosity level as early as possible
 		setVerbosity(global.quiet(), global.verbose(), global.debug());
@@ -68,7 +99,7 @@ public class Console {
 		
 		// Display help and exit (--help)
 		if (global.help()) {
-//			help(jcommander);
+			help(mainParser);
 			System.exit(0);
 		}
 		
@@ -108,39 +139,34 @@ public class Console {
 	}
 	
 	/**
-	 * Parses the arguments list into the given global options object.
+	 * Parses the arguments list into the given global options object
+	 * and a new SubCommand.
 	 * @param arguments a list of the command-line arguments up to
-	 *        (and including) the first subcommand
+	 *        (and including) including at most one subcommand
 	 * @param target the global options object to receive the parsed values
+	 * @return the new SubCommand, initialized from the arguments
 	 */
-	private void parseGlobalArguments(List<String> arguments,
-	                                  GlobalOptions target) {
-		JCommander.Builder globalParserBldr = JCommander.newBuilder()
-				.addObject(target)
-				.acceptUnknownOptions(true);
-		JCommander globalParser = globalParserBldr.build();
-		globalParser.parse(arguments.toArray(new String[arguments.size()]));
+	private SubCommand parseGlobalAndSubcommand(List<String> arguments,
+	                                            GlobalOptions target) {
+		mainParser.parse(arguments.toArray(new String[arguments.size()]));
+		return mainSubCommands.get(mainParser.getParsedCommand());
 	}
 	
 	/**
-	 * Parses each of the split arguments into a new SubCommand and collects
-	 * the parsed subcommands into the given list.
-	 * @param splitArgs a 2D list of arguments, with each sublist standing
-	 *        for one subcommand and its arguments
-	 * @param subCmdList the list to put parsed subcommands into
+	 * Parses the list of arguments into a new SubCommand.
+	 * @param args a list of the command-line arguments with one subcommand.
+	 *        The subcommand is expected to be at the beginning of the list.
+	 * @return the new SubCommand, initialized from the arguments
 	 */
-	private void parseSubCommands(List<List<String>> splitArgs,
-	                              List<SubCommand> subCmdList) {
-		for (List<String> sublist : splitArgs) {
-			SubCommands subcmds = new SubCommands();
-			JCommander.Builder subCmdParserBldr = JCommander.newBuilder();
-			for (Map.Entry<String, SubCommand> cmd : subcmds.entrySet()) {
-				subCmdParserBldr.addCommand(cmd.getKey(), cmd.getValue());
-			}
-			JCommander subCmdParser = subCmdParserBldr.build();
-			subCmdParser.parse(sublist.toArray(new String[sublist.size()]));
-			subCmdList.add(subcmds.get(subCmdParser.getParsedCommand()));
+	private SubCommand parseSubCommand(List<String> args) {
+		SubCommands subcmds = new SubCommands();
+		JCommander.Builder subCmdParserBldr = JCommander.newBuilder();
+		for (Map.Entry<String, SubCommand> cmd : subcmds.entrySet()) {
+			subCmdParserBldr.addCommand(cmd.getKey(), cmd.getValue());
 		}
+		JCommander subCmdParser = subCmdParserBldr.build();
+		subCmdParser.parse(args.toArray(new String[args.size()]));
+		return subcmds.get(subCmdParser.getParsedCommand());
 	}
 	
 	/** Prints version info. */
