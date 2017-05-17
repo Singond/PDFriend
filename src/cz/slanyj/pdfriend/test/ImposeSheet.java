@@ -48,10 +48,10 @@ public class ImposeSheet {
 			VirtualPage four = new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 3)));
 			leaf.numberPagesFrom(1);
 			leaf2.numberPagesFrom(3);
-			((SinglePage) leaf.getFrontPage()).setSource(one);
-			((SinglePage) leaf.getBackPage()).setSource(two);
-			((SinglePage) leaf2.getFrontPage()).setSource(three);
-			((SinglePage) leaf2.getBackPage()).setSource(four);
+			((SinglePage) leaf.getRecto()).setSource(one);
+			((SinglePage) leaf.getVerso()).setSource(two);
+			((SinglePage) leaf2.getRecto()).setSource(three);
+			((SinglePage) leaf2.getVerso()).setSource(four);
 			
 			// Build document model
 			VirtualDocument.Builder doc = new VirtualDocument.Builder();
