@@ -35,8 +35,8 @@ public class ImposeLeaf {
 			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
 			VirtualPage one = new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 0)));
 			VirtualPage two = new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 1)));
-			((SinglePage) leaf.getFrontPage()).setSource(one);
-			((SinglePage) leaf.getBackPage()).setSource(two);
+//			((SinglePage) leaf.getFrontPage()).setSource(one);
+//			((SinglePage) leaf.getBackPage()).setSource(two);
 			
 			// Impose
 			VirtualDocument.Builder doc = new VirtualDocument.Builder();
