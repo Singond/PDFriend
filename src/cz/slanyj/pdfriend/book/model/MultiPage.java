@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import cz.slanyj.pdfriend.book.control.PageVisitor;
 import cz.slanyj.pdfriend.document.Content;
@@ -14,6 +15,11 @@ import cz.slanyj.pdfriend.document.VirtualPage;
 
 public class MultiPage extends Page {
 
+	/**
+	 * Individual pages which make up this MultiPage along with their
+	 * respective positions. These "pagelets" are stored in the order
+	 * of their insertion.
+	 */
 	private final List<Pagelet> pagelets;
 	
 	public MultiPage(double width, double height) {
@@ -21,8 +27,19 @@ public class MultiPage extends Page {
 		pagelets = new ArrayList<>();
 	}
 	
-	public void AddPage(VirtualPage page, AffineTransform position) {
+	public void addPage(VirtualPage page, AffineTransform position) {
 		pagelets.add(new Pagelet(page, position));
+	}
+	
+	/**
+	 * Returns a list of the individual VirtualPages comprising this
+	 * MultiPage. The pagels are listed in the order of their insertion.
+	 * @return A new list of the pages, sorted in the order of insertion.
+	 */
+	public List<VirtualPage> getPages() {
+		return pagelets.stream()
+				.map(p -> p.source)
+				.collect(Collectors.toList());
 	}
 	
 	@Override
@@ -47,6 +64,12 @@ public class MultiPage extends Page {
 		private final VirtualPage source;
 		private final AffineTransform position;
 		
+		/**
+		 * Constructs a new Pagelet representing the given page (source)
+		 * at the given position in the parent MultiPage.
+		 * @param source
+		 * @param position
+		 */
 		private Pagelet(VirtualPage source, AffineTransform position) {
 			this.source = source;
 			this.position = position;
