@@ -66,6 +66,12 @@ public abstract class Content {
 		/** Matrix accumulating the transformations */
 		private final AffineTransform transform = new AffineTransform(position);
 		
+		/**
+		 * Provides direct access to the current position.
+		 * Changes to the returned object will be reflected in the Content's
+		 * position.
+		 * @return The internal transformation matrix.
+		 */
 		public AffineTransform getTransform() {
 			return transform;
 		}

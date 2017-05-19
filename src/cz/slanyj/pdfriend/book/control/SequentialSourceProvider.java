@@ -3,6 +3,7 @@ package cz.slanyj.pdfriend.book.control;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import cz.slanyj.pdfriend.book.model.MultiPage;
 import cz.slanyj.pdfriend.book.model.Page;
 import cz.slanyj.pdfriend.book.model.SinglePage;
 import cz.slanyj.pdfriend.document.NoException;
@@ -47,6 +48,12 @@ public class SequentialSourceProvider implements SourceProvider, PageVisitor<Voi
 	@Override
 	public Void visit(SinglePage p, Void param) throws NoException {
 		p.setSource(sourcePages.poll());
+		return null;
+	}
+	
+	@Override
+	public Void visit(MultiPage p, Void param) throws NoException {
+		// TODO Implement
 		return null;
 	}
 }
