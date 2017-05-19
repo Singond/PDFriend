@@ -94,17 +94,42 @@ public class Leaf {
 	private static ResourceBundle bundle = ResourceBundle.getBundle("Console");
 	
 	/**
-	 * Constructs a new Leaf of the given dimensions with one empty
-	 * SinglePage on each side.
-	 * @param width
-	 * @param height
+	 * Constructs a new Leaf of the given dimensions with each of the two
+	 * given pages on one side.
+	 * @param width The width of the Leaf.
+	 * @param height The height of the Leaf.
+	 * @param recto The page which will become the recto of the new Leaf.
+	 * @param verso The page which will become the verso of the new Leaf.
 	 */
-	public Leaf(double width, double height) {
-		this.recto = new SinglePage(width, height);
-		this.verso = new SinglePage(width, height);
+	private Leaf(double width, double height, Page recto, Page verso) {
+		this.recto = recto;
+		this.verso = verso;
 		this.width = width;
 		this.height = height;
 		this.instanceNumber = nextInstanceNumber++;
+	}
+	
+	/**
+	 * Constructs a new Leaf of the given dimensions with one empty
+	 * SinglePage on each side.
+	 * @param width The width of the Leaf.
+	 * @param height The height of the Leaf.
+	 */
+	public Leaf(double width, double height) {
+		this(width, height,
+		     new SinglePage(width, height),
+		     new SinglePage(width, height));
+	}
+	
+	/**
+	 * Constructs a new Leaf with each of the two given Pages on one side.
+	 * The Leaf dimension is the smallest rectangle into which both of the
+	 * two Pages can fit.
+	 */
+	public Leaf(Page recto, Page verso) {
+		this(Double.max(recto.getWidth(), verso.getWidth()),
+		     Double.max(recto.getHeight(), verso.getHeight()),
+		     recto, verso);
 	}
 	
 	
