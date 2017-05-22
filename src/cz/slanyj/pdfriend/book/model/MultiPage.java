@@ -44,7 +44,7 @@ public class MultiPage extends Page {
 	
 	@Override
 	public Collection<Movable> getContent() {
-		Set<Content.Movable> contents = new HashSet<>();;
+		Set<Content.Movable> contents = new HashSet<>();
 		for (Pagelet p : pagelets) {
 			for (Content.Movable cm : p.source.getMovableContent()) {
 				cm.getTransform().preConcatenate(p.position);

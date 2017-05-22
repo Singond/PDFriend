@@ -153,7 +153,7 @@ public class Stack {
 	 * The Leaves are placed recto-up onto the Layer. If the Stack is to
 	 * be filled in reverse order, ie. from bottom to top, it must be
 	 * flipped first.
-	 * @param pattern A pattern of Leaves to be placed into all Sheets.
+	 * @param leaf A Leaf whose blank copy is to be placed into all Sheets.
 	 */
 	public Signature buildSignature(Leaf leaf) {
 		Signature signature = new Signature();
