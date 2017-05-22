@@ -1,9 +1,9 @@
 package cz.slanyj.pdfriend.book.model;
 
 import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,11 +20,11 @@ public class MultiPage extends Page {
 	 * respective positions. These "pagelets" are stored in the order
 	 * of their insertion.
 	 */
-	private final List<Pagelet> pagelets;
+	private final LinkedHashSet<Pagelet> pagelets;
 	
 	public MultiPage(double width, double height) {
 		super(width, height);
-		pagelets = new ArrayList<>();
+		pagelets = new LinkedHashSet<>();
 	}
 	
 	public void addPage(VirtualPage page, AffineTransform position) {
