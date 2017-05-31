@@ -2,7 +2,7 @@
 	<info organisation="cz.slanyj" module="testpdf"/>
 
 	<dependencies>
-<!-- 		<dependency org="cz.slanyj" name="collections" rev="latest-integration"/> -->
+		<dependency org="cz.slanyj" name="collections" rev="latest.integration"/>
 		<!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
 		<!-- Available versions 1.8+ and 2.0+ -->
 		<dependency org="org.apache.pdfbox" name="pdfbox" rev="2.0.6"/>
