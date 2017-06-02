@@ -5,7 +5,7 @@
 	
 	<target name="resolve" description="Resolve dependencies with Ivy">
 		<ivy:resolve/>
-		<ivy:retrieve type="jar,bundle,javadoc" sync="true"/>
+		<ivy:retrieve type="jar,bundle,javadoc" sync="true" pattern="lib/[artifact]-[type].[ext]"/>
 	</target>
 	
 	<target name="compile" depends="resolve" description="Compile Java source files">
