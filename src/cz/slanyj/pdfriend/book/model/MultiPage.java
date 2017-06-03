@@ -1,12 +1,12 @@
 package cz.slanyj.pdfriend.book.model;
 
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import cz.slanyj.pdfriend.book.control.PageVisitor;
 import cz.slanyj.pdfriend.document.Content;
@@ -17,9 +17,11 @@ import cz.slanyj.pdfriend.document.VirtualPage;
  * A page of a document, ie. one side of a Leaf.
  * This page can hold multiple pages of a source document at arbitrary
  * positions. These source pages are called "pagelets".
+ * This class is a skeletal implementation of multiple page and it is
+ * not intended for direct use in applications.
  * @author Singon
  */
-public class MultiPage extends Page {
+public abstract class MultiPage extends Page {
 
 	/**
 	 * Individual pages which make up this MultiPage along with their
@@ -28,26 +30,26 @@ public class MultiPage extends Page {
 	 */
 	private final LinkedHashSet<Pagelet> pagelets;
 
-	public MultiPage(double width, double height) {
+	protected MultiPage(double width, double height) {
 		super(width, height);
 		pagelets = new LinkedHashSet<>();
 	}
 
 	/**
-	 * Adds the given virtual page at the given position to this page
-	 * as a new pagelet.
+	 * Adds the given pagelet to this page.
+	 * @param pagelet the pagelet to be added
 	 */
-	public void addPage(VirtualPage page, AffineTransform position) {
-		pagelets.add(new Pagelet(page, position));
+	protected final void addPagelet(Pagelet pagelet) {
+		pagelets.add(pagelet);
 	}
 
 	/**
-	 * Returns a list of the individual VirtualPages comprising this
-	 * MultiPage. The pages are listed in the order of their insertion.
-	 * @return A new list of the pages, sorted in the order of insertion.
+	 * Returns a list of the individual pagelets comprising this MultiPage.
+	 * The pagelets are listed in the order of their insertion.
+	 * @return a new list of the pagelets preserving their order of insertion
 	 */
-	public List<VirtualPage> getPages() {
-		return pagelets.stream().map(p -> p.source).collect(Collectors.toList());
+	protected final List<Pagelet> getPagelets() {
+		return new ArrayList<>(pagelets);
 	}
 
 	@Override
@@ -68,7 +70,7 @@ public class MultiPage extends Page {
 	}
 
 	/** A source page along with its position on this MultiPage. */
-	protected static class Pagelet {
+	public static class Pagelet {
 		private VirtualPage source;
 		private final AffineTransform position;
 
@@ -77,7 +79,7 @@ public class MultiPage extends Page {
 		 * at the given position in the parent MultiPage.
 		 * @param position
 		 */
-		protected Pagelet(AffineTransform position) {
+		public Pagelet(AffineTransform position) {
 			this.position = position;
 		}
 
@@ -87,7 +89,7 @@ public class MultiPage extends Page {
 		 * @param source
 		 * @param position
 		 */
-		protected Pagelet(VirtualPage source, AffineTransform position) {
+		public Pagelet(VirtualPage source, AffineTransform position) {
 			this.source = source;
 			this.position = position;
 		}
@@ -96,7 +98,7 @@ public class MultiPage extends Page {
 		 * Sets the source VirtualPage for this Pagelet.
 		 * @param source
 		 */
-		protected void setSource(VirtualPage source) {
+		public void setSource(VirtualPage source) {
 			this.source = source;
 		}
 	}

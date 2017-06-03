@@ -25,10 +25,21 @@ import cz.slanyj.pdfriend.format.process.PDFRenderer;
  *
  */
 public class ImposeMultiPage {
+	
+	private static class MyMultiPage extends MultiPage {
+		
+		MyMultiPage(double w, double h) {
+			super(w, h);
+		}
+		
+		public void addPage(VirtualPage page, AffineTransform position) {
+			super.addPagelet(new Pagelet(page, position));
+		}
+	}
 
 	public static void main(String[] args) {
-		MultiPage page1 = new MultiPage(612, 792);
-		MultiPage page2 = new MultiPage(612, 792);
+		MyMultiPage page1 = new MyMultiPage(612, 792){};
+		MyMultiPage page2 = new MyMultiPage(612, 792){};
 		AffineTransform pagelet1Position = new AffineTransform();
 //		pagelet1Position.translate(10, 10);
 		pagelet1Position.scale(0.5, 0.5);
@@ -63,10 +74,10 @@ public class ImposeMultiPage {
 			VirtualPage five = new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 4)));
 			VirtualPage six = new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 5)));
 			
-			((MultiPage) leaf.getRecto()).addPage(one, pagelet1Position);
-			((MultiPage) leaf.getRecto()).addPage(two, pagelet2Position);
-			((MultiPage) leaf.getVerso()).addPage(three, pagelet1Position);
-			((MultiPage) leaf.getVerso()).addPage(four, pagelet2Position);
+			((MyMultiPage) leaf.getRecto()).addPage(one, pagelet1Position);
+			((MyMultiPage) leaf.getRecto()).addPage(two, pagelet2Position);
+			((MyMultiPage) leaf.getVerso()).addPage(three, pagelet1Position);
+			((MyMultiPage) leaf.getVerso()).addPage(four, pagelet2Position);
 			((SinglePage) leaf2.getRecto()).setSource(five);
 			((SinglePage) leaf2.getVerso()).setSource(six);
 			
