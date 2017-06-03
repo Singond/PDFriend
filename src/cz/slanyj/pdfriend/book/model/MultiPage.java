@@ -13,6 +13,12 @@ import cz.slanyj.pdfriend.document.Content;
 import cz.slanyj.pdfriend.document.Content.Movable;
 import cz.slanyj.pdfriend.document.VirtualPage;
 
+/**
+ * A page of a document, ie. one side of a Leaf.
+ * This page can hold multiple pages of a source document at arbitrary
+ * positions. These source pages are called "pagelets".
+ * @author Singon
+ */
 public class MultiPage extends Page {
 
 	/**
@@ -21,27 +27,29 @@ public class MultiPage extends Page {
 	 * of their insertion.
 	 */
 	private final LinkedHashSet<Pagelet> pagelets;
-	
+
 	public MultiPage(double width, double height) {
 		super(width, height);
 		pagelets = new LinkedHashSet<>();
 	}
-	
+
+	/**
+	 * Adds the given virtual page at the given position to this page
+	 * as a new pagelet.
+	 */
 	public void addPage(VirtualPage page, AffineTransform position) {
 		pagelets.add(new Pagelet(page, position));
 	}
-	
+
 	/**
 	 * Returns a list of the individual VirtualPages comprising this
-	 * MultiPage. The pagels are listed in the order of their insertion.
+	 * MultiPage. The pages are listed in the order of their insertion.
 	 * @return A new list of the pages, sorted in the order of insertion.
 	 */
 	public List<VirtualPage> getPages() {
-		return pagelets.stream()
-				.map(p -> p.source)
-				.collect(Collectors.toList());
+		return pagelets.stream().map(p -> p.source).collect(Collectors.toList());
 	}
-	
+
 	@Override
 	public Collection<Movable> getContent() {
 		Set<Content.Movable> contents = new HashSet<>();
