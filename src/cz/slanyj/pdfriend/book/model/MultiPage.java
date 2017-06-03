@@ -44,6 +44,14 @@ public abstract class MultiPage extends Page {
 	}
 
 	/**
+	 * Removes the given pagelet from this page.
+	 * @param pagelet
+	 */
+	protected final void removePagelet(Pagelet pagelet) {
+		pagelets.remove(pagelet);
+	}
+
+	/**
 	 * Returns a list of the individual pagelets comprising this MultiPage.
 	 * The pagelets are listed in the order of their insertion.
 	 * @return a new list of the pagelets preserving their order of insertion
