@@ -8,6 +8,10 @@
 		<ivy:retrieve type="jar,bundle,javadoc" sync="true" pattern="lib/[artifact]-[type].[ext]"/>
 	</target>
 	
+	<target name="clean-cache" description="Clean Ivy cache">
+		<ivy:cleancache/>
+	</target>
+	
 	<target name="compile" depends="resolve" description="Compile Java source files">
 		<mkdir dir="build/classes"/>
 		<javac srcdir="src"
