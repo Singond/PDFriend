@@ -66,21 +66,38 @@ public class MultiPage extends Page {
 	public <R, P, E extends Throwable> R invite(PageVisitor<R, P, E> visitor, P param) throws E {
 		return visitor.visit(this, param);
 	}
-	
+
 	/** A source page along with its position on this MultiPage. */
-	private static class Pagelet {
-		private final VirtualPage source;
+	protected static class Pagelet {
+		private VirtualPage source;
 		private final AffineTransform position;
-		
+
+		/**
+		 * Constructs a new Pagelet with empty source
+		 * at the given position in the parent MultiPage.
+		 * @param position
+		 */
+		protected Pagelet(AffineTransform position) {
+			this.position = position;
+		}
+
 		/**
 		 * Constructs a new Pagelet representing the given page (source)
 		 * at the given position in the parent MultiPage.
 		 * @param source
 		 * @param position
 		 */
-		private Pagelet(VirtualPage source, AffineTransform position) {
+		protected Pagelet(VirtualPage source, AffineTransform position) {
 			this.source = source;
 			this.position = position;
+		}
+
+		/**
+		 * Sets the source VirtualPage for this Pagelet.
+		 * @param source
+		 */
+		protected void setSource(VirtualPage source) {
+			this.source = source;
 		}
 	}
 }
