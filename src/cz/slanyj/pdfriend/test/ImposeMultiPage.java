@@ -33,7 +33,9 @@ public class ImposeMultiPage {
 		}
 		
 		public void addPage(VirtualPage page, AffineTransform position) {
-			super.addPagelet(new Pagelet(page, position));
+			Pagelet p = new Pagelet(page.getHeight(), page.getWidth(), position);
+			p.setSource(page);
+			super.addPagelet(p);
 		}
 	}
 
