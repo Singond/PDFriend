@@ -5,6 +5,7 @@ import java.util.Queue;
 
 import cz.slanyj.pdfriend.book.model.GridPage;
 import cz.slanyj.pdfriend.book.model.MultiPage;
+import cz.slanyj.pdfriend.book.model.MultiPage.Pagelet;
 import cz.slanyj.pdfriend.book.model.Page;
 import cz.slanyj.pdfriend.book.model.SinglePage;
 import cz.slanyj.pdfriend.document.NoException;
@@ -63,10 +64,13 @@ public class SequentialSourceProvider implements SourceProvider, PageVisitor<Voi
 	
 	/**
 	 * Fills the pagelets in a grid page in its preferred order.
+	 * TODO Currently fills the pages only row by row.
 	 */
 	@Override
 	public Void visit(GridPage p, Void param) throws NoException {
-		throw new UnsupportedOperationException(
-				"MultiPage cannot be used directly, please choose one of its subclasses");
+		for (Pagelet pg : p.pageletsByRows()) {
+			pg.setSource(sourcePages.poll());
+		}
+		return null;
 	}
 }
