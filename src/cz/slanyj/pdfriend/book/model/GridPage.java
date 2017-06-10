@@ -55,20 +55,12 @@ public class GridPage extends MultiPage {
 			AffineTransform position = new AffineTransform();
 			position.translate(cellWidth*index[1], cellHeight*(rows-index[0]-1));
 			Pagelet pagelet = new Pagelet(cellWidth, cellHeight, position);
-			addPagelet(index, pagelet);
+			cells.set(index[0], index[1], pagelet);
+			super.addPagelet(pagelet);
 		}
 		// Set the matrix as the backing matrix
 		matrix = cells;
 	}
-
-	/**
-	 * Adds a pagelet to the matrix and registers it in the superclass.
-	 * This should be the only way to insert pagelets into this page.
-	 */
-	private void addPagelet(int[] index, Pagelet pagelet) {
-		matrix.set(index[0], index[1], pagelet);
-		super.addPagelet(pagelet);
-	};
 
 	/**
 	 * Provides a way to iterate through the pages by rows.
