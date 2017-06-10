@@ -92,9 +92,20 @@ public class GridPage extends MultiPage {
 	 * Scales up all pages by a fixed amount.
 	 * @param scale magnification to be applied to all pages
 	 */
-	public void setPagesScale(double scale) {
+	public void scalePages(double scale) {
 		for (Pagelet p : getPagelets()) {
 			p.scalePage(scale);
+		}
+	}
+	
+	/**
+	 * Rotates all pages by the given angle.
+	 * @param angle the angle of rotation in counter-clockwise direction
+	 *        in radians to be applied to all pages
+	 */
+	public void rotatePages(double angle) {
+		for (Pagelet p : getPagelets()) {
+			p.rotatePage(angle);
 		}
 	}
 	

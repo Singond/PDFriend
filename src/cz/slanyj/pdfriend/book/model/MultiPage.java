@@ -195,5 +195,15 @@ public abstract class MultiPage extends Page {
 			positioner.setSize(positioner.new Scale(scale));
 			positionValid = false;
 		}
+		
+		/**
+		 * Rotates the source page by the given angle.
+		 * @param angle the angle of rotation in counter-clockwise direction
+		 *        in radians
+		 */
+		public void rotatePage(double angle) {
+			positioner.setRotation(angle);
+			positionValid = false;
+		}
 	}
 }
