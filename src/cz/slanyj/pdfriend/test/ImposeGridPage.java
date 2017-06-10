@@ -2,11 +2,6 @@ package cz.slanyj.pdfriend.test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 import cz.slanyj.pdfriend.book.control.SequentialSourceProvider;
@@ -16,12 +11,10 @@ import cz.slanyj.pdfriend.book.model.GridPage;
 import cz.slanyj.pdfriend.book.model.Leaf;
 import cz.slanyj.pdfriend.book.model.Sheet;
 import cz.slanyj.pdfriend.book.model.Leaf.Orientation;
-import cz.slanyj.pdfriend.book.model.MultiPage.Pagelet;
 import cz.slanyj.pdfriend.document.ImportException;
 import cz.slanyj.pdfriend.document.RenderingException;
 import cz.slanyj.pdfriend.document.VirtualDocument;
 import cz.slanyj.pdfriend.document.VirtualPage;
-import cz.slanyj.pdfriend.format.content.PDFPage;
 import cz.slanyj.pdfriend.format.process.PDFImporter;
 import cz.slanyj.pdfriend.format.process.PDFRenderer;
 
