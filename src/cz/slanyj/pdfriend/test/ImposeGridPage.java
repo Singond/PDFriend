@@ -9,16 +9,20 @@ import java.util.List;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
+import cz.slanyj.pdfriend.book.control.SequentialSourceProvider;
+import cz.slanyj.pdfriend.book.control.SourceProvider;
 import cz.slanyj.pdfriend.book.model.FlipDirection;
 import cz.slanyj.pdfriend.book.model.GridPage;
 import cz.slanyj.pdfriend.book.model.Leaf;
 import cz.slanyj.pdfriend.book.model.Sheet;
 import cz.slanyj.pdfriend.book.model.Leaf.Orientation;
 import cz.slanyj.pdfriend.book.model.MultiPage.Pagelet;
+import cz.slanyj.pdfriend.document.ImportException;
 import cz.slanyj.pdfriend.document.RenderingException;
 import cz.slanyj.pdfriend.document.VirtualDocument;
 import cz.slanyj.pdfriend.document.VirtualPage;
 import cz.slanyj.pdfriend.format.content.PDFPage;
+import cz.slanyj.pdfriend.format.process.PDFImporter;
 import cz.slanyj.pdfriend.format.process.PDFRenderer;
 
 /**
@@ -44,24 +48,11 @@ public class ImposeGridPage {
 		
 		try {
 			// Get content
-			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
-			List<VirtualPage> sourcePages = new ArrayList<>();
-			sourcePages.add(new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 0))));
-			sourcePages.add(new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 1))));
-			sourcePages.add(new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 2))));
-			sourcePages.add(new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 3))));
-			sourcePages.add(new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 4))));
-			sourcePages.add(new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 5))));
-			
-			Iterator<VirtualPage> srcPgIter = sourcePages.iterator();
-			for (Pagelet p : page1.pageletsByRows()) {
-				if (srcPgIter.hasNext())
-					p.setSource(srcPgIter.next());
-			}
-			for (Pagelet p : page2.pageletsByRows()) {
-				if (srcPgIter.hasNext())
-					p.setSource(srcPgIter.next());
-			}
+			File srcFile = new File("test/lorem-letter.pdf");
+			VirtualDocument source = new PDFImporter(srcFile).importDocument();
+			SourceProvider sp = new SequentialSourceProvider(source);
+			sp.setSourceTo(page1);
+			sp.setSourceTo(page2);
 			
 			// Build document model
 			VirtualDocument.Builder doc = new VirtualDocument.Builder();
@@ -77,6 +68,8 @@ public class ImposeGridPage {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (RenderingException e) {
+			e.printStackTrace();
+		} catch (ImportException e) {
 			e.printStackTrace();
 		}
 	}
