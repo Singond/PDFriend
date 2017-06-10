@@ -40,6 +40,10 @@ public class GridPage extends MultiPage {
 	 * when iterating.
 	 */
 	private Direction direction = Direction.ROWS;
+	/**
+	 * Orientation of the grid, rotation in multiples of right angle.
+	 */
+	private final GridOrientation orientation;
 
 	/**
 	 * Constructs a new GridPage with cells of the given dimensions.
@@ -47,10 +51,32 @@ public class GridPage extends MultiPage {
 	 * @param rows number of rows in the grid
 	 * @param cellWidth width of a single cell
 	 * @param cellHeight height of a single cell
+	 * @param orientation orientation of the grid
 	 */
 	public GridPage(int columns, int rows,
-	                double cellWidth, double cellHeight) {
-		super(cellWidth*columns, cellHeight*rows);
+	                double cellWidth, double cellHeight,
+	                GridOrientation orientation) {
+		super(pageWidth(columns, rows, cellWidth, cellHeight, orientation),
+		      pageHeight(columns, rows, cellWidth, cellHeight, orientation));
+		this.orientation = orientation;
+		
+		/** Grid orientation */
+		AffineTransform gridOr =
+				AffineTransform.getRotateInstance(orientation.angle);
+		switch (orientation) {
+			case UPRIGHT:
+			default:
+				break;
+			case ROTATED_LEFT:
+				gridOr.translate(0, -getWidth());
+				break;
+			case UPSIDE_DOWN:
+				gridOr.translate(-getWidth(), -getHeight());
+				break;
+			case ROTATED_RIGHT:
+				gridOr.translate(-getHeight(), 0);
+				break;
+		}
 		
 		// Initialize the matrix with null values
 		Matrix<Pagelet> cells = new ArrayMatrix<>(rows, columns);
@@ -59,7 +85,7 @@ public class GridPage extends MultiPage {
 		while (iterator.hasNext()) {
 			iterator.next();
 			int[] index = iterator.previousIndex();
-			AffineTransform position = new AffineTransform();
+			AffineTransform position = new AffineTransform(gridOr);
 			position.translate(cellWidth*index[1], cellHeight*(rows-index[0]-1));
 			Pagelet pagelet = new Pagelet(cellWidth, cellHeight, position);
 			cells.set(index[0], index[1], pagelet);
@@ -67,6 +93,19 @@ public class GridPage extends MultiPage {
 		}
 		// Set the matrix as the backing matrix
 		matrix = cells;
+	}
+
+	/**
+	 * Constructs a new GridPage with cells of the given dimensions,
+	 * in the default upright orientation.
+	 * @param columns number of columns in the grid
+	 * @param rows number of rows in the grid
+	 * @param cellWidth width of a single cell
+	 * @param cellHeight height of a single cell
+	 */
+	public GridPage(int columns, int rows,
+	                double cellWidth, double cellHeight) {
+		this(columns, rows, cellWidth, cellHeight, GridOrientation.UPRIGHT);
 	}
 	
 	/**
@@ -79,6 +118,40 @@ public class GridPage extends MultiPage {
 		this.direction = direction;
 	}
 	
+	public GridOrientation getOrientation() {
+		return orientation;
+	}
+	
+	/** Calculates necessary page width to fit the grid */
+	private static double pageWidth(int columns, int rows,
+	                                double cellWidth, double cellHeight,
+	                                GridOrientation orientation) {
+		switch (orientation) {
+			case UPRIGHT:
+			case UPSIDE_DOWN:
+			default:
+				return cellWidth * columns;
+			case ROTATED_LEFT:
+			case ROTATED_RIGHT:
+				return cellHeight * rows;
+		}
+	}
+
+	/** Calculates necessary page height to fit the grid */
+	private static double pageHeight(int columns, int rows,
+	                                 double cellWidth, double cellHeight,
+	                                 GridOrientation orientation) {
+		switch (orientation) {
+			case UPRIGHT:
+			case UPSIDE_DOWN:
+			default:
+				return cellHeight * rows;
+			case ROTATED_LEFT:
+			case ROTATED_RIGHT:
+				return cellWidth * columns;
+		}
+	}
+
 	/**
 	 * Provides a way to iterate through the pages in the order specified
 	 * by {@code direction}.
@@ -139,5 +212,22 @@ public class GridPage extends MultiPage {
 		ROWS,
 		/** Traverse the grid from top to bottom, left to right */
 		COLUMNS;
+	}
+	
+	/**
+	 * The angle by which the direction of the grid row from left to right,
+	 * deviates from the positive x-coordinate.
+	 */
+	public enum GridOrientation {
+		UPRIGHT (0),
+		ROTATED_LEFT (Math.PI/2),
+		UPSIDE_DOWN (Math.PI),
+		ROTATED_RIGHT (Math.PI*3/2);
+		
+		public final double angle;
+		
+		private GridOrientation(double angle) {
+			this.angle = angle;
+		}
 	}
 }

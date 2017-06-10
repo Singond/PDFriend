@@ -9,6 +9,7 @@ import cz.slanyj.pdfriend.book.control.SourceProvider;
 import cz.slanyj.pdfriend.book.model.FlipDirection;
 import cz.slanyj.pdfriend.book.model.GridPage;
 import cz.slanyj.pdfriend.book.model.GridPage.Direction;
+import cz.slanyj.pdfriend.book.model.GridPage.GridOrientation;
 import cz.slanyj.pdfriend.book.model.Leaf;
 import cz.slanyj.pdfriend.book.model.Sheet;
 import cz.slanyj.pdfriend.book.model.Leaf.Orientation;
@@ -28,21 +29,23 @@ import cz.slanyj.pdfriend.format.process.PDFRenderer;
 public class ImposeGridPage {
 
 	public static void main(String[] args) {
-		GridPage page1 = new GridPage(2, 2, 306, 396);
-		GridPage page2 = new GridPage(2, 2, 306, 396);
+		GridOrientation go = GridOrientation.ROTATED_RIGHT;
+		GridPage page1 = new GridPage(2, 2, 306, 396, go);
+		GridPage page2 = new GridPage(2, 2, 306, 396, go);
 //		page1.scalePages(0.55);
 		page1.fitPages();
-		page1.rotatePages(Math.PI/2);
+//		page1.rotatePages(Math.PI/2);
 		page2.fitPages();
 		page2.setDirection(Direction.COLUMNS);
 		
 		Leaf leaf = new Leaf(page1, page2);
-		leaf.setAsFrontPosition(new Leaf.Position(306, 396, 0));
+		leaf.setAsFrontPosition(new Leaf.Position(396, 306, 0));
 		leaf.setOrientation(Orientation.RECTO_UP);
 		leaf.setFlipDirection(FlipDirection.AROUND_Y);
 		leaf.numberPagesFrom(1);
 		
-		Sheet sheet = new Sheet(612, 792);
+//		Sheet sheet = new Sheet(612, 792);
+		Sheet sheet = new Sheet(792, 612);
 		sheet.addLeaf(leaf);
 		
 		try {
