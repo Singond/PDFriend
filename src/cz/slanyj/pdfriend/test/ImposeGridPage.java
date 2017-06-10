@@ -27,16 +27,18 @@ import cz.slanyj.pdfriend.format.process.PDFRenderer;
 public class ImposeGridPage {
 
 	public static void main(String[] args) {
-		GridPage page1 = new GridPage(2, 1, 612, 792);
-		GridPage page2 = new GridPage(2, 1, 612, 792);
+		GridPage page1 = new GridPage(2, 1, 306, 396);
+		GridPage page2 = new GridPage(2, 1, 306, 396);
+//		page1.fitPages();
+		page2.fitPages();
 		
 		Leaf leaf = new Leaf(page1, page2);
-		leaf.setAsFrontPosition(new Leaf.Position(612, 396, 0));
+		leaf.setAsFrontPosition(new Leaf.Position(306, 198, 0));
 		leaf.setOrientation(Orientation.RECTO_UP);
 		leaf.setFlipDirection(FlipDirection.AROUND_Y);
 		leaf.numberPagesFrom(1);
 		
-		Sheet sheet = new Sheet(1224, 792);
+		Sheet sheet = new Sheet(612, 396);
 		sheet.addLeaf(leaf);
 		
 		try {

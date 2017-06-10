@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import cz.slanyj.geometry.plane.RectangleFrame;
 import cz.slanyj.pdfriend.book.control.PageVisitor;
 import cz.slanyj.pdfriend.document.Content;
 import cz.slanyj.pdfriend.document.Content.Movable;
@@ -65,7 +66,8 @@ public abstract class MultiPage extends Page {
 		Set<Content.Movable> contents = new HashSet<>();
 		for (Pagelet p : pagelets) {
 			for (Content.Movable cm : p.source.getMovableContent()) {
-				cm.getTransform().preConcatenate(p.framePosition);
+//				cm.getTransform().preConcatenate(p.framePosition);
+				cm.getTransform().preConcatenate(p.getPositionInPage());
 				contents.add(cm);
 			}
 		}
@@ -99,8 +101,8 @@ public abstract class MultiPage extends Page {
 
 		/** The source page */
 		private VirtualPage source;
-		/** The position of the source page relative to the pagelet frame */
-		private AffineTransform positionInFrame;
+		/** A helper object for positioning the source page in the frame */
+		private final RectangleFrame positioner;
 		/**
 		 * The position of the source relative to the page.
 		 * This is calculated by composing {@code positionInFrame} and
@@ -121,7 +123,7 @@ public abstract class MultiPage extends Page {
 			this.width = width;
 			this.height = height;
 			this.framePosition = new AffineTransform(position);
-			this.positionInFrame = new AffineTransform();
+			this.positioner = new RectangleFrame(width, height);
 		}
 
 		public double getWidth() {
@@ -142,10 +144,12 @@ public abstract class MultiPage extends Page {
 			return new AffineTransform(framePosition);
 		}
 
-		/** Sets the position of the source page relative to the frame */
-		public void setPositionInFrame(AffineTransform newPosition) {
-			positionInFrame = newPosition;
-			positionValid = false;
+		/**
+		 * Sets the source VirtualPage for this Pagelet.
+		 * @param source
+		 */
+		public void setSource(VirtualPage source) {
+			this.source = source;
 		}
 		
 		/**
@@ -160,23 +164,26 @@ public abstract class MultiPage extends Page {
 		 *         transformation matrix
 		 */
 		public AffineTransform getPositionInPage() {
+			if (source == null) {
+				throw new IllegalStateException(
+						"No source page has been set for this pagelet yet");
+			}
 			if (positionValid) {
 				return new AffineTransform(positionInPage);
 			} else {
-				AffineTransform result = new AffineTransform(positionInFrame);
-				result.concatenate(framePosition);
+				AffineTransform result = positioner.positionRectangle(
+						source.getWidth(), source.getHeight());
+				result.preConcatenate(framePosition);
 				positionInPage = result;
 				positionValid = true;
 				return new AffineTransform(result);
 			}
 		}
-
-		/**
-		 * Sets the source VirtualPage for this Pagelet.
-		 * @param source
-		 */
-		public void setSource(VirtualPage source) {
-			this.source = source;
+		
+		/** Makes the source page fit this frame. */
+		public void fitPage() {
+			positioner.setSize(positioner.new Fit());
+			positionValid = false;
 		}
 	}
 }

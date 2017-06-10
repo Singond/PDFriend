@@ -79,6 +79,15 @@ public class GridPage extends MultiPage {
 		return matrix.vertically();
 	}
 	
+	/**
+	 * Makes all pages fit their cell.
+	 */
+	public void fitPages() {
+		for (Pagelet p : getPagelets()) {
+			p.fitPage();
+		}
+	}
+	
 	@Override
 	public <R, P, E extends Throwable> R invite(PageVisitor<R, P, E> visitor, P param) throws E {
 		return visitor.visit(this, param);
