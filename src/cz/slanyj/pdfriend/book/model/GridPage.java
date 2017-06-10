@@ -5,6 +5,7 @@ import cz.slanyj.collections.ArrayMatrix;
 import cz.slanyj.collections.Matrix;
 import cz.slanyj.collections.MatrixIterable;
 import cz.slanyj.collections.MatrixIterator;
+import cz.slanyj.pdfriend.book.control.PageVisitor;
 
 /**
  * A type of MultiPage which provides tabular layout of pagelets.
@@ -76,5 +77,10 @@ public class GridPage extends MultiPage {
 	 */
 	public MatrixIterable<Pagelet> pageletsByColumns() {
 		return matrix.vertically();
+	}
+	
+	@Override
+	public <R, P, E extends Throwable> R invite(PageVisitor<R, P, E> visitor, P param) throws E {
+		return visitor.visit(this, param);
 	}
 }

@@ -1,5 +1,6 @@
 package cz.slanyj.pdfriend.book.control;
 
+import cz.slanyj.pdfriend.book.model.GridPage;
 import cz.slanyj.pdfriend.book.model.MultiPage;
 import cz.slanyj.pdfriend.book.model.SinglePage;
 
@@ -16,4 +17,5 @@ public interface PageVisitor<R, P, E extends Throwable> {
 
 	public R visit(SinglePage p, P param) throws E;
 	public R visit(MultiPage p, P param) throws E;
+	public R visit(GridPage p, P param) throws E;
 }

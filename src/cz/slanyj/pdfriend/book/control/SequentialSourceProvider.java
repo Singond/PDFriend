@@ -3,6 +3,7 @@ package cz.slanyj.pdfriend.book.control;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import cz.slanyj.pdfriend.book.model.GridPage;
 import cz.slanyj.pdfriend.book.model.MultiPage;
 import cz.slanyj.pdfriend.book.model.Page;
 import cz.slanyj.pdfriend.book.model.SinglePage;
@@ -51,9 +52,21 @@ public class SequentialSourceProvider implements SourceProvider, PageVisitor<Voi
 		return null;
 	}
 	
+	/**
+	 * Fills the pagelets in multipage in their order of insertion.
+	 */
 	@Override
 	public Void visit(MultiPage p, Void param) throws NoException {
-		// TODO Implement
-		return null;
+		throw new UnsupportedOperationException(
+				"MultiPage cannot be used directly, please choose one of its subclasses");
+	}
+	
+	/**
+	 * Fills the pagelets in a grid page in its preferred order.
+	 */
+	@Override
+	public Void visit(GridPage p, Void param) throws NoException {
+		throw new UnsupportedOperationException(
+				"MultiPage cannot be used directly, please choose one of its subclasses");
 	}
 }
