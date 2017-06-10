@@ -185,5 +185,15 @@ public abstract class MultiPage extends Page {
 			positioner.setSize(positioner.new Fit());
 			positionValid = false;
 		}
+		
+		/**
+		 * Scales the source page by a constant amount.
+		 * @param scale the scale as magnification (values greater
+		 *        than 1 increase the size of the source page)
+		 */
+		public void scalePage(double scale) {
+			positioner.setSize(positioner.new Scale(scale));
+			positionValid = false;
+		}
 	}
 }

@@ -88,6 +88,16 @@ public class GridPage extends MultiPage {
 		}
 	}
 	
+	/**
+	 * Scales up all pages by a fixed amount.
+	 * @param scale magnification to be applied to all pages
+	 */
+	public void setPagesScale(double scale) {
+		for (Pagelet p : getPagelets()) {
+			p.scalePage(scale);
+		}
+	}
+	
 	@Override
 	public <R, P, E extends Throwable> R invite(PageVisitor<R, P, E> visitor, P param) throws E {
 		return visitor.visit(this, param);

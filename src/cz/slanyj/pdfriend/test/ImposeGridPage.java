@@ -29,7 +29,7 @@ public class ImposeGridPage {
 	public static void main(String[] args) {
 		GridPage page1 = new GridPage(2, 1, 306, 396);
 		GridPage page2 = new GridPage(2, 1, 306, 396);
-//		page1.fitPages();
+		page1.setPagesScale(0.55);
 		page2.fitPages();
 		
 		Leaf leaf = new Leaf(page1, page2);
