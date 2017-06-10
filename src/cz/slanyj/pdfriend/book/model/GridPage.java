@@ -34,6 +34,12 @@ public class GridPage extends MultiPage {
 	 * with the set of Pagelets in the superclass.
 	 */
 	private final Matrix<Pagelet> matrix;
+	/**
+	 * Traversal direction of the grid.
+	 * Specifies the order in which the cells of the grid should be visited
+	 * when iterating.
+	 */
+	private Direction direction = Direction.ROWS;
 
 	/**
 	 * Constructs a new GridPage with cells of the given dimensions.
@@ -62,21 +68,31 @@ public class GridPage extends MultiPage {
 		// Set the matrix as the backing matrix
 		matrix = cells;
 	}
-
+	
 	/**
-	 * Provides a way to iterate through the pages by rows.
+	 * Sets the order in which the cells of the grid should be visited
+	 * when iterating.
+	 * @param direction either by rows or by columns
+	 * @see Direction
+	 */
+	public void setDirection(Direction direction) {
+		this.direction = direction;
+	}
+	
+	/**
+	 * Provides a way to iterate through the pages in the order specified
+	 * by {@code direction}.
 	 * @return an iterable traversing the grid left to right, top to bottom
 	 */
-	public MatrixIterable<Pagelet> pageletsByRows() {
-		return matrix.horizontally();
-	}
-
-	/**
-	 * Provides a way to iterate through the pages by columns.
-	 * @return an iterable traversing the grid top to bottom, left to right
-	 */
-	public MatrixIterable<Pagelet> pageletsByColumns() {
-		return matrix.vertically();
+	public MatrixIterable<Pagelet> pagelets() {
+		switch (direction) {
+			case COLUMNS:
+				return matrix.vertically();
+			case ROWS:
+				return matrix.horizontally();
+			default:
+				throw new AssertionError("Bad GridPage direction is set: "+direction);
+		}
 	}
 	
 	/**
@@ -112,5 +128,16 @@ public class GridPage extends MultiPage {
 	@Override
 	public <R, P, E extends Throwable> R invite(PageVisitor<R, P, E> visitor, P param) throws E {
 		return visitor.visit(this, param);
+	}
+	
+	/**
+	 * Specifies the order in which this grid page will be iterated.
+	 * This will affect the order of source pages on the page.
+	 */
+	public enum Direction {
+		/** Traverse the grid from left to right, top to bottom */
+		ROWS,
+		/** Traverse the grid from top to bottom, left to right */
+		COLUMNS;
 	}
 }

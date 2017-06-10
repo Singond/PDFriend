@@ -64,11 +64,10 @@ public class SequentialSourceProvider implements SourceProvider, PageVisitor<Voi
 	
 	/**
 	 * Fills the pagelets in a grid page in its preferred order.
-	 * TODO Currently fills the pages only row by row.
 	 */
 	@Override
 	public Void visit(GridPage p, Void param) throws NoException {
-		for (Pagelet pg : p.pageletsByRows()) {
+		for (Pagelet pg : p.pagelets()) {
 			pg.setSource(sourcePages.poll());
 		}
 		return null;
