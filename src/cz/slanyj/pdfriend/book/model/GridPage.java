@@ -3,6 +3,7 @@ package cz.slanyj.pdfriend.book.model;
 import java.awt.geom.AffineTransform;
 import cz.slanyj.collections.ArrayMatrix;
 import cz.slanyj.collections.Matrix;
+import cz.slanyj.collections.MatrixIterable;
 import cz.slanyj.collections.MatrixIterator;
 
 /**
@@ -71,17 +72,17 @@ public class GridPage extends MultiPage {
 
 	/**
 	 * Provides a way to iterate through the pages by rows.
-	 * @return an iterator traversing the grid left to right, top to bottom
+	 * @return an iterable traversing the grid left to right, top to bottom
 	 */
-	public MatrixIterator<Pagelet> pageletsByRows() {
-		return matrix.horizontally().iterator();
+	public MatrixIterable<Pagelet> pageletsByRows() {
+		return matrix.horizontally();
 	}
 
 	/**
 	 * Provides a way to iterate through the pages by columns.
-	 * @return an iterator traversing the grid top to bottom, left to right
+	 * @return an iterable traversing the grid top to bottom, left to right
 	 */
-	public MatrixIterator<Pagelet> pageletsByColumns() {
-		return matrix.vertically().iterator();
+	public MatrixIterable<Pagelet> pageletsByColumns() {
+		return matrix.vertically();
 	}
 }
