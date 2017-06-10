@@ -16,7 +16,7 @@ import cz.slanyj.pdfriend.document.VirtualPage;
 /**
  * A page of a document, ie. one side of a Leaf.
  * This page can hold multiple pages of a source document at arbitrary
- * positions. These source pages are called "pagelets".
+ * positions. These source pages are contained in frames called "pagelets".
  * This class is a skeletal implementation of multiple page and it is
  * not intended for direct use in applications.
  * @author Singon
@@ -65,7 +65,7 @@ public abstract class MultiPage extends Page {
 		Set<Content.Movable> contents = new HashSet<>();
 		for (Pagelet p : pagelets) {
 			for (Content.Movable cm : p.source.getMovableContent()) {
-				cm.getTransform().preConcatenate(p.position);
+				cm.getTransform().preConcatenate(p.framePosition);
 				contents.add(cm);
 			}
 		}
@@ -77,29 +77,98 @@ public abstract class MultiPage extends Page {
 		return visitor.visit(this, param);
 	}
 
-	/** A source page along with its position on this MultiPage. */
+	/**
+	 * A frame containing a single source page along with position.
+	 * This frame has well-defined dimensions and position on the MultiPage
+	 * and enables further positioning of the source page relative to itself.
+	 */
 	public static class Pagelet {
+		/** Width of this pagelet */
+		private final double width;
+		/** Height of this pagelet */
+		private final double height;
+		/**
+		 * The position of the pagelet frame on the page.
+		 * Specifically, this is the transformation needed to bring
+		 * a rectangle with its two vertices at [0, 0] and [width, height]
+		 * to the desired position on the page.
+		 * This is <strong>not</strong> the final position of the source page,
+		 * see {@link #positionInFrame}.
+		 */
+		private final AffineTransform framePosition;
+
+		/** The source page */
 		private VirtualPage source;
-		private final AffineTransform position;
+		/** The position of the source page relative to the pagelet frame */
+		private AffineTransform positionInFrame;
+		/**
+		 * The position of the source relative to the page.
+		 * This is calculated by composing {@code positionInFrame} and
+		 * {@code position}.
+		 * This field should be calculated once and updated only when
+		 * necessary.
+		 */
+		private AffineTransform positionInPage;
+		/** Indicates that {@code positionInPage} is up to date. */
+		private boolean positionValid = false;
 
 		/**
 		 * Constructs a new Pagelet with empty source
 		 * at the given position in the parent MultiPage.
 		 * @param position
 		 */
-		public Pagelet(AffineTransform position) {
-			this.position = position;
+		public Pagelet(double width, double height, AffineTransform position) {
+			this.width = width;
+			this.height = height;
+			this.framePosition = new AffineTransform(position);
+			this.positionInFrame = new AffineTransform();
+		}
+
+		public double getWidth() {
+			return width;
+		}
+
+		public double getHeight() {
+			return height;
 		}
 
 		/**
-		 * Constructs a new Pagelet representing the given page (source)
-		 * at the given position in the parent MultiPage.
-		 * @param source
-		 * @param position
+		 * Returns the position of this pagelet frame on the page.
+		 * This is <strong>not</strong> the final position of the source page,
+		 * see {@link #getPositionInPage}.
+		 * @return a copy of the internal transformation matrix
 		 */
-		public Pagelet(VirtualPage source, AffineTransform position) {
-			this.source = source;
-			this.position = position;
+		public AffineTransform getFramePosition() {
+			return new AffineTransform(framePosition);
+		}
+
+		/** Sets the position of the source page relative to the frame */
+		public void setPositionInFrame(AffineTransform newPosition) {
+			positionInFrame = newPosition;
+			positionValid = false;
+		}
+		
+		/**
+		 * Returns the position of the source page on the parent page.
+		 * The position of the source page is based on the pagelet position
+		 * (see {@link #getPosition}), but further transformed with respect
+		 * to the pagelet frame.
+		 * This method returns the value calculated from the current
+		 * {@code framePosition} and {@code positionInFrame}, recalculating
+		 * it only when the prerequisite values have changed.
+		 * @return a copy of the cached or freshly recalculated
+		 *         transformation matrix
+		 */
+		public AffineTransform getPositionInPage() {
+			if (positionValid) {
+				return new AffineTransform(positionInPage);
+			} else {
+				AffineTransform result = new AffineTransform(positionInFrame);
+				result.concatenate(framePosition);
+				positionInPage = result;
+				positionValid = true;
+				return new AffineTransform(result);
+			}
 		}
 
 		/**
