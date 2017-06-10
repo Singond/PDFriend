@@ -40,8 +40,8 @@ public class GridPage extends MultiPage {
 	 * @param cellWidth width of a single cell
 	 * @param cellHeight height of a single cell
 	 */
-	private GridPage(int columns, int rows,
-	                 double cellWidth, double cellHeight) {
+	public GridPage(int columns, int rows,
+	                double cellWidth, double cellHeight) {
 		super(cellWidth*columns, cellHeight*rows);
 		
 		// Initialize the matrix with null values
