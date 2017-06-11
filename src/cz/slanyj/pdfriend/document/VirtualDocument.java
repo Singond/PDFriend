@@ -63,6 +63,27 @@ public class VirtualDocument {
 		return pages.size();
 	}
 	
+	/**
+	 * Returns the dimensions of the minimal rectangle into which all pages
+	 * of this document can fit.
+	 * @return the pair of dimensions [width, height]
+	 */
+	public double[] maxPageDimensions() {
+		double width = 0;
+		double height = 0;
+		for (VirtualPage p : pages) {
+			double w = p.getWidth();
+			if (w > width) {
+				width = w;
+			}
+			double h = p.getHeight();
+			if (h > height) {
+				height = h;
+			}
+		}
+		return new double[]{width, height};
+	}
+	
 	@Override
 	public String toString() {
 		return "VirtualDocument@"+hashCode()+" ("+pages.size()+" pages)";
