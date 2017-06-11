@@ -61,11 +61,8 @@
 		</unzip>
 		<jar destfile="dist/pdfriend-standalone.jar"
 		     manifest="build/MANIFEST.MF">
-			<fileset dir="build/classes"/>
+			<resources refid="jar-contents"/>
 			<fileset dir="build/lib" excludes="META-INF/*.SF"/>
-			<fileset dir="etc"/>
-			<fileset dir="loc"/>
-			<file file="version.properties"/>
 		</jar>
 	</target>
 	
