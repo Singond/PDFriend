@@ -47,7 +47,7 @@ public class Main {
 	
 	/** Prints usage info and exits */
 	private static void usage() {
-		Out.line("This is PDFriend version {}", Version.current().toString());
+		Out.line("This is PDFriend version %s", Version.current().toString());
 		System.exit(0);
 	}
 	
