@@ -55,26 +55,28 @@ public class GridPage extends MultiPage {
 	 */
 	public GridPage(int columns, int rows,
 	                double cellWidth, double cellHeight,
+	                double horizontalOffset, double verticalOffset,
 	                GridOrientation orientation) {
 		super(pageWidth(columns, rows, cellWidth, cellHeight, orientation),
 		      pageHeight(columns, rows, cellWidth, cellHeight, orientation));
 		this.orientation = orientation;
 		
-		/** Grid orientation */
-		AffineTransform gridOr =
-				AffineTransform.getRotateInstance(orientation.angle);
+		/** Grid position */
+		AffineTransform gridPos = AffineTransform.getTranslateInstance
+				(horizontalOffset, verticalOffset);
+		gridPos.rotate(orientation.angle);
 		switch (orientation) {
 			case UPRIGHT:
 			default:
 				break;
 			case ROTATED_LEFT:
-				gridOr.translate(0, -getWidth());
+				gridPos.translate(0, -getWidth());
 				break;
 			case UPSIDE_DOWN:
-				gridOr.translate(-getWidth(), -getHeight());
+				gridPos.translate(-getWidth(), -getHeight());
 				break;
 			case ROTATED_RIGHT:
-				gridOr.translate(-getHeight(), 0);
+				gridPos.translate(-getHeight(), 0);
 				break;
 		}
 		
@@ -85,7 +87,7 @@ public class GridPage extends MultiPage {
 		while (iterator.hasNext()) {
 			iterator.next();
 			int[] index = iterator.previousIndex();
-			AffineTransform position = new AffineTransform(gridOr);
+			AffineTransform position = new AffineTransform(gridPos);
 			position.translate(cellWidth*index[1], cellHeight*(rows-index[0]-1));
 			Pagelet pagelet = new Pagelet(cellWidth, cellHeight, position);
 			cells.set(index[0], index[1], pagelet);
@@ -104,8 +106,37 @@ public class GridPage extends MultiPage {
 	 * @param cellHeight height of a single cell
 	 */
 	public GridPage(int columns, int rows,
+	                double cellWidth, double cellHeight,
+	                double horizontalOffset, double verticalOffset) {
+		this(columns, rows, cellWidth, cellHeight, horizontalOffset,
+		     verticalOffset, GridOrientation.UPRIGHT);
+	}
+	
+	/**
+	 * Constructs a new GridPage with cells of the given dimensions,
+	 * in the default upright orientation.
+	 * @param columns number of columns in the grid
+	 * @param rows number of rows in the grid
+	 * @param cellWidth width of a single cell
+	 * @param cellHeight height of a single cell
+	 */
+	public GridPage(int columns, int rows,
+	                double cellWidth, double cellHeight,
+	                GridOrientation orientation) {
+		this(columns, rows, cellWidth, cellHeight, 0, 0, orientation);
+	}
+	
+	/**
+	 * Constructs a new GridPage with cells of the given dimensions,
+	 * in the default upright orientation.
+	 * @param columns number of columns in the grid
+	 * @param rows number of rows in the grid
+	 * @param cellWidth width of a single cell
+	 * @param cellHeight height of a single cell
+	 */
+	public GridPage(int columns, int rows,
 	                double cellWidth, double cellHeight) {
-		this(columns, rows, cellWidth, cellHeight, GridOrientation.UPRIGHT);
+		this(columns, rows, cellWidth, cellHeight, 0, 0, GridOrientation.UPRIGHT);
 	}
 	
 	/**

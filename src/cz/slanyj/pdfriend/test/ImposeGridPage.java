@@ -34,8 +34,8 @@ public class ImposeGridPage {
 
 	public static void main(String[] args) {
 		logger.info("This is a test of the GridPage class functionality");
-		GridOrientation go = GridOrientation.ROTATED_RIGHT;
-		GridPage page1 = new GridPage(2, 2, 306, 396, go);
+		GridOrientation go = GridOrientation.ROTATED_LEFT;
+		GridPage page1 = new GridPage(2, 2, 306, 396, 0, 0, go);
 		GridPage page2 = new GridPage(2, 2, 306, 396, go);
 //		page1.scalePages(0.55);
 		page1.fitPages();
