@@ -22,8 +22,8 @@ public class Main {
 	 * treat it as a console subcommand.
 	 */
 	public static void main(String[] args) {
-		logger.debug("The working directory is %s", Util.getWorkingDir());
-		logger.debug("The application directory is %s", Util.getApplicationDir());
+		logger.debug("The working directory is {}", Util.getWorkingDir());
+		logger.debug("The application directory is {}", Util.getApplicationDir());
 		
 		if (args.length <= 0) {
 			// GUI (to be added later). For now, just print usage.
@@ -45,7 +45,7 @@ public class Main {
 	
 	/** Prints usage info and exits */
 	private static void usage() {
-		Out.line("This is PDFriend version %s", Version.current().toString());
+		Out.line("This is PDFriend version {}", Version.current().toString());
 		System.exit(0);
 	}
 	

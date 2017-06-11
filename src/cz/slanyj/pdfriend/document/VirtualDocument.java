@@ -123,7 +123,7 @@ public class VirtualDocument {
 		 * Creates a new Document instance from this builder.
 		 */
 		public VirtualDocument build() {
-			logger.verbose("Building VirtualDocument %d pages long", pages.size());
+			logger.verbose("Building VirtualDocument {} pages long", pages.size());
 			return new VirtualDocument(pages);
 		}
 	}

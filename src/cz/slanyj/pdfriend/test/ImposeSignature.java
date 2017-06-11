@@ -64,7 +64,7 @@ public class ImposeSignature {
 		signature.add(sheet2);
 		signature.setLeafOrder(new Order<Leaf>());
 		int next = signature.numberPagesFrom(25);
-		logger.debug("Next page is %d", next);
+		logger.debug("Next page is {}", next);
 		
 		Volume volume = new Volume();
 		volume.add(signature);
