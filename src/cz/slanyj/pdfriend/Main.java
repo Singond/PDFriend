@@ -1,6 +1,12 @@
 package cz.slanyj.pdfriend;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
 import cz.slanyj.pdfriend.cli.Impose;
+import cz.slanyj.pdfriend.cli.SubCommand;
 
 /**
  * The main class; this executes PDFriend.
@@ -20,10 +26,14 @@ import cz.slanyj.pdfriend.cli.Impose;
 public class Main {
 	
 	private static ExtendedLogger logger = Log.logger(Main.class);
+	
+	private static Map<String, Supplier<SubCommand>> subcommands = new HashMap<>();
+	static {
+		subcommands.put("impose", Impose::new);
+	}
 
 	/**
-	 * If the first argument exists and begins with letter,
-	 * treat it as a console subcommand.
+	 * Runs PDFriend.
 	 */
 	public static void main(String[] args) {
 		logger.debug("The working directory is {}", Util.getWorkingDir());
@@ -33,18 +43,59 @@ public class Main {
 			// GUI (to be added later). For now, just print usage.
 			usage();
 			
-		} else if (Character.isLetter(args[0].charAt(0))) {
-			// A subcommand, execute in CLI
-			String sub = args[0];
-			String[] subArgs = new String[args.length-1];
-			System.arraycopy(args, 1, subArgs, 0, args.length-1);
-			subcommand(sub, subArgs);
 		} else {
-			// Top-level command with arguments.
-			// Could either start GUI or CLI.
-			// In either case, don't forget to pass command-line parameters.
-			usage();
+			/*
+			 * Split the arguments array at the first element which matches
+			 * the name of any subcommand. Pass the part before that as arguments
+			 * to PDFriend, use the rest (excluding the subcommand itself)
+			 * as arguments to the subcommands.
+			 */
+			String[] globalArgs = null;
+			String cmdName = null;
+			String[] cmdArgs = null;
+			for (int i=0; i<args.length; i++) {
+				String arg = args[i];
+				if (subcommands.containsKey(arg)) {
+					globalArgs = new String[i];
+					System.arraycopy(args, 0, globalArgs, 0, i);
+					cmdArgs = new String[args.length-i-1];
+					System.arraycopy(args, i+1, cmdArgs, 0, args.length-i-1);
+					cmdName = arg;
+					break;
+				}
+			}
+			if (cmdName == null) {
+				master(args);
+			} else {
+				globalOptions(globalArgs);
+				subcommands.get(cmdName).get().execute(cmdArgs);
+			}
+			
+			
+			// A subcommand, execute in CLI
+//			String sub = args[0];
+//			String[] subArgs = new String[args.length-1];
+//			System.arraycopy(args, 1, subArgs, 0, args.length-1);
+//			subcommand(sub, subArgs);
 		}
+	}
+	
+	/**
+	 * Action to invoke when no valid subcommand has been specified.
+	 * @param args
+	 */
+	private static void master(String[] args) {
+		globalOptions(args);
+		usage();
+	}
+	
+	/**
+	 * Handles global options (ie. options which do not belong with
+	 * specific module).
+	 */
+	private static void globalOptions(String[] args) {
+		logger.debug("Global arguments " + Arrays.toString(args));
+		// Implement as necessary
 	}
 	
 	/** Prints usage info and exits */
@@ -58,14 +109,14 @@ public class Main {
 	 * @param cmd The subcommand.
 	 * @param args Its command-line arguments.
 	 */
-	private static void subcommand(String cmd, String[] args) {
-		switch (cmd) {
-			case "impose":
-				Impose.main(args);
-				break;
-			default:
-				logger.error("unknownCommand", cmd);
-				System.exit(1);
-		}
-	}
+//	private static void subcommand(String cmd, String[] args) {
+//		switch (cmd) {
+//			case "impose":
+//				Impose.main(args);
+//				break;
+//			default:
+//				logger.error("unknownCommand", cmd);
+//				System.exit(1);
+//		}
+//	}
 }
