@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.collections4.list.SetUniqueList;
-import cz.slanyj.pdfriend.Bundle;
+import cz.slanyj.pdfriend.ExtendedLogger;
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.book.control.BookUtils;
 import cz.slanyj.pdfriend.document.VirtualPage;
@@ -28,6 +28,8 @@ public class Sheet {
 	 * order.
 	 */
 	private final List<Leaf> leaves;
+	
+	private static final ExtendedLogger logger = Log.logger(Sheet.class);
 	
 	public Sheet(double width, double height) {
 		this.width = width;

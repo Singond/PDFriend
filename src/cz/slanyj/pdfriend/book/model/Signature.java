@@ -8,7 +8,7 @@ import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.list.SetUniqueList;
-import cz.slanyj.pdfriend.Bundle;
+import cz.slanyj.pdfriend.ExtendedLogger;
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.book.control.BookUtils;
 import cz.slanyj.pdfriend.book.control.Order;
@@ -30,11 +30,11 @@ public class Signature {
 	 */
 	private Order<Leaf> leafOrder;
 	
+	private static final ExtendedLogger logger = Log.logger(Signature.class);
 	
 	public Signature() {
 		this.sheets = SetUniqueList.setUniqueList(new LinkedList<Sheet>());
 	}
-	
 	
 	/**
 	 * Provides access to the Sheets in this Signature.

@@ -16,6 +16,8 @@ package cz.slanyj.pdfriend;
  *
  */
 public class Main {
+	
+	private static ExtendedLogger logger = Log.logger(Main.class);
 
 	/**
 	 * If the first argument exists and begins with letter,

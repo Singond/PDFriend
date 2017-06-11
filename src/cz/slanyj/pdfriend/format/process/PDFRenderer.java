@@ -12,7 +12,7 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
 import org.apache.pdfbox.util.Matrix;
 
-import cz.slanyj.pdfriend.Bundle;
+import cz.slanyj.pdfriend.ExtendedLogger;
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.document.AContentVisitor;
 import cz.slanyj.pdfriend.document.Content;
@@ -23,6 +23,8 @@ import cz.slanyj.pdfriend.document.RenderingException;
 import cz.slanyj.pdfriend.format.content.PDFPage;
 
 public class PDFRenderer extends Renderer<PDDocument> {
+	
+	private static final ExtendedLogger logger = Log.logger(PDFRenderer.class);
 
 	@Override
 	public PDDocument render(VirtualDocument document) throws RenderingException {

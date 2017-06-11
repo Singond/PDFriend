@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.collections4.list.SetUniqueList;
-import cz.slanyj.pdfriend.Bundle;
+import cz.slanyj.pdfriend.ExtendedLogger;
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.book.control.BookUtils;
 import cz.slanyj.pdfriend.document.VirtualDocument;
@@ -22,6 +22,8 @@ public class Volume {
 	 * Signatures sorted in their proper order in the finished volume.
 	 */
 	private List<Signature> signatures;
+	
+	private static final ExtendedLogger logger = Log.logger(Volume.class);
 	
 	public Volume() {
 		signatures = SetUniqueList.setUniqueList(new LinkedList<Signature>());

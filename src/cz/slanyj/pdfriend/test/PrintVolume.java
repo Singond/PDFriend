@@ -3,6 +3,7 @@ package cz.slanyj.pdfriend.test;
 import java.io.File;
 import java.io.IOException;
 
+import cz.slanyj.pdfriend.ExtendedLogger;
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.book.control.Order;
 import cz.slanyj.pdfriend.book.control.SequentialSourceProvider;
@@ -25,6 +26,8 @@ import cz.slanyj.pdfriend.format.process.PDFRenderer;
  *
  */
 public class PrintVolume {
+	
+	private static final ExtendedLogger logger = Log.logger(PrintVolume.class);
 
 	public static void main(String[] args) {
 		Leaf leaf = new Leaf(612, 792);

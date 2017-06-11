@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import cz.slanyj.pdfriend.Bundle;
+import cz.slanyj.pdfriend.ExtendedLogger;
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.geometry.Transformations;
 import cz.slanyj.pdfriend.book.control.Layer.Orientation;
@@ -37,6 +37,8 @@ import cz.slanyj.pdfriend.geometry.Point;
  *
  */
 public class Stack {
+	
+	private static final ExtendedLogger logger = Log.logger(Stack.class);
 
 	/**
 	 * The list of Sheet Layers represented by this Stack. The layers are

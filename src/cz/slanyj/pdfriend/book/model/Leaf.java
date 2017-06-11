@@ -1,8 +1,7 @@
 package cz.slanyj.pdfriend.book.model;
 
 import java.awt.geom.AffineTransform;
-import java.util.ResourceBundle;
-
+import cz.slanyj.pdfriend.ExtendedLogger;
 import cz.slanyj.pdfriend.Log;
 
 /**
@@ -91,7 +90,7 @@ public class Leaf {
 	private int instanceNumber;
 	
 	private static int nextInstanceNumber = 1;
-	private static ResourceBundle bundle = ResourceBundle.getBundle("Console");
+	private static final ExtendedLogger logger = Log.logger(Leaf.class);
 	
 	/**
 	 * Constructs a new Leaf of the given dimensions with each of the two
@@ -204,10 +203,10 @@ public class Leaf {
 		referenceIsFront = true;
 		// Check sanity
 		if (transform.getDeterminant()==0) {
-			logger.warn(bundle, "leaf_degeneratePosition", this);
+			logger.warn("leaf_degeneratePosition", this);
 		} else if (transform.getDeterminant()<0) {
-			logger.warn(bundle, "leaf_mirroredFront", this);
-			logger.debug(bundle, "leaf_mirroredFront_detail", this);
+			logger.warn("leaf_mirroredFront", this);
+			logger.debug("leaf_mirroredFront_detail", this);
 		}
 	}
 	/**
@@ -231,10 +230,10 @@ public class Leaf {
 		referenceIsFront = false;
 		// Check sanity
 		if (transform.getDeterminant()==0) {
-			logger.warn(bundle, "leaf_degeneratePosition", this);
+			logger.warn("leaf_degeneratePosition", this);
 		} else if (transform.getDeterminant()>0) {
-			logger.warn(bundle, "leaf_mirroredBack", this);
-			logger.debug(bundle, "leaf_mirroredBack_detail", this);
+			logger.warn("leaf_mirroredBack", this);
+			logger.debug("leaf_mirroredBack_detail", this);
 		}
 	}
 	/**
@@ -313,7 +312,7 @@ public class Leaf {
 		verso.setNumber(number++);
 		// Issue warning if recto is being set to even number
 		if (number%2==0) {
-			logger.warn(bundle, "leaf_rectoEven", this);
+			logger.warn("leaf_rectoEven", this);
 		}
 		return number;
 	}

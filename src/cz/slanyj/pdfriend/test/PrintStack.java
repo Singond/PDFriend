@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.slanyj.pdfriend.ExtendedLogger;
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.book.control.SequentialSourceProvider;
 import cz.slanyj.pdfriend.book.control.Stack;
@@ -29,6 +30,8 @@ import cz.slanyj.pdfriend.geometry.Point;
  *
  */
 public class PrintStack {
+	
+	private static final ExtendedLogger logger = Log.logger(PrintStack.class);
 
 	public static void main(String[] args) {
 		Leaf leaf = new Leaf(612, 792);

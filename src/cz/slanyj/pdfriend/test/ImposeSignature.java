@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
-import cz.slanyj.pdfriend.Bundle;
+import cz.slanyj.pdfriend.ExtendedLogger;
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.book.control.Order;
 import cz.slanyj.pdfriend.book.control.SequentialSourceProvider;
@@ -28,6 +28,8 @@ import cz.slanyj.pdfriend.format.process.PDFRenderer;
  *
  */
 public class ImposeSignature {
+	
+	private static final ExtendedLogger logger = Log.logger(ImposeSignature.class);
 
 	public static void main(String[] args) {
 		Leaf leaf = new Leaf(612, 792);

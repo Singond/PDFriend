@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import cz.slanyj.pdfriend.Bundle;
+import cz.slanyj.pdfriend.ExtendedLogger;
 import cz.slanyj.pdfriend.Log;
 
 /**
@@ -25,6 +25,8 @@ public class VirtualPage {
 	private final double height;
 	/** A collection of all pages along with their positions. */
 	private final Collection<Content> content;
+	
+	private static final ExtendedLogger logger = Log.logger(VirtualPage.class);
 
 
 	/**

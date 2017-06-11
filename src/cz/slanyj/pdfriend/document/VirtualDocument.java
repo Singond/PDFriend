@@ -3,6 +3,7 @@ package cz.slanyj.pdfriend.document;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.slanyj.pdfriend.ExtendedLogger;
 import cz.slanyj.pdfriend.Log;
 
 /**
@@ -22,6 +23,8 @@ public class VirtualDocument {
 	 * numbers do not correspond to their indices in this internal list!
 	 */
 	private final List<VirtualPage> pages;
+	
+	private static final ExtendedLogger logger = Log.logger(VirtualDocument.class);
 	
 	
 	/**
