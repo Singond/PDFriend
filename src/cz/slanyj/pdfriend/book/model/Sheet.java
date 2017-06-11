@@ -67,7 +67,7 @@ public class Sheet {
 	 * @return A new VirtualPage object with the front side of this Sheet.
 	 */
 	public VirtualPage renderFront() {
-		logger.verbose(Bundle.console, "sheet_renderingFront", this);
+		logger.verbose("sheet_renderingFront", this);
 		/** Front side of this sheet compiled into page */
 		VirtualPage.Builder paper = new VirtualPage.Builder();
 		paper.setWidth(width);
@@ -88,7 +88,7 @@ public class Sheet {
 	 * @return A new VirtualPage object with the front side of this Sheet.
 	 */
 	public VirtualPage renderBack() {
-		logger.verbose(Bundle.console, "sheet_renderingFront", this);
+		logger.verbose("sheet_renderingFront", this);
 		/** Front side of this sheet compiled into page */
 		VirtualPage.Builder paper = new VirtualPage.Builder();
 		paper.setWidth(width);

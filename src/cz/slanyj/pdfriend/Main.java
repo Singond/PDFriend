@@ -57,7 +57,7 @@ public class Main {
 	private static void subcommand(String cmd, String[] args) {
 		switch (cmd) {
 			default:
-				logger.error(Bundle.console, "unknownCommand", cmd);
+				logger.error("unknownCommand", cmd);
 				System.exit(1);
 		}
 	}

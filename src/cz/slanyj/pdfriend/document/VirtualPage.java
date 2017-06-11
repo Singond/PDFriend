@@ -149,7 +149,7 @@ public class VirtualPage {
 		 */
 		public void setContent(List<Content> content) {
 			if (!this.content.isEmpty()) {
-				logger.warn(Bundle.console, "vpage_overwritingContent", Builder.this);
+				logger.warn("vpage_overwritingContent", Builder.this);
 			}
 			this.content = content;
 		}

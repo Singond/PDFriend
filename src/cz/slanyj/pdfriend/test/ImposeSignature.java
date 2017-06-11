@@ -82,7 +82,7 @@ public class ImposeSignature {
 			PDDocument output = new PDFRenderer().render(outDoc.build());
 			output.save(new File("test/imposed-signature.pdf"));
 			output.close();
-			logger.info(Bundle.console, "printDone", "imposed-signature.pdf");
+			logger.info("printDone", "imposed-signature.pdf");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ImportException e) {

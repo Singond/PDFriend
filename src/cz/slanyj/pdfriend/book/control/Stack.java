@@ -286,7 +286,7 @@ public class Stack {
 				throw new IllegalArgumentException
 					("Number of copies must be at least one.");
 			} else if (n == 1) {
-				logger.warn(Bundle.console, "stack_gatherOne");
+				logger.warn("stack_gatherOne");
 			}
 			this.copies = n;
 			this.placement = placement;
