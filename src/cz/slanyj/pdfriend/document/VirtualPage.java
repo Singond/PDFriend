@@ -149,7 +149,7 @@ public class VirtualPage {
 		 */
 		public void setContent(List<Content> content) {
 			if (!this.content.isEmpty()) {
-				Log.warn(Bundle.console, "vpage_overwritingContent", Builder.this);
+				logger.warn(Bundle.console, "vpage_overwritingContent", Builder.this);
 			}
 			this.content = content;
 		}
@@ -167,7 +167,7 @@ public class VirtualPage {
 		 * @return A new instance of VirtualPage.
 		 */
 		public VirtualPage build() {
-			Log.verbose("Building VirtualPage [%.0f x %.0f] with %d pieces of content",
+			logger.verbose("Building VirtualPage [%.0f x %.0f] with %d pieces of content",
 			            width, height, content.size());
 			return new VirtualPage(width, height, content);
 		}

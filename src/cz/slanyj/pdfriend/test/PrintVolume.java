@@ -74,7 +74,7 @@ public class PrintVolume {
 			new SequentialSourceProvider(source).setSourceTo(volume.pages());
 			VirtualDocument doc = volume.renderDocument();
 			new PDFRenderer().renderAndSave(doc, new File("test/printed-volume.pdf"));
-			Log.info("Finished writing document");
+			logger.info("Finished writing document");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ImportException e) {

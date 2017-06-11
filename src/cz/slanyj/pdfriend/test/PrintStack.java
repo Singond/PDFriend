@@ -61,7 +61,7 @@ public class PrintStack {
 			new SequentialSourceProvider(source).setSourceTo(volume.pages());
 			VirtualDocument output = volume.renderDocument();
 			new PDFRenderer().renderAndSave(output, new File("test/printed-stack.pdf"));
-			Log.info("Finished printing stack");
+			logger.info("Finished printing stack");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ImportException e) {

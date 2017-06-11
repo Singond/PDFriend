@@ -112,7 +112,7 @@ public class Volume {
 	 * @return a new VirtualDocument instance
 	 */
 	public VirtualDocument renderDocument() {
-		Log.info(Bundle.console, "volume_rendering", this);
+		logger.info(Bundle.console, "volume_rendering", this);
 		VirtualDocument.Builder document = new VirtualDocument.Builder();
 		for (Signature s : signatures) {
 			s.renderAllSheets(document);

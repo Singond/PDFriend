@@ -204,10 +204,10 @@ public class Leaf {
 		referenceIsFront = true;
 		// Check sanity
 		if (transform.getDeterminant()==0) {
-			Log.warn(bundle, "leaf_degeneratePosition", this);
+			logger.warn(bundle, "leaf_degeneratePosition", this);
 		} else if (transform.getDeterminant()<0) {
-			Log.warn(bundle, "leaf_mirroredFront", this);
-			Log.debug(bundle, "leaf_mirroredFront_detail", this);
+			logger.warn(bundle, "leaf_mirroredFront", this);
+			logger.debug(bundle, "leaf_mirroredFront_detail", this);
 		}
 	}
 	/**
@@ -231,10 +231,10 @@ public class Leaf {
 		referenceIsFront = false;
 		// Check sanity
 		if (transform.getDeterminant()==0) {
-			Log.warn(bundle, "leaf_degeneratePosition", this);
+			logger.warn(bundle, "leaf_degeneratePosition", this);
 		} else if (transform.getDeterminant()>0) {
-			Log.warn(bundle, "leaf_mirroredBack", this);
-			Log.debug(bundle, "leaf_mirroredBack_detail", this);
+			logger.warn(bundle, "leaf_mirroredBack", this);
+			logger.debug(bundle, "leaf_mirroredBack_detail", this);
 		}
 	}
 	/**
@@ -313,7 +313,7 @@ public class Leaf {
 		verso.setNumber(number++);
 		// Issue warning if recto is being set to even number
 		if (number%2==0) {
-			Log.warn(bundle, "leaf_rectoEven", this);
+			logger.warn(bundle, "leaf_rectoEven", this);
 		}
 		return number;
 	}

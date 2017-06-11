@@ -77,7 +77,7 @@ public class Signature {
 	 * @throw {@code NullPointerException} when Leaf order is null.
 	 */
 	public int numberPagesFrom(int number, Order<Leaf> order) {
-		Log.verbose(Bundle.console, "signature_numbering", this, number);
+		logger.verbose(Bundle.console, "signature_numbering", this, number);
 		if (order == null) {
 			throw new NullPointerException("The leaf order cannot be null");
 		}
@@ -188,7 +188,7 @@ public class Signature {
 	 * @param doc
 	 */
 	private void renderSheet(Sheet sheet, VirtualDocument.Builder doc) {
-		Log.verbose(Bundle.console, "signature_renderingSheet", sheet);
+		logger.verbose(Bundle.console, "signature_renderingSheet", sheet);
 		VirtualPage front = sheet.renderFront();
 		doc.addPage(front);
 		VirtualPage back = sheet.renderBack();
@@ -200,7 +200,7 @@ public class Signature {
 	 * each as two new pages (recto first, verso second).
 	 */
 	public void renderAllSheets(VirtualDocument.Builder doc) {
-		Log.verbose(Bundle.console, "signature_rendering", this);
+		logger.verbose(Bundle.console, "signature_rendering", this);
 		for (Sheet s : sheets) {
 			renderSheet(s, doc);
 		}

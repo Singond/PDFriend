@@ -22,8 +22,8 @@ public class Main {
 	 * treat it as a console subcommand.
 	 */
 	public static void main(String[] args) {
-		Log.debug("The working directory is %s", Util.getWorkingDir());
-		Log.debug("The application directory is %s", Util.getApplicationDir());
+		logger.debug("The working directory is %s", Util.getWorkingDir());
+		logger.debug("The application directory is %s", Util.getApplicationDir());
 		
 		if (args.length <= 0) {
 			// GUI (to be added later). For now, just print usage.
@@ -57,7 +57,7 @@ public class Main {
 	private static void subcommand(String cmd, String[] args) {
 		switch (cmd) {
 			default:
-				Log.error(Bundle.console, "unknownCommand", cmd);
+				logger.error(Bundle.console, "unknownCommand", cmd);
 				System.exit(1);
 		}
 	}

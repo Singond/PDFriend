@@ -64,7 +64,7 @@ public class ImposeSignature {
 		signature.add(sheet2);
 		signature.setLeafOrder(new Order<Leaf>());
 		int next = signature.numberPagesFrom(25);
-		Log.debug("Next page is %d", next);
+		logger.debug("Next page is %d", next);
 		
 		Volume volume = new Volume();
 		volume.add(signature);
@@ -82,7 +82,7 @@ public class ImposeSignature {
 			PDDocument output = new PDFRenderer().render(outDoc.build());
 			output.save(new File("test/imposed-signature.pdf"));
 			output.close();
-			Log.info(Bundle.console, "printDone", "imposed-signature.pdf");
+			logger.info(Bundle.console, "printDone", "imposed-signature.pdf");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ImportException e) {
