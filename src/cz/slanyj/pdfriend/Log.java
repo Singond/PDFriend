@@ -14,8 +14,8 @@ public class Log {
 		}
 	}
 	
-	public static ExtendedLogger logger(Object object) {
-		return ExtendedLogger.create(object.getClass(),
+	public static ExtendedLogger logger(Class<?> cls) {
+		return ExtendedLogger.create(cls,
 		                             new LocalizedMessageFactory(Bundle.console));
 	}
 	

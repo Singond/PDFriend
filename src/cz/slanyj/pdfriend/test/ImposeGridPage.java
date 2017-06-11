@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
+import cz.slanyj.pdfriend.ExtendedLogger;
+import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.book.control.SequentialSourceProvider;
 import cz.slanyj.pdfriend.book.control.SourceProvider;
 import cz.slanyj.pdfriend.book.model.FlipDirection;
@@ -27,8 +29,11 @@ import cz.slanyj.pdfriend.format.process.PDFRenderer;
  *
  */
 public class ImposeGridPage {
+	
+	private static final ExtendedLogger logger = Log.logger(ImposeGridPage.class);
 
 	public static void main(String[] args) {
+		logger.info("This is a test of the GridPage class functionality");
 		GridOrientation go = GridOrientation.ROTATED_RIGHT;
 		GridPage page1 = new GridPage(2, 2, 306, 396, go);
 		GridPage page2 = new GridPage(2, 2, 306, 396, go);
@@ -65,6 +70,7 @@ public class ImposeGridPage {
 			
 			// Render and save
 			PDDocument output = new PDFRenderer().render(doc.build());
+			logger.info("Saving file test/imposed-gridpage.pdf");
 			output.save(new File("test/imposed-gridpage.pdf"));
 			output.close();
 		} catch (IOException e) {
