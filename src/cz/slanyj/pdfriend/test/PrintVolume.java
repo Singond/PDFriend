@@ -4,16 +4,19 @@ import java.io.File;
 import java.io.IOException;
 
 import cz.slanyj.pdfriend.Log;
-import cz.slanyj.pdfriend.book.FlipDirection;
-import cz.slanyj.pdfriend.book.Leaf;
-import cz.slanyj.pdfriend.book.Leaf.Orientation;
-import cz.slanyj.pdfriend.book.Sheet;
-import cz.slanyj.pdfriend.book.Signature;
-import cz.slanyj.pdfriend.book.Volume;
+import cz.slanyj.pdfriend.book.control.Order;
+import cz.slanyj.pdfriend.book.control.SequentialSourceProvider;
+import cz.slanyj.pdfriend.book.model.FlipDirection;
+import cz.slanyj.pdfriend.book.model.Leaf;
+import cz.slanyj.pdfriend.book.model.Sheet;
+import cz.slanyj.pdfriend.book.model.Signature;
+import cz.slanyj.pdfriend.book.model.Volume;
+import cz.slanyj.pdfriend.book.model.Leaf.Orientation;
 import cz.slanyj.pdfriend.document.ImportException;
 import cz.slanyj.pdfriend.document.RenderingException;
 import cz.slanyj.pdfriend.document.VirtualDocument;
 import cz.slanyj.pdfriend.format.process.PDFImporter;
+import cz.slanyj.pdfriend.format.process.PDFRenderer;
 
 /**
  * A sample volume of two signatures.
@@ -59,15 +62,18 @@ public class PrintVolume {
 		Signature signature = new Signature();
 		signature.add(sheet);
 		signature.add(sheet2);
+		signature.setLeafOrder(new Order<Leaf>());
 		
 		Volume volume = new Volume();
 		volume.add(signature);
 		
 		try {
 			// Get content
-			VirtualDocument source = new PDFImporter(new File("test/lorem-letter.pdf")).importDocument();
-			volume.setSource(source);
-			volume.renderAndSaveDocument(new File("test/printed-volume.pdf"));
+			File srcFile = new File("test/lorem-letter.pdf");
+			VirtualDocument source = new PDFImporter(srcFile).importDocument();
+			new SequentialSourceProvider(source).setSourceTo(volume.pages());
+			VirtualDocument doc = volume.renderDocument();
+			new PDFRenderer().renderAndSave(doc, new File("test/printed-volume.pdf"));
 			Log.info("Finished writing document");
 		} catch (IOException e) {
 			e.printStackTrace();

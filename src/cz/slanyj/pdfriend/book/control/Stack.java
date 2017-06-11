@@ -1,4 +1,4 @@
-package cz.slanyj.pdfriend.book;
+package cz.slanyj.pdfriend.book.control;
 
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
@@ -11,7 +11,10 @@ import java.util.Map;
 import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.geometry.Transformations;
-import cz.slanyj.pdfriend.book.Layer.Orientation;
+import cz.slanyj.pdfriend.book.control.Layer.Orientation;
+import cz.slanyj.pdfriend.book.model.Leaf;
+import cz.slanyj.pdfriend.book.model.Sheet;
+import cz.slanyj.pdfriend.book.model.Signature;
 import cz.slanyj.pdfriend.geometry.Line;
 import cz.slanyj.pdfriend.geometry.Point;
 
@@ -145,25 +148,23 @@ public class Stack {
 	
 	/**
 	 * Assembles Layers on all Sheets into the final Signature,
-	 * placing the given pattern of Leaves into each Layer in the order
+	 * placing the given Leaf into each Layer in the order
 	 * from bottom (Layer 0) to top.
 	 * The Leaves are placed recto-up onto the Layer. If the Stack is to
 	 * be filled in reverse order, ie. from bottom to top, it must be
 	 * flipped first.
-	 * @param pattern A pattern of Leaves to be placed into all Sheets.
+	 * @param leaf A Leaf whose blank copy is to be placed into all Sheets.
 	 */
-	public Signature buildSignature(List<Leaf> pattern) {
+	public Signature buildSignature(Leaf leaf) {
 		Signature signature = new Signature();
 		Order<Leaf> orderMap = new Order<>();
 		/** The order of the Leaf in the folded Stack */
 		for (Layer lr : layers) {
-			for (Leaf l : pattern) {
-				if (lr.isInSheet(l)) {
-					Leaf nl = l.cloneAsTemplate();
-					//nl.setOrientation(Leaf.Orientation.RECTO_UP);
-					orderMap.addNext(nl);
-					lr.addLeaf(nl);
-				}
+			if (lr.isInSheet(leaf)) {
+				Leaf nl = leaf.cloneAsTemplate();
+				//nl.setOrientation(Leaf.Orientation.RECTO_UP);
+				orderMap.addNext(nl);
+				lr.addLeaf(nl);
 			}
 		}
 		// Place the layers into their sheets
@@ -235,7 +236,7 @@ public class Stack {
 
 		/**
 		 * Performs the stacking
-		 * @see cz.slanyj.pdfriend.book.Stack.Join
+		 * @see cz.slanyj.pdfriend.book.control.Stack.Join
 		 */
 		@Override
 		public void manipulate(Stack stack) {

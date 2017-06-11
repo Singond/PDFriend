@@ -7,13 +7,14 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 
 import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.Log;
-import cz.slanyj.pdfriend.book.FlipDirection;
-import cz.slanyj.pdfriend.book.Leaf;
-import cz.slanyj.pdfriend.book.Leaf.Orientation;
-import cz.slanyj.pdfriend.book.Order;
-import cz.slanyj.pdfriend.book.Sheet;
-import cz.slanyj.pdfriend.book.Signature;
-import cz.slanyj.pdfriend.book.Volume;
+import cz.slanyj.pdfriend.book.control.Order;
+import cz.slanyj.pdfriend.book.control.SequentialSourceProvider;
+import cz.slanyj.pdfriend.book.model.FlipDirection;
+import cz.slanyj.pdfriend.book.model.Leaf;
+import cz.slanyj.pdfriend.book.model.Sheet;
+import cz.slanyj.pdfriend.book.model.Signature;
+import cz.slanyj.pdfriend.book.model.Volume;
+import cz.slanyj.pdfriend.book.model.Leaf.Orientation;
 import cz.slanyj.pdfriend.document.ImportException;
 import cz.slanyj.pdfriend.document.RenderingException;
 import cz.slanyj.pdfriend.document.VirtualDocument;
@@ -72,7 +73,7 @@ public class ImposeSignature {
 			// Get content
 			File src = new File("test/lorem-letter.pdf");
 			VirtualDocument doc = new PDFImporter(src).importDocument();
-			volume.setSource(doc);
+			new SequentialSourceProvider(doc).setSourceTo(volume.pages());
 			
 			VirtualDocument.Builder outDoc = new VirtualDocument.Builder();
 			signature.renderAllSheets(outDoc);

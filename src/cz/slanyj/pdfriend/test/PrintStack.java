@@ -6,17 +6,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.slanyj.pdfriend.Log;
-import cz.slanyj.pdfriend.book.FlipDirection;
-import cz.slanyj.pdfriend.book.Leaf;
-import cz.slanyj.pdfriend.book.Leaf.Orientation;
-import cz.slanyj.pdfriend.book.Signature;
-import cz.slanyj.pdfriend.book.Stack;
-import cz.slanyj.pdfriend.book.Stack.Flip;
-import cz.slanyj.pdfriend.book.Volume;
+import cz.slanyj.pdfriend.book.control.SequentialSourceProvider;
+import cz.slanyj.pdfriend.book.control.Stack;
+import cz.slanyj.pdfriend.book.control.Stack.Flip;
+import cz.slanyj.pdfriend.book.model.FlipDirection;
+import cz.slanyj.pdfriend.book.model.Leaf;
+import cz.slanyj.pdfriend.book.model.Signature;
+import cz.slanyj.pdfriend.book.model.Volume;
+import cz.slanyj.pdfriend.book.model.Leaf.Orientation;
 import cz.slanyj.pdfriend.document.ImportException;
 import cz.slanyj.pdfriend.document.RenderingException;
 import cz.slanyj.pdfriend.document.VirtualDocument;
 import cz.slanyj.pdfriend.format.process.PDFImporter;
+import cz.slanyj.pdfriend.format.process.PDFRenderer;
 import cz.slanyj.pdfriend.geometry.Line;
 import cz.slanyj.pdfriend.geometry.Point;
 
@@ -34,9 +36,6 @@ public class PrintStack {
 		leaf.setOrientation(Orientation.RECTO_UP);
 		leaf.setFlipDirection(FlipDirection.AROUND_Y);
 		
-		List<Leaf> template = new ArrayList<>();
-		template.add(leaf);
-		
 		Stack stack = new Stack(1224, 1584);
 		
 		List<Stack.Manipulation> mm = new ArrayList<Stack.Manipulation>();
@@ -49,7 +48,7 @@ public class PrintStack {
 		//mm.add(new Stack.Gather(2));
 		stack.performManipulations(mm);
 		
-		Signature signature = stack.buildSignature(template);
+		Signature signature = stack.buildSignature(leaf);
 		signature.numberPagesFrom(1);
 		
 		Volume volume = new Volume();
@@ -59,9 +58,9 @@ public class PrintStack {
 			// Get content
 			File srcFile = new File("test/lorem-letter.pdf");
 			VirtualDocument source = new PDFImporter(srcFile).importDocument();
-			volume.setSource(source);
-				
-			volume.renderAndSaveDocument(new File("test/printed-stack.pdf"));
+			new SequentialSourceProvider(source).setSourceTo(volume.pages());
+			VirtualDocument output = volume.renderDocument();
+			new PDFRenderer().renderAndSave(output, new File("test/printed-stack.pdf"));
 			Log.info("Finished printing stack");
 		} catch (IOException e) {
 			e.printStackTrace();

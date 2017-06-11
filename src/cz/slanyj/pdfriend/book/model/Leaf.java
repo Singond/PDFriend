@@ -1,13 +1,9 @@
-package cz.slanyj.pdfriend.book;
+package cz.slanyj.pdfriend.book.model;
 
 import java.awt.geom.AffineTransform;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import cz.slanyj.pdfriend.Log;
-import cz.slanyj.pdfriend.book.FlipDirection;
-import cz.slanyj.pdfriend.document.VirtualDocument;
-import cz.slanyj.pdfriend.document.VirtualPage;
 
 /**
  * A single Leaf of a bound book. Each of its two sides is represented
@@ -92,18 +88,48 @@ public class Leaf {
 	 */
 	private boolean referenceIsFront = true;
 	
+	private int instanceNumber;
+	
+	private static int nextInstanceNumber = 1;
 	private static ResourceBundle bundle = ResourceBundle.getBundle("Console");
 	
 	/**
-	 * Constructs a new Leaf of the given dimensions.
-	 * @param width
-	 * @param height
+	 * Constructs a new Leaf of the given dimensions with each of the two
+	 * given pages on one side.
+	 * @param width The width of the Leaf.
+	 * @param height The height of the Leaf.
+	 * @param recto The page which will become the recto of the new Leaf.
+	 * @param verso The page which will become the verso of the new Leaf.
 	 */
-	public Leaf(double width, double height) {
-		this.recto = new Page(width, height);
-		this.verso = new Page(width, height);
+	private Leaf(double width, double height, Page recto, Page verso) {
+		this.recto = recto;
+		this.verso = verso;
 		this.width = width;
 		this.height = height;
+		this.instanceNumber = nextInstanceNumber++;
+	}
+	
+	/**
+	 * Constructs a new Leaf of the given dimensions with one empty
+	 * SinglePage on each side.
+	 * @param width The width of the Leaf.
+	 * @param height The height of the Leaf.
+	 */
+	public Leaf(double width, double height) {
+		this(width, height,
+		     new SinglePage(width, height),
+		     new SinglePage(width, height));
+	}
+	
+	/**
+	 * Constructs a new Leaf with each of the two given Pages on one side.
+	 * The Leaf dimension is the smallest rectangle into which both of the
+	 * two Pages can fit.
+	 */
+	public Leaf(Page recto, Page verso) {
+		this(Double.max(recto.getWidth(), verso.getWidth()),
+		     Double.max(recto.getHeight(), verso.getHeight()),
+		     recto, verso);
 	}
 	
 	
@@ -293,42 +319,17 @@ public class Leaf {
 	}
 	
 	/**
-	 * Sets the page of a virtual source document as the content ("source")
-	 * of the Pages of this Leaf.
-	 * This variant selects the source page from the given page list using
-	 * this Page's page number, assuming the pages in the list are sorted
-	 * in ascending order with page of list index 0 having page number 1.
-	 * This assumes the page number has already been set for both recto
-	 * and verso of this Leaf.
-	 * @param pagesList A list of source pages sorted in ascending order
-	 * starting with page number one. Note that while page numbers are
-	 * indexed from one, the indices in the list are standard zero-based,
-	 * ie. page 1 is placed at index 0 in the list.
-	 * @throws IllegalStateException if the page number has not been set yet
-	 * for any of the Pages of this Leaf.
+	 * Returns the recto of this Leaf.
 	 */
-	public void setSourceFrom(List<VirtualPage> pagesList) {
-		this.recto.setSourceFrom(pagesList);
-		this.verso.setSourceFrom(pagesList);
+	public Page getRecto() {
+		return recto;
 	}
+	
 	/**
-	 * Sets the page of a virtual source document as the content ("source")
-	 * of this Page.
-	 * This variant selects the source page from the given document using
-	 * this Page's page number, assuming the pages in the document are
-	 * numbered from one.
-	 * This assumes the page number has already been set for both recto
-	 * and verso of this Leaf.
-	 * @param document A virtual source document with page number from one.
-	 * Note that while pages in a VirtualDocument are indexed from one,
-	 * the indices in the list are standard zero-based, ie. page 1 is placed
-	 * at index 0 in the list.
-	 * @throws IllegalStateException if the page number has not been set yet
-	 * for any of the Pages of this Leaf.
+	 * Returns the verso of this Leaf.
 	 */
-	public void setSourceFrom(VirtualDocument document) {
-		this.recto.setSourceFrom(document);
-		this.verso.setSourceFrom(document);
+	public Page getVerso() {
+		return verso;
 	}
 	
 	/**
@@ -378,7 +379,8 @@ public class Leaf {
 
 	@Override
 	public String toString() {
-		return "Leaf "+recto.getNumber()+"-"+verso.getNumber();
+//		return "Leaf "+recto.getNumber()+"-"+verso.getNumber();
+		return "Leaf "+instanceNumber;
 	}
 	
 	/**

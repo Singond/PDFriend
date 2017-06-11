@@ -1,4 +1,4 @@
-package cz.slanyj.pdfriend.book;
+package cz.slanyj.pdfriend.book.control;
 
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.collections4.list.SetUniqueList;
+
+import cz.slanyj.pdfriend.book.model.Leaf;
+import cz.slanyj.pdfriend.book.model.Sheet;
 
 /**
  * An area on a Sheet with a specific position and own coordinate system,
