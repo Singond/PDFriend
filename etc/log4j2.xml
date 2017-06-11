@@ -4,13 +4,16 @@
 		<Console name="Log" target="SYSTEM_OUT">
 			<!--<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>-->
 			<!--<PatternLayout pattern="[%t] %-5level %logger{36} - %msg%n"/>-->
-			<PatternLayout pattern="[%t] %-4level: %msg%n"/>
+			<PatternLayout pattern="[%t] %-16.16c{1} %-5level{VERBOSE=VERB} | %msg%n"/>
 		</Console>
 		<!-- Writes the log messages to standard error so that stdout can be piped. --> 
 		<Console name="CommandLineInterface" target="SYSTEM_ERR">
 			<PatternLayout pattern="pdfriend: %msg%n"/>
 		</Console>
-		<RollingFile name="Roll" fileName="log/app.log" filePattern="log/app-%d{yyyy-MM-dd}-%i.log">
+		<!-- Set logFile system property from inside application before initializing log4j. -->
+		<RollingFile name="Roll"
+		             fileName="${sys:logFile}/log/app.log"
+		             filePattern="${sys:logFile}/log/app-%d{yyyy-MM-dd}-%i.log">
 			<PatternLayout pattern="[%t] %-4level: %msg%n"/>
 			<Policies>
 				<TimeBasedTriggeringPolicy/>
@@ -19,7 +22,8 @@
 	</Appenders>
 	<Loggers>
 		<Root level="debug">
-			<AppenderRef ref="CommandLineInterface"/>
+<!-- 			<AppenderRef ref="CommandLineInterface"/> -->
+			<AppenderRef ref="Log"/>
 			<AppenderRef ref="Roll"/>
 		</Root>
 	</Loggers>

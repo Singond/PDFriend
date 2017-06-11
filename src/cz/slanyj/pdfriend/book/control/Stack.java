@@ -1,4 +1,4 @@
-package cz.slanyj.pdfriend.book;
+package cz.slanyj.pdfriend.book.control;
 
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
@@ -8,23 +8,26 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import cz.slanyj.pdfriend.Bundle;
+import cz.slanyj.pdfriend.ExtendedLogger;
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.geometry.Transformations;
-import cz.slanyj.pdfriend.book.Field.Orientation;
+import cz.slanyj.pdfriend.book.control.Layer.Orientation;
+import cz.slanyj.pdfriend.book.model.Leaf;
+import cz.slanyj.pdfriend.book.model.Sheet;
+import cz.slanyj.pdfriend.book.model.Signature;
 import cz.slanyj.pdfriend.geometry.Line;
 import cz.slanyj.pdfriend.geometry.Point;
 
 /**
- * <p>A vertical stack of Fields, ie. a collection of possibly folded
- * sheets of paper. Here, each Field represents a single layer of such stack.
- * Multiple Fields may belong to the same Sheet; such as when the Sheet has
+ * <p>A vertical stack of Layers, ie. a collection of possibly folded
+ * sheets of paper. Here, each Layer represents a single layer of such stack.
+ * Multiple Layers may belong to the same Sheet; such as when the Sheet has
  * been folded in half.</p>
  * <p>The sheets can be manipulated, ie. folded and stacked to simulate these
  * procedures in real-world print production.
  * Once the Stack has been manipulated, Leaves can be placed into it.
  * This involves taking a pattern of Leaves (most usually, a single Leaf)
- * and applying it into each layer of the stack (ie. each Field), in the
+ * and applying it into each layer of the stack (ie. each Layer), in the
  * order the layers are encountered when going from top to bottom.</p>
  * <p>The Stack is finally rendered into a Signature which contains Sheets
  * and properly imposed Leaves, which, when printed, folded and stacked
@@ -34,13 +37,15 @@ import cz.slanyj.pdfriend.geometry.Point;
  *
  */
 public class Stack {
+	
+	private static final ExtendedLogger logger = Log.logger(Stack.class);
 
 	/**
-	 * The list of Sheet Fields represented by this Stack. The fields are
+	 * The list of Sheet Layers represented by this Stack. The layers are
 	 * numbered from top to bottom, ie the topmost one is 0.
 	 */
-	private final List<Field> fields;
-	/** A list of all Sheets referenced by the Fields */
+	private final List<Layer> layers;
+	/** A list of all Sheets referenced by the Layers */
 	private final List<Sheet> sheets;
 	
 	/**
@@ -56,25 +61,25 @@ public class Stack {
 
 	
 	/**
-	 * Constructs a new Stack, optionally with a default Field and Sheet.
+	 * Constructs a new Stack, optionally with a default Layer and Sheet.
 	 * @param width The unfolded width of this Stack.
 	 * @param height The unfolded height of this Stack.
-	 * @param initialize Whether to create default Field and Sheet.
+	 * @param initialize Whether to create default Layer and Sheet.
 	 */
 	public Stack(double width, double height, boolean initialize) {
 		this.width = width;
 		this.height = height;
 		sheets = new LinkedList<>();
-		fields = new LinkedList<>();
+		layers = new LinkedList<>();
 		if (initialize) {
 			Sheet s = new Sheet(width, height);
 			sheets.add(s);
-			Field f = new Field(s, new AffineTransform(), Orientation.POSITIVE);
-			fields.add(f);
+			Layer l = new Layer(s, new AffineTransform(), Orientation.POSITIVE);
+			layers.add(l);
 		}
 	}
 	/**
-	 * Constructs a new Stack with a default Field and Sheet.
+	 * Constructs a new Stack with a default Layer and Sheet.
 	 * @param width The unfolded width of this Stack.
 	 * @param height The unfolded height of this Stack.
 	 */
@@ -93,11 +98,11 @@ public class Stack {
 	
 	/**
 	 * Performs a partial-depth clone of this Stack by copying the graph
-	 * of Fields down to the level of Sheets, while preserving their
+	 * of Layers down to the level of Sheets, while preserving their
 	 * relations. The clone doesn't reach into Sheets, meaning the Sheets
 	 * are copied blank, without Leaves.
 	 * In order for this method to work correctly, all Sheets referenced
-	 * by Fields must be present in the {@code sheets} list.
+	 * by Layers must be present in the {@code sheets} list.
 	 */
 	public Stack copy() {
 		/**
@@ -133,9 +138,9 @@ public class Stack {
 		// Do the clone
 		Stack clone = new Stack(width, height, false);
 		SheetCloner cloner = new SheetCloner();
-		for (Field f : fields) {
-			Sheet parentClone = cloner.cloneSheet(f.getSheet());
-			clone.fields.add(new Field(f, parentClone));
+		for (Layer l : layers) {
+			Sheet parentClone = cloner.cloneSheet(l.getSheet());
+			clone.layers.add(new Layer(l, parentClone));
 		}
 		for (Sheet s : sheets) {
 			clone.sheets.add(cloner.cloneSheet(s));
@@ -144,31 +149,29 @@ public class Stack {
 	}
 	
 	/**
-	 * Assembles Fields on all Sheets into the final Signature,
-	 * placing the given pattern of Leaves into each Field in the order
-	 * from bottom (Field 0) to top.
-	 * The Leaves are placed recto-up onto the Field. If the Stack is to
+	 * Assembles Layers on all Sheets into the final Signature,
+	 * placing the given Leaf into each Layer in the order
+	 * from bottom (Layer 0) to top.
+	 * The Leaves are placed recto-up onto the Layer. If the Stack is to
 	 * be filled in reverse order, ie. from bottom to top, it must be
 	 * flipped first.
-	 * @param pattern A pattern of Leaves to be placed into all Sheets.
+	 * @param leaf A Leaf whose blank copy is to be placed into all Sheets.
 	 */
-	public Signature buildSignature(List<Leaf> pattern) {
+	public Signature buildSignature(Leaf leaf) {
 		Signature signature = new Signature();
 		Order<Leaf> orderMap = new Order<>();
 		/** The order of the Leaf in the folded Stack */
-		for (Field f : fields) {
-			for (Leaf l : pattern) {
-				if (f.isInSheet(l)) {
-					Leaf nl = l.cloneAsTemplate();
-					//nl.setOrientation(Leaf.Orientation.RECTO_UP);
-					orderMap.addNext(nl);
-					f.addLeaf(nl);
-				}
+		for (Layer lr : layers) {
+			if (lr.isInSheet(leaf)) {
+				Leaf nl = leaf.cloneAsTemplate();
+				//nl.setOrientation(Leaf.Orientation.RECTO_UP);
+				orderMap.addNext(nl);
+				lr.addLeaf(nl);
 			}
 		}
-		// Place the fields into their sheets
-		for (Field f : fields) {
-			f.placeLeaves();
+		// Place the layers into their sheets
+		for (Layer l : layers) {
+			l.placeLeaves();
 		}
 		for (Sheet s : sheets) {
 			signature.add(s);
@@ -235,17 +238,17 @@ public class Stack {
 
 		/**
 		 * Performs the stacking
-		 * @see cz.slanyj.pdfriend.book.Stack.Join
+		 * @see cz.slanyj.pdfriend.book.control.Stack.Join
 		 */
 		@Override
 		public void manipulate(Stack stack) {
-			/** The fields to be joined */
-			List<Field> joined = other.fields;
+			/** The layers to be joined */
+			List<Layer> joined = other.layers;
 			if (placement == Placement.TOP) {
-				stack.fields.addAll(0, joined);
+				stack.layers.addAll(0, joined);
 				stack.sheets.addAll(0, other.sheets);
 			} else if (placement == Placement.BOTTOM) {
-				stack.fields.addAll(joined);
+				stack.layers.addAll(joined);
 				stack.sheets.addAll(other.sheets);
 			} else {
 				assert false : placement;
@@ -285,7 +288,7 @@ public class Stack {
 				throw new IllegalArgumentException
 					("Number of copies must be at least one.");
 			} else if (n == 1) {
-				Log.warn(Bundle.console, "stack_gatherOne");
+				logger.warn("stack_gatherOne");
 			}
 			this.copies = n;
 			this.placement = placement;
@@ -308,13 +311,13 @@ public class Stack {
 				for (int i=0; i<copies-1; i++) {
 					Stack copy = original.copy();
 					stack.sheets.addAll(0, copy.sheets);
-					stack.fields.addAll(0, copy.fields);
+					stack.layers.addAll(0, copy.layers);
 				}
 			} else if (placement == Placement.BOTTOM) {
 				for (int i=0; i<copies-1; i++) {
 					Stack copy = original.copy();
 					stack.sheets.addAll(copy.sheets);
-					stack.fields.addAll(copy.fields);
+					stack.layers.addAll(copy.layers);
 				}
 			} else {
 				assert false: placement;
@@ -342,37 +345,37 @@ public class Stack {
 		
 		@Override
 		public void manipulate(Stack stack) {
-			int fieldCount = stack.fields.size();
+			int layerCount = stack.layers.size();
 			// The folded part of the stack
-			List<Field> foldedStack = new ArrayList<>(fieldCount);
+			List<Layer> foldedStack = new ArrayList<>(layerCount);
 			AffineTransform fold = Transformations.mirror(axis);
 			
 			if (direction == Direction.UNDER) {
-				// Iterate backwards, place new Fields to bottom of Stack
-				int end = fieldCount;
-				ListIterator<Field> iter = stack.fields.listIterator(end);
+				// Iterate backwards, place new Layers to bottom of Stack
+				int end = layerCount;
+				ListIterator<Layer> iter = stack.layers.listIterator(end);
 				while (iter.hasPrevious()) {
-					Field f = iter.previous();
+					Layer l = iter.previous();
 					AffineTransform position = new AffineTransform(fold);
-					position.concatenate(f.getPosition());
-					Field folded = new Field(f.getSheet(),
+					position.concatenate(l.getPosition());
+					Layer folded = new Layer(l.getSheet(),
 					                         position,
-					                         f.getOrientation().inverse());
+					                         l.getOrientation().inverse());
 					foldedStack.add(folded);
 				}
 				iter = null;
-				stack.fields.addAll(foldedStack);
+				stack.layers.addAll(foldedStack);
 			} else if (direction == Direction.OVER) {
-				// Iterate forward, place new Fields to the top of Stack
-				for (Field f : stack.fields) {
+				// Iterate forward, place new Layers to the top of Stack
+				for (Layer l : stack.layers) {
 					AffineTransform position = new AffineTransform(fold);
-					position.concatenate(f.getPosition());
-					Field folded = new Field(f.getSheet(),
+					position.concatenate(l.getPosition());
+					Layer folded = new Layer(l.getSheet(),
 					                         position,
-					                         f.getOrientation().inverse());
+					                         l.getOrientation().inverse());
 					foldedStack.add(0, folded);
 				}
-				stack.fields.addAll(0, foldedStack);
+				stack.layers.addAll(0, foldedStack);
 			} else {
 				assert false : direction;
 			}
@@ -381,23 +384,23 @@ public class Stack {
 		/**
 		 * Specifies the direction of folding.
 		 * The Stack is assumed to be fixed in the origin and the newly
-		 * created Fields can be placed either to top or to bottom. 
+		 * created Layers can be placed either to top or to bottom.
 		 * @author Singon
 		 */
 		public static enum Direction {
 			/**
-			 * The origin stays in position and Fields are folded on top.
+			 * The origin stays in position and Layers are folded on top.
 			 */
 			OVER,
 			/**
-			 * The origin stays in position and Fields are folded to bottom.
+			 * The origin stays in position and Layers are folded to bottom.
 			 */
 			UNDER;
 		}
 	}
 	
 	/**
-	 * Turns this Stack over so that bottom becomes top and for each Field,
+	 * Turns this Stack over so that bottom becomes top and for each Layer,
 	 * what was front side now becomes the back side.
 	 * @author Singon
 	 *
@@ -443,19 +446,19 @@ public class Stack {
 		
 		@Override
 		public void manipulate(Stack stack) {
-			// The original Fields stored in a new list
-			List<Field> orig = new ArrayList<>(stack.fields);
+			// The original Layers stored in a new list
+			List<Layer> orig = new ArrayList<>(stack.layers);
 			AffineTransform flip = Transformations.mirror(axis);
-			// Reverse the order of the fields, changing their orientation
-			stack.fields.clear();
-			ListIterator<Field> iter = orig.listIterator(orig.size());
+			// Reverse the order of the layers, changing their orientation
+			stack.layers.clear();
+			ListIterator<Layer> iter = orig.listIterator(orig.size());
 			while(iter.hasPrevious()) {
-				Field f = iter.previous();
-				AffineTransform position = f.getPosition();
+				Layer l = iter.previous();
+				AffineTransform position = l.getPosition();
 				position.concatenate(flip);
-				Orientation ornt = f.getOrientation().inverse();
-				Sheet sheet = f.getSheet();
-				stack.fields.add(new Field(sheet, position, ornt));
+				Orientation ornt = l.getOrientation().inverse();
+				Sheet sheet = l.getSheet();
+				stack.layers.add(new Layer(sheet, position, ornt));
 			}
 		}
 		

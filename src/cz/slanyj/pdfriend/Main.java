@@ -18,13 +18,16 @@ import cz.slanyj.pdfriend.cli.Impose;
  *
  */
 public class Main {
+	
+	private static ExtendedLogger logger = Log.logger(Main.class);
 
 	/**
 	 * If the first argument exists and begins with letter,
 	 * treat it as a console subcommand.
 	 */
 	public static void main(String[] args) {
-		Log.debug("The current directory is %s", Util.getWorkingDir());
+		logger.debug("The working directory is {}", Util.getWorkingDir());
+		logger.debug("The application directory is {}", Util.getApplicationDir());
 		
 		if (args.length <= 0) {
 			// GUI (to be added later). For now, just print usage.
@@ -46,7 +49,7 @@ public class Main {
 	
 	/** Prints usage info and exits */
 	private static void usage() {
-		Out.println("This is PDFriend");
+		Out.line("This is PDFriend version {}", Version.current().toString());
 		System.exit(0);
 	}
 	
@@ -61,7 +64,7 @@ public class Main {
 				Impose.main(args);
 				break;
 			default:
-				Log.error(Bundle.console, "unknownCommand", cmd);
+				logger.error("unknownCommand", cmd);
 				System.exit(1);
 		}
 	}

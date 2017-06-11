@@ -1,4 +1,4 @@
-package cz.slanyj.pdfriend.book;
+package cz.slanyj.pdfriend.book.control;
 
 import java.util.HashMap;
 import java.util.Map;

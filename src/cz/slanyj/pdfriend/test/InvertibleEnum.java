@@ -1,6 +1,6 @@
 package cz.slanyj.pdfriend.test;
 
-import cz.slanyj.pdfriend.book.Leaf.Orientation;;
+import cz.slanyj.pdfriend.book.model.Leaf.Orientation;;
 
 public class InvertibleEnum {
 

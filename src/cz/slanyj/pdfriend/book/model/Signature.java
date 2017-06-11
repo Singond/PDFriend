@@ -1,17 +1,19 @@
-package cz.slanyj.pdfriend.book;
+package cz.slanyj.pdfriend.book.model;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.ToIntFunction;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.list.SetUniqueList;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-
-import cz.slanyj.pdfriend.Bundle;
+import cz.slanyj.pdfriend.ExtendedLogger;
 import cz.slanyj.pdfriend.Log;
+import cz.slanyj.pdfriend.book.control.BookUtils;
+import cz.slanyj.pdfriend.book.control.Order;
+import cz.slanyj.pdfriend.document.VirtualDocument;
+import cz.slanyj.pdfriend.document.VirtualPage;
 
 /**
  * A signature of a document, made by folding one or more Sheets.
@@ -28,11 +30,11 @@ public class Signature {
 	 */
 	private Order<Leaf> leafOrder;
 	
+	private static final ExtendedLogger logger = Log.logger(Signature.class);
 	
 	public Signature() {
 		this.sheets = SetUniqueList.setUniqueList(new LinkedList<Sheet>());
 	}
-	
 	
 	/**
 	 * Provides access to the Sheets in this Signature.
@@ -75,7 +77,7 @@ public class Signature {
 	 * @throw {@code NullPointerException} when Leaf order is null.
 	 */
 	public int numberPagesFrom(int number, Order<Leaf> order) {
-		Log.verbose(Bundle.console, "signature_numbering", this, number);
+		logger.verbose("signature_numbering", this, number);
 		if (order == null) {
 			throw new NullPointerException("The leaf order cannot be null");
 		}
@@ -125,16 +127,71 @@ public class Signature {
 	}
 	
 	/**
+	 * Iterates through the leaves in the currently set order.
+	 * @return A new Iterator object starting at the first Leaf.
+	 */
+	public Iterator<Leaf> leafIterator() {
+		Order<Leaf> order;
+		if (leafOrder == null) {
+			throw new IllegalStateException("No leaf order has been set for "+this);
+		} else {
+			order = leafOrder;
+		}
+		
+		List<Leaf> sheetList = sheets.stream()
+				.flatMap(s -> s.getLeaves().stream())
+				// Sort by order and put unordered Leaves to the end
+				.sorted((x, y) -> {
+					if (order.hasElement(x) && order.hasElement(y)) {
+						return order.indexOf(x) - order.indexOf(y);
+					} else {
+						return 1;
+					}
+				})
+				.collect(Collectors.toList());
+		return sheetList.iterator();
+	}
+	
+	/**
+	 * Wraps this object to iterate through all Leaves in the current order.
+	 * @see {@link #leafIterator}
+	 * @return This object wrapped as an Iterable<Leaf>.
+	 */
+	public Iterable<Leaf> leaves() {
+		return new Iterable<Leaf>() {
+			@Override
+			public Iterator<Leaf> iterator() {
+				return leafIterator();
+			}
+		};
+	}
+	
+	/**
+	 * Wraps this object to iterate through the pages in the order of the
+	 * Leaves and with the recto of each Leaf coming right before its verso.
+	 * @see {@link #leafIterator}
+	 * @return This object wrapped as an Iterable<Page>.
+	 */
+	public Iterable<Page> pages() {
+		return new Iterable<Page>() {
+			@Override
+			public Iterator<Page> iterator() {
+				return BookUtils.pageIterator(leafIterator());
+			}
+		};
+	}
+	
+	/**
 	 * Renders the given sheet into the given document as two new pages
 	 * (recto first, verso second).
 	 * @param i
 	 * @param doc
 	 */
-	private void renderSheet(Sheet sheet, PDDocument doc) throws IOException {
-		Log.verbose(Bundle.console, "signature_renderingSheet", sheet);
-		PDPage front = sheet.renderFront(doc);
+	private void renderSheet(Sheet sheet, VirtualDocument.Builder doc) {
+		logger.verbose("signature_renderingSheet", sheet);
+		VirtualPage front = sheet.renderFront();
 		doc.addPage(front);
-		PDPage back = sheet.renderBack(doc);
+		VirtualPage back = sheet.renderBack();
 		doc.addPage(back);
 	}
 	
@@ -142,8 +199,8 @@ public class Signature {
 	 * Renders all Sheets in this signature into the given document,
 	 * each as two new pages (recto first, verso second).
 	 */
-	public void renderAllSheets(PDDocument doc) throws IOException {
-		Log.verbose(Bundle.console, "signature_rendering", this);
+	public void renderAllSheets(VirtualDocument.Builder doc) {
+		logger.verbose("signature_rendering", this);
 		for (Sheet s : sheets) {
 			renderSheet(s, doc);
 		}

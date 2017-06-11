@@ -5,7 +5,11 @@
 	
 	<target name="resolve" description="Resolve dependencies with Ivy">
 		<ivy:resolve/>
-		<ivy:retrieve type="jar,bundle,javadoc" sync="true"/>
+		<ivy:retrieve type="jar,bundle,javadoc" sync="true" pattern="lib/[artifact]-[type].[ext]"/>
+	</target>
+	
+	<target name="clean-cache" description="Clean Ivy cache">
+		<ivy:cleancache/>
 	</target>
 	
 	<target name="compile" depends="resolve" description="Compile Java source files">
@@ -30,16 +34,21 @@
 		</manifest>
 	</target>
 	
+	<union id="jar-contents">
+		<fileset dir="build/classes">
+			<exclude name="cz/slanyj/pdfriend/test/"/>
+		</fileset>
+		<fileset dir="etc"/>
+		<fileset dir="loc"/>
+		<file file="version.properties"/>
+	</union>
+	
 	<target name="jar-mini"
 	        depends="compile, manifest"
 	        description="Package into minimal Java archive">
 		<jar destfile="dist/pdfriend-minimal.jar"
 		     manifest="build/MANIFEST.MF">
-			<fileset dir="build/classes">
-				<exclude name="cz/slanyj/pdfriend/test/"/>
-			</fileset>
-			<fileset dir="etc"/>
-			<fileset dir="loc"/>
+			<resources refid="jar-contents"/>
 		</jar>
 	</target>
 	
@@ -48,21 +57,18 @@
 	        description="Package into a standalone Java archive, ie. with all libraries">
 		<jar destfile="dist/pdfriend-standalone.jar"
 		     manifest="build/MANIFEST.MF">
-			<fileset dir="build/classes">
-				<exclude name="cz/slanyj/pdfriend/test/"/>
-			</fileset>
-			<fileset dir="etc"/>
-			<fileset dir="loc"/>
+			<resources refid="jar-contents"/>
 			<!-- Unzip the contents of libraries to speed up loading -->
-            <zipfileset excludes="META-INF/*.SF" src="lib/bcmail-jdk15on-1.54.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/bcpkix-jdk15on-1.54.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/bcprov-jdk15on-1.54.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/commons-logging-1.2.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/fontbox-2.0.4.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/log4j-api-2.7.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/log4j-core-2.7.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/pdfbox-2.0.4.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/commons-collections4-4.1.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/bcmail-jdk15on-jar.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/bcpkix-jdk15on-jar.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/bcprov-jdk15on-jar.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/commons-collections4-jar.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/commons-logging-jar.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/fontbox-bundle.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/log4j-api-jar.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/log4j-core-jar.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/pdfbox-bundle.jar"/>
+			<zipfileset excludes="META-INF/*.SF" src="lib/singon-collections-jar.jar"/>
 		</jar>
 	</target>
 	

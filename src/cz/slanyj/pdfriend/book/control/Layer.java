@@ -1,4 +1,4 @@
-package cz.slanyj.pdfriend.book;
+package cz.slanyj.pdfriend.book.control;
 
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.collections4.list.SetUniqueList;
+
+import cz.slanyj.pdfriend.book.model.Leaf;
+import cz.slanyj.pdfriend.book.model.Sheet;
 
 /**
  * An area on a Sheet with a specific position and own coordinate system,
@@ -15,12 +18,12 @@ import org.apache.commons.collections4.list.SetUniqueList;
  * @author Singon
  *
  */
-public class Field {
+public class Layer {
 
-	/** Parent Sheet this Field belongs to. */
+	/** Parent Sheet this Layer belongs to. */
 	private final Sheet sheet;
 	/**
-	 * Position of this Field on the parent Sheet, as seen from the front
+	 * Position of this Layer on the parent Sheet, as seen from the front
 	 * of the Sheet, represented by a matrix.
 	 */
 	private final AffineTransform position;
@@ -30,33 +33,33 @@ public class Field {
 	 * the transformation's determinant.
 	 * However, this convention was not adopted and orientation is thus
 	 * specified as a separate value. This allows full freedom in positio-
-	 * ning Fields on the Sheet, allowing them to be placed in mirrored
+	 * ning Layers on the Sheet, allowing them to be placed in mirrored
 	 * position, as useless as it might seem.
 	 */
-	/** Orientation of this Field */
+	/** Orientation of this Layer */
 	private final Orientation orientation;
 	
 	/**
-	 * A list of all Leaves positioned on this field, arranged in ascending
+	 * A list of all Leaves positioned on this layer, arranged in ascending
 	 * order.
 	 */
 	private final List<Leaf> leaves;
 	
 	
 	/**
-	 * Constructs a new Field in the given Sheet, with the specified position
+	 * Constructs a new Layer in the given Sheet, with the specified position
 	 * and orientation.
-	 * @param parent The parent sheet of this Field
+	 * @param parent The parent sheet of this Layer
 	 * @param pos The transformation matrix representing the position of this
-	 * Field on the Sheet, when viewed from the front side of the Sheet. This
+	 * Layer on the Sheet, when viewed from the front side of the Sheet. This
 	 * transformation should be composed of only rotations and translations,
 	 * otherwise the page shape will be deformed.
-	 * @param orient The orientation of this Field, ie. either front on front
+	 * @param orient The orientation of this Layer, ie. either front on front
 	 * (= positive) or front on back (= negative). In order not to obtain
 	 * mirrored pages, the sign of the orientation should match the sign of
 	 * the determinant of the {@code pos} matrix.
 	 */
-	public Field(Sheet parent, AffineTransform pos, Orientation orient) {
+	public Layer(Sheet parent, AffineTransform pos, Orientation orient) {
 		sheet = parent;
 		position = pos;
 		orientation = orient;
@@ -64,21 +67,21 @@ public class Field {
 	}
 	/**
 	 * A copy constructor.
-	 * Creates a new Field which is a copy of the original with the same
-	 * position and orientation. The new Field is created in the Sheet
-	 * given in argument. This does not copy any Leaves placed in the Field.
-	 * @param original The Field to be copied.
-	 * @param parent The parent Sheet of the newly created Field.
-	 * @return A new Field object with the same position and orientation
+	 * Creates a new Layer which is a copy of the original with the same
+	 * position and orientation. The new Layer is created in the Sheet
+	 * given in argument. This does not copy any Leaves placed in the Layer.
+	 * @param original The Layer to be copied.
+	 * @param parent The parent Sheet of the newly created Layer.
+	 * @return A new Layer object with the same position and orientation
 	 * as the original.
 	 */
-	public Field(Field original, Sheet parent) {
+	public Layer(Layer original, Sheet parent) {
 		this(parent, original.position, original.orientation);
 	}
 	
 	
 	/**
-	 * Returns the position of this Field.
+	 * Returns the position of this Layer.
 	 * @return A copy of the internal transformation matrix.
 	 */
 	public AffineTransform getPosition() {
@@ -89,7 +92,7 @@ public class Field {
 		return orientation;
 	}
 
-	/** Returns the Sheet this Field belongs to. */
+	/** Returns the Sheet this Layer belongs to. */
 	public Sheet getSheet() {
 		return sheet;
 	}
@@ -102,15 +105,15 @@ public class Field {
 	}
 	
 	/**
-	 * Adds a Leaf to this Field.
+	 * Adds a Leaf to this Layer.
 	 */
 	public void addLeaf(Leaf leaf) {
 		leaves.add(leaf);
 	}
 	
 	/**
-	 * Checks whether a Leaf would lie in the parent Sheet of this Field,
-	 * were it placed into this Field at its current position.
+	 * Checks whether a Leaf would lie in the parent Sheet of this Layer,
+	 * were it placed into this Layer at its current position.
 	 */
 	public boolean isInSheet(Leaf leaf) {
 		// TODO Implement!
@@ -118,43 +121,43 @@ public class Field {
 	}
 	
 	/**
-	 * Places all Leaves in this Field into the parent Sheet.
+	 * Places all Leaves in this Layer into the parent Sheet.
 	 */
 	public void placeLeaves() {
 		if (orientation == Orientation.POSITIVE) {
-    		for (Leaf l : leaves) {
-    			AffineTransform transform = new AffineTransform(position);
-    			transform.concatenate(l.getFrontPosition());
-    			l.setAsFrontPosition(transform);
-    			sheet.addLeaf(l);
-    		}
+			for (Leaf l : leaves) {
+				AffineTransform transform = new AffineTransform(position);
+				transform.concatenate(l.getFrontPosition());
+				l.setAsFrontPosition(transform);
+				sheet.addLeaf(l);
+			}
 		} else if (orientation == Orientation.NEGATIVE) {
 			for (Leaf l : leaves) {
-    			AffineTransform transform = new AffineTransform(position);
-    			transform.concatenate(l.getFrontPosition());
-    			l.setAsBackPosition(transform);
-    			l.setOrientation(l.getOrientation().inverse());
-    			sheet.addLeaf(l);
-    		}
+				AffineTransform transform = new AffineTransform(position);
+				transform.concatenate(l.getFrontPosition());
+				l.setAsBackPosition(transform);
+				l.setOrientation(l.getOrientation().inverse());
+				sheet.addLeaf(l);
+			}
 		} else {
-			throw new IllegalArgumentException("Wrong orientation specified for Field");
+			throw new IllegalArgumentException("Wrong orientation specified for Layer");
 		}
 	}
 
 	/**
-	 * Placement of the Field on the Sheet: Either the front corresponds
+	 * Placement of the Layer on the Sheet: Either the front corresponds
 	 * to the front of the Sheet, or to the back.
-	 * This will affect the orientation of Pages from this Field once they
+	 * This will affect the orientation of Pages from this Layer once they
 	 * are laid out onto the Sheet.
 	 * @author Singon
 	 *
 	 */
 	public static enum Orientation {
-		/** Front of the Field lies on the front of the Sheet */
+		/** Front of the Layer lies on the front of the Sheet */
 		POSITIVE {
 			@Override public Orientation inverse() {return NEGATIVE;}
 		},
-		/** Front of the Field lies on the back of the Sheet */
+		/** Front of the Layer lies on the back of the Sheet */
 		NEGATIVE {
 			@Override public Orientation inverse() {return POSITIVE;}
 		};

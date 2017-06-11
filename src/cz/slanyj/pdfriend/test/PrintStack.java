@@ -5,18 +5,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-
+import cz.slanyj.pdfriend.ExtendedLogger;
 import cz.slanyj.pdfriend.Log;
-import cz.slanyj.pdfriend.SourceDocument;
-import cz.slanyj.pdfriend.book.FlipDirection;
-import cz.slanyj.pdfriend.book.Leaf;
-import cz.slanyj.pdfriend.book.Order;
-import cz.slanyj.pdfriend.book.Leaf.Orientation;
-import cz.slanyj.pdfriend.book.Signature;
-import cz.slanyj.pdfriend.book.Stack;
-import cz.slanyj.pdfriend.book.Stack.Flip;
-import cz.slanyj.pdfriend.book.Volume;
+import cz.slanyj.pdfriend.book.control.SequentialSourceProvider;
+import cz.slanyj.pdfriend.book.control.Stack;
+import cz.slanyj.pdfriend.book.control.Stack.Flip;
+import cz.slanyj.pdfriend.book.model.FlipDirection;
+import cz.slanyj.pdfriend.book.model.Leaf;
+import cz.slanyj.pdfriend.book.model.Signature;
+import cz.slanyj.pdfriend.book.model.Volume;
+import cz.slanyj.pdfriend.book.model.Leaf.Orientation;
+import cz.slanyj.pdfriend.document.ImportException;
+import cz.slanyj.pdfriend.document.RenderingException;
+import cz.slanyj.pdfriend.document.VirtualDocument;
+import cz.slanyj.pdfriend.format.process.PDFImporter;
+import cz.slanyj.pdfriend.format.process.PDFRenderer;
 import cz.slanyj.pdfriend.geometry.Line;
 import cz.slanyj.pdfriend.geometry.Point;
 
@@ -27,15 +30,14 @@ import cz.slanyj.pdfriend.geometry.Point;
  *
  */
 public class PrintStack {
+	
+	private static final ExtendedLogger logger = Log.logger(PrintStack.class);
 
 	public static void main(String[] args) {
 		Leaf leaf = new Leaf(612, 792);
 		leaf.setAsFrontPosition(new Leaf.Position(306, 396, 0));
 		leaf.setOrientation(Orientation.RECTO_UP);
 		leaf.setFlipDirection(FlipDirection.AROUND_Y);
-		
-		List<Leaf> template = new ArrayList<>();
-		template.add(leaf);
 		
 		Stack stack = new Stack(1224, 1584);
 		
@@ -49,9 +51,7 @@ public class PrintStack {
 		//mm.add(new Stack.Gather(2));
 		stack.performManipulations(mm);
 		
-		Stack copy = stack.copy();
-		
-		Signature signature = stack.buildSignature(template);
+		Signature signature = stack.buildSignature(leaf);
 		signature.numberPagesFrom(1);
 		
 		Volume volume = new Volume();
@@ -59,13 +59,17 @@ public class PrintStack {
 		
 		try {
 			// Get content
-			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
-			SourceDocument sourceDoc = new SourceDocument(source);
-			volume.setSource(sourceDoc.getAllPages());
-				
-			volume.renderAndSaveDocument(new File("test/printed-stack.pdf"));
-			Log.info("Finished printing stack");
+			File srcFile = new File("test/lorem-letter.pdf");
+			VirtualDocument source = new PDFImporter(srcFile).importDocument();
+			new SequentialSourceProvider(source).setSourceTo(volume.pages());
+			VirtualDocument output = volume.renderDocument();
+			new PDFRenderer().renderAndSave(output, new File("test/printed-stack.pdf"));
+			logger.info("Finished printing stack");
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ImportException e) {
+			e.printStackTrace();
+		} catch (RenderingException e) {
 			e.printStackTrace();
 		}
 	}

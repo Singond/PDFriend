@@ -1,5 +1,6 @@
 package cz.slanyj.pdfriend.cli;
 
+import cz.slanyj.pdfriend.ExtendedLogger;
 import cz.slanyj.pdfriend.Log;
 
 /**
@@ -8,8 +9,11 @@ import cz.slanyj.pdfriend.Log;
  *
  */
 public abstract class Impose {
+	
+	private static final ExtendedLogger logger = Log.logger(Impose.class);
+	
 	public static void main(String[] args) {
-		Log.trace("executing impose");
+		logger.trace("executing impose");
 		// Do something
 	}
 }

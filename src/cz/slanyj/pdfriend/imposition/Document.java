@@ -15,6 +15,7 @@ import cz.slanyj.pdfriend.book.Volume;
  * @author Singon
  *
  */
+@Deprecated
 public abstract class Document {
 	
 	abstract Volume volume();
