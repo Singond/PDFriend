@@ -3,15 +3,15 @@ package cz.slanyj.pdfriend.imposition;
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.slanyj.pdfriend.Bundle;
+import cz.slanyj.pdfriend.ExtendedLogger;
 import cz.slanyj.pdfriend.Log;
-import cz.slanyj.pdfriend.SourceDocument;
-import cz.slanyj.pdfriend.book.FlipDirection;
-import cz.slanyj.pdfriend.book.Leaf;
-import cz.slanyj.pdfriend.book.Stack;
-import cz.slanyj.pdfriend.book.Stack.Flip;
-import cz.slanyj.pdfriend.book.Volume;
-import cz.slanyj.pdfriend.book.Signature;
+import cz.slanyj.pdfriend.book.control.Stack;
+import cz.slanyj.pdfriend.book.control.Stack.Flip;
+import cz.slanyj.pdfriend.book.model.FlipDirection;
+import cz.slanyj.pdfriend.book.model.Leaf;
+import cz.slanyj.pdfriend.book.model.Signature;
+import cz.slanyj.pdfriend.book.model.Volume;
+import cz.slanyj.pdfriend.document.VirtualDocument;
 import cz.slanyj.pdfriend.geometry.Line;
 import cz.slanyj.pdfriend.geometry.Point;
 
@@ -22,7 +22,7 @@ import cz.slanyj.pdfriend.geometry.Point;
  * @author Singon
  *
  */
-public class Booklet extends Document {
+public class Booklet {
 
 	/** Width of single Page. */
 	private final double pageWidth;
@@ -30,6 +30,9 @@ public class Booklet extends Document {
 	private final double pageHeight;
 	/** The Volume representing this Booklet. */
 	private final Volume volume;
+	
+	/** Logger */
+	private static final ExtendedLogger logger = Log.logger(Booklet.class);
 	
 	/**
 	 * Constructs a new Booklet without content.
@@ -39,7 +42,7 @@ public class Booklet extends Document {
 	 * @param binding The edge of a Page where the binding is to be placed.
 	 */
 	public Booklet(double width, double height, int pages, Binding binding) {
-		Log.info(Bundle.console, "booklet_constructing", pages);
+		logger.info("booklet_constructing", pages);
 		pageWidth = width;
 		pageHeight = height;
 		
@@ -47,7 +50,7 @@ public class Booklet extends Document {
 			throw new IllegalArgumentException
 				("A booklet must have at least one page");
 		} else if (pages % 4 != 0) {
-			Log.warn(Bundle.console, "booklet-padding");
+			logger.warn("booklet-padding");
 			pages = ((pages / 4) + 1) * 4;
 		}
 		assert (pages >= 1) && (pages % 4 == 0) : pages;
@@ -85,12 +88,10 @@ public class Booklet extends Document {
 		manipulations.add(Flip.horizontal(width));
 		stack.performManipulations(manipulations);
 		
-		List<Leaf> pattern = new ArrayList<>(1);
 		Leaf leaf = new Leaf(width, height);
 		leaf.setAsFrontPosition(new Leaf.Position(width/2, height/2, 0));
-		pattern.add(leaf);
 		
-		return stack.buildSignature(pattern);
+		return stack.buildSignature(leaf);
 	}
 	
 	private Signature createHorizontal(double width, double height, int pages) {
@@ -101,13 +102,11 @@ public class Booklet extends Document {
 		manipulations.add(new Stack.Fold(foldAxis, Stack.Fold.Direction.UNDER));
 		stack.performManipulations(manipulations);
 		
-		List<Leaf> pattern = new ArrayList<>(1);
 		Leaf leaf = new Leaf(width, height);
 		leaf.setAsFrontPosition(new Leaf.Position(width/2, height/2, 0));
 		leaf.setFlipDirection(FlipDirection.AROUND_X);
-		pattern.add(leaf);
 		
-		return stack.buildSignature(pattern);
+		return stack.buildSignature(leaf);
 	}
 	
 	/**
@@ -117,9 +116,9 @@ public class Booklet extends Document {
 	 * @param binding The edge with binding.
 	 * @return A new Booklet object.
 	 */
-	public static Booklet from(SourceDocument source, Binding binding) {
-		double[] dimensions = source.getPageDimensions();
-		int pageCount = source.getPageCount();
+	public static Booklet from(VirtualDocument source, Binding binding) {
+		double[] dimensions = source.maxPageDimensions();
+		int pageCount = source.getLength();
 		return new Booklet(dimensions[0], dimensions[1], pageCount, binding);
 	}
 	
@@ -129,11 +128,10 @@ public class Booklet extends Document {
 	 * @param source The document to adapt to.
 	 * @return A new Booklet object.
 	 */
-	public static Booklet from(SourceDocument source) {
+	public static Booklet from(VirtualDocument source) {
 		return Booklet.from(source, Binding.VERTICAL);
 	}
 	
-	@Override
 	public Volume volume() {
 		return volume;
 	}
