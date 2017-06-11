@@ -63,6 +63,10 @@ public class VirtualDocument {
 		return pages.size();
 	}
 	
+	@Override
+	public String toString() {
+		return "VirtualDocument@"+hashCode()+" ("+pages.size()+" pages)";
+	}
 	
 	/**
 	 * Mutable class for constructing Document objects easily and incrementally. 

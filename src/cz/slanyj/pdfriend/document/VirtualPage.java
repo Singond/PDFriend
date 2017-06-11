@@ -90,6 +90,10 @@ public class VirtualPage {
 		              .collect(Collectors.toSet());
 	}
 	
+	@Override
+	public String toString() {
+		return "Virtualpage@"+hashCode()+" ("+content.size()+" pieces of content)";
+	}
 	
 	/**
 	 * A builder class for DocPage.
@@ -169,7 +173,7 @@ public class VirtualPage {
 		 * @return A new instance of VirtualPage.
 		 */
 		public VirtualPage build() {
-			logger.verbose("Building VirtualPage [%.0f x %.0f] with %d pieces of content",
+			logger.verbose("vpage_building",
 			            width, height, content.size());
 			return new VirtualPage(width, height, content);
 		}
