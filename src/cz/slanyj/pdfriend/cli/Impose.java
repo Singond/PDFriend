@@ -16,7 +16,7 @@ public class Impose implements SubCommand {
 
 	@Override
 	public void execute(String[] args) {
-		logger.debug("PDFriend Impose Module");
+		logger.info("PDFriend Impose");
 		logger.debug("Module arguments: " + Arrays.toString(args));
 		// Do something
 		

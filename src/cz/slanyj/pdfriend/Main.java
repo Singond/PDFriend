@@ -1,11 +1,11 @@
 package cz.slanyj.pdfriend;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
 import cz.slanyj.pdfriend.cli.Impose;
+import cz.slanyj.pdfriend.cli.Master;
 import cz.slanyj.pdfriend.cli.SubCommand;
 
 /**
@@ -24,13 +24,14 @@ import cz.slanyj.pdfriend.cli.SubCommand;
  *
  */
 public class Main {
-	
-	private static ExtendedLogger logger = Log.logger(Main.class);
-	
+
+	/** A map which binds subcommand names to their implementations */
 	private static Map<String, Supplier<SubCommand>> subcommands = new HashMap<>();
 	static {
 		subcommands.put("impose", Impose::new);
 	}
+	private static ExtendedLogger logger = Log.logger(Main.class);
+	
 
 	/**
 	 * Runs PDFriend.
@@ -40,9 +41,9 @@ public class Main {
 		logger.debug("The application directory is {}", Util.getApplicationDir());
 		
 		if (args.length <= 0) {
-			// GUI (to be added later). For now, just print usage.
-			usage();
-			
+			// GUI (to be added later). For now, just print version.
+			Out.line("This is PDFriend version %s", Version.current().toString());
+			System.exit(0);
 		} else {
 			/*
 			 * Split the arguments array at the first element which matches
@@ -65,58 +66,11 @@ public class Main {
 				}
 			}
 			if (cmdName == null) {
-				master(args);
+				Master.execute(args);
 			} else {
-				globalOptions(globalArgs);
+				Master.execute(globalArgs);
 				subcommands.get(cmdName).get().execute(cmdArgs);
 			}
-			
-			
-			// A subcommand, execute in CLI
-//			String sub = args[0];
-//			String[] subArgs = new String[args.length-1];
-//			System.arraycopy(args, 1, subArgs, 0, args.length-1);
-//			subcommand(sub, subArgs);
 		}
 	}
-	
-	/**
-	 * Action to invoke when no valid subcommand has been specified.
-	 * @param args
-	 */
-	private static void master(String[] args) {
-		globalOptions(args);
-		usage();
-	}
-	
-	/**
-	 * Handles global options (ie. options which do not belong with
-	 * specific module).
-	 */
-	private static void globalOptions(String[] args) {
-		logger.debug("Global arguments " + Arrays.toString(args));
-		// Implement as necessary
-	}
-	
-	/** Prints usage info and exits */
-	private static void usage() {
-		Out.line("This is PDFriend version %s", Version.current().toString());
-		System.exit(0);
-	}
-	
-	/**
-	 * Executes a pdfriend subcommand.
-	 * @param cmd The subcommand.
-	 * @param args Its command-line arguments.
-	 */
-//	private static void subcommand(String cmd, String[] args) {
-//		switch (cmd) {
-//			case "impose":
-//				Impose.main(args);
-//				break;
-//			default:
-//				logger.error("unknownCommand", cmd);
-//				System.exit(1);
-//		}
-//	}
 }
