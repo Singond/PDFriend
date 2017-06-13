@@ -3,10 +3,13 @@ package cz.slanyj.pdfriend.cli;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.beust.jcommander.ParametersDelegate;
 
 import cz.slanyj.pdfriend.ExtendedLogger;
 import cz.slanyj.pdfriend.Log;
@@ -20,6 +23,9 @@ import cz.slanyj.pdfriend.Log;
 public class Impose implements SubCommand {
 	private static final ExtendedLogger logger = Log.logger(Impose.class);
 
+	@ParametersDelegate
+	private TypeArgument type = new TypeArgument();
+	
 	/**
 	 * The input files.
 	 * All files in the list are taken as the input files, and concatenated
@@ -41,5 +47,33 @@ public class Impose implements SubCommand {
 			logger.debug("Input file: " + f.getAbsolutePath());
 		}
 		logger.debug("Output file: "+outputFile.getAbsolutePath());
+		
+		switch (type.getType()) {
+			case BOOKLET:
+				logger.debug("Selected imposition type is booklet");
+				
+				break;
+			default:
+				break;
+			
+		}
+	}
+	
+	private void imposeBooklet() {
+		
+	}
+	
+	public static class TypeArgument {
+		@Parameter(names="--booklet", description="A simple stack of sheets folded in half")
+		private Boolean booklet = new Boolean(false);
+		
+		public Type getType() {
+			if (booklet) return Type.BOOKLET;
+			return null;
+		}
+	}
+	
+	private enum Type {
+		BOOKLET
 	}
 }
