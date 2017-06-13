@@ -20,6 +20,10 @@ import cz.slanyj.pdfriend.Version;
  *
  */
 public class Console {
+	private static final ExtendedLogger logger = Log.logger(Console.class);
+
+	/* Root options */
+	
 	/** Print version info and exit */
 	@Parameter(names={"-V", "--version"}, description="Print version info and exit")
 	private boolean version = false;
@@ -36,8 +40,10 @@ public class Console {
 	@Parameter(names={"-q", "--quiet"}, description="Be less verbose than normal, display only warnings")
 	private boolean quiet = false;
 	
-	private static final ExtendedLogger logger = Log.logger(Console.class);
-	
+	/**
+	 * Run PDFriend in command-line mode.
+	 * @param args the whole argument array passed into the program
+	 */
 	public void execute(String[] args) {
 		logger.debug("PDFriend arguments: " + Arrays.toString(args));
 		
