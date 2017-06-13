@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
@@ -42,38 +43,71 @@ public class Impose implements SubCommand {
 	public void execute(String[] args) {
 		logger.info("PDFriend Impose");
 		logger.debug("Module arguments: " + Arrays.toString(args));
-
+		for (File f : inputFiles) {
+			logger.verbose("Input file: " + f.getAbsolutePath());
+		}
+		logger.verbose("Output file: "+outputFile.getAbsolutePath());
+		
+		logger.debug("Selected imposition type is: " + type.getType().getName());
+		type.getType().invokeActionIn(this);
+	}
+	
+	private void imposeBooklet() {
+		logger.debug("Imposing booklet...");
 		for (File f : inputFiles) {
 			logger.debug("Input file: " + f.getAbsolutePath());
 		}
 		logger.debug("Output file: "+outputFile.getAbsolutePath());
-		
-		switch (type.getType()) {
-			case BOOKLET:
-				logger.debug("Selected imposition type is booklet");
-				
-				break;
-			default:
-				break;
-			
-		}
 	}
 	
-	private void imposeBooklet() {
-		
-	}
-	
+	/**
+	 * Groups the individual imposition types into one group, from which
+	 * only one imposition type should be selected.
+	 */
 	public static class TypeArgument {
 		@Parameter(names="--booklet", description="A simple stack of sheets folded in half")
 		private Boolean booklet = new Boolean(false);
 		
+		/**
+		 * Gets the selected type.
+		 * If more than one type is selected, this should throw an exception.
+		 * TODO Implement the check that exactly one is selected.
+		 * @return
+		 */
 		public Type getType() {
 			if (booklet) return Type.BOOKLET;
 			return null;
 		}
 	}
 	
+	/**
+	 * The type of document to be produced by imposition (a booklet, n-up etc).
+	 */
 	private enum Type {
-		BOOKLET
+		BOOKLET("booklet", i->i.imposeBooklet());
+		
+		/** The name of the type */
+		private final String name;
+		/** The action to invoke on Impose */
+		private final Consumer<Impose> action;
+		
+		/**
+		 * @param name the user-friendly name of the imposition type
+		 * @param action the action to invoke in Impose object
+		 */
+		private Type(String name, Consumer<Impose> action) {
+			this.name = name;
+			this.action = action;
+		}
+		
+		/** Returns a user-friendly name of the imposition type. */
+		public String getName() {
+			return name;
+		}
+		
+		/** Invokes the action in the Impose object. */
+		public void invokeActionIn(Impose impose) {
+			action.accept(impose);
+		}
 	}
 }
