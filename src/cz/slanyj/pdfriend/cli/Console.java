@@ -25,19 +25,23 @@ public class Console {
 	/* Root options */
 	
 	/** Print version info and exit */
-	@Parameter(names={"-V", "--version"}, description="Print version info and exit")
+	@Parameter(names={"-V", "--version"}, description="Print version info and exit", order=0)
 	private boolean version = false;
 	
+	/** Print help info and exit */
+	@Parameter(names={"-h", "-?", "--help"}, description="Print this help page and exit", order=1)
+	private boolean help = false;
+	
 	/** Set Log4j to VERBOSE level */
-	@Parameter(names={"-v", "--verbose"}, description="Verbose output")
+	@Parameter(names={"-v", "--verbose"}, description="Verbose output", order=4)
 	private boolean verbose = false;
 	
 	/** Set Log4j to DEBUG level */
-	@Parameter(names={"-vv", "--debug"}, description="Extra verbose output, used for debugging")
+	@Parameter(names={"-vv", "--debug"}, description="Extra verbose output, used for debugging", order=5)
 	private boolean debug = false;
 	
 	/** Set Log4j to WARN level */
-	@Parameter(names={"-q", "--quiet"}, description="Be less verbose than normal, display only warnings")
+	@Parameter(names={"-q", "--quiet"}, description="Be less verbose than normal, display only warnings", order=6)
 	private boolean quiet = false;
 	
 	/**
@@ -48,11 +52,11 @@ public class Console {
 		logger.debug("PDFriend arguments: " + Arrays.toString(args));
 		
 		// Parse arguments
-		JCommander.newBuilder()
-		          .addObject(this)
-		          .acceptUnknownOptions(true)
-		          .build()
-		          .parse(args);
+		JCommander.Builder jcbuilder = JCommander.newBuilder()
+				.addObject(this)
+				.acceptUnknownOptions(true);
+		JCommander jcommander = jcbuilder.build();
+		jcommander.parse(args);
 		
 		/* Run */
 		// Display version
@@ -60,15 +64,29 @@ public class Console {
 			version();
 			System.exit(0);
 		}
+		// Display help
+		if (help) {
+			help(jcommander);
+			System.exit(0);
+		}
 		// Set verbosity level
 		setVerbosity(quiet, verbose, debug);
 		
 	}
 	
-	/** Prints version info and exits */
+	/** Prints version info and exits. */
 	private void version() {
 		Out.line("This is PDFriend version %s", Version.current().toString());
 		System.exit(0);
+	}
+	
+	/**
+	 * Prints help page and exits.
+	 * @param jcommander an instance of jcommander used to parse the CLI args
+	 */
+	private void help(JCommander jcommander) {
+		//jcommander.setColumnSize(80);
+		jcommander.usage();
 	}
 	
 	/**
