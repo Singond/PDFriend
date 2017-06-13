@@ -1,6 +1,7 @@
 package cz.slanyj.pdfriend.cli;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,6 +15,15 @@ import com.beust.jcommander.ParametersDelegate;
 
 import cz.slanyj.pdfriend.ExtendedLogger;
 import cz.slanyj.pdfriend.Log;
+import cz.slanyj.pdfriend.book.control.SequentialSourceProvider;
+import cz.slanyj.pdfriend.book.control.SourceProvider;
+import cz.slanyj.pdfriend.book.model.Volume;
+import cz.slanyj.pdfriend.document.ImportException;
+import cz.slanyj.pdfriend.document.RenderingException;
+import cz.slanyj.pdfriend.document.VirtualDocument;
+import cz.slanyj.pdfriend.format.process.PDFImporter;
+import cz.slanyj.pdfriend.format.process.PDFRenderer;
+import cz.slanyj.pdfriend.imposition.Booklet;
 
 /**
  * The impose command of pdfriend.
@@ -48,16 +58,31 @@ public class Impose implements SubCommand {
 		}
 		logger.verbose("Output file: "+outputFile.getAbsolutePath());
 		
-		logger.debug("Selected imposition type is: " + type.getType().getName());
+		logger.verbose("Selected imposition type is: " + type.getType().getName());
 		type.getType().invokeActionIn(this);
 	}
 	
 	private void imposeBooklet() {
-		logger.debug("Imposing booklet...");
-		for (File f : inputFiles) {
-			logger.debug("Input file: " + f.getAbsolutePath());
+		logger.info("Imposing booklet...");
+		// TODO Use all the input files
+		File sourceFile = inputFiles.get(0);
+		File targetFile = outputFile;
+		VirtualDocument source;
+		try {
+			source = new PDFImporter(sourceFile).importDocument();
+			Booklet booklet = Booklet.from(source);
+			Volume volume = booklet.volume();
+			SourceProvider sp = new SequentialSourceProvider(source);
+			sp.setSourceTo(volume.pages());
+			VirtualDocument doc = volume.renderDocument();
+			new PDFRenderer().renderAndSave(doc, targetFile);
+		} catch (ImportException e) {
+			e.printStackTrace();
+		} catch (RenderingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		logger.debug("Output file: "+outputFile.getAbsolutePath());
 	}
 	
 	/**
