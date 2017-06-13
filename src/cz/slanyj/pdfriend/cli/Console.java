@@ -62,7 +62,7 @@ public class Console {
 		/* Parse the CLI arguments */
 		JCommander.Builder jcbuilder = JCommander.newBuilder()
 				.addObject(this)
-				.acceptUnknownOptions(true);
+				.acceptUnknownOptions(false);
 		// Register subcommands with the parser
 		for (Map.Entry<String, SubCommand> cmd : subcommands.entrySet()) {
 			jcbuilder.addCommand(cmd.getKey(), cmd.getValue());
