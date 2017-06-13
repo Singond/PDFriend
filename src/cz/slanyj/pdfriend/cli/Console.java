@@ -1,6 +1,8 @@
 package cz.slanyj.pdfriend.cli;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.logging.log4j.Level;
 
@@ -44,6 +46,12 @@ public class Console {
 	@Parameter(names={"-q", "--quiet"}, description="Be less verbose than normal, display only warnings", order=6)
 	private boolean quiet = false;
 	
+	/* Subcommands (ie. modules) */
+	private final Map<String, SubCommand> subcommands = new HashMap<>();
+	{
+		subcommands.put("impose", new Impose());
+	}
+	
 	/**
 	 * Run PDFriend in command-line mode.
 	 * @param args the whole argument array passed into the program
@@ -51,10 +59,14 @@ public class Console {
 	public void execute(String[] args) {
 		logger.debug("PDFriend arguments: " + Arrays.toString(args));
 		
-		// Parse arguments
+		/* Parse the CLI arguments */
 		JCommander.Builder jcbuilder = JCommander.newBuilder()
 				.addObject(this)
 				.acceptUnknownOptions(true);
+		// Register subcommands with the parser
+		for (Map.Entry<String, SubCommand> cmd : subcommands.entrySet()) {
+			jcbuilder.addCommand(cmd.getKey(), cmd.getValue());
+		}
 		JCommander jcommander = jcbuilder.build();
 		jcommander.parse(args);
 		
@@ -72,6 +84,8 @@ public class Console {
 		// Set verbosity level
 		setVerbosity(quiet, verbose, debug);
 		
+		// End global-level option processing and run the subcommand
+		subcommands.get(jcommander.getParsedCommand()).execute(args);
 	}
 	
 	/** Prints version info and exits. */

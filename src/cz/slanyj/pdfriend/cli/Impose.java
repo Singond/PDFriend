@@ -2,6 +2,8 @@ package cz.slanyj.pdfriend.cli;
 
 import java.util.Arrays;
 
+import com.beust.jcommander.Parameters;
+
 import cz.slanyj.pdfriend.ExtendedLogger;
 import cz.slanyj.pdfriend.Log;
 
@@ -10,6 +12,7 @@ import cz.slanyj.pdfriend.Log;
  * @author Singon
  *
  */
+@Parameters(commandDescription="Lay out pages of the source documents onto pages of a new document")
 public class Impose implements SubCommand {
 	
 	private static final ExtendedLogger logger = Log.logger(Impose.class);
