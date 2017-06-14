@@ -1,7 +1,8 @@
 <project name="PDFriend"
 		 xmlns:ivy="antlib:org.apache.ivy.ant">
 	
-	<property file="version.properties"/>
+	<property file="version.properties" prefix="version"/>
+	<property name="version" value="${version.major}.${version.minor}.${version.revision}"/>
 	
 	<target name="resolve" description="Resolve dependencies with Ivy">
 		<ivy:resolve/>
@@ -66,11 +67,25 @@
 		</jar>
 	</target>
 	
+	<target name="dist-windows"
+	        depends="jar-full"
+	        description="Build a standalone Windows distribution">
+		<!-- Unzip the contents of libraries to speed up loading -->
+		<zip destfile="dist/pdfriend-${version}-windows.zip">
+			<fileset dir="dist">
+				<include name="pdfriend-standalone.jar"/>
+			</fileset>
+			<fileset dir="ext">
+				<include name="install.bat"/>
+			</fileset>
+		</zip>
+	</target>
+	
 	<target name="clean" description="Remove build files">
 		<delete dir="build"/>
 	</target>
 	
-	<target name="cleanall" description="Remove build and distribution files">
+	<target name="clean-all" description="Remove build and distribution files">
 		<delete dir="build"/>
 		<delete dir="dist"/>
 	</target>
