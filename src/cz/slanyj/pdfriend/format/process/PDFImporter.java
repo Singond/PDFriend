@@ -6,7 +6,6 @@ import java.io.IOException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 
-import cz.slanyj.pdfriend.Bundle;
 import cz.slanyj.pdfriend.ExtendedLogger;
 import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.document.ImportException;
@@ -14,13 +13,12 @@ import cz.slanyj.pdfriend.document.Importer;
 import cz.slanyj.pdfriend.document.VirtualDocument;
 import cz.slanyj.pdfriend.document.VirtualPage;
 import cz.slanyj.pdfriend.format.content.PDFPage;
-import cz.slanyj.pdfriend.test.PrintBooklet;
 
 public class PDFImporter implements Importer {
 
 	private final File file;
 	
-	private static final ExtendedLogger logger = Log.logger(PrintBooklet.class);
+	private static final ExtendedLogger logger = Log.logger(PDFImporter.class);
 	
 	public PDFImporter(File file) {
 		this.file = file;
