@@ -6,6 +6,8 @@ import java.io.IOException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 
+import cz.slanyj.pdfriend.ExtendedLogger;
+import cz.slanyj.pdfriend.Log;
 import cz.slanyj.pdfriend.document.ImportException;
 import cz.slanyj.pdfriend.document.Importer;
 import cz.slanyj.pdfriend.document.VirtualDocument;
@@ -15,6 +17,8 @@ import cz.slanyj.pdfriend.format.content.PDFPage;
 public class PDFImporter implements Importer {
 
 	private final File file;
+	
+	private static final ExtendedLogger logger = Log.logger(PDFImporter.class);
 	
 	public PDFImporter(File file) {
 		this.file = file;
@@ -28,9 +32,10 @@ public class PDFImporter implements Importer {
 	public VirtualDocument importDocument() throws ImportException {
 		PDDocument sourceDoc = null;
 		try {
+			logger.info("load-file-start", file);
 			sourceDoc = PDDocument.load(file);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error when loading the file", e);
 		}
 		VirtualDocument.Builder result = new VirtualDocument.Builder();
 		int length = sourceDoc.getNumberOfPages();

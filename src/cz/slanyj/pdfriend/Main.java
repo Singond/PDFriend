@@ -1,6 +1,6 @@
 package cz.slanyj.pdfriend;
 
-import cz.slanyj.pdfriend.cli.Impose;
+import cz.slanyj.pdfriend.cli.Console;
 
 /**
  * The main class; this executes PDFriend.
@@ -18,54 +18,28 @@ import cz.slanyj.pdfriend.cli.Impose;
  *
  */
 public class Main {
-	
+
+	/** A map which binds subcommand names to their implementations */
+//	private static Map<String, Supplier<SubCommand>> subcommands = new HashMap<>();
+//	static {
+//		subcommands.put("impose", Impose::new);
+//	}
 	private static ExtendedLogger logger = Log.logger(Main.class);
+	
 
 	/**
-	 * If the first argument exists and begins with letter,
-	 * treat it as a console subcommand.
+	 * Runs PDFriend.
 	 */
 	public static void main(String[] args) {
 		logger.debug("The working directory is {}", Util.getWorkingDir());
 		logger.debug("The application directory is {}", Util.getApplicationDir());
-		
+
 		if (args.length <= 0) {
-			// GUI (to be added later). For now, just print usage.
-			usage();
-			
-		} else if (Character.isLetter(args[0].charAt(0))) {
-			// A subcommand, execute in CLI
-			String sub = args[0];
-			String[] subArgs = new String[args.length-1];
-			System.arraycopy(args, 1, subArgs, 0, args.length-1);
-			subcommand(sub, subArgs);
+			// GUI (to be added later). For now, just print version.
+			Out.line("This is PDFriend version %s", Version.current().toString());
+			System.exit(0);
 		} else {
-			// Top-level command with arguments.
-			// Could either start GUI or CLI.
-			// In either case, don't forget to pass command-line parameters.
-			usage();
-		}
-	}
-	
-	/** Prints usage info and exits */
-	private static void usage() {
-		Out.line("This is PDFriend version {}", Version.current().toString());
-		System.exit(0);
-	}
-	
-	/**
-	 * Executes a pdfriend subcommand.
-	 * @param cmd The subcommand.
-	 * @param args Its command-line arguments.
-	 */
-	private static void subcommand(String cmd, String[] args) {
-		switch (cmd) {
-			case "impose":
-				Impose.main(args);
-				break;
-			default:
-				logger.error("unknownCommand", cmd);
-				System.exit(1);
+			new Console().execute(args);
 		}
 	}
 }
