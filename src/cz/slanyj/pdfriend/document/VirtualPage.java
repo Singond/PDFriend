@@ -90,6 +90,22 @@ public class VirtualPage {
 		              .collect(Collectors.toSet());
 	}
 	
+	/**
+	 * Indicates that this page can be considered blank.
+	 * <p>
+	 * This flag indicates that this page may be safely skipped in rendering
+	 * without affecting the visible result.
+	 * While individual pieces of content may themselves be invisible
+	 * or empty, this method currently only checks whether the number of
+	 * content elements is zero.
+	 * </p>
+	 * @return {@code true} if skipping the page in rendering would not
+	 *         make any visible changes to the output
+	 */
+	public boolean isBlank() {
+		return content.isEmpty();
+	}
+	
 	@Override
 	public String toString() {
 		return "Virtualpage@"+hashCode()+" ("+content.size()+" pieces of content)";

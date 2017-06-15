@@ -61,6 +61,15 @@ public abstract class MultiPage extends Page {
 		return new ArrayList<>(pagelets);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @return {@code true} if there are no pagelets on this MultiPage
+	 */
+	@Override
+	public boolean isBlank() {
+		return pagelets.isEmpty();
+	}
+	
 	@Override
 	public Collection<Movable> getContent() {
 		Set<Content.Movable> contents = new HashSet<>();

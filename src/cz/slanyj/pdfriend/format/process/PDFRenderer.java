@@ -35,7 +35,11 @@ public class PDFRenderer extends Renderer<PDDocument> {
 		DocumentController docCtrl = new DocumentController(targetDoc, lutil);
 		
 		for (VirtualPage pg : document.getPages()) {
-			targetDoc.addPage(renderPage(pg, docCtrl));
+			if (!pg.isBlank()) {
+				targetDoc.addPage(renderPage(pg, docCtrl));
+			} else {
+				logger.verbose("render-skip-blank", pg);
+			}
 		}
 		return targetDoc;
 	}

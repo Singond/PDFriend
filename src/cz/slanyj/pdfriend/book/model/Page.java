@@ -58,6 +58,19 @@ public abstract class Page {
 	}
 	
 	/**
+	 * Indicates that this page can be considered blank.
+	 * <p>
+	 * This flag indicates that this page may be safely skipped in rendering
+	 * without affecting the visible result. It should be noted that this
+	 * method in general does <strong>not</strong> provide complete
+	 * protection against null values.
+	 * </p>
+	 * @return {@code true} if skipping the page in rendering would not
+	 *         make any visible changes to the output
+	 */
+	public abstract boolean isBlank();
+	
+	/**
 	 * Returns the content of this page collected from its VirtualPage(s)
 	 * as a collection of transformable pieces of content.
 	 * <p>This is the main interface for retrieving this Page's content.
