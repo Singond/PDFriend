@@ -119,7 +119,8 @@ public class VirtualPage {
 	
 	@Override
 	public String toString() {
-		return "Virtualpage@"+hashCode()+" ("+content.size()+" pieces of content)";
+//		return "Virtualpage@"+hashCode()+" ("+content.size()+" pieces of content)";
+		return "VirtualPage@"+hashCode();
 	}
 	
 	/**
