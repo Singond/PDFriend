@@ -4,11 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 
+import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
@@ -30,12 +29,16 @@ import cz.slanyj.pdfriend.imposition.Booklet;
  * @author Singon
  *
  */
-@Parameters(commandDescription="Lay out pages of the source documents onto pages of a new document")
+@Parameters(separators="=",
+		commandDescription="Lay out pages of the source documents onto pages of a new document")
 public class Impose implements SubCommand {
 	private static final ExtendedLogger logger = Log.logger(Impose.class);
 
 	@ParametersDelegate
 	private TypeArgument type = new TypeArgument();
+	
+	@Parameter(names="--binding", converter=BookletBindingConverter.class)
+	private Booklet.Binding binding = Booklet.Binding.LEFT;
 	
 	/**
 	 * The input files.
@@ -70,7 +73,7 @@ public class Impose implements SubCommand {
 		VirtualDocument source;
 		try {
 			source = new PDFImporter(sourceFile).importDocument();
-			Booklet booklet = Booklet.from(source);
+			Booklet booklet = Booklet.from(source, binding);
 			Volume volume = booklet.volume();
 			SourceProvider sp = new SequentialSourceProvider(source);
 			sp.setSourceTo(volume.pages());
@@ -91,7 +94,7 @@ public class Impose implements SubCommand {
 	 */
 	public static class TypeArgument {
 		@Parameter(names="--booklet", description="A simple stack of sheets folded in half")
-		private Boolean booklet = new Boolean(false);
+		private boolean booklet = false;
 		
 		/**
 		 * Gets the selected type.
@@ -133,6 +136,14 @@ public class Impose implements SubCommand {
 		/** Invokes the action in the Impose object. */
 		public void invokeActionIn(Impose impose) {
 			action.accept(impose);
+		}
+	}
+	
+	/** Converts a string into a valule of the "binding" fiíeld. */
+	private static class BookletBindingConverter implements IStringConverter<Booklet.Binding> {
+		@Override
+		public Booklet.Binding convert(String arg) {
+			return Booklet.Binding.valueOf(arg.toUpperCase());
 		}
 	}
 }
