@@ -8,12 +8,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.github.singond.geometry.plane.RectangleFrame;
 import com.github.singond.pdfriend.book.control.PageVisitor;
 import com.github.singond.pdfriend.document.Content;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.document.Content.Movable;
 
-import cz.slanyj.geometry.plane.RectangleFrame;
 
 /**
  * A page of a document, ie. one side of a Leaf.

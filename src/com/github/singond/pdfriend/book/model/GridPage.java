@@ -2,12 +2,12 @@ package com.github.singond.pdfriend.book.model;
 
 import java.awt.geom.AffineTransform;
 
+import com.github.singond.collections.ArrayMatrix;
+import com.github.singond.collections.Matrix;
+import com.github.singond.collections.MatrixIterable;
+import com.github.singond.collections.MatrixIterator;
 import com.github.singond.pdfriend.book.control.PageVisitor;
 
-import cz.slanyj.collections.ArrayMatrix;
-import cz.slanyj.collections.Matrix;
-import cz.slanyj.collections.MatrixIterable;
-import cz.slanyj.collections.MatrixIterator;
 
 /**
  * A type of MultiPage which provides tabular layout of pagelets.
