@@ -1,5 +1,5 @@
 <ivy-module version="2.0">
-	<info organisation="cz.slanyj" module="pdfriend"/>
+	<info organisation="com.github.singond" module="pdfriend"/>
 
 	<dependencies>
 		<dependency org="cz.slanyj" name="collections" rev="latest.integration"/>
