@@ -6,7 +6,8 @@ import com.github.singond.pdfriend.book.model.Leaf;
 import com.github.singond.pdfriend.book.model.Page;
 
 /**
- * A utility class for the book object model package (cz.slanyj.pdfriend.book).
+ * A utility class for the book object model package
+ * (com.github.singond.pdfriend.book).
  *
  * @author Singon
  *
