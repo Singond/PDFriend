@@ -10,9 +10,9 @@ import cz.slanyj.pdfriend.ExtendedLogger;
 import cz.slanyj.pdfriend.Log;
 
 /**
- * A page in the output document.
+ * A generalized representation of a page in a document.
  * This is a part of the uniform document interface shared between modules.
- * If the used implementation of Content is immutable, this DocPage
+ * If the used implementation of Content is immutable, this VirtualPage
  * itself is immutable.
  * @author Singon
  *
@@ -30,14 +30,25 @@ public class VirtualPage {
 
 
 	/**
-	 * Creates a new instance of VirtualSheet with the given dimensions
+	 * Creates a blank new VirtualPage with the given dimensions.
+	 * @param width the width of the output sheet
+	 * @param height the height of the output sheet
+	 */
+	public VirtualPage(double width, double height) {
+		this.width = width;
+		this.height = height;
+		this.content = new HashSet<>();
+	}
+	
+	/**
+	 * Creates a new instance of VirtualPage with the given dimensions
 	 * and content.
-	 * The content (given as a collection of pages), is defensively copied
-	 * into an internal collection.
-	 * @param width The width of the output sheet.
-	 * @param height The height of the output sheet.
-	 * @param pages The content of the sheet, ie. a collection of pages
-	 * along with their positions.
+	 * The content (given as a collection of content elements), is
+	 * defensively copied into the internal collection of content.
+	 * @param width the width of the output sheet
+	 * @param height the height of the output sheet
+	 * @param content the content of the sheet, given as collection of
+	 *        content elements
 	 */
 	public VirtualPage(double width, double height, Collection<Content> content) {
 		this.width = width;
@@ -46,13 +57,12 @@ public class VirtualPage {
 	}
 	
 	/**
-	 * Creates a new instance of VirtualSheet with the given dimensions
+	 * Creates a new instance of VirtualPage with the given dimensions
 	 * and content.
-	 * The content (given as a collection of pages), is defensively copied
-	 * into an internal collection.
-	 * @param width The width of the output sheet.
-	 * @param height The height of the output sheet.
-	 * @param pages The only content of the sheet, ie. a single piece of content.
+	 * The piece of content is automatically put into the internal collection.
+	 * @param width the width of the output sheet
+	 * @param height the height of the output sheet
+	 * @param content the single piece of content on the page
 	 */
 	public VirtualPage(double width, double height, Content content) {
 		this.width = width;
@@ -72,7 +82,8 @@ public class VirtualPage {
 
 	/**
 	 * Returns the content of the sheet as a collection of all content elements.
-	 * @return A shallow copy of the internal collection of content elements.
+	 * @return a shallow copy of the internal collection of content elements.
+	 *         The returned collection can be empty, but will not be null.
 	 */
 	public Collection<Content> getContent() {
 		return new HashSet<>(content);
@@ -81,8 +92,8 @@ public class VirtualPage {
 	/**
 	 * Returns the content of the sheet as a collection of all content
 	 * elements, wrapped in a builder object to facilitate transforming.
-	 * @return A shallow copy of the internal collection of content
-	 * elements, each converted to a new Content.Movable.
+	 * @return a shallow copy of the internal collection of content
+	 *         elements, each converted to a new Content.Movable
 	 */
 	public Collection<Content.Movable> getMovableContent() {
 		return content.stream()
@@ -90,9 +101,26 @@ public class VirtualPage {
 		              .collect(Collectors.toSet());
 	}
 	
+	/**
+	 * Indicates that this page can be considered blank.
+	 * <p>
+	 * This flag indicates that this page may be safely skipped in rendering
+	 * without affecting the visible result.
+	 * While individual pieces of content may themselves be invisible
+	 * or empty, this method currently only checks whether the number of
+	 * content elements is zero.
+	 * </p>
+	 * @return {@code true} if skipping the page in rendering would not
+	 *         make any visible changes to the output
+	 */
+	public boolean isBlank() {
+		return content.isEmpty();
+	}
+	
 	@Override
 	public String toString() {
-		return "Virtualpage@"+hashCode()+" ("+content.size()+" pieces of content)";
+//		return "Virtualpage@"+hashCode()+" ("+content.size()+" pieces of content)";
+		return "VirtualPage@"+hashCode();
 	}
 	
 	/**

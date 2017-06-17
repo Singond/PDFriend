@@ -60,11 +60,17 @@ public class PDFRenderer extends Renderer<PDDocument> {
 		targetPage.setMediaBox(new PDRectangle((float) page.getWidth(), (float) page.getHeight()));
 		ContentRenderer contentRndr = new ContentRenderer();
 		
+		if (page.getContent().isEmpty()) {
+			logger.debug("render-blank", page);
+			return targetPage;
+		}
 		try {
 			PDPageContentStream content = new PDPageContentStream(docCtrl.doc, targetPage);
 			PageController pageCtrl = new PageController(docCtrl, targetPage, content);
 			
-			logger.debug("render-page-content", page);
+			if (logger.isDebugEnabled()) {
+				logger.debug("render-page-content", page.getContent().size(), page);
+			}
 			for (Content c : page.getContent()) {
 				c.invite(contentRndr, pageCtrl);
 			}

@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import cz.slanyj.pdfriend.ExtendedLogger;
+import cz.slanyj.pdfriend.Log;
+import cz.slanyj.pdfriend.format.process.PDFRenderer;
+
 /**
  * Converts the virtual document into a document of a specific file format.
  * The file format of the output document depends on the Renderer subclass.
@@ -13,6 +17,8 @@ import java.nio.file.Files;
  *
  */
 public abstract class Renderer<T> {
+	
+	private static final ExtendedLogger logger = Log.logger(Renderer.class);
 
 	/**
 	 * Renders the given virtual document into a real document.
@@ -34,5 +40,6 @@ public abstract class Renderer<T> {
 	public void renderAndSave(VirtualDocument document, File output) throws RenderingException, IOException {
 		byte[] data = renderRaw(document);
 		Files.write(output.toPath(), data);
+		logger.info("printDone", output);
 	}
 }

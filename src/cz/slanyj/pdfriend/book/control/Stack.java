@@ -433,7 +433,7 @@ public class Stack {
 		
 		/**
 		 * Returns a new instance which flips the stack parallel to x-axis.
-		 * @param width Reference height of the current extents of the stack.
+		 * @param height Reference height of the current extents of the stack.
 		 * The axis will be placed into half this height in order to keep
 		 * an area of this height (with one corner in origin) within its
 		 * original extents.

@@ -35,6 +35,17 @@ public class SinglePage extends Page {
 	}
 	
 	/**
+	 * Indicates that the page is blank and calling methods on its source
+	 * page would generate a NullPointerException.
+	 * @return {@code true} if the source page is {@code null}
+	 * @see Page#isBlank()
+	 */
+	@Override
+	public boolean isBlank() {
+		return source == null;
+	}
+	
+	/**
 	 * Returns the content of this page collected from its VirtualPage(s)
 	 * as a collection of transformable pieces of content.
 	 * <p>This is the main interface for retrieveing this Page's content.
