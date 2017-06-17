@@ -31,7 +31,7 @@
 		<manifest file="build/MANIFEST.MF">
 			<attribute name="Built-By" value="${user.name}"/>
 			<attribute name="Class-Path" value="."/>
-			<attribute name="Main-Class" value="cz.slanyj.pdfriend.Main"/>
+			<attribute name="Main-Class" value="com.github.singond.pdfriend.Main"/>
 		</manifest>
 	</target>
 	
