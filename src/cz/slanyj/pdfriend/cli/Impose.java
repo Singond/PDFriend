@@ -34,11 +34,17 @@ import cz.slanyj.pdfriend.imposition.Booklet;
 public class Impose implements SubCommand {
 	private static final ExtendedLogger logger = Log.logger(Impose.class);
 
+	/** A pre-defined type of imposition: booklet, n-up etc. */
 	@ParametersDelegate
 	private TypeArgument type = new TypeArgument();
 	
+	/** Specifies where the binding is located */
 	@Parameter(names="--binding", converter=BookletBindingConverter.class)
 	private Booklet.Binding binding = Booklet.Binding.LEFT;
+	
+	/** In a vertical booklet, print the verso upside down. */
+	@Parameter(names="--verso-opposite")
+	private boolean flipVerso = false;
 	
 	/**
 	 * The input files.
@@ -72,7 +78,7 @@ public class Impose implements SubCommand {
 		VirtualDocument source;
 		try {
 			source = new PDFImporter(sourceFile).importDocument();
-			Booklet booklet = Booklet.from(source, binding);
+			Booklet booklet = Booklet.from(source, binding, flipVerso);
 			Volume volume = booklet.volume();
 			SourceProvider sp = new SequentialSourceProvider(source);
 			sp.setSourceTo(volume.pages());

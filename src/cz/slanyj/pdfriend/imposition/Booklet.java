@@ -43,8 +43,12 @@ public class Booklet {
 	 *        four: It is increased to the first integer multiple
 	 *        automatically.
 	 * @param binding he edge of a Page where the binding is to be placed
+	 * @param versoOpposite whether verso should be upside down with respect
+	 *        to the recto.
+	 *        This only has effect when {@code binding} is TOP or BOTTOM.
 	 */
-	public Booklet(double width, double height, int pages, Binding binding) {
+	public Booklet(double width, double height, int pages, Binding binding,
+	               boolean versoOpposite) {
 		if (width <= 0) {
 			throw new IllegalArgumentException
 					("Booklet width must be a positive number");
@@ -75,13 +79,13 @@ public class Booklet {
 		Signature signature = null;
 		switch (binding) {
 			case TOP:
-				signature = withTopBinding(width, height, pages);
+				signature = withTopBinding(width, height, pages, versoOpposite);
 				break;
 			case RIGHT:
 				signature = withRightBinding(width, height, pages);
 				break;
 			case BOTTOM:
-				signature = withBottomBinding(width, height, pages);
+				signature = withBottomBinding(width, height, pages, versoOpposite);
 				break;
 			case LEFT:
 				signature = withLeftBinding(width, height, pages);
@@ -101,7 +105,7 @@ public class Booklet {
 	 * @param pages the number of pages in the finished booklet
 	 */
 	public Booklet(double width, double height, int pages) {
-		this(width, height, pages, Binding.LEFT);
+		this(width, height, pages, Binding.LEFT, false);
 	}
 	
 	/**
@@ -158,9 +162,12 @@ public class Booklet {
 	 * @param height width of one page of the folded sheet
 	 * @param pages the number of pages in the finished booklet, including blanks.
 	 *        It follows that the number must be an integer multiple of four.
+	 * @param versoOpposite whether verso should be upside down with respect
+	 *        to the recto
 	 * @return a new {@code Signature} object with leaves in proper positions
 	 */
-	private Signature withTopBinding(double width, double height, int pages) {
+	private Signature withTopBinding(double width, double height, int pages,
+	                                 boolean versoOpposite) {
 		final Stack stack = new Stack(width, 2*height);
 		List<Stack.Manipulation> manipulations = new ArrayList<>(2);
 		manipulations.add(new Stack.Gather(pages/4));
@@ -170,7 +177,14 @@ public class Booklet {
 		
 		Leaf leaf = new Leaf(width, height);
 		leaf.setAsFrontPosition(new Leaf.Position(width/2, height/2, 0));
-		leaf.setFlipDirection(FlipDirection.AROUND_X);
+		/*
+		 * With the default flip direction about y, the verso is opposite
+		 * already. When verso is to be in the same direction as recto,
+		 * make it flip around the x-axis:
+		 */
+		if (!versoOpposite) {
+			leaf.setFlipDirection(FlipDirection.AROUND_X);
+		}
 		
 		return stack.buildSignature(leaf);
 	}
@@ -182,9 +196,12 @@ public class Booklet {
 	 * @param height width of one page of the folded sheet
 	 * @param pages the number of pages in the finished booklet, including blanks.
 	 *        It follows that the number must be an integer multiple of four.
+	 * @param versoOpposite whether verso should be upside down with respect
+	 *        to the recto
 	 * @return a new {@code Signature} object with leaves in proper positions
 	 */
-	private Signature withBottomBinding(double width, double height, int pages) {
+	private Signature withBottomBinding(double width, double height, int pages,
+	                                    boolean versoOpposite) {
 		final Stack stack = new Stack(width, 2*height);
 		List<Stack.Manipulation> manipulations = new ArrayList<>(3);
 		manipulations.add(new Stack.Gather(pages/4));
@@ -195,7 +212,14 @@ public class Booklet {
 		
 		Leaf leaf = new Leaf(width, height);
 		leaf.setAsFrontPosition(new Leaf.Position(width/2, height/2, 0));
-		leaf.setFlipDirection(FlipDirection.AROUND_X);
+		/*
+		 * With the default flip direction about y, the verso is opposite
+		 * already. When verso it to be in the same direction as recto,
+		 * make it flip around the x-axis:
+		 */
+		if (!versoOpposite) {
+			leaf.setFlipDirection(FlipDirection.AROUND_X);
+		}
 		
 		return stack.buildSignature(leaf);
 	}
@@ -205,12 +229,16 @@ public class Booklet {
 	 * given document by getting its number of pages and page dimensions.
 	 * @param source the document to adapt to
 	 * @param binding the edge with binding
+	 * @param versoOpposite whether verso should be upside down with respect
+	 *        to the recto.
+	 *        This only has effect when {@code binding} is TOP or BOTTOM.
 	 * @return a new Booklet object
 	 */
-	public static Booklet from(VirtualDocument source, Binding binding) {
+	public static Booklet from(VirtualDocument source, Binding binding,
+	                           boolean versoOpposite) {
 		double[] dimensions = source.maxPageDimensions();
 		int pageCount = source.getLength();
-		return new Booklet(dimensions[0], dimensions[1], pageCount, binding);
+		return new Booklet(dimensions[0], dimensions[1], pageCount, binding, versoOpposite);
 	}
 	
 	/**
@@ -221,7 +249,7 @@ public class Booklet {
 	 * @return a new Booklet object
 	 */
 	public static Booklet from(VirtualDocument source) {
-		return Booklet.from(source, Binding.LEFT);
+		return Booklet.from(source, Binding.LEFT, false);
 	}
 	
 	public Volume volume() {
