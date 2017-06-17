@@ -71,12 +71,12 @@ public class Console {
 		jcommander.parse(args);
 		
 		/* Run */
-		// Display version
+		// Display version and exit (--version)
 		if (version) {
 			version();
 			System.exit(0);
 		}
-		// Display help
+		// Display help and exit (--help)
 		if (help) {
 			help(jcommander);
 			System.exit(0);
@@ -85,17 +85,16 @@ public class Console {
 		setVerbosity(quiet, verbose, debug);
 		
 		// End global-level option processing and run the subcommand
-		subcommands.get(jcommander.getParsedCommand()).execute(args);
+		subcommands.get(jcommander.getParsedCommand()).execute();
 	}
 	
-	/** Prints version info and exits. */
+	/** Prints version info. */
 	private void version() {
 		Out.line("This is PDFriend version %s", Version.current().toString());
-		System.exit(0);
 	}
 	
 	/**
-	 * Prints help page and exits.
+	 * Prints help page.
 	 * @param jcommander an instance of jcommander used to parse the CLI args
 	 */
 	private void help(JCommander jcommander) {

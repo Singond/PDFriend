@@ -5,6 +5,10 @@ package cz.slanyj.pdfriend.cli;
  */
 public interface SubCommand {
 
-	/** Execute the subcommand with the given subcommand arguments */
-	public void execute(String[] args);
+	/**
+	 * Execute the subcommand. This method does not allow any arguments,
+	 * meaning the module must be completely initialized to perform the
+	 * intended task in advance. 
+	 */
+	public void execute();
 }

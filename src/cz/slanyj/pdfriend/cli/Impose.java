@@ -53,9 +53,8 @@ public class Impose implements SubCommand {
 	private File outputFile;
 
 	@Override
-	public void execute(String[] args) {
-		logger.info("PDFriend Impose");
-		logger.debug("Module arguments: " + Arrays.toString(args));
+	public void execute() {
+		logger.info("*** PDFriend Impose ***");
 		for (File f : inputFiles) {
 			logger.verbose("Input file: " + f.getAbsolutePath());
 		}
