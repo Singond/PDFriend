@@ -26,7 +26,7 @@ public class PrintBooklet {
 		VirtualDocument source;
 		try {
 			source = new PDFImporter(sourceFile).importDocument();
-			Booklet booklet = Booklet.from(source, Binding.BOTTOM);
+			Booklet booklet = Booklet.from(source, Binding.BOTTOM, false);
 			Volume volume = booklet.volume();
 			SourceProvider sp = new SequentialSourceProvider(source);
 			sp.setSourceTo(volume.pages());
