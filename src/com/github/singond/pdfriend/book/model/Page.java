@@ -2,8 +2,11 @@ package com.github.singond.pdfriend.book.model;
 
 import java.util.Collection;
 
+import com.github.singond.pdfriend.ExtendedLogger;
+import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.control.PageVisitor;
 import com.github.singond.pdfriend.document.Content;
+import com.github.singond.pdfriend.document.VirtualPage;
 
 /**
  * A page of a document, ie. one side of a Leaf.
@@ -18,6 +21,8 @@ public abstract class Page {
 	private final double width;
 	/** The page height (y-direction) */
 	private final double height; 
+	
+	private static final ExtendedLogger logger = Log.logger(Page.class);
 	
 	public Page(double width, double height) {
 		this.width = width;
@@ -81,6 +86,29 @@ public abstract class Page {
 	 * @return The collection of Content obtained from the source page.
 	 */
 	public abstract Collection<Content.Movable> getContent();
+	
+	/**
+	 * Renders this page directly into a new virtual page.
+	 * This method places this page onto the virutal page without any
+	 * transformation. It ignores any notion of leaves, sheets or signatures
+	 * ans as such is only useful for simple imposition tasks which can be
+	 * handled by the Page subclasses themselves.
+	 * @return a new VirtualPage object representing this page
+	 */
+	public VirtualPage render() {
+		logger.verbose("page_rendering", this);
+		/** Front side of this sheet compiled into page */
+		VirtualPage.Builder paper = new VirtualPage.Builder();
+		paper.setWidth(width);
+		paper.setHeight(height);
+		
+		if (!isBlank()) {
+			for (Content.Movable cm : getContent()) {
+				paper.addContent(cm.transformed());
+			}
+		}
+		return paper.build();
+	}
 	
 	/**
 	 * Invites a PageVisitor.

@@ -63,6 +63,19 @@ public class SinglePage extends Page {
 	
 	/**
 	 * {@inheritDoc}
+	 * <p>
+	 * In SinglePage, the desired behaviour described above is achieved
+	 * by simply returning a copy of the source page, setting its dimensions
+	 * to those of this page.
+	 * </p>
+	 */
+	@Override
+	public VirtualPage render() {
+		return new VirtualPage(getWidth(), getHeight(), source.getContent());
+	}
+	
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public <R, P, E extends Throwable> R invite(PageVisitor<R, P, E> visitor, P param) throws E {
