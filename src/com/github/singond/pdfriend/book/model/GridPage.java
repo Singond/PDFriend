@@ -187,10 +187,11 @@ public class GridPage extends MultiPage {
 
 	/**
 	 * Provides a way to iterate through the pages in the order specified
-	 * by {@code direction}.
-	 * @return an iterable traversing the grid left to right, top to bottom
+	 * by {@code direction} argument.
+	 * @param direction the manner in which to iterate
+	 * @return an iterable traversing the grid in {@code direction}
 	 */
-	public MatrixIterable<Pagelet> pagelets() {
+	public MatrixIterable<Pagelet> pagelets(Direction direction) {
 		switch (direction) {
 			case COLUMNS:
 				return matrix.vertically();
@@ -199,6 +200,16 @@ public class GridPage extends MultiPage {
 			default:
 				throw new AssertionError("Bad GridPage direction is set: "+direction);
 		}
+	}
+	
+	/**
+	 * Provides a way to iterate through the pages in the order specified
+	 * by the current value of the {@code direction} field.
+	 * @return an iterable traversing the grid according to current value
+	 *         of the {@code direction} field
+	 */
+	public MatrixIterable<Pagelet> pagelets() {
+		return pagelets(direction);
 	}
 	
 	/**
