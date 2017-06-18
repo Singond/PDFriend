@@ -20,8 +20,8 @@ import com.github.singond.pdfriend.document.RenderingException;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.format.process.PDFImporter;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
-import com.github.singond.pdfriend.geometry.Line;
-import com.github.singond.pdfriend.geometry.Point;
+import com.github.singond.geometry.plane.Line;
+import com.github.singond.geometry.plane.Point;
 
 /**
  * A sample signature of two sheets.

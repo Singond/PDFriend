@@ -14,9 +14,9 @@ import com.github.singond.pdfriend.book.control.Layer.Orientation;
 import com.github.singond.pdfriend.book.model.Leaf;
 import com.github.singond.pdfriend.book.model.Sheet;
 import com.github.singond.pdfriend.book.model.Signature;
-import com.github.singond.pdfriend.geometry.Line;
-import com.github.singond.pdfriend.geometry.Point;
-import com.github.singond.pdfriend.geometry.Transformations;
+import com.github.singond.geometry.plane.Line;
+import com.github.singond.geometry.plane.Point;
+import com.github.singond.geometry.plane.Transformations;
 
 /**
  * <p>A vertical stack of Layers, ie. a collection of possibly folded
