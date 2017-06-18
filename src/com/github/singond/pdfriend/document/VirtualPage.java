@@ -70,6 +70,17 @@ public class VirtualPage {
 		this.content = new HashSet<>();
 		this.content.add(content);
 	}
+	
+	/**
+	 * A copy constructor.
+	 * Creates a new instance of VirtualPagae which is a copy of the given
+	 * VirtualPage, including all its content.
+	 */
+	public VirtualPage(VirtualPage original) {
+		this.width = original.width;
+		this.height = original.height;
+		this.content = new HashSet<>(original.content);
+	}
 
 
 	public double getWidth() {
