@@ -142,6 +142,27 @@ public class GridPage extends MultiPage {
 	}
 	
 	/**
+	 * A copy constructor.
+	 * @param original
+	 */
+	public GridPage(GridPage original) {
+		super(original.getWidth(), original.getHeight());
+		this.orientation = original.orientation;
+		this.direction = original.direction; // (This one's not final)
+		
+		int[] dimensions = ((ArrayMatrix<?>) original.matrix).getDimensions();
+		Matrix<Pagelet> cells = new ArrayMatrix<>(dimensions[0], dimensions[1]);
+		MatrixIterator<Pagelet> origIter = original.matrix.horizontallyAll().iterator();
+		
+		while (origIter.hasNext()) {
+			Pagelet p = new Pagelet(origIter.next());
+			int[] coords = origIter.previousIndex();
+			cells.set(coords[0], coords[1], p);
+		}
+		this.matrix = cells;
+	}
+	
+	/**
 	 * Sets the order in which the cells of the grid should be visited
 	 * when iterating.
 	 * @param direction either by rows or by columns

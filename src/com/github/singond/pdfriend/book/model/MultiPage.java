@@ -135,6 +135,18 @@ public abstract class MultiPage extends Page {
 			this.framePosition = new AffineTransform(position);
 			this.positioner = new RectangleFrame(width, height);
 		}
+		
+		/**
+		 * A copy constructor.
+		 * Constructs a new Pagelet which is a copy of the given Pagelet.
+		 * The copy is a shallow one, ie. the source page reference is copied
+		 * to the new Pagelet.
+		 * @param original the pagelet to be copied
+		 */
+		public Pagelet(Pagelet original) {
+			this(original.width, original.height, original.framePosition);
+			this.source = original.source;
+		}
 
 		public double getWidth() {
 			return width;
