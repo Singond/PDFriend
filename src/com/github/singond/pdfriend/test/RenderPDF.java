@@ -41,10 +41,8 @@ public class RenderPDF {
 			out.save(new File("test/rendered-pdf.pdf"));
 			out.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (RenderingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
