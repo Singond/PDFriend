@@ -212,8 +212,8 @@ public class VirtualPage {
 		 * @return A new instance of VirtualPage.
 		 */
 		public VirtualPage build() {
-			logger.verbose("vpage_building",
-			            width, height, content.size());
+			logger.debug("vpage_building",
+			             width, height, content.size());
 			return new VirtualPage(width, height, content);
 		}
 	}
