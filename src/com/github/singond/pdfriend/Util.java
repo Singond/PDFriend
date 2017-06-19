@@ -34,4 +34,14 @@ public abstract class Util {
 			return null;
 		}
 	}
+	
+	/**
+	 * Returns the quotient of the two numbers rounded to integer upwards.
+	 * @param dividend
+	 * @param divisor
+	 * @return
+	 */
+	public static int ceilingDivision(int dividend, int divisor) {
+		return (int) (Math.ceil(((float)dividend)/divisor));
+	}
 }
