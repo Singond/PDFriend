@@ -158,6 +158,7 @@ public class GridPage extends MultiPage {
 			Pagelet p = new Pagelet(origIter.next());
 			int[] coords = origIter.previousIndex();
 			cells.set(coords[0], coords[1], p);
+			super.addPagelet(p);
 		}
 		this.matrix = cells;
 	}
