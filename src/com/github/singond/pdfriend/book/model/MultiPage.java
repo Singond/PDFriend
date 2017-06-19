@@ -75,6 +75,7 @@ public abstract class MultiPage extends Page {
 	public Collection<Movable> getContent() {
 		Set<Content.Movable> contents = new HashSet<>();
 		for (Pagelet p : pagelets) {
+			if (p.source == null) continue;
 			for (Content.Movable cm : p.source.getMovableContent()) {
 //				cm.getTransform().preConcatenate(p.framePosition);
 				cm.getTransform().preConcatenate(p.getPositionInPage());
