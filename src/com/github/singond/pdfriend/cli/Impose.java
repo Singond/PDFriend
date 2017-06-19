@@ -15,12 +15,16 @@ import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.control.SequentialSourceProvider;
 import com.github.singond.pdfriend.book.control.SourceProvider;
 import com.github.singond.pdfriend.book.model.Volume;
+import com.github.singond.pdfriend.cli.parsing.BookletBindingConverter;
+import com.github.singond.pdfriend.cli.parsing.IntegerDimensions;
+import com.github.singond.pdfriend.cli.parsing.IntegerDimensionsConverter;
 import com.github.singond.pdfriend.document.ImportException;
 import com.github.singond.pdfriend.document.RenderingException;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.format.process.PDFImporter;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
 import com.github.singond.pdfriend.imposition.Booklet;
+import com.github.singond.pdfriend.imposition.NUp;
 
 /**
  * The impose command of pdfriend.
@@ -44,6 +48,9 @@ public class Impose implements SubCommand {
 	@Parameter(names="--verso-opposite")
 	private boolean flipVerso = false;
 	
+	@Parameter(names="pages", description="")
+	private int pages = -1;
+	
 	/**
 	 * The input files.
 	 * All files in the list are taken as the input files, and concatenated
@@ -59,6 +66,10 @@ public class Impose implements SubCommand {
 	@Override
 	public void execute() {
 		logger.info("*** PDFriend Impose ***");
+		if (type == null) {
+			throw new NullPointerException("No imposition type has been specified");
+		}
+		
 		for (File f : inputFiles) {
 			logger.verbose("Input file: " + f.getAbsolutePath());
 		}
@@ -70,12 +81,10 @@ public class Impose implements SubCommand {
 	
 	private void imposeBooklet() {
 		logger.info("Imposing booklet...");
-		// TODO Use all the input files
-		File sourceFile = inputFiles.get(0);
 		File targetFile = outputFile;
 		VirtualDocument source;
 		try {
-			source = new PDFImporter(sourceFile).importDocument();
+			source = getInput(inputFiles);
 			Booklet booklet = Booklet.from(source, binding, flipVerso);
 			Volume volume = booklet.volume();
 			SourceProvider sp = new SequentialSourceProvider(source);
@@ -91,13 +100,51 @@ public class Impose implements SubCommand {
 		}
 	}
 	
+	private void imposeNUp() {
+		logger.info("Imposing n-up...");
+		int rows = type.nup.getFirstDimension();
+		int columns = type.nup.getSecondDimension();
+		int pages = this.pages;
+		File targetFile = outputFile;
+		
+		try {
+			VirtualDocument source = getInput(inputFiles);
+			NUp.Builder nup = new NUp.Builder();
+			nup.setRows(rows);
+			nup.setCols(columns);
+			if (pages > 0) {
+				nup.setNumberOfPages(pages);
+			}
+			VirtualDocument imposed = nup.buildFor(source).getDocument();
+			new PDFRenderer().renderAndSave(imposed, targetFile);
+		} catch (ImportException e) {
+			e.printStackTrace();
+		} catch (RenderingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private VirtualDocument getInput(List<File> files) throws ImportException {
+		// TODO Use all the input files
+		File sourceFile = inputFiles.get(0);
+		return new PDFImporter(sourceFile).importDocument();
+	}
+	
 	/**
 	 * Groups the individual imposition types into one group, from which
 	 * only one imposition type should be selected.
 	 */
+	@Parameters(separators=" ")
 	public static class TypeArgument {
 		@Parameter(names="--booklet", description="A simple stack of sheets folded in half")
 		private boolean booklet = false;
+		
+		@Parameter(names={"--n-up", "--nup"},
+				description="Several pages arranged into a grid on a larget sheet",
+				converter=IntegerDimensionsConverter.class)
+		private IntegerDimensions nup = null;
 		
 		/**
 		 * Gets the selected type.
@@ -107,6 +154,7 @@ public class Impose implements SubCommand {
 		 */
 		public Type getType() {
 			if (booklet) return Type.BOOKLET;
+			else if (nup != null) return Type.N_UP;
 			return null;
 		}
 	}
@@ -115,7 +163,8 @@ public class Impose implements SubCommand {
 	 * The type of document to be produced by imposition (a booklet, n-up etc).
 	 */
 	private enum Type {
-		BOOKLET("booklet", i->i.imposeBooklet());
+		BOOKLET("booklet", i->i.imposeBooklet()),
+		N_UP("n-up", i->i.imposeNUp());
 		
 		/** The name of the type */
 		private final String name;
@@ -139,14 +188,6 @@ public class Impose implements SubCommand {
 		/** Invokes the action in the Impose object. */
 		public void invokeActionIn(Impose impose) {
 			action.accept(impose);
-		}
-	}
-	
-	/** Converts a string into a valule of the "binding" fiíeld. */
-	private static class BookletBindingConverter implements IStringConverter<Booklet.Binding> {
-		@Override
-		public Booklet.Binding convert(String arg) {
-			return Booklet.Binding.valueOf(arg.toUpperCase());
 		}
 	}
 }
