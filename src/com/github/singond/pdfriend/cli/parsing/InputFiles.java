@@ -21,7 +21,7 @@ public class InputFiles {
 	private static final ExtendedLogger logger = Log.logger(InputFiles.class);
 	
 	@Parameter(description="The list of input files")
-	public List<File> files = new ArrayList<>();
+	private List<File> files = new ArrayList<>();
 	
 	public void postParse() {
 		logger.verbose(listFiles(files));
