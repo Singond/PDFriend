@@ -2,11 +2,8 @@ package com.github.singond.pdfriend.cli;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
-import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
@@ -16,12 +13,12 @@ import com.github.singond.pdfriend.book.control.SequentialSourceProvider;
 import com.github.singond.pdfriend.book.control.SourceProvider;
 import com.github.singond.pdfriend.book.model.Volume;
 import com.github.singond.pdfriend.cli.parsing.BookletBindingConverter;
+import com.github.singond.pdfriend.cli.parsing.InputFiles;
 import com.github.singond.pdfriend.cli.parsing.IntegerDimensions;
 import com.github.singond.pdfriend.cli.parsing.IntegerDimensionsConverter;
 import com.github.singond.pdfriend.document.ImportException;
 import com.github.singond.pdfriend.document.RenderingException;
 import com.github.singond.pdfriend.document.VirtualDocument;
-import com.github.singond.pdfriend.format.process.PDFImporter;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
 import com.github.singond.pdfriend.imposition.Booklet;
 import com.github.singond.pdfriend.imposition.NUp;
@@ -56,8 +53,8 @@ public class Impose implements SubCommand {
 	 * All files in the list are taken as the input files, and concatenated
 	 * in the order they appear in the command.
 	 */
-	@Parameter(description="Input files")
-	private List<File> inputFiles = new ArrayList<>();
+	@ParametersDelegate
+	private InputFiles inputFiles = new InputFiles();
 	
 	/** The output file. */
 	@Parameter(names={"-o", "--output"}, description="Output file name")
@@ -74,10 +71,6 @@ public class Impose implements SubCommand {
 		if (type == null) {
 			throw new NullPointerException("No imposition type has been specified");
 		}
-		
-		for (File f : inputFiles) {
-			logger.verbose("Input file: " + f.getAbsolutePath());
-		}
 		logger.verbose("Output file: "+outputFile.getAbsolutePath());
 		
 		logger.verbose("Selected imposition type is: " + type.getType().getName());
@@ -87,9 +80,9 @@ public class Impose implements SubCommand {
 	private void imposeBooklet() {
 		logger.info("Imposing booklet...");
 		File targetFile = outputFile;
-		VirtualDocument source;
+		
 		try {
-			source = getInput(inputFiles);
+			VirtualDocument source = inputFiles.getAsDocument();
 			Booklet booklet = Booklet.from(source, binding, flipVerso);
 			Volume volume = booklet.volume();
 			SourceProvider sp = new SequentialSourceProvider(source);
@@ -113,7 +106,7 @@ public class Impose implements SubCommand {
 		File targetFile = outputFile;
 		
 		try {
-			VirtualDocument source = getInput(inputFiles);
+			VirtualDocument source = inputFiles.getAsDocument();
 			NUp.Builder nup = new NUp.Builder();
 			nup.setRows(rows);
 			nup.setCols(columns);
@@ -129,12 +122,6 @@ public class Impose implements SubCommand {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	private VirtualDocument getInput(List<File> files) throws ImportException {
-		// TODO Use all the input files
-		File sourceFile = inputFiles.get(0);
-		return new PDFImporter(sourceFile).importDocument();
 	}
 	
 	/**
