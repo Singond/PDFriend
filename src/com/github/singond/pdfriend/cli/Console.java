@@ -68,6 +68,8 @@ public class Console {
 		}
 		JCommander jcommander = jcbuilder.build();
 		jcommander.parse(args);
+		SubCommand subcommand = subcommands.get(jcommander.getParsedCommand());
+		subcommand.postParse();
 		
 		/* Run */
 		// Display version and exit (--version)
@@ -84,7 +86,7 @@ public class Console {
 		setVerbosity(quiet, verbose, debug);
 		
 		// End global-level option processing and run the subcommand
-		subcommands.get(jcommander.getParsedCommand()).execute();
+		subcommand.execute();
 	}
 	
 	/** Prints version info. */

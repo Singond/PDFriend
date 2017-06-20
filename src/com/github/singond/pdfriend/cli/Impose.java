@@ -64,6 +64,11 @@ public class Impose implements SubCommand {
 	private File outputFile;
 
 	@Override
+	public void postParse() {
+		inputFiles.postParse();
+	}
+	
+	@Override
 	public void execute() {
 		logger.info("*** PDFriend Impose ***");
 		if (type == null) {

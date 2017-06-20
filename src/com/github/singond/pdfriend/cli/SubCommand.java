@@ -6,6 +6,12 @@ package com.github.singond.pdfriend.cli;
 public interface SubCommand {
 
 	/**
+	 * Method to be invoked after the SubCommand object is built
+	 * and initialized with values from the command line.
+	 */
+	public void postParse();
+	
+	/**
 	 * Execute the subcommand. This method does not allow any arguments,
 	 * meaning the module must be completely initialized to perform the
 	 * intended task in advance. 
