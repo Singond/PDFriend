@@ -11,6 +11,7 @@ import com.beust.jcommander.Parameter;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.Out;
+import com.github.singond.pdfriend.Util;
 import com.github.singond.pdfriend.Version;
 
 /**
@@ -56,8 +57,6 @@ public class Console {
 	 * @param args the whole argument array passed into the program
 	 */
 	public void execute(String[] args) {
-		logger.debug("PDFriend arguments: " + Arrays.toString(args));
-		
 		/* Parse the CLI arguments */
 		JCommander.Builder jcbuilder = JCommander.newBuilder()
 				.addObject(this)
@@ -68,22 +67,28 @@ public class Console {
 		}
 		JCommander jcommander = jcbuilder.build();
 		jcommander.parse(args);
+		// Set verbosity level as early as possible
+		setVerbosity(quiet, verbose, debug);
 		SubCommand subcommand = subcommands.get(jcommander.getParsedCommand());
 		subcommand.postParse();
 		
 		/* Run */
+		
+		logger.debug("The working directory is {}", Util.getWorkingDir());
+		logger.debug("The application directory is {}", Util.getApplicationDir());
+		logger.debug("PDFriend arguments: " + Arrays.toString(args));
+		
 		// Display version and exit (--version)
 		if (version) {
 			version();
 			System.exit(0);
 		}
+		
 		// Display help and exit (--help)
 		if (help) {
 			help(jcommander);
 			System.exit(0);
 		}
-		// Set verbosity level
-		setVerbosity(quiet, verbose, debug);
 		
 		// End global-level option processing and run the subcommand
 		subcommand.execute();

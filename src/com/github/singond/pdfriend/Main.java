@@ -19,11 +19,7 @@ import com.github.singond.pdfriend.cli.Console;
  */
 public class Main {
 
-	/** A map which binds subcommand names to their implementations */
-//	private static Map<String, Supplier<SubCommand>> subcommands = new HashMap<>();
-//	static {
-//		subcommands.put("impose", Impose::new);
-//	}
+	@SuppressWarnings("unused")
 	private static ExtendedLogger logger = Log.logger(Main.class);
 	
 
@@ -31,9 +27,9 @@ public class Main {
 	 * Runs PDFriend.
 	 */
 	public static void main(String[] args) {
-		logger.debug("The working directory is {}", Util.getWorkingDir());
-		logger.debug("The application directory is {}", Util.getApplicationDir());
-
+		//logger.debug("The working directory is {}", Util.getWorkingDir());
+		//logger.debug("The application directory is {}", Util.getApplicationDir());
+		
 		if (args.length <= 0) {
 			// GUI (to be added later). For now, just print version.
 			Out.line("This is PDFriend version %s", Version.current().toString());
