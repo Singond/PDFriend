@@ -18,7 +18,7 @@ public class PDFImporter implements Importer {
 
 	private final File file;
 	
-	private static final ExtendedLogger logger = Log.logger(PDFImporter.class);
+	private static ExtendedLogger logger = Log.logger(PDFImporter.class);
 	
 	public PDFImporter(File file) {
 		this.file = file;

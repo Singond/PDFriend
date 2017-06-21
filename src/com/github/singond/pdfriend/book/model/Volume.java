@@ -24,7 +24,7 @@ public class Volume {
 	 */
 	private List<Signature> signatures;
 	
-	private static final ExtendedLogger logger = Log.logger(Volume.class);
+	private static ExtendedLogger logger = Log.logger(Volume.class);
 	
 	public Volume() {
 		signatures = SetUniqueList.setUniqueList(new LinkedList<Signature>());

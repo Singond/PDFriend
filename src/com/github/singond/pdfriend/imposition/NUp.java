@@ -22,7 +22,7 @@ public class NUp implements Imposable {
 
 	private final List<Page> pages;
 	
-	private static final ExtendedLogger logger = Log.logger(NUp.class);
+	private static ExtendedLogger logger = Log.logger(NUp.class);
 	
 	/**
 	 * Constructs a new n-up document with the given layout.

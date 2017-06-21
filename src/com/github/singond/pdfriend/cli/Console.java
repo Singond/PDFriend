@@ -21,7 +21,7 @@ import com.github.singond.pdfriend.Version;
  *
  */
 public class Console {
-	private static final ExtendedLogger logger = Log.logger(Console.class);
+	private static ExtendedLogger logger = Log.logger(Console.class);
 
 	/* Root options */
 	

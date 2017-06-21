@@ -18,7 +18,7 @@ import com.github.singond.pdfriend.format.process.PDFRenderer;
  */
 public abstract class Renderer<T> {
 	
-	private static final ExtendedLogger logger = Log.logger(Renderer.class);
+	private static ExtendedLogger logger = Log.logger(Renderer.class);
 
 	/**
 	 * Renders the given virtual document into a real document.

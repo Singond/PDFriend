@@ -31,7 +31,7 @@ import com.github.singond.pdfriend.imposition.NUp;
 @Parameters(separators="=",
 		commandDescription="Lay out pages of the source documents onto pages of a new document")
 public class Impose implements SubCommand {
-	private static final ExtendedLogger logger = Log.logger(Impose.class);
+	private static ExtendedLogger logger = Log.logger(Impose.class);
 
 	/** A pre-defined type of imposition: booklet, n-up etc. */
 	@ParametersDelegate

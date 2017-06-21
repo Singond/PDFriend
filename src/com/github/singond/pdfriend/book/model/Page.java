@@ -22,7 +22,7 @@ public abstract class Page {
 	/** The page height (y-direction) */
 	private final double height; 
 	
-	private static final ExtendedLogger logger = Log.logger(Page.class);
+	private static ExtendedLogger logger = Log.logger(Page.class);
 	
 	public Page(double width, double height) {
 		this.width = width;

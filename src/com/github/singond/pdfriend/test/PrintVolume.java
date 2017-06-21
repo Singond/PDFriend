@@ -27,7 +27,7 @@ import com.github.singond.pdfriend.format.process.PDFRenderer;
  */
 public class PrintVolume {
 	
-	private static final ExtendedLogger logger = Log.logger(PrintVolume.class);
+	private static ExtendedLogger logger = Log.logger(PrintVolume.class);
 
 	public static void main(String[] args) {
 		Leaf leaf = new Leaf(612, 792);

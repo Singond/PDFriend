@@ -26,7 +26,7 @@ public class VirtualPage {
 	/** A collection of all pages along with their positions. */
 	private final Collection<Content> content;
 	
-	private static final ExtendedLogger logger = Log.logger(VirtualPage.class);
+	private static ExtendedLogger logger = Log.logger(VirtualPage.class);
 
 
 	/**

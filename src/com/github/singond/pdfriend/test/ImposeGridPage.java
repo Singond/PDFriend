@@ -30,7 +30,7 @@ import com.github.singond.pdfriend.format.process.PDFRenderer;
  */
 public class ImposeGridPage {
 	
-	private static final ExtendedLogger logger = Log.logger(ImposeGridPage.class);
+	private static ExtendedLogger logger = Log.logger(ImposeGridPage.class);
 
 	public static void main(String[] args) {
 		logger.info("This is a test of the GridPage class functionality");

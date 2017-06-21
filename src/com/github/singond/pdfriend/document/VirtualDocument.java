@@ -24,7 +24,7 @@ public class VirtualDocument {
 	 */
 	private final List<VirtualPage> pages;
 	
-	private static final ExtendedLogger logger = Log.logger(VirtualDocument.class);
+	private static ExtendedLogger logger = Log.logger(VirtualDocument.class);
 	
 	
 	/**

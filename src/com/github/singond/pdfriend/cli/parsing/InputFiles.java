@@ -18,7 +18,7 @@ import com.github.singond.pdfriend.format.process.PDFImporter;
  */
 public class InputFiles {
 
-	private static final ExtendedLogger logger = Log.logger(InputFiles.class);
+	private static ExtendedLogger logger = Log.logger(InputFiles.class);
 	
 	@Parameter(description="The list of input files")
 	private List<File> files = new ArrayList<>();

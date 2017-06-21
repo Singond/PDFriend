@@ -31,7 +31,7 @@ import com.github.singond.geometry.plane.Point;
  */
 public class PrintStack {
 	
-	private static final ExtendedLogger logger = Log.logger(PrintStack.class);
+	private static ExtendedLogger logger = Log.logger(PrintStack.class);
 
 	public static void main(String[] args) {
 		Leaf leaf = new Leaf(612, 792);

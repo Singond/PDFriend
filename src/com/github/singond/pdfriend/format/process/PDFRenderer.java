@@ -24,7 +24,7 @@ import com.github.singond.pdfriend.format.content.PDFPage;
 
 public class PDFRenderer extends Renderer<PDDocument> {
 	
-	private static final ExtendedLogger logger = Log.logger(PDFRenderer.class);
+	private static ExtendedLogger logger = Log.logger(PDFRenderer.class);
 
 	@Override
 	public PDDocument render(VirtualDocument document) throws RenderingException {

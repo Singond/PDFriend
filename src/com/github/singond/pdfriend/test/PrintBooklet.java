@@ -18,7 +18,7 @@ import com.github.singond.pdfriend.imposition.Booklet.Binding;
 
 public class PrintBooklet {
 	
-	private static final ExtendedLogger logger = Log.logger(PrintBooklet.class);
+	private static ExtendedLogger logger = Log.logger(PrintBooklet.class);
 
 	public static void main(String[] args) {
 		File sourceFile = new File("test/lorem-letter.pdf");

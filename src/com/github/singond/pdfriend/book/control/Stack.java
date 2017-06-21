@@ -38,7 +38,7 @@ import com.github.singond.geometry.plane.Transformations;
  */
 public class Stack {
 	
-	private static final ExtendedLogger logger = Log.logger(Stack.class);
+	private static ExtendedLogger logger = Log.logger(Stack.class);
 
 	/**
 	 * The list of Sheet Layers represented by this Stack. The layers are

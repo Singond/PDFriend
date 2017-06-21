@@ -32,7 +32,7 @@ public class Booklet {
 	private final Volume volume;
 	
 	/** Logger */
-	private static final ExtendedLogger logger = Log.logger(Booklet.class);
+	private static ExtendedLogger logger = Log.logger(Booklet.class);
 	
 	/**
 	 * Constructs a new Booklet without content.
