@@ -16,6 +16,7 @@ import com.github.singond.pdfriend.Out;
 import com.github.singond.pdfriend.Util;
 import com.github.singond.pdfriend.Version;
 import com.github.singond.pdfriend.cli.parsing.GlobalOptions;
+import com.github.singond.pdfriend.cli.parsing.InputFiles;
 
 /**
  * The root of the command-line interface.
@@ -67,10 +68,17 @@ public class Console {
 	 */
 	public void execute(String[] args) {
 		List<List<String>> splitArgs = splitArgs(Arrays.asList(args));
-		/** Parsed subcommands */
+		/** Object to receive parsed global options */
+		GlobalOptions global = new GlobalOptions();
+		/** Object to receive parsed subcommands */
 		List<SubCommand> subcommands = new ArrayList<>(splitArgs.size());
+		/** Object to receive parsed input files */
+		InputFiles inputFiles = new InputFiles();
 		
-		Iterator<List<String>> iter = splitArgs.iterator();
+		Arguments arguments = new Arguments(global, inputFiles, subcommands);
+		parse(splitArgs, arguments);
+		
+		/*Iterator<List<String>> iter = splitArgs.iterator();
 		if (iter.hasNext()) {
 			SubCommand scmd = parseGlobalAndSubcommand(iter.next(), global);
 			subcommands.add(scmd);
@@ -78,7 +86,7 @@ public class Console {
 		while (iter.hasNext()) {
 			SubCommand scmd = parseSubCommand(iter.next());
 			subcommands.add(scmd);
-		}
+		}*/
 
 		// Set verbosity level as early as possible
 		setVerbosity(global.quiet(), global.verbose(), global.debug());
@@ -139,6 +147,45 @@ public class Console {
 	}
 	
 	/**
+	 * <p>
+	 * The global options must be specified in the first section, while
+	 * the input files must be listed in the last section of the command
+	 * line.
+	 * </p>
+	 * @param argSections the argument string split into sections with
+	 *        one subcommand in each
+	 * @param arguments the object to receive the parsed arguments
+	 */
+	private void parse(List<List<String>> argSections, Arguments arguments) {
+		int i = 0;
+		for (List<String> argSection : argSections) {
+			SubCommands subcmds = new SubCommands();
+			JCommander.Builder cmdrBldr = JCommander.newBuilder();
+			// If this is the first section of the command line,
+			// parse global options
+			if (i == 0) {
+				cmdrBldr.addObject(arguments.globalOptions);
+			}
+			// If this is the last section of the command line,
+			// parse input files as well
+			if (i == argSections.size()) {
+				cmdrBldr.addObject(arguments.inputFiles);
+			}
+			// Add all the subcommands
+			for (Map.Entry<String, SubCommand> cmd : subcmds.entrySet()) {
+				cmdrBldr.addCommand(cmd.getKey(), cmd.getValue());
+			}
+			// Parse it
+			JCommander cmdr = cmdrBldr.build();
+			cmdr.parse(argSection.toArray(new String[argSection.size()]));
+			// Retrieve the initialized subcommand and put it to the output
+			SubCommand subcmd = subcmds.get(cmdr.getParsedCommand());
+			arguments.subCommands.add(subcmd);
+			i++;
+		}
+	}
+	
+	/**
 	 * Parses the arguments list into the given global options object
 	 * and a new SubCommand.
 	 * @param arguments a list of the command-line arguments up to
@@ -146,6 +193,7 @@ public class Console {
 	 * @param target the global options object to receive the parsed values
 	 * @return the new SubCommand, initialized from the arguments
 	 */
+	@Deprecated
 	private SubCommand parseGlobalAndSubcommand(List<String> arguments,
 	                                            GlobalOptions target) {
 		mainParser.parse(arguments.toArray(new String[arguments.size()]));
@@ -158,6 +206,7 @@ public class Console {
 	 *        The subcommand is expected to be at the beginning of the list.
 	 * @return the new SubCommand, initialized from the arguments
 	 */
+	@Deprecated
 	private SubCommand parseSubCommand(List<String> args) {
 		SubCommands subcmds = new SubCommands();
 		JCommander.Builder subCmdParserBldr = JCommander.newBuilder();
@@ -199,6 +248,29 @@ public class Console {
 			Log.setLevel(Log.VERBOSE);
 		} else if (debug) {
 			Log.setLevel(Level.DEBUG);
+		}
+	}
+	
+	/**
+	 * A helper class which groups all the objects parseable from the
+	 * command line into one.
+	 */
+	private static class Arguments {
+		private final GlobalOptions globalOptions;
+		private final InputFiles inputFiles;
+		private final List<SubCommand> subCommands;
+		
+		private Arguments(GlobalOptions globalOpts, InputFiles inputFiles,
+		               List<SubCommand> subcommands) {
+			this.globalOptions = globalOpts;
+			this.inputFiles = inputFiles;
+			this.subCommands = subcommands;
+		}
+		
+		private Arguments() {
+			this.globalOptions = new GlobalOptions();
+			this.inputFiles = new InputFiles();
+			this.subCommands = new ArrayList<SubCommand>();
 		}
 	}
 }
