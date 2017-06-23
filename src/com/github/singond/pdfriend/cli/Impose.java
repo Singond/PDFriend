@@ -11,7 +11,6 @@ import com.github.singond.pdfriend.book.control.SequentialSourceProvider;
 import com.github.singond.pdfriend.book.control.SourceProvider;
 import com.github.singond.pdfriend.book.model.Volume;
 import com.github.singond.pdfriend.cli.parsing.BookletBindingConverter;
-import com.github.singond.pdfriend.cli.parsing.InputFiles;
 import com.github.singond.pdfriend.cli.parsing.IntegerDimensions;
 import com.github.singond.pdfriend.cli.parsing.IntegerDimensionsConverter;
 import com.github.singond.pdfriend.document.RenderingException;
@@ -45,22 +44,13 @@ public class Impose extends SubCommand implements Module {
 	@Parameter(names="pages", description="")
 	private int pages = -1;
 	
-	/**
-	 * The input files.
-	 * All files in the list are taken as the input files, and concatenated
-	 * in the order they appear in the command.
-	 */
-//	@ParametersDelegate
-//	private InputFiles inputFiles = new InputFiles();
 	
 	/** The output file. */
 	@Parameter(names={"-o", "--output"}, description="Output file name")
 	private File outputFile;
 
 	@Override
-	public void postParse() {
-//		inputFiles.postParse();
-	}
+	public void postParse() {}
 	
 	@Override
 	public Module getModule() {

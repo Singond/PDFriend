@@ -7,8 +7,14 @@ public abstract class SubCommand {
 
 	/**
 	 * The input files.
-	 * All files in the list are taken as the input files, and concatenated
-	 * in the order they appear in the command.
+	 * <p>
+	 * Parsing the command line requires that an InputFiles object be
+	 * present in each subcommand. This field may be set to some instance
+	 * known to the object which performs the parsing, so that the parsing
+	 * object can later access its value directly.
+	 * However, due to the limitations of JCommander, this field must not be
+	 * null after initialization, which is why the field is initialized;
+	 * </p>
 	 */
 	@ParametersDelegate
 	private InputFiles inputFiles = new InputFiles();
