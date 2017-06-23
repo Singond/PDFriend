@@ -7,12 +7,6 @@ import com.github.singond.pdfriend.document.VirtualDocument;
  * on the processed document.
  */
 public interface Module {
-
-	/**
-	 * Method to be invoked after the Module object is built
-	 * and initialized with values from the command line.
-	 */
-	public void postParse();
 	
 	/**
 	 * Process the document with this module. This method takes as its

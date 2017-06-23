@@ -63,6 +63,11 @@ public class Impose extends SubCommand implements Module {
 	}
 	
 	@Override
+	public Module getModule() {
+		return this;
+	}
+	
+	@Override
 	public void process(VirtualDocument document) {
 		logger.info("*** PDFriend Impose ***");
 		if (type == null) {

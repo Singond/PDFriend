@@ -20,4 +20,16 @@ public abstract class SubCommand {
 	public void setInputFiles(InputFiles inputFiles) {
 		this.inputFiles = inputFiles;
 	}
+	
+	/**
+	 * Method to be invoked after the SubCommand object is built
+	 * and initialized with values from the command line.
+	 */
+	public abstract void postParse();
+	
+	/**
+	 * Returns a PDFriend module which performs the task represented
+	 * by this subcommand.
+	 */
+	public abstract Module getModule();
 }
