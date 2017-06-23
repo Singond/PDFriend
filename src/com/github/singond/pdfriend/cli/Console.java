@@ -16,6 +16,7 @@ import com.github.singond.pdfriend.Util;
 import com.github.singond.pdfriend.Version;
 import com.github.singond.pdfriend.cli.parsing.GlobalOptions;
 import com.github.singond.pdfriend.cli.parsing.InputFiles;
+import com.github.singond.pdfriend.document.ImportException;
 
 /**
  * The root of the command-line interface.
@@ -25,6 +26,12 @@ import com.github.singond.pdfriend.cli.parsing.InputFiles;
  *
  */
 public class Console {
+	/** Object to receive parsed global options */
+	private final GlobalOptions global = new GlobalOptions();
+	/** Object to receive parsed subcommands */
+	private List<Module> subcommands = new ArrayList<>();
+	/** Object to receive parsed input files */
+	private final InputFiles inputFiles = new InputFiles();
 	/** Pattern to split the argument array at. This must be one element. */
 	private static final String SUBCOMMAND_DELIMITER = "+";
 	/** A mock instance of JCommander used to generate the help text. */
@@ -34,7 +41,7 @@ public class Console {
 	
 	/** A container class grouping all possible subcommands (ie. modules) */
 	@SuppressWarnings("serial")
-	private static class SubCommands extends HashMap<String, SubCommand> {{
+	private static class SubCommands extends HashMap<String, Module> {{
 		put("impose", new Impose());
 	}}
 	
@@ -43,8 +50,8 @@ public class Console {
 		JCommander.Builder globalParserBldr = JCommander.newBuilder()
 				.addObject(new GlobalOptions())
 				.addObject(new InputFiles())
-				.addObject(new ArrayList<SubCommand>());
-		for (Map.Entry<String, SubCommand> cmd : subcmds.entrySet()) {
+				.addObject(new ArrayList<Module>());
+		for (Map.Entry<String, Module> cmd : subcmds.entrySet()) {
 			globalParserBldr.addCommand(cmd.getKey(), cmd.getValue());
 		}
 		helpParser = globalParserBldr.build();
@@ -57,12 +64,6 @@ public class Console {
 	public void execute(String[] args) {
 		/** The argument line split into sections by subcommand */
 		List<List<String>> splitArgs = splitArgs(Arrays.asList(args));
-		/** Object to receive parsed global options */
-		GlobalOptions global = new GlobalOptions();
-		/** Object to receive parsed subcommands */
-		List<SubCommand> subcommands = new ArrayList<>(splitArgs.size());
-		/** Object to receive parsed input files */
-		InputFiles inputFiles = new InputFiles();
 		/** A helper object grouping the parsed objects */
 		Arguments arguments = new Arguments(global, inputFiles, subcommands);
 		
@@ -71,7 +72,7 @@ public class Console {
 		parse(splitArgs, arguments);
 		// Set verbosity level as early as possible
 		setVerbosity(global.quiet(), global.verbose(), global.debug());
-		SubCommand subcommand = subcommands.get(0);
+		Module subcommand = subcommands.get(0);
 		subcommand.postParse();
 		
 		/* Run the whole thing */
@@ -93,7 +94,12 @@ public class Console {
 		}
 		
 		// End global-level option processing and run the subcommand
-		subcommand.execute();
+		try {
+			subcommand.process(inputFiles.getAsDocument());
+		} catch (ImportException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -148,6 +154,9 @@ public class Console {
 			 * elements. Better thoughts, anyone?
 			 */
 			SubCommands subcmds = new SubCommands();
+			for (Module sc : subcmds.values()) {
+				((SubCommand) sc).setInputFiles(inputFiles);
+			}
 			JCommander.Builder cmdrBldr = JCommander.newBuilder();
 			// If this is the first section of the command line,
 			// parse global options
@@ -158,16 +167,17 @@ public class Console {
 			// parse input files as well
 			if (i == argSections.size()-1) {
 				cmdrBldr.addObject(arguments.inputFiles);
+//				cmdrBldr.addObject(new InputFiles());
 			}
 			// Add all the subcommands
-			for (Map.Entry<String, SubCommand> cmd : subcmds.entrySet()) {
+			for (Map.Entry<String, Module> cmd : subcmds.entrySet()) {
 				cmdrBldr.addCommand(cmd.getKey(), cmd.getValue());
 			}
 			// Parse it
 			JCommander cmdr = cmdrBldr.build();
 			cmdr.parse(argSection.toArray(new String[argSection.size()]));
 			// Retrieve the initialized subcommand and put it to the output
-			SubCommand subcmd = subcmds.get(cmdr.getParsedCommand());
+			Module subcmd = subcmds.get(cmdr.getParsedCommand());
 			arguments.subCommands.add(subcmd);
 			i++;
 		}
@@ -213,10 +223,10 @@ public class Console {
 	private static class Arguments {
 		private final GlobalOptions globalOptions;
 		private final InputFiles inputFiles;
-		private final List<SubCommand> subCommands;
+		private final List<Module> subCommands;
 		
 		private Arguments(GlobalOptions globalOpts, InputFiles inputFiles,
-		               List<SubCommand> subcommands) {
+		               List<Module> subcommands) {
 			this.globalOptions = globalOpts;
 			this.inputFiles = inputFiles;
 			this.subCommands = subcommands;
@@ -225,7 +235,7 @@ public class Console {
 		private Arguments() {
 			this.globalOptions = new GlobalOptions();
 			this.inputFiles = new InputFiles();
-			this.subCommands = new ArrayList<SubCommand>();
+			this.subCommands = new ArrayList<Module>();
 		}
 	}
 }

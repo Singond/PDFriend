@@ -2,8 +2,6 @@ package com.github.singond.pdfriend.cli;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.function.Consumer;
-
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
@@ -16,7 +14,6 @@ import com.github.singond.pdfriend.cli.parsing.BookletBindingConverter;
 import com.github.singond.pdfriend.cli.parsing.InputFiles;
 import com.github.singond.pdfriend.cli.parsing.IntegerDimensions;
 import com.github.singond.pdfriend.cli.parsing.IntegerDimensionsConverter;
-import com.github.singond.pdfriend.document.ImportException;
 import com.github.singond.pdfriend.document.RenderingException;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
@@ -30,7 +27,7 @@ import com.github.singond.pdfriend.imposition.NUp;
  */
 @Parameters(separators="=",
 		commandDescription="Lay out pages of the source documents onto pages of a new document")
-public class Impose implements SubCommand {
+public class Impose extends SubCommand implements Module {
 	private static ExtendedLogger logger = Log.logger(Impose.class);
 
 	/** A pre-defined type of imposition: booklet, n-up etc. */
@@ -53,8 +50,8 @@ public class Impose implements SubCommand {
 	 * All files in the list are taken as the input files, and concatenated
 	 * in the order they appear in the command.
 	 */
-	@ParametersDelegate
-	private InputFiles inputFiles = new InputFiles();
+//	@ParametersDelegate
+//	private InputFiles inputFiles = new InputFiles();
 	
 	/** The output file. */
 	@Parameter(names={"-o", "--output"}, description="Output file name")
@@ -62,11 +59,11 @@ public class Impose implements SubCommand {
 
 	@Override
 	public void postParse() {
-		inputFiles.postParse();
+//		inputFiles.postParse();
 	}
 	
 	@Override
-	public void execute() {
+	public void process(VirtualDocument document) {
 		logger.info("*** PDFriend Impose ***");
 		if (type == null) {
 			throw new NullPointerException("No imposition type has been specified");
@@ -74,54 +71,46 @@ public class Impose implements SubCommand {
 		logger.verbose("Output file: "+outputFile.getAbsolutePath());
 		
 		logger.verbose("Selected imposition type is: " + type.getType().getName());
-		type.getType().invokeActionIn(this);
-	}
-	
-	private void imposeBooklet() {
-		logger.info("Imposing booklet...");
-		File targetFile = outputFile;
-		
 		try {
-			VirtualDocument source = inputFiles.getAsDocument();
-			Booklet booklet = Booklet.from(source, binding, flipVerso);
-			Volume volume = booklet.volume();
-			SourceProvider sp = new SequentialSourceProvider(source);
-			sp.setSourceTo(volume.pages());
-			VirtualDocument doc = volume.renderDocument();
-			new PDFRenderer().renderAndSave(doc, targetFile);
-		} catch (ImportException e) {
-			e.printStackTrace();
+			type.getType().impose(document);
 		} catch (RenderingException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	private void imposeNUp() {
+	private void imposeBooklet(VirtualDocument source)
+			throws RenderingException, IOException {
+		logger.info("Imposing booklet...");
+		File targetFile = outputFile;
+		
+		Booklet booklet = Booklet.from(source, binding, flipVerso);
+		Volume volume = booklet.volume();
+		SourceProvider sp = new SequentialSourceProvider(source);
+		sp.setSourceTo(volume.pages());
+		VirtualDocument doc = volume.renderDocument();
+		new PDFRenderer().renderAndSave(doc, targetFile);
+	}
+	
+	private void imposeNUp(VirtualDocument source)
+			throws RenderingException, IOException {
 		logger.info("Imposing n-up...");
 		int rows = type.nup.getFirstDimension();
 		int columns = type.nup.getSecondDimension();
 		int pages = this.pages;
 		File targetFile = outputFile;
 		
-		try {
-			VirtualDocument source = inputFiles.getAsDocument();
-			NUp.Builder nup = new NUp.Builder();
-			nup.setRows(rows);
-			nup.setCols(columns);
-			if (pages > 0) {
-				nup.setNumberOfPages(pages);
-			}
-			VirtualDocument imposed = nup.buildFor(source).getDocument();
-			new PDFRenderer().renderAndSave(imposed, targetFile);
-		} catch (ImportException e) {
-			e.printStackTrace();
-		} catch (RenderingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		NUp.Builder nup = new NUp.Builder();
+		nup.setRows(rows);
+		nup.setCols(columns);
+		if (pages > 0) {
+			nup.setNumberOfPages(pages);
 		}
+		VirtualDocument imposed = nup.buildFor(source).getDocument();
+		new PDFRenderer().renderAndSave(imposed, targetFile);
 	}
 	
 	/**
@@ -129,7 +118,7 @@ public class Impose implements SubCommand {
 	 * only one imposition type should be selected.
 	 */
 	@Parameters(separators=" ")
-	public static class TypeArgument {
+	public class TypeArgument {
 		@Parameter(names="--booklet", description="A simple stack of sheets folded in half")
 		private boolean booklet = false;
 		
@@ -142,11 +131,14 @@ public class Impose implements SubCommand {
 		 * Gets the selected type.
 		 * If more than one type is selected, this should throw an exception.
 		 * TODO Implement the check that exactly one is selected.
-		 * @return
+		 * @return an object with the implementation of the concrete
+		 *         imposition type
 		 */
 		public Type getType() {
-			if (booklet) return Type.BOOKLET;
-			else if (nup != null) return Type.N_UP;
+			if (booklet)
+				return new TypeBooklet();
+			else if (nup != null)
+				return new TypeNUp();
 			return null;
 		}
 	}
@@ -154,32 +146,55 @@ public class Impose implements SubCommand {
 	/**
 	 * The type of document to be produced by imposition (a booklet, n-up etc).
 	 */
-	private enum Type {
-		BOOKLET("booklet", i->i.imposeBooklet()),
-		N_UP("n-up", i->i.imposeNUp());
-		
-		/** The name of the type */
-		private final String name;
-		/** The action to invoke on Impose */
-		private final Consumer<Impose> action;
+	private interface Type {
+		/** Returns a user-friendly name of the imposition type. */
+		public String getName();
 		
 		/**
-		 * @param name the user-friendly name of the imposition type
-		 * @param action the action to invoke in Impose object
+		 * Performs the imposition task defined by this Type class,
+		 * using the settings in the outer Impose object and the
+		 * @param doc the document whose pages are to be imposed onto
+		 *        this document
 		 */
-		private Type(String name, Consumer<Impose> action) {
-			this.name = name;
-			this.action = action;
-		}
+		public void impose(VirtualDocument doc)
+				throws RenderingException, IOException;
+	}
+	
+	/**
+	 * The type of document to be produced by imposition (a booklet, n-up etc).
+	 */
+	private class TypeBooklet implements Type {
+		/** The name of the document type */
+		private static final String name = "booklet";
 		
-		/** Returns a user-friendly name of the imposition type. */
+		@Override
 		public String getName() {
 			return name;
 		}
 		
-		/** Invokes the action in the Impose object. */
-		public void invokeActionIn(Impose impose) {
-			action.accept(impose);
+		@Override
+		public void impose(VirtualDocument doc)
+				throws RenderingException, IOException {
+			imposeBooklet(doc);
+		}
+	}
+	
+	/**
+	 * The type of document to be produced by imposition (a booklet, n-up etc).
+	 */
+	private class TypeNUp implements Type {
+		/** The name of the document type */
+		private static final String name = "n-up";
+		
+		@Override
+		public String getName() {
+			return name;
+		}
+		
+		@Override
+		public void impose(VirtualDocument doc)
+				throws RenderingException, IOException {
+			imposeNUp(doc);
 		}
 	}
 }

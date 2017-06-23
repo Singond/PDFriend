@@ -1,20 +1,23 @@
 package com.github.singond.pdfriend.cli;
 
-/**
- * A sub-command of pdfriend, referring to one of its modules
- */
-public interface SubCommand {
+import com.beust.jcommander.ParametersDelegate;
+import com.github.singond.pdfriend.cli.parsing.InputFiles;
+
+public abstract class SubCommand {
 
 	/**
-	 * Method to be invoked after the SubCommand object is built
-	 * and initialized with values from the command line.
+	 * The input files.
+	 * All files in the list are taken as the input files, and concatenated
+	 * in the order they appear in the command.
 	 */
-	public void postParse();
-	
-	/**
-	 * Execute the subcommand. This method does not allow any arguments,
-	 * meaning the module must be completely initialized to perform the
-	 * intended task in advance. 
-	 */
-	public void execute();
+	@ParametersDelegate
+	private InputFiles inputFiles = new InputFiles();
+
+	public InputFiles getInputFiles() {
+		return inputFiles;
+	}
+
+	public void setInputFiles(InputFiles inputFiles) {
+		this.inputFiles = inputFiles;
+	}
 }
