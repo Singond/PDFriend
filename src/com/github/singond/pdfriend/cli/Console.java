@@ -156,7 +156,7 @@ public class Console {
 			}
 			// If this is the last section of the command line,
 			// parse input files as well
-			if (i == argSections.size()) {
+			if (i == argSections.size()-1) {
 				cmdrBldr.addObject(arguments.inputFiles);
 			}
 			// Add all the subcommands
