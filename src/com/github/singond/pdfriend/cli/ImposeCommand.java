@@ -57,12 +57,12 @@ public class ImposeCommand extends SubCommand {
 	@Override
 	public Module getModule() {
 		Impose impose = new Impose();
-		impose.setType(type.getType());
 		impose.setBinding(binding);
 		impose.setFlipVerso(flipVerso);
 		impose.setOutputFile(outputFile);
 		impose.setPages(pages);
-		return this;
+		type.passToModule(impose);
+		return impose;
 	}
 	
 	/**
@@ -80,18 +80,29 @@ public class ImposeCommand extends SubCommand {
 		private IntegerDimensions nup = null;
 		
 		/**
-		 * Gets the selected type.
-		 * If more than one type is selected, this should throw an exception.
-		 * TODO Implement the check that exactly one is selected.
-		 * @return an object with the implementation of the concrete
-		 *         imposition type
+		 * Resolves the type of imposed document from the command line
+		 * arguments and creates an instance of an implementing class
+		 * in the given module instance.
+		 * If more than one type is given in the command line, only one will
+		 * be used.
+		 * <p>
+		 * TODO It is a good idea to display some kind warning to the user
+		 * in case that more types are specified in the command line (eg.
+		 * {@code --nup 2x4 --booklet}. Implement the check that exactly one
+		 * is selected and display a warning otherwise.
+		 * </p>
 		 */
-		public Impose.Type getType() {
-			if (booklet)
-				return new TypeBooklet();
-			else if (nup != null)
-				return new TypeNUp();
-			return null;
+		public void passToModule(Impose module) {
+			if (booklet) {
+				Impose.TypeBooklet impl = module.new TypeBooklet();
+				module.setType(impl);
+			} else if (nup != null) {
+				Impose.TypeNUp impl = module.new TypeNUp
+						(nup.getFirstDimension(), nup.getSecondDimension());
+				module.setType(impl);
+			} else {
+				throw new IllegalStateException("No imposition type has been set");
+			}
 		}
 	}
 }
