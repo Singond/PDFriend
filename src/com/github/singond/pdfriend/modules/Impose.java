@@ -1,16 +1,14 @@
-package com.github.singond.pdfriend.cli;
+package com.github.singond.pdfriend.modules;
 
 import java.io.File;
 import java.io.IOException;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.beust.jcommander.ParametersDelegate;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.control.SequentialSourceProvider;
 import com.github.singond.pdfriend.book.control.SourceProvider;
 import com.github.singond.pdfriend.book.model.Volume;
-import com.github.singond.pdfriend.cli.parsing.BookletBindingConverter;
 import com.github.singond.pdfriend.cli.parsing.IntegerDimensions;
 import com.github.singond.pdfriend.cli.parsing.IntegerDimensionsConverter;
 import com.github.singond.pdfriend.document.RenderingException;
@@ -26,37 +24,61 @@ import com.github.singond.pdfriend.imposition.NUp;
  */
 @Parameters(separators="=",
 		commandDescription="Lay out pages of the source documents onto pages of a new document")
-public class Impose extends SubCommand implements Module {
-	private static ExtendedLogger logger = Log.logger(Impose.class);
+public class Impose implements Module {
 
 	/** A pre-defined type of imposition: booklet, n-up etc. */
-	@ParametersDelegate
 	private TypeArgument type = new TypeArgument();
-	
 	/** Specifies where the binding is located */
-	@Parameter(names="--binding", converter=BookletBindingConverter.class)
 	private Booklet.Binding binding = Booklet.Binding.LEFT;
-	
 	/** In a vertical booklet, print the verso upside down. */
-	@Parameter(names="--verso-opposite")
 	private boolean flipVerso = false;
-	
-	@Parameter(names="pages", description="")
+	/** Number of output pages */
 	private int pages = -1;
-	
-	
 	/** The output file. */
-	@Parameter(names={"-o", "--output"}, description="Output file name")
 	private File outputFile;
-
-	@Override
-	public void postParse() {}
 	
-	@Override
-	public Module getModule() {
-		return this;
+	private static ExtendedLogger logger = Log.logger(Impose.class);
+	
+	public TypeArgument getType() {
+		return type;
 	}
-	
+
+	public void setType(TypeArgument type) {
+		this.type = type;
+	}
+
+	public Booklet.Binding getBinding() {
+		return binding;
+	}
+
+	public void setBinding(Booklet.Binding binding) {
+		this.binding = binding;
+	}
+
+	public boolean isFlipVerso() {
+		return flipVerso;
+	}
+
+	public void setFlipVerso(boolean flipVerso) {
+		this.flipVerso = flipVerso;
+	}
+
+	public int getPages() {
+		return pages;
+	}
+
+	public void setPages(int pages) {
+		this.pages = pages;
+	}
+
+	public File getOutputFile() {
+		return outputFile;
+	}
+
+	public void setOutputFile(File outputFile) {
+		this.outputFile = outputFile;
+	}
+
 	@Override
 	public void process(VirtualDocument document) {
 		logger.info("*** PDFriend Impose ***");

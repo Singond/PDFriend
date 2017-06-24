@@ -2,6 +2,7 @@ package com.github.singond.pdfriend.cli;
 
 import com.beust.jcommander.ParametersDelegate;
 import com.github.singond.pdfriend.cli.parsing.InputFiles;
+import com.github.singond.pdfriend.modules.Module;
 
 public abstract class SubCommand {
 

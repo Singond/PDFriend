@@ -17,6 +17,7 @@ import com.github.singond.pdfriend.Version;
 import com.github.singond.pdfriend.cli.parsing.GlobalOptions;
 import com.github.singond.pdfriend.cli.parsing.InputFiles;
 import com.github.singond.pdfriend.document.ImportException;
+import com.github.singond.pdfriend.modules.Module;
 
 /**
  * The root of the command-line interface.
@@ -42,7 +43,7 @@ public class Console {
 	/** A container class grouping all possible subcommands (ie. modules) */
 	@SuppressWarnings("serial")
 	private static class SubCommands extends HashMap<String, SubCommand> {{
-		put("impose", new Impose());
+		put("impose", new ImposeCommand());
 	}}
 	
 	static {
