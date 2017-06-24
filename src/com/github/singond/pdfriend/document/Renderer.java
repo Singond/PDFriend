@@ -6,7 +6,6 @@ import java.nio.file.Files;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.format.process.PDFRenderer;
 
 /**
  * Converts the virtual document into a document of a specific file format.
