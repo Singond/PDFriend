@@ -1,23 +1,15 @@
 package com.github.singond.pdfriend.cli;
 
 import java.io.File;
-import java.io.IOException;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.book.control.SequentialSourceProvider;
-import com.github.singond.pdfriend.book.control.SourceProvider;
-import com.github.singond.pdfriend.book.model.Volume;
 import com.github.singond.pdfriend.cli.parsing.BookletBindingConverter;
 import com.github.singond.pdfriend.cli.parsing.IntegerDimensions;
 import com.github.singond.pdfriend.cli.parsing.IntegerDimensionsConverter;
-import com.github.singond.pdfriend.document.RenderingException;
-import com.github.singond.pdfriend.document.VirtualDocument;
-import com.github.singond.pdfriend.format.process.PDFRenderer;
 import com.github.singond.pdfriend.imposition.Booklet;
-import com.github.singond.pdfriend.imposition.NUp;
 import com.github.singond.pdfriend.modules.Impose;
 import com.github.singond.pdfriend.modules.Module;
 
@@ -29,6 +21,7 @@ import com.github.singond.pdfriend.modules.Module;
 @Parameters(separators="=",
 		commandDescription="Lay out pages of the source documents onto pages of a new document")
 public class ImposeCommand extends SubCommand {
+	@SuppressWarnings("unused")
 	private static ExtendedLogger logger = Log.logger(ImposeCommand.class);
 
 	/** A pre-defined type of imposition: booklet, n-up etc. */
