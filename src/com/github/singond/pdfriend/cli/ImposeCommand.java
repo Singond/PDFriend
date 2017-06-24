@@ -39,6 +39,11 @@ public class ImposeCommand extends SubCommand {
 	private int pages = -1;
 
 	@Override
+	public ImposeCommand newInstance() {
+		return new ImposeCommand();
+	}
+	
+	@Override
 	public void postParse() {}
 	
 	@Override

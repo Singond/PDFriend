@@ -49,9 +49,28 @@ public class Console {
 	
 	/** A container class grouping all possible subcommands (ie. modules) */
 	@SuppressWarnings("serial")
-	private static class SubCommands extends HashMap<String, SubCommand> {{
-		put("impose", new ImposeCommand());
-	}}
+	private static class SubCommands extends HashMap<String, SubCommand> {
+		{
+			put("impose", new ImposeCommand());
+		}
+		
+		/**
+		 * Returns the value mapped to the given key (or null, if the map
+		 * contains no mapping for the key) and replaces the value at that
+		 * key with a new instance of the same type as the returned object.
+		 * @param key
+		 * @return
+		 */
+		public SubCommand getAndReplace(Object key) {
+			SubCommand value = get(key);
+			if (value != null) {
+				// It should be safe to cast because if the key is not
+				// a string, the value variable is null.
+				put((String) key, value.newInstance());
+			}
+			return value;
+		}
+	}
 	
 	static {
 		SubCommands subcmds = new SubCommands();
@@ -163,17 +182,8 @@ public class Console {
 	private void parse(List<List<String>> argSections, Arguments arguments) {
 		/** A loop counter */
 		int i = 0;
+		SubCommands subcmds = new SubCommands();
 		for (List<String> argSection : argSections) {
-			/*
-			 * NOTE
-			 * OK, this is ugly: We create the whole map of possible
-			 * subcommands for every section of the argument string
-			 * being parsed and, for each map, use only one of the
-			 * elements. Better thoughts, anyone?
-			 * TODO Use only one map and after removing an element from it,
-			 * replace it with a new instance of the same type.
-			 */
-			SubCommands subcmds = new SubCommands();
 			JCommander.Builder cmdrBldr = JCommander.newBuilder();
 			// If this is the first section of the command line,
 			// parse global options
@@ -201,7 +211,7 @@ public class Console {
 			JCommander cmdr = cmdrBldr.build();
 			cmdr.parse(argSection.toArray(new String[argSection.size()]));
 			// Retrieve the initialized subcommand and put it to the output
-			SubCommand subcmd = subcmds.get(cmdr.getParsedCommand());
+			SubCommand subcmd = subcmds.getAndReplace(cmdr.getParsedCommand());
 			arguments.subCommands.add(subcmd);
 			i++;
 		}

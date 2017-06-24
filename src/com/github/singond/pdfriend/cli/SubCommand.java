@@ -44,6 +44,11 @@ public abstract class SubCommand {
 	/* Abstract methods */
 	
 	/**
+	 * Creates a new instance of this SubCommand.
+	 */
+	public abstract SubCommand newInstance();
+	
+	/**
 	 * Method to be invoked after the SubCommand object is built
 	 * and initialized with values from the command line.
 	 */
