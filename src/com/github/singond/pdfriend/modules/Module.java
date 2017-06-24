@@ -1,4 +1,4 @@
-package com.github.singond.pdfriend.cli;
+package com.github.singond.pdfriend.modules;
 
 import com.github.singond.pdfriend.document.VirtualDocument;
 

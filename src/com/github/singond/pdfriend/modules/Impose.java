@@ -1,18 +1,13 @@
-package com.github.singond.pdfriend.cli;
+package com.github.singond.pdfriend.modules;
 
 import java.io.File;
 import java.io.IOException;
-import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.beust.jcommander.ParametersDelegate;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.control.SequentialSourceProvider;
 import com.github.singond.pdfriend.book.control.SourceProvider;
 import com.github.singond.pdfriend.book.model.Volume;
-import com.github.singond.pdfriend.cli.parsing.BookletBindingConverter;
-import com.github.singond.pdfriend.cli.parsing.IntegerDimensions;
-import com.github.singond.pdfriend.cli.parsing.IntegerDimensionsConverter;
 import com.github.singond.pdfriend.document.RenderingException;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
@@ -26,37 +21,61 @@ import com.github.singond.pdfriend.imposition.NUp;
  */
 @Parameters(separators="=",
 		commandDescription="Lay out pages of the source documents onto pages of a new document")
-public class Impose extends SubCommand implements Module {
-	private static ExtendedLogger logger = Log.logger(Impose.class);
+public class Impose implements Module {
 
 	/** A pre-defined type of imposition: booklet, n-up etc. */
-	@ParametersDelegate
-	private TypeArgument type = new TypeArgument();
-	
+	private Type type;
 	/** Specifies where the binding is located */
-	@Parameter(names="--binding", converter=BookletBindingConverter.class)
 	private Booklet.Binding binding = Booklet.Binding.LEFT;
-	
 	/** In a vertical booklet, print the verso upside down. */
-	@Parameter(names="--verso-opposite")
 	private boolean flipVerso = false;
-	
-	@Parameter(names="pages", description="")
+	/** Number of output pages */
 	private int pages = -1;
-	
-	
 	/** The output file. */
-	@Parameter(names={"-o", "--output"}, description="Output file name")
 	private File outputFile;
-
-	@Override
-	public void postParse() {}
 	
-	@Override
-	public Module getModule() {
-		return this;
+	private static ExtendedLogger logger = Log.logger(Impose.class);
+	
+	public Type getType() {
+		return type;
 	}
-	
+
+	public void setType(Type type) {
+		this.type = type;
+	}
+
+	public Booklet.Binding getBinding() {
+		return binding;
+	}
+
+	public void setBinding(Booklet.Binding binding) {
+		this.binding = binding;
+	}
+
+	public boolean isFlipVerso() {
+		return flipVerso;
+	}
+
+	public void setFlipVerso(boolean flipVerso) {
+		this.flipVerso = flipVerso;
+	}
+
+	public int getPages() {
+		return pages;
+	}
+
+	public void setPages(int pages) {
+		this.pages = pages;
+	}
+
+	public File getOutputFile() {
+		return outputFile;
+	}
+
+	public void setOutputFile(File outputFile) {
+		this.outputFile = outputFile;
+	}
+
 	@Override
 	public void process(VirtualDocument document) {
 		logger.info("*** PDFriend Impose ***");
@@ -65,9 +84,9 @@ public class Impose extends SubCommand implements Module {
 		}
 		logger.verbose("Output file: "+outputFile.getAbsolutePath());
 		
-		logger.verbose("Selected imposition type is: " + type.getType().getName());
+		logger.verbose("Selected imposition type is: " + type.getName());
 		try {
-			type.getType().impose(document);
+			type.impose(document);
 		} catch (RenderingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -90,11 +109,9 @@ public class Impose extends SubCommand implements Module {
 		new PDFRenderer().renderAndSave(doc, targetFile);
 	}
 	
-	private void imposeNUp(VirtualDocument source)
+	private void imposeNUp(VirtualDocument source, int rows, int columns)
 			throws RenderingException, IOException {
 		logger.info("Imposing n-up...");
-		int rows = type.nup.getFirstDimension();
-		int columns = type.nup.getSecondDimension();
 		int pages = this.pages;
 		File targetFile = outputFile;
 		
@@ -109,39 +126,11 @@ public class Impose extends SubCommand implements Module {
 	}
 	
 	/**
-	 * Groups the individual imposition types into one group, from which
-	 * only one imposition type should be selected.
-	 */
-	@Parameters(separators=" ")
-	public class TypeArgument {
-		@Parameter(names="--booklet", description="A simple stack of sheets folded in half")
-		private boolean booklet = false;
-		
-		@Parameter(names={"--n-up", "--nup"},
-				description="Several pages arranged into a grid on a larget sheet",
-				converter=IntegerDimensionsConverter.class)
-		private IntegerDimensions nup = null;
-		
-		/**
-		 * Gets the selected type.
-		 * If more than one type is selected, this should throw an exception.
-		 * TODO Implement the check that exactly one is selected.
-		 * @return an object with the implementation of the concrete
-		 *         imposition type
-		 */
-		public Type getType() {
-			if (booklet)
-				return new TypeBooklet();
-			else if (nup != null)
-				return new TypeNUp();
-			return null;
-		}
-	}
-	
-	/**
 	 * The type of document to be produced by imposition (a booklet, n-up etc).
+	 * Each class of this interface represents one type of imposed document
+	 * and provides its complete implementation.
 	 */
-	private interface Type {
+	public interface Type {
 		/** Returns a user-friendly name of the imposition type. */
 		public String getName();
 		
@@ -158,7 +147,7 @@ public class Impose extends SubCommand implements Module {
 	/**
 	 * The type of document to be produced by imposition (a booklet, n-up etc).
 	 */
-	private class TypeBooklet implements Type {
+	public class TypeBooklet implements Type {
 		/** The name of the document type */
 		private static final String name = "booklet";
 		
@@ -177,9 +166,18 @@ public class Impose extends SubCommand implements Module {
 	/**
 	 * The type of document to be produced by imposition (a booklet, n-up etc).
 	 */
-	private class TypeNUp implements Type {
+	public class TypeNUp implements Type {
 		/** The name of the document type */
 		private static final String name = "n-up";
+		/** Then number of rows in the n-up grid */
+		private final int rows;
+		/** Then number of columns in the n-up grid */
+		private final int columns;
+		
+		public TypeNUp(int rows, int columns) {
+			this.rows = rows;
+			this.columns = columns;
+		}
 		
 		@Override
 		public String getName() {
@@ -189,7 +187,7 @@ public class Impose extends SubCommand implements Module {
 		@Override
 		public void impose(VirtualDocument doc)
 				throws RenderingException, IOException {
-			imposeNUp(doc);
+			imposeNUp(doc, rows, columns);
 		}
 	}
 }
