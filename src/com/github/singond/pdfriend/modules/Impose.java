@@ -1,6 +1,5 @@
 package com.github.singond.pdfriend.modules;
 
-import java.io.File;
 import com.beust.jcommander.Parameters;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
@@ -29,8 +28,6 @@ public class Impose implements Module {
 	private boolean flipVerso = false;
 	/** Number of output pages */
 	private int pages = -1;
-	/** The output file. */
-	private File outputFile;
 	
 	private static ExtendedLogger logger = Log.logger(Impose.class);
 	
@@ -66,22 +63,12 @@ public class Impose implements Module {
 		this.pages = pages;
 	}
 
-	public File getOutputFile() {
-		return outputFile;
-	}
-
-	public void setOutputFile(File outputFile) {
-		this.outputFile = outputFile;
-	}
-
 	@Override
 	public VirtualDocument process(VirtualDocument document) throws RenderingException {
 		logger.info("*** PDFriend Impose ***");
 		if (type == null) {
 			throw new NullPointerException("No imposition type has been specified");
 		}
-		logger.verbose("Output file: "+outputFile.getAbsolutePath());
-		
 		logger.verbose("Selected imposition type is: " + type.getName());
 		return type.impose(document);
 	}

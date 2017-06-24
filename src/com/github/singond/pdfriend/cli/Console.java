@@ -161,6 +161,7 @@ public class Console {
 	 * @param arguments the object to receive the parsed arguments
 	 */
 	private void parse(List<List<String>> argSections, Arguments arguments) {
+		/** A loop counter */
 		int i = 0;
 		for (List<String> argSection : argSections) {
 			/*
@@ -169,17 +170,10 @@ public class Console {
 			 * subcommands for every section of the argument string
 			 * being parsed and, for each map, use only one of the
 			 * elements. Better thoughts, anyone?
+			 * TODO Use only one map and after removing an element from it,
+			 * replace it with a new instance of the same type.
 			 */
 			SubCommands subcmds = new SubCommands();
-			/*
-			 * Pass the reference to fields we want to have filled to the
-			 * subcommands, otherwise the parser will fill new instances,
-			 * which are unknown here.
-			 */
-			for (SubCommand sc : subcmds.values()) {
-				sc.setInputFiles(inputFiles);
-				sc.setOutputFile(outputFile);
-			}
 			JCommander.Builder cmdrBldr = JCommander.newBuilder();
 			// If this is the first section of the command line,
 			// parse global options
@@ -187,11 +181,17 @@ public class Console {
 				cmdrBldr.addObject(arguments.globalOptions);
 			}
 			// If this is the last section of the command line,
-			// parse input files as well
+			// parse input and output files as well
 			if (i == argSections.size()-1) {
-//				cmdrBldr.addObject(arguments.inputFiles);
-//				cmdrBldr.addObject(arguments.outputFile);
-//				cmdrBldr.addObject(new InputFiles());
+				/*
+				 * Pass the reference to fields we want to have filled to the
+				 * subcommands, otherwise the parser will fill new instances,
+				 * which are unknown here.
+				 */
+				for (SubCommand sc : subcmds.values()) {
+					sc.setInputFiles(inputFiles);
+					sc.setOutputFile(outputFile);
+				}
 			}
 			// Add all the subcommands
 			for (Map.Entry<String, SubCommand> cmd : subcmds.entrySet()) {
@@ -244,6 +244,7 @@ public class Console {
 	 * A helper class which groups all the objects parseable from the
 	 * command line into one.
 	 */
+	@SuppressWarnings("unused")
 	private static class Arguments {
 		private final GlobalOptions globalOptions;
 		private final InputFiles inputFiles;

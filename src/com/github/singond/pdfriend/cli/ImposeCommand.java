@@ -1,6 +1,5 @@
 package com.github.singond.pdfriend.cli;
 
-import java.io.File;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
@@ -47,7 +46,6 @@ public class ImposeCommand extends SubCommand {
 		Impose impose = new Impose();
 		impose.setBinding(binding);
 		impose.setFlipVerso(flipVerso);
-		impose.setOutputFile(getOutputFile().getFile());
 		impose.setPages(pages);
 		type.passToModule(impose);
 		return impose;
