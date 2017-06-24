@@ -38,11 +38,6 @@ public class ImposeCommand extends SubCommand {
 	
 	@Parameter(names="pages", description="")
 	private int pages = -1;
-	
-	
-	/** The output file. */
-	@Parameter(names={"-o", "--output"}, description="Output file name")
-	private File outputFile;
 
 	@Override
 	public void postParse() {}
@@ -52,7 +47,7 @@ public class ImposeCommand extends SubCommand {
 		Impose impose = new Impose();
 		impose.setBinding(binding);
 		impose.setFlipVerso(flipVerso);
-		impose.setOutputFile(outputFile);
+		impose.setOutputFile(getOutputFile().getFile());
 		impose.setPages(pages);
 		type.passToModule(impose);
 		return impose;

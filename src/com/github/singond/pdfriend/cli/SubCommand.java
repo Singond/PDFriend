@@ -2,6 +2,7 @@ package com.github.singond.pdfriend.cli;
 
 import com.beust.jcommander.ParametersDelegate;
 import com.github.singond.pdfriend.cli.parsing.InputFiles;
+import com.github.singond.pdfriend.cli.parsing.OutputFile;
 import com.github.singond.pdfriend.modules.Module;
 
 public abstract class SubCommand {
@@ -19,6 +20,10 @@ public abstract class SubCommand {
 	 */
 	@ParametersDelegate
 	private InputFiles inputFiles = new InputFiles();
+	
+	/** The output file. */
+	@ParametersDelegate
+	private OutputFile outputFile = new OutputFile();
 
 	public InputFiles getInputFiles() {
 		return inputFiles;
@@ -27,6 +32,16 @@ public abstract class SubCommand {
 	public void setInputFiles(InputFiles inputFiles) {
 		this.inputFiles = inputFiles;
 	}
+	
+	public OutputFile getOutputFile() {
+		return outputFile;
+	}
+
+	public void setOutputFile(OutputFile outputFile) {
+		this.outputFile = outputFile;
+	}
+
+	/* Abstract methods */
 	
 	/**
 	 * Method to be invoked after the SubCommand object is built

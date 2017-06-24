@@ -16,6 +16,7 @@ import com.github.singond.pdfriend.Util;
 import com.github.singond.pdfriend.Version;
 import com.github.singond.pdfriend.cli.parsing.GlobalOptions;
 import com.github.singond.pdfriend.cli.parsing.InputFiles;
+import com.github.singond.pdfriend.cli.parsing.OutputFile;
 import com.github.singond.pdfriend.document.ImportException;
 import com.github.singond.pdfriend.modules.Module;
 
@@ -33,6 +34,8 @@ public class Console {
 	private List<SubCommand> subcommands = new ArrayList<>();
 	/** Object to receive parsed input files */
 	private final InputFiles inputFiles = new InputFiles();
+	/** Object to receive parsed output file */
+	private final OutputFile outputFile = new OutputFile();
 	/** Pattern to split the argument array at. This must be one element. */
 	private static final String SUBCOMMAND_DELIMITER = "+";
 	/** A mock instance of JCommander used to generate the help text. */
@@ -66,7 +69,7 @@ public class Console {
 		/** The argument line split into sections by subcommand */
 		List<List<String>> splitArgs = splitArgs(Arrays.asList(args));
 		/** A helper object grouping the parsed objects */
-		Arguments arguments = new Arguments(global, inputFiles, subcommands);
+		Arguments arguments = new Arguments(global, inputFiles, outputFile, subcommands);
 		
 		/* Parse and setup */
 		
@@ -224,18 +227,21 @@ public class Console {
 	private static class Arguments {
 		private final GlobalOptions globalOptions;
 		private final InputFiles inputFiles;
+		private final OutputFile outputFile;
 		private final List<SubCommand> subCommands;
 		
 		private Arguments(GlobalOptions globalOpts, InputFiles inputFiles,
-		               List<SubCommand> subcommands) {
+		                  OutputFile outputFile, List<SubCommand> subcmds) {
 			this.globalOptions = globalOpts;
 			this.inputFiles = inputFiles;
-			this.subCommands = subcommands;
+			this.outputFile = outputFile;
+			this.subCommands = subcmds;
 		}
 		
 		private Arguments() {
 			this.globalOptions = new GlobalOptions();
 			this.inputFiles = new InputFiles();
+			this.outputFile = new OutputFile();
 			this.subCommands = new ArrayList<SubCommand>();
 		}
 	}
