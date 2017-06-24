@@ -1,7 +1,6 @@
 package com.github.singond.pdfriend.modules;
 
 import java.io.File;
-import java.io.IOException;
 import com.beust.jcommander.Parameters;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
@@ -10,7 +9,6 @@ import com.github.singond.pdfriend.book.control.SourceProvider;
 import com.github.singond.pdfriend.book.model.Volume;
 import com.github.singond.pdfriend.document.RenderingException;
 import com.github.singond.pdfriend.document.VirtualDocument;
-import com.github.singond.pdfriend.format.process.PDFRenderer;
 import com.github.singond.pdfriend.imposition.Booklet;
 import com.github.singond.pdfriend.imposition.NUp;
 
@@ -77,7 +75,7 @@ public class Impose implements Module {
 	}
 
 	@Override
-	public void process(VirtualDocument document) {
+	public VirtualDocument process(VirtualDocument document) throws RenderingException {
 		logger.info("*** PDFriend Impose ***");
 		if (type == null) {
 			throw new NullPointerException("No imposition type has been specified");
@@ -85,35 +83,25 @@ public class Impose implements Module {
 		logger.verbose("Output file: "+outputFile.getAbsolutePath());
 		
 		logger.verbose("Selected imposition type is: " + type.getName());
-		try {
-			type.impose(document);
-		} catch (RenderingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		return type.impose(document);
 	}
 	
-	private void imposeBooklet(VirtualDocument source)
-			throws RenderingException, IOException {
+	private VirtualDocument imposeBooklet(VirtualDocument source)
+			throws RenderingException {
 		logger.info("Imposing booklet...");
-		File targetFile = outputFile;
 		
 		Booklet booklet = Booklet.from(source, binding, flipVerso);
 		Volume volume = booklet.volume();
 		SourceProvider sp = new SequentialSourceProvider(source);
 		sp.setSourceTo(volume.pages());
-		VirtualDocument doc = volume.renderDocument();
-		new PDFRenderer().renderAndSave(doc, targetFile);
+		VirtualDocument imposed = volume.renderDocument();
+		return imposed;
 	}
 	
-	private void imposeNUp(VirtualDocument source, int rows, int columns)
-			throws RenderingException, IOException {
+	private VirtualDocument imposeNUp(VirtualDocument source, int rows, int columns)
+			throws RenderingException {
 		logger.info("Imposing n-up...");
 		int pages = this.pages;
-		File targetFile = outputFile;
 		
 		NUp.Builder nup = new NUp.Builder();
 		nup.setRows(rows);
@@ -122,7 +110,7 @@ public class Impose implements Module {
 			nup.setNumberOfPages(pages);
 		}
 		VirtualDocument imposed = nup.buildFor(source).getDocument();
-		new PDFRenderer().renderAndSave(imposed, targetFile);
+		return imposed;
 	}
 	
 	/**
@@ -139,9 +127,10 @@ public class Impose implements Module {
 		 * using the settings in the outer Impose object and the
 		 * @param doc the document whose pages are to be imposed onto
 		 *        this document
+		 * @return the imposed document as a new instance of virtual document
 		 */
-		public void impose(VirtualDocument doc)
-				throws RenderingException, IOException;
+		public VirtualDocument impose(VirtualDocument doc)
+				throws RenderingException;
 	}
 	
 	/**
@@ -157,9 +146,8 @@ public class Impose implements Module {
 		}
 		
 		@Override
-		public void impose(VirtualDocument doc)
-				throws RenderingException, IOException {
-			imposeBooklet(doc);
+		public VirtualDocument impose(VirtualDocument doc) throws RenderingException {
+			return imposeBooklet(doc);
 		}
 	}
 	
@@ -185,9 +173,8 @@ public class Impose implements Module {
 		}
 		
 		@Override
-		public void impose(VirtualDocument doc)
-				throws RenderingException, IOException {
-			imposeNUp(doc, rows, columns);
+		public VirtualDocument impose(VirtualDocument doc) throws RenderingException {
+			return imposeNUp(doc, rows, columns);
 		}
 	}
 }

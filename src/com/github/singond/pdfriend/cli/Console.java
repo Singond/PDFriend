@@ -1,5 +1,6 @@
 package com.github.singond.pdfriend.cli;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,6 +19,9 @@ import com.github.singond.pdfriend.cli.parsing.GlobalOptions;
 import com.github.singond.pdfriend.cli.parsing.InputFiles;
 import com.github.singond.pdfriend.cli.parsing.OutputFile;
 import com.github.singond.pdfriend.document.ImportException;
+import com.github.singond.pdfriend.document.RenderingException;
+import com.github.singond.pdfriend.document.VirtualDocument;
+import com.github.singond.pdfriend.format.process.PDFRenderer;
 import com.github.singond.pdfriend.modules.Module;
 
 /**
@@ -99,8 +103,17 @@ public class Console {
 		
 		// End global-level option processing and run the subcommand
 		try {
-			subcommand.getModule().process(inputFiles.getAsDocument());
+			VirtualDocument input = inputFiles.getAsDocument();
+			VirtualDocument output;
+			output = subcommand.getModule().process(input);
+			new PDFRenderer().renderAndSave(output, outputFile.getFile());
 		} catch (ImportException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (RenderingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -158,8 +171,14 @@ public class Console {
 			 * elements. Better thoughts, anyone?
 			 */
 			SubCommands subcmds = new SubCommands();
+			/*
+			 * Pass the reference to fields we want to have filled to the
+			 * subcommands, otherwise the parser will fill new instances,
+			 * which are unknown here.
+			 */
 			for (SubCommand sc : subcmds.values()) {
 				sc.setInputFiles(inputFiles);
+				sc.setOutputFile(outputFile);
 			}
 			JCommander.Builder cmdrBldr = JCommander.newBuilder();
 			// If this is the first section of the command line,
@@ -170,7 +189,8 @@ public class Console {
 			// If this is the last section of the command line,
 			// parse input files as well
 			if (i == argSections.size()-1) {
-				cmdrBldr.addObject(arguments.inputFiles);
+//				cmdrBldr.addObject(arguments.inputFiles);
+//				cmdrBldr.addObject(arguments.outputFile);
 //				cmdrBldr.addObject(new InputFiles());
 			}
 			// Add all the subcommands

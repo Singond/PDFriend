@@ -1,5 +1,6 @@
 package com.github.singond.pdfriend.modules;
 
+import com.github.singond.pdfriend.document.RenderingException;
 import com.github.singond.pdfriend.document.VirtualDocument;
 
 /**
@@ -14,6 +15,8 @@ public interface Module {
 	 * must be fully initialized to perform the intended task before
 	 * invoking this method.
 	 * @param document the virtual document to be processed
+	 * @return the processed document as a new virtual document
+	 * @throws RenderingException 
 	 */
-	public void process(VirtualDocument document);
+	public VirtualDocument process(VirtualDocument document) throws RenderingException;
 }
