@@ -84,6 +84,36 @@ public class VirtualDocument {
 		return new double[]{width, height};
 	}
 	
+	/**
+	 * Joins several virtual document into one in the order they are given.
+	 * @param docs a list of virtual documents to be joined, listed in the
+	 *        order they should appear in the output
+	 * @return a new instance of VirtualDocument containing all input
+	 *         documents merged into one
+	 */
+	public static VirtualDocument concatenate(List<VirtualDocument> docs) {
+		final List<VirtualPage> pages = new ArrayList<>();
+		for (VirtualDocument doc : docs) {
+			pages.addAll(doc.getPages());
+		}
+		return new VirtualDocument(pages);
+	}
+	
+	/**
+	 * Joins several virtual document into one in the order they are given.
+	 * @param docs virtual documents to be joined, listed in the order they
+	 *        should appear in the output
+	 * @return a new instance of VirtualDocument containing all input
+	 *         documents merged into one
+	 */
+	public static VirtualDocument concatenate(VirtualDocument... docs) {
+		final List<VirtualPage> pages = new ArrayList<>();
+		for (VirtualDocument doc : docs) {
+			pages.addAll(doc.getPages());
+		}
+		return new VirtualDocument(pages);
+	}
+	
 	@Override
 	public String toString() {
 		return "VirtualDocument@"+hashCode()+" ("+pages.size()+" pages)";
