@@ -26,11 +26,18 @@ public class Pipe {
 		operations.add(new Operation(module));
 	}
 	
-	public void setInput(List<VirtualDocument> doc) {
+	public void setInput(VirtualDocument doc) {
 		if (executed) {
 			throw new IllegalStateException("This pipe has already been executed");
 		}
 		input = new PipeData(ModuleDataFactory.of(doc));
+	}
+	
+	public void setInput(List<VirtualDocument> docs) {
+		if (executed) {
+			throw new IllegalStateException("This pipe has already been executed");
+		}
+		input = new PipeData(ModuleDataFactory.of(docs));
 	}
 	
 	public List<VirtualDocument> getOutput() {
