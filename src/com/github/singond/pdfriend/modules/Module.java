@@ -17,5 +17,5 @@ public interface Module {
 	 * @return the processed document as a new virtual document
 	 * @throws RenderingException 
 	 */
-	public ModuleData process(ModuleData document) throws RenderingException;
+	public ModuleData process(ModuleData document) throws ModuleException;
 }

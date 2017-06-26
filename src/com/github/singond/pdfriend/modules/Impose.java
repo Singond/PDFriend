@@ -64,14 +64,19 @@ public class Impose implements Module {
 	}
 
 	@Override
-	public ModuleData process(ModuleData data) throws RenderingException {
+	public ModuleData process(ModuleData data) throws ModuleException  {
 		logger.info("*** PDFriend Impose ***");
 		if (type == null) {
 			throw new NullPointerException("No imposition type has been specified");
 		}
 		logger.verbose("Selected imposition type is: " + type.getName());
-		VirtualDocument document = type.impose(data.asSingleDocument());
-		return ModuleDataFactory.of(document);
+		VirtualDocument document;
+		try {
+			document = type.impose(data.asSingleDocument());
+			return ModuleDataFactory.of(document);
+		} catch (RenderingException e) {
+			throw new ModuleException(e);
+		}
 	}
 	
 	private VirtualDocument imposeBooklet(VirtualDocument source)
