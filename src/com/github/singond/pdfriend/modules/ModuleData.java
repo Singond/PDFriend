@@ -1,16 +1,16 @@
-package com.github.singond.pdfriend.pipe;
+package com.github.singond.pdfriend.modules;
 
 import java.util.List;
 
 import com.github.singond.pdfriend.document.VirtualDocument;
 
 /**
- * The documents flowing between modules in the pipe.
+ * The data being passed between modules.
  *
  * @author Singon
  *
  */
-public interface PipeData {
+public interface ModuleData {
 
 	public VirtualDocument asSingleDocument();
 	

@@ -1,20 +1,20 @@
-package com.github.singond.pdfriend.pipe;
+package com.github.singond.pdfriend.modules;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.github.singond.pdfriend.document.VirtualDocument;
 
-class MultiDocPipeData implements PipeData {
+class MultiDocModuleData implements ModuleData {
 	
 	/** The list of documents */
 	private final List<VirtualDocument> documents;
 	
-	MultiDocPipeData(List<VirtualDocument> docs) {
+	MultiDocModuleData(List<VirtualDocument> docs) {
 		this.documents = new ArrayList<>(docs);
 	}
 	
-	MultiDocPipeData(VirtualDocument document) {
+	MultiDocModuleData(VirtualDocument document) {
 		List<VirtualDocument> list = new ArrayList<>();
 		list.add(document);
 		this.documents = list;

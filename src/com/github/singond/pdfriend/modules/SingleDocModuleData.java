@@ -1,4 +1,4 @@
-package com.github.singond.pdfriend.pipe;
+package com.github.singond.pdfriend.modules;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.github.singond.pdfriend.document.VirtualDocument;
 
-class SingleDocPipeData implements PipeData {
+class SingleDocModuleData implements ModuleData {
 
 	/** The sole document in this unit of pipe data */
 	private final VirtualDocument document;
@@ -14,7 +14,7 @@ class SingleDocPipeData implements PipeData {
 	/** The document viewed as a list */
 	private List<VirtualDocument> asList;
 
-	SingleDocPipeData(VirtualDocument document) {
+	SingleDocModuleData(VirtualDocument document) {
 		this.document = document;
 	}
 
