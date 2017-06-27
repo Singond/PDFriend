@@ -19,9 +19,11 @@ import com.github.singond.pdfriend.cli.parsing.GlobalOptions;
 import com.github.singond.pdfriend.cli.parsing.InputFiles;
 import com.github.singond.pdfriend.cli.parsing.OutputFile;
 import com.github.singond.pdfriend.document.VirtualDocument;
-import com.github.singond.pdfriend.format.ImportException;
+import com.github.singond.pdfriend.format.ImportManager;
 import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
+import com.github.singond.pdfriend.io.Input;
+import com.github.singond.pdfriend.io.InputException;
 import com.github.singond.pdfriend.modules.Module;
 import com.github.singond.pdfriend.modules.ModuleException;
 import com.github.singond.pdfriend.pipe.Pipe;
@@ -128,15 +130,15 @@ public class Console {
 		
 		// End global-level option processing and run the subcommand
 		try {
-			VirtualDocument input = inputFiles.getAsDocument();
+			// "Cast" is only possible using intermediate list
+			List<Input> input = new ArrayList<>(inputFiles.getInputFiles());
+			ImportManager imgr = new ImportManager();
+			List<VirtualDocument> docs = imgr.importAsDocuments(input);
 			VirtualDocument output;
-			pipe.setInput(input);
+			pipe.setInput(docs);
 			pipe.execute();
 			output = pipe.getOutput().get(0);
 			new PDFRenderer().renderAndSave(output, outputFile.getFile());
-		} catch (ImportException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (RenderingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -144,6 +146,9 @@ public class Console {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ModuleException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InputException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
