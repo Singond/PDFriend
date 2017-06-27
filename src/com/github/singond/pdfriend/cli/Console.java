@@ -23,6 +23,8 @@ import com.github.singond.pdfriend.document.RenderingException;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
 import com.github.singond.pdfriend.modules.Module;
+import com.github.singond.pdfriend.modules.ModuleException;
+import com.github.singond.pdfriend.pipe.Pipe;
 
 /**
  * The root of the command-line interface.
@@ -99,8 +101,12 @@ public class Console {
 		parse(splitArgs, arguments);
 		// Set verbosity level as early as possible
 		setVerbosity(global.quiet(), global.verbose(), global.debug());
-		SubCommand subcommand = subcommands.get(0);
-		subcommand.postParse();
+		
+		Pipe pipe = new Pipe();
+		for (SubCommand subcmd : subcommands) {
+			subcmd.postParse();
+			pipe.addOperation(subcmd.getModule());
+		}
 		
 		/* Run the whole thing */
 		
@@ -124,7 +130,9 @@ public class Console {
 		try {
 			VirtualDocument input = inputFiles.getAsDocument();
 			VirtualDocument output;
-			output = subcommand.getModule().process(input);
+			pipe.setInput(input);
+			pipe.execute();
+			output = pipe.getOutput().get(0);
 			new PDFRenderer().renderAndSave(output, outputFile.getFile());
 		} catch (ImportException e) {
 			// TODO Auto-generated catch block
@@ -133,6 +141,9 @@ public class Console {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModuleException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
