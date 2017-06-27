@@ -3,6 +3,7 @@ package com.github.singond.pdfriend.cli.parsing;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.beust.jcommander.Parameter;
 import com.github.singond.pdfriend.ExtendedLogger;
@@ -10,6 +11,7 @@ import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.format.ImportException;
 import com.github.singond.pdfriend.format.process.PDFImporter;
+import com.github.singond.pdfriend.io.FileInput;
 
 /**
  * Collects the unnamed arguments from the command line and builds a list
@@ -33,9 +35,20 @@ public class InputFiles {
 	 * TODO Concatenate all files into one (do not ignore the rest like now)
 	 * @throws ImportException 
 	 */
+	@Deprecated
 	public VirtualDocument getAsDocument() throws ImportException {
 		// TODO Support other file formats?
 		return new PDFImporter(files.get(0)).importDocument();
+	}
+	
+	/**
+	 * Returns the input files wrapped in FileInput objects.
+	 */
+	public List<FileInput> getInputFiles() {
+		List<FileInput> result = files.stream()
+				.map(f->new FileInput(f.toPath()))
+				.collect(Collectors.toList());
+		return result;
 	}
 	
 	/**
