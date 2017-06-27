@@ -31,7 +31,7 @@ public class FileInput implements Input {
 	}
 
 	@Override
-	public <T, P, E extends Throwable> T invite(InputVisitor visitor, P param) throws E {
+	public <T, P> T invite(InputVisitor<T, P> visitor, P param) throws InputException {
 		return visitor.visit(this, param);
 	}
 }

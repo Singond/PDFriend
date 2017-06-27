@@ -10,5 +10,5 @@ public interface Input {
 	public byte[] getBytes() throws InputException;
 	
 	/** Invite an InputVisitor object */
-	public <T, P, E extends Throwable> T invite (InputVisitor visitor, P param) throws E;
+	public <T, P> T invite (InputVisitor<T, P> visitor, P param) throws InputException;
 }

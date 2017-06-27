@@ -10,5 +10,5 @@ public interface Output {
 	public void acceptBytes(byte[] bytes) throws OutputException;
 	
 	/** Invite an InputVisitor object */
-	public <T, P> T invite (OutputVisitor visitor, P param) throws OutputException;
+	public <T, P> T invite (OutputVisitor<T, P> visitor, P param) throws OutputException;
 }
