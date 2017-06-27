@@ -1,4 +1,4 @@
-package com.github.singond.pdfriend.cli.parsing;
+package com.github.singond.pdfriend.geometry;
 
 /** A pair of integer dimensions */
 public class IntegerDimensions {

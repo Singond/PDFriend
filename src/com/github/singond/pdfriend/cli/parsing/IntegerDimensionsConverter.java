@@ -4,6 +4,7 @@ import java.util.regex.Pattern;
 
 import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.ParameterException;
+import com.github.singond.pdfriend.geometry.IntegerDimensions;
 
 public class IntegerDimensionsConverter implements IStringConverter<IntegerDimensions> {
 	private static final Pattern INT_DIMENSIONS = Pattern.compile("\\d*x\\d*");
