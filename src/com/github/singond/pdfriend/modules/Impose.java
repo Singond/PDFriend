@@ -72,7 +72,7 @@ public class Impose implements Module {
 		logger.verbose("Selected imposition type is: " + type.getName());
 		VirtualDocument document;
 		try {
-			document = type.impose(data.asSingleDocument());
+			document = type.impose(data);
 			return ModuleDataFactory.of(document);
 		} catch (RenderingException e) {
 			throw new ModuleException(e);
@@ -118,11 +118,11 @@ public class Impose implements Module {
 		/**
 		 * Performs the imposition task defined by this Type class,
 		 * using the settings in the outer Impose object and the
-		 * @param doc the document whose pages are to be imposed onto
-		 *        this document
+		 * @param data a ModuleData object containing the documents whose
+		 *        pages are to be imposed onto this document
 		 * @return the imposed document as a new instance of virtual document
 		 */
-		public VirtualDocument impose(VirtualDocument doc)
+		public VirtualDocument impose(ModuleData data)
 				throws RenderingException;
 	}
 	
@@ -139,8 +139,8 @@ public class Impose implements Module {
 		}
 		
 		@Override
-		public VirtualDocument impose(VirtualDocument doc) throws RenderingException {
-			return imposeBooklet(doc);
+		public VirtualDocument impose(ModuleData data) throws RenderingException {
+			return imposeBooklet(data.asSingleDocument());
 		}
 	}
 	
@@ -166,8 +166,8 @@ public class Impose implements Module {
 		}
 		
 		@Override
-		public VirtualDocument impose(VirtualDocument doc) throws RenderingException {
-			return imposeNUp(doc, rows, columns);
+		public VirtualDocument impose(ModuleData data) throws RenderingException {
+			return imposeNUp(data.asSingleDocument(), rows, columns);
 		}
 	}
 }
