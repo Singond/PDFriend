@@ -19,6 +19,11 @@ public class FileInput implements Input {
 	public FileInput(String file) {
 		this(Paths.get(file));
 	}
+	
+	/** Returns the input file */
+	public Path getFile() {
+		return file;
+	}
 
 	@Override
 	public byte[] getBytes() throws InputException {
