@@ -1,4 +1,6 @@
-package com.github.singond.pdfriend.document;
+package com.github.singond.pdfriend.format;
+
+import com.github.singond.pdfriend.document.VirtualDocument;
 
 public interface Importer {
 

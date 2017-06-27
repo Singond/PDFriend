@@ -8,10 +8,10 @@ import org.apache.pdfbox.pdmodel.PDPage;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.document.ImportException;
-import com.github.singond.pdfriend.document.Importer;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
+import com.github.singond.pdfriend.format.ImportException;
+import com.github.singond.pdfriend.format.Importer;
 import com.github.singond.pdfriend.format.content.PDFPage;
 
 public class PDFImporter implements Importer {

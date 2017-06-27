@@ -1,6 +1,6 @@
 package com.github.singond.pdfriend.modules;
 
-import com.github.singond.pdfriend.document.RenderingException;
+import com.github.singond.pdfriend.format.RenderingException;
 
 /**
  * A module of pdfriend, ie. a component which performs aa concrete operation

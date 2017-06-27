@@ -7,9 +7,9 @@ import java.io.IOException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 import com.github.singond.pdfriend.document.Content;
-import com.github.singond.pdfriend.document.RenderingException;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
+import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.content.PDFPage;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
 

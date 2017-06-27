@@ -7,8 +7,8 @@ import java.util.List;
 import com.beust.jcommander.Parameter;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.document.ImportException;
 import com.github.singond.pdfriend.document.VirtualDocument;
+import com.github.singond.pdfriend.format.ImportException;
 import com.github.singond.pdfriend.format.process.PDFImporter;
 
 /**

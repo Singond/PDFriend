@@ -6,8 +6,8 @@ import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.control.SequentialSourceProvider;
 import com.github.singond.pdfriend.book.control.SourceProvider;
 import com.github.singond.pdfriend.book.model.Volume;
-import com.github.singond.pdfriend.document.RenderingException;
 import com.github.singond.pdfriend.document.VirtualDocument;
+import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.imposition.Booklet;
 import com.github.singond.pdfriend.imposition.NUp;
 
