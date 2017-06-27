@@ -92,6 +92,7 @@ public class VirtualDocument {
 	 *         documents merged into one
 	 */
 	public static VirtualDocument concatenate(List<VirtualDocument> docs) {
+		logger.debug("vdoc_concatenating", docs.size());
 		final List<VirtualPage> pages = new ArrayList<>();
 		for (VirtualDocument doc : docs) {
 			pages.addAll(doc.getPages());
