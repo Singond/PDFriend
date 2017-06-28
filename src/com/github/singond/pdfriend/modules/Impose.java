@@ -1,5 +1,7 @@
 package com.github.singond.pdfriend.modules;
 
+import java.util.List;
+
 import com.beust.jcommander.Parameters;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
@@ -10,6 +12,7 @@ import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.imposition.Booklet;
 import com.github.singond.pdfriend.imposition.NUp;
+import com.github.singond.pdfriend.imposition.Overlay;
 
 /**
  * The impose command of pdfriend.
@@ -150,9 +153,9 @@ public class Impose implements Module {
 	public class TypeNUp implements Type {
 		/** The name of the document type */
 		private static final String name = "n-up";
-		/** Then number of rows in the n-up grid */
+		/** The number of rows in the n-up grid */
 		private final int rows;
-		/** Then number of columns in the n-up grid */
+		/** The number of columns in the n-up grid */
 		private final int columns;
 		
 		public TypeNUp(int rows, int columns) {
@@ -168,6 +171,38 @@ public class Impose implements Module {
 		@Override
 		public VirtualDocument impose(ModuleData data) throws RenderingException {
 			return imposeNUp(data.asSingleDocument(), rows, columns);
+		}
+	}
+	
+	/**
+	 * The type of document to be produced by imposition (a booklet, n-up etc).
+	 */
+	public class TypeOverlay implements Type {
+		/** The name of the document type */
+		private static final String name = "overlay";
+		/** Number of layers on each page */
+		private final int layers;
+		
+		public TypeOverlay(int layers) {
+			this.layers = layers;
+		}
+		
+		@Override
+		public String getName() {
+			return name;
+		}
+		
+		@Override
+		public VirtualDocument impose(ModuleData data) throws RenderingException {
+			logger.info("Imposing overlay...");
+			List<VirtualDocument> docs = data.asMultipleDocuments();
+			int pages = VirtualDocument.getTotalLength(docs);
+			int layers = docs.size();
+			double[] dims = VirtualDocument.maxPageDimensions(docs);
+			
+			Overlay model = new Overlay(dims[0], dims[1], pages, layers);
+			VirtualDocument imposed = model.getDocument();
+			return imposed;
 		}
 	}
 }
