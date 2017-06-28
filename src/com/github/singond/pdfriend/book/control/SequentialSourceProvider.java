@@ -15,7 +15,10 @@ import com.github.singond.pdfriend.document.VirtualPage;
 /**
  * Assigns VirtualPages to Page objects by visiting Pages in their order,
  * putting VirtualPages into them sequentially.
- *
+ * 
+ * TODO Hide the PageVisitor nature into private object: We do not want
+ * this to appear in the API.
+ * 
  * @author Singon
  *
  */
