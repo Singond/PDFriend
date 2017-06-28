@@ -10,20 +10,20 @@ import com.github.singond.pdfriend.book.model.Page;
  * is implementation-specific and will differ for each subclass.
  * 
  * @author Singon
- *
+ * @param <P> the subtype of Page handled by this SourceProvider
  */
-public interface SourceProvider {
+public interface SourceProvider<P extends Page> {
 
 	/**
 	 * For each Page from the given iterable container, set one or more
 	 * VirtualPages as its source.
 	 * @param pages
 	 */
-	public void setSourceTo(Iterable<Page> pages);
+	public void setSourceTo(Iterable<P> pages);
 	
 	/**
 	 * Set one or more VirtualPages as the source of the given Page. 
 	 * @param page
 	 */
-	public void setSourceTo(Page page);
+	public void setSourceTo(P page);
 }

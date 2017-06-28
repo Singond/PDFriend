@@ -115,6 +115,51 @@ public class VirtualDocument {
 		return new VirtualDocument(pages);
 	}
 	
+	/**
+	 * Returns the dimensions of the minimal rectangle into which any page
+	 * of the given documents can fit.
+	 * @return the pair of dimensions [width, height]
+	 */
+	public static double[] maxPageDimensions(List<VirtualDocument> docs) {
+		double[] max = new double[2];
+		for (VirtualDocument doc : docs) {
+			double[] docSize = doc.maxPageDimensions();
+			if (docSize[0] > max[0])
+				max[0] = docSize[0];
+			if (docSize[1] > max[1])
+				max[1] = docSize[1];
+		}
+		return max;
+	}
+	
+	/**
+	 * Returns the total number of pages in the given documents.
+	 * @param docs
+	 * @return the sum of lengths of the given documents
+	 */
+	public static int totalLength(List<VirtualDocument> docs) {
+		int count = 0;
+		for (VirtualDocument doc : docs) {
+			count += doc.getLength();
+		}
+		return count;
+	}
+	
+	/**
+	 * Returns the length of the longest document from the list.
+	 * @param docs the list of document to be searched
+	 * @return the length of the longest document
+	 */
+	public static int maxLength(List<VirtualDocument> docs) {
+		int max = 0;
+		for (VirtualDocument doc : docs) {
+			int length = doc.getLength();
+			if (length > max)
+				max = length;
+		}
+		return max;
+	}
+	
 	@Override
 	public String toString() {
 		return "VirtualDocument@"+hashCode()+" ("+pages.size()+" pages)";

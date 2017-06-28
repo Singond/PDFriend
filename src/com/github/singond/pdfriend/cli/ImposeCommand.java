@@ -70,6 +70,9 @@ public class ImposeCommand extends SubCommand {
 				converter=IntegerDimensionsConverter.class)
 		private IntegerDimensions nup = null;
 		
+		@Parameter(names="--overlay", description="Print pages on top of each other")
+		private boolean overlay = false;
+		
 		/**
 		 * Resolves the type of imposed document from the command line
 		 * arguments and creates an instance of an implementing class
@@ -90,6 +93,12 @@ public class ImposeCommand extends SubCommand {
 			} else if (nup != null) {
 				Impose.TypeNUp impl = module.new TypeNUp
 						(nup.getFirstDimension(), nup.getSecondDimension());
+				module.setType(impl);
+			} else if (overlay) {
+				// TODO Implement
+//				throw new UnsupportedOperationException("Not implemented yet");
+				// TODO Pass some value into layers argument or remove it
+				Impose.TypeOverlay impl = module.new TypeOverlay(-1);
 				module.setType(impl);
 			} else {
 				throw new IllegalStateException("No imposition type has been set");
