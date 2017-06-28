@@ -16,10 +16,10 @@ import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.document.AContentVisitor;
 import com.github.singond.pdfriend.document.Content;
-import com.github.singond.pdfriend.document.Renderer;
-import com.github.singond.pdfriend.document.RenderingException;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
+import com.github.singond.pdfriend.format.Renderer;
+import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.content.PDFPage;
 
 public class PDFRenderer extends Renderer<PDDocument> {

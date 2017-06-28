@@ -3,9 +3,9 @@ package com.github.singond.pdfriend.test;
 import java.io.File;
 import java.io.IOException;
 
-import com.github.singond.pdfriend.document.RenderingException;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
+import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
 
 public class EmptyPages {
