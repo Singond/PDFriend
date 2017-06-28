@@ -137,12 +137,27 @@ public class VirtualDocument {
 	 * @param docs
 	 * @return the sum of lengths of the given documents
 	 */
-	public static int getTotalLength(List<VirtualDocument> docs) {
+	public static int totalLength(List<VirtualDocument> docs) {
 		int count = 0;
 		for (VirtualDocument doc : docs) {
 			count += doc.getLength();
 		}
 		return count;
+	}
+	
+	/**
+	 * Returns the length of the longest document from the list.
+	 * @param docs the list of document to be searched
+	 * @return the length of the longest document
+	 */
+	public static int maxLength(List<VirtualDocument> docs) {
+		int max = 0;
+		for (VirtualDocument doc : docs) {
+			int length = doc.getLength();
+			if (length > max)
+				max = length;
+		}
+		return max;
 	}
 	
 	@Override

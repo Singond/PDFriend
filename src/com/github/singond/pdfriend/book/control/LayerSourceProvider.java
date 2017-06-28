@@ -21,11 +21,16 @@ public class LayerSourceProvider implements SourceProvider<LayeredPage>{
 	private final List<Queue<VirtualPage>> sourcePages;
 	/** The cached number of layers */
 	private final int layers;
+	/** Stores information whether empty warning has been issued for ith layer */
+	private final boolean[] queueEmptyWarningIssued;
+	
 	/** Logger instance */
 	private static final ExtendedLogger logger = Log.logger(LayerSourceProvider.class);
 	
+	
 	public LayerSourceProvider(List<VirtualDocument> documents) {
 		this.layers = documents.size();
+		queueEmptyWarningIssued = new boolean[layers];
 		List<Queue<VirtualPage>> srcList = new ArrayList<>(layers);
 		for (VirtualDocument doc : documents) {
 			srcList.add(new ArrayDeque<>(doc.getPages()));
@@ -43,18 +48,22 @@ public class LayerSourceProvider implements SourceProvider<LayeredPage>{
 
 	@Override
 	public void setSourceTo(LayeredPage page) {
-		int i = 0;
+		int layersInPage = page.numberOfLayers();
+		if (layersInPage > layers) {
+			logger.debug("layerSP_tooManyLayersInPage", layersInPage, layers);
+		}
+		int layerNo = 0;
 		for (Pagelet layer : page.getLayers()) {
-			if (i < layers) {
-				Queue<VirtualPage> pageQueue = sourcePages.get(i);
-				if (!pageQueue.isEmpty())
+			if (layerNo < layers) {
+				Queue<VirtualPage> pageQueue = sourcePages.get(layerNo);
+				if (!pageQueue.isEmpty()) {
 					layer.setSource(pageQueue.remove());
-				else
-					logger.warn("layerSP_queueEmpty", i);
-			} else {
-				logger.warn("layerSP_tooManyLayersInPage",
-				            page.numberOfLayers(), layers, i);
+				} else if (!queueEmptyWarningIssued[layerNo]) {
+					logger.warn("layerSP_queueEmpty", layerNo, page);
+					queueEmptyWarningIssued[layerNo] = true;
+				}
 			}
+			layerNo++;
 		}
 		
 	}

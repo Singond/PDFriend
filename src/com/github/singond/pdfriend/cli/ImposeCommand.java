@@ -96,7 +96,10 @@ public class ImposeCommand extends SubCommand {
 				module.setType(impl);
 			} else if (overlay) {
 				// TODO Implement
-				throw new UnsupportedOperationException("Not implemented yet");
+//				throw new UnsupportedOperationException("Not implemented yet");
+				// TODO Pass some value into layers argument or remove it
+				Impose.TypeOverlay impl = module.new TypeOverlay(-1);
+				module.setType(impl);
 			} else {
 				throw new IllegalStateException("No imposition type has been set");
 			}

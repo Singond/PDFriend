@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
+import com.github.singond.pdfriend.book.control.LayerSourceProvider;
 import com.github.singond.pdfriend.book.control.SequentialSourceProvider;
 import com.github.singond.pdfriend.book.control.SourceProvider;
 import com.github.singond.pdfriend.book.model.LayeredPage;
@@ -37,14 +38,12 @@ public class Overlay implements Imposable {
 	
 	public static Overlay from(List<VirtualDocument> docs) {
 		double[] dims = VirtualDocument.maxPageDimensions(docs);
-		int pages = VirtualDocument.getTotalLength(docs);
+		int pages = VirtualDocument.maxLength(docs);
 		int layers = docs.size();
 		Overlay result = new Overlay(dims[0], dims[1], pages, layers);
 		
-		List<SourceProvider> sps = new ArrayList<>(layers);
-		for (VirtualDocument doc : docs) {
-			sps.add(new SequentialSourceProvider(doc));
-		}
+		LayerSourceProvider lsp = new LayerSourceProvider(docs);
+		lsp.setSourceTo(result.pages);
 		// TODO Fill pagelets with source
 //		for (Page p : pages) {
 //			for (Pagelet)

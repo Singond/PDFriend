@@ -196,11 +196,7 @@ public class Impose implements Module {
 		public VirtualDocument impose(ModuleData data) throws RenderingException {
 			logger.info("Imposing overlay...");
 			List<VirtualDocument> docs = data.asMultipleDocuments();
-			int pages = VirtualDocument.getTotalLength(docs);
-			int layers = docs.size();
-			double[] dims = VirtualDocument.maxPageDimensions(docs);
-			
-			Overlay model = new Overlay(dims[0], dims[1], pages, layers);
+			Overlay model = Overlay.from(docs);
 			VirtualDocument imposed = model.getDocument();
 			return imposed;
 		}
