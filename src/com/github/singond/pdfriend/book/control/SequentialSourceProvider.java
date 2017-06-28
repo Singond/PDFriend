@@ -5,6 +5,7 @@ import java.util.Queue;
 
 import com.github.singond.pdfriend.NoException;
 import com.github.singond.pdfriend.book.model.GridPage;
+import com.github.singond.pdfriend.book.model.LayeredPage;
 import com.github.singond.pdfriend.book.model.MultiPage;
 import com.github.singond.pdfriend.book.model.Page;
 import com.github.singond.pdfriend.book.model.SinglePage;
@@ -75,6 +76,12 @@ public class SequentialSourceProvider implements SourceProvider<Page> {
 				pg.setSource(sourcePages.poll());
 			}
 			return null;
+		}
+
+		@Override
+		public Void visit(LayeredPage p, Void param) throws NoException {
+			throw new UnsupportedOperationException(
+					"This SourceProvider does not accept LayeredPages");
 		}
 	};
 }

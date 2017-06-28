@@ -1,6 +1,7 @@
 package com.github.singond.pdfriend.book.control;
 
 import com.github.singond.pdfriend.book.model.GridPage;
+import com.github.singond.pdfriend.book.model.LayeredPage;
 import com.github.singond.pdfriend.book.model.MultiPage;
 import com.github.singond.pdfriend.book.model.SinglePage;
 
@@ -18,4 +19,5 @@ public interface PageVisitor<R, P, E extends Throwable> {
 	public R visit(SinglePage p, P param) throws E;
 	public R visit(MultiPage p, P param) throws E;
 	public R visit(GridPage p, P param) throws E;
+	public R visit(LayeredPage p, P param) throws E;
 }

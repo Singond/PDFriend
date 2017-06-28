@@ -4,6 +4,7 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.singond.pdfriend.book.control.PageVisitor;
 import com.github.singond.pdfriend.document.VirtualPage;
 
 /**
@@ -47,5 +48,10 @@ public class LayeredPage extends MultiPage {
 	 */
 	public void setLayerSource(int index, VirtualPage source) {
 		layers.get(index).setSource(source);
+	}
+	
+	@Override
+	public <R, P, E extends Throwable> R invite(PageVisitor<R, P, E> visitor, P param) throws E {
+		return visitor.visit(this, param);
 	}
 }
