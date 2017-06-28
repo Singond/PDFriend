@@ -28,7 +28,9 @@ public class LayeredPage extends MultiPage {
 	
 	/**
 	 * A copy constructor.
-	 * @param original
+	 * Creates a new LayeredPage which is an exact copy of the original.
+	 * The Pagelets are copied recursively into the new instance.
+	 * @param original the original layered page
 	 */
 	public LayeredPage(LayeredPage original) {
 		super(original.getWidth(), original.getHeight());
@@ -48,6 +50,21 @@ public class LayeredPage extends MultiPage {
 	 */
 	public void setLayerSource(int index, VirtualPage source) {
 		layers.get(index).setSource(source);
+	}
+	
+	/**
+	 * Returns the layers of this page.
+	 * @return a shallow copy of the internal list of pagelets
+	 */
+	public List<Pagelet> getLayers() {
+		return new ArrayList<>(layers);
+	}
+	
+	/**
+	 * Returns the number of layers in this page.
+	 */
+	public int numberOfLayers() {
+		return layers.size();
 	}
 	
 	@Override
