@@ -6,8 +6,6 @@ import java.util.List;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.control.LayerSourceProvider;
-import com.github.singond.pdfriend.book.control.SequentialSourceProvider;
-import com.github.singond.pdfriend.book.control.SourceProvider;
 import com.github.singond.pdfriend.book.model.LayeredPage;
 import com.github.singond.pdfriend.book.model.Page;
 import com.github.singond.pdfriend.document.VirtualDocument;
@@ -46,10 +44,6 @@ public class Overlay implements Imposable {
 		logger.verbose("overlay_filling");
 		LayerSourceProvider lsp = new LayerSourceProvider(docs);
 		lsp.setSourceTo(result.pages);
-		// TODO Fill pagelets with source
-//		for (Page p : pages) {
-//			for (Pagelet)
-//		}
 		logger.verbose("overlay_setupFinished");
 		return result;
 	}

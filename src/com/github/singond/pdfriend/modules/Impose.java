@@ -7,6 +7,7 @@ import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.control.SequentialSourceProvider;
 import com.github.singond.pdfriend.book.control.SourceProvider;
+import com.github.singond.pdfriend.book.model.Page;
 import com.github.singond.pdfriend.book.model.Volume;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.format.RenderingException;
@@ -88,7 +89,7 @@ public class Impose implements Module {
 		
 		Booklet booklet = Booklet.from(source, binding, flipVerso);
 		Volume volume = booklet.volume();
-		SourceProvider sp = new SequentialSourceProvider(source);
+		SourceProvider<Page> sp = new SequentialSourceProvider(source);
 		sp.setSourceTo(volume.pages());
 		VirtualDocument imposed = volume.renderDocument();
 		return imposed;
