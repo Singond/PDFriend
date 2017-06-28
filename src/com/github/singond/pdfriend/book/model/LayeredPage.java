@@ -4,6 +4,8 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.singond.pdfriend.document.VirtualPage;
+
 /**
  * A type of MultiPage which stacks multiple pagelets onto each other.
  * The pagelets perform no transformation.
@@ -13,7 +15,7 @@ public class LayeredPage extends MultiPage {
 	/** The layers (ie. pagelets) of this page */
 	private final List<Pagelet> layers;
 
-	protected LayeredPage(double width, double height, int layers) {
+	public LayeredPage(double width, double height, int layers) {
 		super(width, height);
 		this.layers = new ArrayList<>(layers);
 		for (int i=0; i<layers; i++) {
@@ -36,5 +38,14 @@ public class LayeredPage extends MultiPage {
 			this.layers.add(pagelet);
 			super.addPagelet(pagelet);
 		}
+	}
+	
+	/**
+	 * Puts the given virtual page as a source into the given layer.
+	 * @param index the index of the affected layer
+	 * @param source the virtual page to be used as a source for the given layer
+	 */
+	public void setLayerSource(int index, VirtualPage source) {
+		layers.get(index).setSource(source);
 	}
 }
