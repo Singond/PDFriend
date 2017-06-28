@@ -25,6 +25,7 @@ public class Overlay implements Imposable {
 	private static ExtendedLogger logger = Log.logger(Overlay.class);
 	
 	public Overlay(double width, double height, int pages, int layers) {
+		logger.verbose("overlay_constructing", pages, layers);
 		LayeredPage template = new LayeredPage(width, height, layers);
 		List<LayeredPage> pageList = new ArrayList<>(pages);
 		int pageNumber = 0;
@@ -42,12 +43,14 @@ public class Overlay implements Imposable {
 		int layers = docs.size();
 		Overlay result = new Overlay(dims[0], dims[1], pages, layers);
 		
+		logger.verbose("overlay_filling");
 		LayerSourceProvider lsp = new LayerSourceProvider(docs);
 		lsp.setSourceTo(result.pages);
 		// TODO Fill pagelets with source
 //		for (Page p : pages) {
 //			for (Pagelet)
 //		}
+		logger.verbose("overlay_setupFinished");
 		return result;
 	}
 	
