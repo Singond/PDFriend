@@ -46,7 +46,7 @@ public class MultipleImposition2 {
 
 		MyMultiPage page1 = new MyMultiPage(612, 792);
 		AffineTransform pagelet1Position = new AffineTransform();
-		pagelet1Position.translate(306, 0);
+		pagelet1Position.translate(50, 0);
 //		pagelet1Position.scale(0.5, 0.5);
 //		pagelet1Position.rotate(0.02);
 		page1.addPage(one, pagelet1Position);
