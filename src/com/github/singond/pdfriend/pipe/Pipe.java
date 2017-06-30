@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.singond.pdfriend.document.VirtualDocument;
+import com.github.singond.pdfriend.io.Input;
 import com.github.singond.pdfriend.modules.Module;
 import com.github.singond.pdfriend.modules.ModuleDataFactory;
 import com.github.singond.pdfriend.modules.ModuleException;
@@ -11,7 +12,7 @@ import com.github.singond.pdfriend.modules.ModuleException;
 public class Pipe {
 
 	private final List<Operation> operations;
-	private PipeData input;
+	private PipeInput inputProvider;
 	private List<VirtualDocument> output;
 	private boolean executed = false;
 	
@@ -26,18 +27,11 @@ public class Pipe {
 		operations.add(new Operation(module));
 	}
 	
-	public void setInput(VirtualDocument doc) {
+	public void setInput(List<Input> input) {
 		if (executed) {
 			throw new IllegalStateException("This pipe has already been executed");
 		}
-		input = new PipeData(ModuleDataFactory.of(doc));
-	}
-	
-	public void setInput(List<VirtualDocument> docs) {
-		if (executed) {
-			throw new IllegalStateException("This pipe has already been executed");
-		}
-		input = new PipeData(ModuleDataFactory.of(docs));
+		inputProvider = new BatchInput(input);
 	}
 	
 	public List<VirtualDocument> getOutput() {
@@ -47,9 +41,9 @@ public class Pipe {
 		return output;
 	}
 	
-	public void execute() throws ModuleException {
+	public void execute() throws ModuleException, PipeException {
 		executed = true;
-		PipeData data = input;
+		PipeData data = inputProvider.getPipeData();
 		for (Operation op : operations) {
 			data = op.process(data);
 		}

@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * An input to a pipe from a file.
+ * Data output to a file.
  * @author Singon
  */
 public class FileOutput implements Output {

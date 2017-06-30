@@ -27,6 +27,7 @@ import com.github.singond.pdfriend.io.InputException;
 import com.github.singond.pdfriend.modules.Module;
 import com.github.singond.pdfriend.modules.ModuleException;
 import com.github.singond.pdfriend.pipe.Pipe;
+import com.github.singond.pdfriend.pipe.PipeException;
 
 /**
  * The root of the command-line interface.
@@ -132,10 +133,10 @@ public class Console {
 		try {
 			// "Cast" is only possible using intermediate list
 			List<Input> input = new ArrayList<>(inputFiles.getInputFiles());
-			ImportManager imgr = new ImportManager();
-			List<VirtualDocument> docs = imgr.importAsDocuments(input);
+//			ImportManager imgr = new ImportManager();
+//			List<VirtualDocument> docs = imgr.importAsDocuments(input);
 			VirtualDocument output;
-			pipe.setInput(docs);
+			pipe.setInput(input);
 			pipe.execute();
 			output = pipe.getOutput().get(0);
 			new PDFRenderer().renderAndSave(output, outputFile.getFile());
@@ -148,7 +149,7 @@ public class Console {
 		} catch (ModuleException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (InputException e) {
+		} catch (PipeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

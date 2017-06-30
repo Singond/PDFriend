@@ -23,7 +23,7 @@ public class ImportManager {
 	 * @return
 	 * @throws InputException
 	 */
-	public VirtualDocument importAsDocument(Input input) throws InputException {
+	public final VirtualDocument importAsDocument(Input input) throws InputException {
 		return input.invite(importProvider, null);
 	}
 	
@@ -33,7 +33,7 @@ public class ImportManager {
 	 * @return
 	 * @throws InputException
 	 */
-	public List<VirtualDocument> importAsDocuments(List<Input> inputs)
+	public final List<VirtualDocument> importAsDocuments(List<Input> inputs)
 			throws InputException {
 		List<VirtualDocument> docs = new ArrayList<>(inputs.size());
 		for (Input i : inputs) {
