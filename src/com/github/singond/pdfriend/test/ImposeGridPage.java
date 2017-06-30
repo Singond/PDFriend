@@ -15,6 +15,7 @@ import com.github.singond.pdfriend.book.model.Sheet;
 import com.github.singond.pdfriend.book.model.GridPage.Direction;
 import com.github.singond.pdfriend.book.model.GridPage.GridOrientation;
 import com.github.singond.pdfriend.book.model.Leaf.Orientation;
+import com.github.singond.pdfriend.book.model.Page;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.format.ImportException;
@@ -57,7 +58,7 @@ public class ImposeGridPage {
 			// Get content
 			File srcFile = new File("test/lorem-letter.pdf");
 			VirtualDocument source = new PDFImporter(srcFile).importDocument();
-			SourceProvider sp = new SequentialSourceProvider(source);
+			SourceProvider<Page> sp = new SequentialSourceProvider(source);
 			sp.setSourceTo(page1);
 			sp.setSourceTo(page2);
 			

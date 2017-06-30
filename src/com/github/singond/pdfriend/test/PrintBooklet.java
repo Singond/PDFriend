@@ -7,6 +7,7 @@ import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.control.SequentialSourceProvider;
 import com.github.singond.pdfriend.book.control.SourceProvider;
+import com.github.singond.pdfriend.book.model.Page;
 import com.github.singond.pdfriend.book.model.Volume;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.format.ImportException;
@@ -28,7 +29,7 @@ public class PrintBooklet {
 			source = new PDFImporter(sourceFile).importDocument();
 			Booklet booklet = Booklet.from(source, Binding.BOTTOM, false);
 			Volume volume = booklet.volume();
-			SourceProvider sp = new SequentialSourceProvider(source);
+			SourceProvider<Page> sp = new SequentialSourceProvider(source);
 			sp.setSourceTo(volume.pages());
 			VirtualDocument doc = volume.renderDocument();
 			new PDFRenderer().renderAndSave(doc, targetFile);

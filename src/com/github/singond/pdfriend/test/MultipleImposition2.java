@@ -7,12 +7,7 @@ import java.util.Arrays;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 
-import com.github.singond.pdfriend.book.model.FlipDirection;
-import com.github.singond.pdfriend.book.model.Leaf;
 import com.github.singond.pdfriend.book.model.MultiPage;
-import com.github.singond.pdfriend.book.model.Sheet;
-import com.github.singond.pdfriend.book.model.SinglePage;
-import com.github.singond.pdfriend.book.model.Leaf.Orientation;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.format.RenderingException;
