@@ -91,7 +91,7 @@ public abstract class Content {
 		 * This starts with identity transformation and in the end is
 		 * used to transform the current position of this Content element.
 		 */
-		private final AffineTransform transform = new AffineTransform();
+		private final AffineTransform transform = new AffineTransform(position);
 		
 		/**
 		 * Provides direct access to the current position.
@@ -108,7 +108,7 @@ public abstract class Content {
 		 * @return
 		 */
 		public Content transformed() {
-			return Content.this.transform(transform);
+			return Content.this.atPosition(transform);
 		}
 	}
 }
