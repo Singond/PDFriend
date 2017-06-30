@@ -50,13 +50,11 @@ public class PDFPage extends Content {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @return A shallow copy of this PDFPage in the position given
-	 * by transforming the original position by {@code transform}.
+	 * @return a shallow copy of this PDFPage in the position given
+	 *         by the {@code transform} argument
 	 */
 	@Override
-	public PDFPage transform(AffineTransform transform) {
-		AffineTransform newPosition = new AffineTransform(position);
-		newPosition.preConcatenate(transform);
+	public PDFPage atPosition(AffineTransform newPosition) {
 		return new PDFPage(doc, page, newPosition);
 	}
 	
