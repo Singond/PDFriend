@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.format.ImportManager;
-import com.github.singond.pdfriend.io.Input;
+import com.github.singond.pdfriend.io.InputElement;
 import com.github.singond.pdfriend.io.InputException;
 import com.github.singond.pdfriend.modules.ModuleData;
 import com.github.singond.pdfriend.modules.ModuleDataFactory;
@@ -13,12 +13,12 @@ import com.github.singond.pdfriend.modules.ModuleDataFactory;
  * A pipe input provider which sends all input for processing as one unit.
  * @author Singon
  */
-class BatchInput implements PipeInput {
-	private List<Input> input;
+class BatchPipeInput implements PipeInput {
+	private List<InputElement> input;
 	private boolean consumed = false;
 	private final ImportManager imgr = new ImportManager();
 	
-	BatchInput(List<Input> input) {
+	BatchPipeInput(List<InputElement> input) {
 		this.input = input;
 	}
 	

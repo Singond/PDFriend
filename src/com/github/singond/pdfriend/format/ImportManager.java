@@ -6,7 +6,7 @@ import java.util.List;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.format.process.PDFImporter;
 import com.github.singond.pdfriend.io.FileInput;
-import com.github.singond.pdfriend.io.Input;
+import com.github.singond.pdfriend.io.InputElement;
 import com.github.singond.pdfriend.io.InputException;
 import com.github.singond.pdfriend.io.InputVisitor;
 
@@ -23,7 +23,7 @@ public class ImportManager {
 	 * @return
 	 * @throws InputException
 	 */
-	public final VirtualDocument importAsDocument(Input input) throws InputException {
+	public final VirtualDocument importAsDocument(InputElement input) throws InputException {
 		return input.invite(importProvider, null);
 	}
 	
@@ -33,10 +33,10 @@ public class ImportManager {
 	 * @return
 	 * @throws InputException
 	 */
-	public final List<VirtualDocument> importAsDocuments(List<Input> inputs)
+	public final List<VirtualDocument> importAsDocuments(List<InputElement> inputs)
 			throws InputException {
 		List<VirtualDocument> docs = new ArrayList<>(inputs.size());
-		for (Input i : inputs) {
+		for (InputElement i : inputs) {
 			VirtualDocument doc = i.invite(importProvider, null);
 			docs.add(doc);
 		}
