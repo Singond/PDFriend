@@ -228,7 +228,8 @@ public class Console {
 			cmdr.parse(argSection.toArray(new String[argSection.size()]));
 			// Retrieve the initialized subcommand and put it to the output
 			SubCommand subcmd = subcmds.getAndReplace(cmdr.getParsedCommand());
-			arguments.subCommands.add(subcmd);
+			if (subcmd != null)
+				arguments.subCommands.add(subcmd);
 			i++;
 		}
 	}
