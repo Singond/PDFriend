@@ -34,9 +34,4 @@ class FileInput implements InputElement {
 					+ file.toAbsolutePath(), this, e);
 		}
 	}
-
-	@Override
-	public <T, P> T invite(InputVisitor<T, P> visitor, P param) throws InputException {
-		return visitor.visit(this, param);
-	}
 }

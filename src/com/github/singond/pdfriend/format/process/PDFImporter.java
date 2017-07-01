@@ -1,6 +1,5 @@
 package com.github.singond.pdfriend.format.process;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -16,13 +15,9 @@ import com.github.singond.pdfriend.format.content.PDFPage;
 
 public class PDFImporter implements Importer {
 
-//	private final File file;
-	
 	private static ExtendedLogger logger = Log.logger(PDFImporter.class);
 	
-	public PDFImporter() {
-//		this.file = file;
-	}
+	public PDFImporter() {}
 	
 	/**
 	 * {@inheritDoc}
@@ -32,6 +27,7 @@ public class PDFImporter implements Importer {
 	public VirtualDocument importDocument(byte[] bytes) throws ImportException {
 		PDDocument sourceDoc = null;
 		try {
+			// TODO Log somewhere else
 //			logger.info("load-file-start", file);
 			sourceDoc = PDDocument.load(bytes);
 		} catch (IOException e) {

@@ -9,10 +9,6 @@ import java.util.stream.Collectors;
 import com.beust.jcommander.Parameter;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.document.VirtualDocument;
-import com.github.singond.pdfriend.format.ImportException;
-import com.github.singond.pdfriend.format.process.PDFImporter;
-//import com.github.singond.pdfriend.io.FileInput;
 import com.github.singond.pdfriend.io.Input;
 import com.github.singond.pdfriend.io.InputFactory;
 
@@ -31,30 +27,6 @@ public class InputFiles {
 	public void postParse() {
 		logger.verbose(listFiles(files));
 	}
-	
-	/**
-	 * Returns the input files wrapped in a single VirtualDocument.
-	 * @return a new virtual document with the first of the input files only
-	 * TODO Concatenate all files into one (do not ignore the rest like now)
-	 * @throws ImportException 
-	 */
-	@Deprecated
-	public VirtualDocument getAsDocument() throws ImportException {
-		// TODO Support other file formats?
-//		return new PDFImporter(files.get(0)).importDocument();
-		return null;
-	}
-	
-	/**
-	 * Returns the input files wrapped in FileInput objects.
-	 */
-	@Deprecated
-//	public List<FileInput> getInputFiles() {
-//		List<FileInput> result = files.stream()
-//				.map(f->new FileInput(f.toPath()))
-//				.collect(Collectors.toList());
-//		return result;
-//	}
 	
 	/**
 	 * Returns the input files wrapped in one Input object.

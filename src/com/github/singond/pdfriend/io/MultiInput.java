@@ -10,11 +10,9 @@ import com.github.singond.pdfriend.io.InputElement;
  * @author Singon
  */
 class MultiInput implements Input {
-//	private final List<InputElement> input;
 	private final Iterator<InputElement> inputIter;
 	
 	MultiInput(List<InputElement> input) {
-//		this.input = input;
 		this.inputIter = input.iterator();
 	}
 
