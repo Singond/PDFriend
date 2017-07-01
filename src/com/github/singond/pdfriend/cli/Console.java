@@ -46,8 +46,6 @@ public class Console {
 	private final OutputFile outputFile = new OutputFile();
 	/** Pattern to split the argument array at. This must be one element. */
 	private static final String SUBCOMMAND_DELIMITER = "+";
-	/** A mock instance of JCommander used to generate the help text. */
-	private static final JCommander helpParser;
 	/** Logger */
 	private static ExtendedLogger logger = Log.logger(Console.class);
 	
@@ -74,18 +72,6 @@ public class Console {
 			}
 			return value;
 		}
-	}
-	
-	static {
-		SubCommands subcmds = new SubCommands();
-		JCommander.Builder globalParserBldr = JCommander.newBuilder()
-				.addObject(new GlobalOptions())
-				.addObject(new InputFiles())
-				.addObject(new ArrayList<Module>());
-		for (Map.Entry<String, SubCommand> cmd : subcmds.entrySet()) {
-			globalParserBldr.addCommand(cmd.getKey(), cmd.getValue());
-		}
-		helpParser = globalParserBldr.build();
 	}
 	
 	/**
@@ -124,7 +110,7 @@ public class Console {
 		
 		// Display help and exit (--help)
 		if (global.help()) {
-			help(helpParser);
+			help();
 			System.exit(0);
 		}
 		
@@ -243,9 +229,20 @@ public class Console {
 	 * Prints help page.
 	 * @param jcommander an instance of jcommander used to parse the CLI args
 	 */
-	private void help(JCommander jcommander) {
+	private void help() {
+		/** A mock instance of JCommander used to generate the help text. */
+		final JCommander helpParser;
+		SubCommands subcmds = new SubCommands();
+		JCommander.Builder globalParserBldr = JCommander.newBuilder()
+				.addObject(new GlobalOptions())
+				.addObject(new InputFiles())
+				.addObject(new ArrayList<Module>());
+		for (Map.Entry<String, SubCommand> cmd : subcmds.entrySet()) {
+			globalParserBldr.addCommand(cmd.getKey(), cmd.getValue());
+		}
+		helpParser = globalParserBldr.build();
 		//jcommander.setColumnSize(80);
-		jcommander.usage();
+		helpParser.usage();
 	}
 	
 	/**
