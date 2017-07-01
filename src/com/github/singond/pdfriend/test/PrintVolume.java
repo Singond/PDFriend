@@ -2,6 +2,7 @@ package com.github.singond.pdfriend.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
@@ -73,7 +74,7 @@ public class PrintVolume {
 		try {
 			// Get content
 			File srcFile = new File("test/lorem-letter.pdf");
-			VirtualDocument source = new PDFImporter(srcFile).importDocument();
+			VirtualDocument source = new PDFImporter().importDocument(Files.readAllBytes(srcFile.toPath()));
 			new SequentialSourceProvider(source).setSourceTo(volume.pages());
 			VirtualDocument doc = volume.renderDocument();
 			new PDFRenderer().renderAndSave(doc, new File("test/printed-volume.pdf"));

@@ -2,6 +2,7 @@ package com.github.singond.pdfriend.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import com.github.singond.pdfriend.book.control.SequentialSourceProvider;
 import com.github.singond.pdfriend.book.control.SourceProvider;
@@ -19,7 +20,7 @@ public class PrintPage {
 	public static void main(String[] args) throws ImportException, RenderingException, IOException {
 		File srcFile = new File("test/lorem-letter.pdf");
 		File output = new File("test/printed-page.pdf");
-		VirtualDocument source = new PDFImporter(srcFile).importDocument();
+		VirtualDocument source = new PDFImporter().importDocument(Files.readAllBytes(srcFile.toPath()));
 
 		SinglePage page1 = new SinglePage(612, 792);
 		GridPage page2 = new GridPage(2, 2, 306, 396);

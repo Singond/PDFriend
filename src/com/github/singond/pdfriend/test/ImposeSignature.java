@@ -2,6 +2,7 @@ package com.github.singond.pdfriend.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
@@ -74,7 +75,7 @@ public class ImposeSignature {
 		try {
 			// Get content
 			File src = new File("test/lorem-letter.pdf");
-			VirtualDocument doc = new PDFImporter(src).importDocument();
+			VirtualDocument doc = new PDFImporter().importDocument(Files.readAllBytes(src.toPath()));
 			new SequentialSourceProvider(doc).setSourceTo(volume.pages());
 			
 			VirtualDocument.Builder outDoc = new VirtualDocument.Builder();
