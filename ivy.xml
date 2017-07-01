@@ -1,9 +1,9 @@
 <ivy-module version="2.0">
-	<info organisation="cz.slanyj" module="pdfriend"/>
+	<info organisation="com.github.singond" module="pdfriend"/>
 
 	<dependencies>
-		<dependency org="cz.slanyj" name="collections" rev="latest.integration"/>
-		<dependency org="cz.slanyj" name="geometry" rev="latest.integration"/>
+		<dependency org="com.github.singond" name="collections" rev="latest.integration"/>
+		<dependency org="com.github.singond" name="geometry" rev="latest.integration"/>
 		<!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
 		<!-- Available versions 1.8+ and 2.0+ -->
 		<dependency org="org.apache.pdfbox" name="pdfbox" rev="2.0.6"/>
