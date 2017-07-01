@@ -1,6 +1,7 @@
 package com.github.singond.pdfriend.cli.parsing;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,7 +12,9 @@ import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.format.ImportException;
 import com.github.singond.pdfriend.format.process.PDFImporter;
-import com.github.singond.pdfriend.io.FileInput;
+//import com.github.singond.pdfriend.io.FileInput;
+import com.github.singond.pdfriend.io.Input;
+import com.github.singond.pdfriend.io.InputFactory;
 
 /**
  * Collects the unnamed arguments from the command line and builds a list
@@ -38,17 +41,29 @@ public class InputFiles {
 	@Deprecated
 	public VirtualDocument getAsDocument() throws ImportException {
 		// TODO Support other file formats?
-		return new PDFImporter(files.get(0)).importDocument();
+//		return new PDFImporter(files.get(0)).importDocument();
+		return null;
 	}
 	
 	/**
 	 * Returns the input files wrapped in FileInput objects.
 	 */
-	public List<FileInput> getInputFiles() {
-		List<FileInput> result = files.stream()
-				.map(f->new FileInput(f.toPath()))
+	@Deprecated
+//	public List<FileInput> getInputFiles() {
+//		List<FileInput> result = files.stream()
+//				.map(f->new FileInput(f.toPath()))
+//				.collect(Collectors.toList());
+//		return result;
+//	}
+	
+	/**
+	 * Returns the input files wrapped in one Input object.
+	 */
+	public Input getInput() {
+		List<Path> paths = files.stream()
+				.map(f->f.toPath())
 				.collect(Collectors.toList());
-		return result;
+		return InputFactory.of(paths);
 	}
 	
 	/**

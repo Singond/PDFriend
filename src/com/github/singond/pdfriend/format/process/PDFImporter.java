@@ -16,12 +16,12 @@ import com.github.singond.pdfriend.format.content.PDFPage;
 
 public class PDFImporter implements Importer {
 
-	private final File file;
+//	private final File file;
 	
 	private static ExtendedLogger logger = Log.logger(PDFImporter.class);
 	
-	public PDFImporter(File file) {
-		this.file = file;
+	public PDFImporter() {
+//		this.file = file;
 	}
 	
 	/**
@@ -29,11 +29,11 @@ public class PDFImporter implements Importer {
 	 * Imports the file given in constructor, if it is a PDF file.
 	 */
 	@Override
-	public VirtualDocument importDocument() throws ImportException {
+	public VirtualDocument importDocument(byte[] bytes) throws ImportException {
 		PDDocument sourceDoc = null;
 		try {
-			logger.info("load-file-start", file);
-			sourceDoc = PDDocument.load(file);
+//			logger.info("load-file-start", file);
+			sourceDoc = PDDocument.load(bytes);
 		} catch (IOException e) {
 			logger.error("Error when loading the file", e);
 		}

@@ -9,7 +9,7 @@ import java.nio.file.Paths;
  * Data input from a file.
  * @author Singon
  */
-public class FileInput implements InputElement {
+class FileInput implements InputElement {
 	private final Path file;
 	
 	public FileInput(Path file) {

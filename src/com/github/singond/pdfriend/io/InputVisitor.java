@@ -8,7 +8,8 @@ package com.github.singond.pdfriend.io;
  * @param <T> the return type of the visitor
  * @param <P> the parameter type for the visitor
  */
-public interface InputVisitor<T, P> {
+@Deprecated
+interface InputVisitor<T, P> {
 
 	public T visit(FileInput input, P param) throws InputException;
 }

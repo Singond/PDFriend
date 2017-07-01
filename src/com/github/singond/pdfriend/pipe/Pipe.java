@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.singond.pdfriend.document.VirtualDocument;
-import com.github.singond.pdfriend.io.InputElement;
+import com.github.singond.pdfriend.io.Input;
 import com.github.singond.pdfriend.modules.Module;
 import com.github.singond.pdfriend.modules.ModuleDataFactory;
 import com.github.singond.pdfriend.modules.ModuleException;
@@ -27,11 +27,11 @@ public class Pipe {
 		operations.add(new Operation(module));
 	}
 	
-	public void setInput(List<InputElement> input) {
+	public void setInput(Input input) {
 		if (executed) {
 			throw new IllegalStateException("This pipe has already been executed");
 		}
-		inputProvider = new BatchPipeInput(input);
+		inputProvider = new SimpleInput(input);
 	}
 	
 	public List<VirtualDocument> getOutput() {

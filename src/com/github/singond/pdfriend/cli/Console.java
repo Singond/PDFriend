@@ -22,7 +22,6 @@ import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.format.ImportManager;
 import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
-import com.github.singond.pdfriend.io.InputElement;
 import com.github.singond.pdfriend.io.InputException;
 import com.github.singond.pdfriend.modules.Module;
 import com.github.singond.pdfriend.modules.ModuleException;
@@ -132,11 +131,11 @@ public class Console {
 		// End global-level option processing and run the subcommand
 		try {
 			// "Cast" is only possible using intermediate list
-			List<InputElement> input = new ArrayList<>(inputFiles.getInputFiles());
+//			List<InputElement> input = new ArrayList<>(inputFiles.getInputFiles());
 //			ImportManager imgr = new ImportManager();
 //			List<VirtualDocument> docs = imgr.importAsDocuments(input);
 			VirtualDocument output;
-			pipe.setInput(input);
+			pipe.setInput(inputFiles.getInput());
 			pipe.execute();
 			output = pipe.getOutput().get(0);
 			new PDFRenderer().renderAndSave(output, outputFile.getFile());
