@@ -95,8 +95,6 @@ public class ImposeCommand extends SubCommand {
 						(nup.getFirstDimension(), nup.getSecondDimension());
 				module.setType(impl);
 			} else if (overlay) {
-				// TODO Implement
-//				throw new UnsupportedOperationException("Not implemented yet");
 				// TODO Pass some value into layers argument or remove it
 				Impose.TypeOverlay impl = module.new TypeOverlay(-1);
 				module.setType(impl);
