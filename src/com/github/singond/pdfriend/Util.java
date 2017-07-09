@@ -1,5 +1,6 @@
 package com.github.singond.pdfriend;
 
+import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.security.CodeSource;
@@ -43,5 +44,20 @@ public abstract class Util {
 	 */
 	public static int ceilingDivision(int dividend, int divisor) {
 		return (int) (Math.ceil(((float)dividend)/divisor));
+	}
+	
+	/**
+	 * Provides alternative string representation for AffineTransform.
+	 * @param matrix the matrix to be converted to string
+	 * @return a string representation of the matrix 
+	 */
+	public static String toString(AffineTransform matrix) {
+		return String.format("[[%7.3f, %7.3f, %7.3f], [%7.3f, %7.3f, %7.3f]]",
+		                     matrix.getScaleX(),
+		                     matrix.getShearX(),
+		                     matrix.getTranslateX(),
+		                     matrix.getShearY(),
+		                     matrix.getScaleY(),
+		                     matrix.getTranslateY());
 	}
 }
