@@ -97,6 +97,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 			
 			logger.debug("render-pdf-matrix", source, Util.toString(trMatrix));
 			PDPage page = source.getPage();
+			PDRectangle box = PDFSettings.getBox(page);
 			/*
 			 * HACK: Apparently, imposing a page with 90 or 270 degree rotation
 			 * stretches the page to fit the non-rotated rectangle, effectively
@@ -106,11 +107,12 @@ public class PDFRenderer extends Renderer<PDDocument> {
 			int rotation = page.getRotation();
 			if (rotation % 180 == 90) {
 				logger.debug("render-pdf-workaround", source, rotation);
-				PDRectangle box = PDFSettings.getBox(page);
 				float w = box.getWidth();
 				float h = box.getHeight();
 				trMatrix.scale(h/w, w/h);
 			} // End HACK
+			// Move to the box position
+			trMatrix.translate(box.getLowerLeftX(), box.getLowerLeftY());
 			
 			try {
 				PDFormXObject form = layerUtility.importPageAsForm(source.getDoc(), page);

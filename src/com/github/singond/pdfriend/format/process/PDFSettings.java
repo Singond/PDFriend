@@ -12,6 +12,6 @@ public class PDFSettings {
 	 * @return a PDRectangle representing the governing box
 	 */
 	public static final PDRectangle getBox(PDPage page) {
-		return page.getMediaBox();
+		return page.getCropBox();
 	}
 }
