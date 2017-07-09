@@ -95,9 +95,25 @@ public class PDFRenderer extends Renderer<PDDocument> {
 			PDPageContentStream content = controller.cs;
 			AffineTransform trMatrix = source.getPosition();
 			
+			logger.debug("render-pdf-matrix", source, Util.toString(trMatrix));
+			PDPage page = source.getPage();
+			/*
+			 * HACK: Apparently, imposing a page with 90 or 270 degree rotation
+			 * stretches the page to fit the non-rotated rectangle, effectively
+			 * swapping height for width and vice versa. The following is
+			 * a hack to overcome this limitation of PDFBox.
+			 */
+			int rotation = page.getRotation();
+			if (rotation % 180 == 90) {
+				logger.debug("render-pdf-workaround", source, rotation);
+				PDRectangle box = PDFSettings.getBox(page);
+				float w = box.getWidth();
+				float h = box.getHeight();
+				trMatrix.scale(h/w, w/h);
+			} // End HACK
+			
 			try {
-				logger.debug("render-pdf-page-matrix", source, Util.toString(trMatrix));
-				PDFormXObject form = layerUtility.importPageAsForm(source.getDoc(), source.getPage());
+				PDFormXObject form = layerUtility.importPageAsForm(source.getDoc(), page);
 				content.saveGraphicsState();
 				content.transform(new Matrix(trMatrix));
 				content.drawForm(form);
