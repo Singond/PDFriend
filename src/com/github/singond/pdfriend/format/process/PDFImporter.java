@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
@@ -38,12 +39,29 @@ public class PDFImporter implements Importer {
 			logger.error("Error when loading the file", e);
 		}
 		VirtualDocument.Builder result = new VirtualDocument.Builder();
-		int length = sourceDoc.getNumberOfPages();
-		for (int i=0; i<length; i++) {
-			PDPage sourcePage = sourceDoc.getPage(i);
+		for (PDPage sourcePage : sourceDoc.getPages()) {
 			VirtualPage.Builder page = new VirtualPage.Builder();
-			page.setWidth(sourcePage.getMediaBox().getWidth());
-			page.setHeight(sourcePage.getMediaBox().getHeight());
+			double pageWidth, pageHeight;
+			PDRectangle box = sourcePage.getMediaBox();
+			/*
+			 * If the rotation is multiple of 180, the page is either
+			 * upright or upside down, ie. the width is width and
+			 * height is height. If the rotation is a multiple of 180 plus
+			 * 90, the page is rotated either left or right by 90 degrees,
+			 * meaning the declared width and height must be swapped.
+			 */
+			if (sourcePage.getRotation() % 180 == 0) {
+				pageWidth = box.getWidth();
+				pageHeight = box.getHeight();
+			} else if (sourcePage.getRotation() % 180 == 90) {
+				pageWidth = box.getHeight();
+				pageHeight = box.getWidth();
+			} else {
+				throw new AssertionError("PDF Page rotation is not a multiple of 90: "
+						+ sourcePage.getRotation());
+			}
+			page.setWidth(pageWidth);
+			page.setHeight(pageHeight);
 			page.addContent(new PDFPage(sourceDoc, sourcePage));
 			result.addPage(page.build());
 		}
