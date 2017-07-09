@@ -119,8 +119,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 				content.drawForm(form);
 				content.restoreGraphicsState();
 			} catch (IOException e) {
-				logger.error("An I/O Exception occured when imposing PDFPage {} onto target page {}.",
-				          source, controller.page);
+				logger.error("render-pdf-ioException", source, controller.page);
 				throw new RenderingException("Error when writing the contents of page "+source, e);
 			}
 			
