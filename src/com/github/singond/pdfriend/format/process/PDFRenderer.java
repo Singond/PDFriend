@@ -14,6 +14,7 @@ import org.apache.pdfbox.util.Matrix;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
+import com.github.singond.pdfriend.Util;
 import com.github.singond.pdfriend.document.AContentVisitor;
 import com.github.singond.pdfriend.document.Content;
 import com.github.singond.pdfriend.document.VirtualDocument;
@@ -95,6 +96,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 			AffineTransform trMatrix = source.getPosition();
 			
 			try {
+				logger.debug("render-pdf-page-matrix", source, Util.toString(trMatrix));
 				PDFormXObject form = layerUtility.importPageAsForm(source.getDoc(), source.getPage());
 				content.saveGraphicsState();
 				content.transform(new Matrix(trMatrix));
