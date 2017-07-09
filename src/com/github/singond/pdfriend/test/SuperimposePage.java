@@ -36,8 +36,10 @@ import org.apache.pdfbox.multipdf.LayerUtility;
 public class SuperimposePage {
 
 	public static void main(final String[] args) {
+		File input = new File(args[0]);
+		File output = new File(args[1]);
+		
 		try {
-
 			// Create a new document with some basic content
 			PDDocument aDoc = new PDDocument();
 			PDPage aPage = new PDPage();
@@ -64,7 +66,7 @@ public class SuperimposePage {
 			// This will handle the actual import and resources
 			LayerUtility layerUtility = new LayerUtility(aDoc);
 
-			PDDocument toBeImported = PDDocument.load(new File(args[0]));
+			PDDocument toBeImported = PDDocument.load(input);
 
 			// Get the page as a PDXObjectForm to place it
 			PDFormXObject mountable = layerUtility.importPageAsForm(toBeImported, 0);
@@ -85,15 +87,21 @@ public class SuperimposePage {
 			contentStream.drawXObject(mountable, transform);
 			transform = new AffineTransform(0.5, 0.5, -0.5, 0.5, 0.5 * cropBox.getWidth(), 0.2 * cropBox.getHeight());
 			contentStream.drawXObject(mountable, transform);*/
-			// Rotate pi/2 CCW, scale by 0.5, and move width/2 to right  
-			AffineTransform transform = new AffineTransform(0, 0.5, -0.5, 0, cropBox.getWidth(), 0);
-			contentStream.transform(new Matrix(transform));
+			// Rotate pi/2 CCW, scale by 0.5, and move width/2 to right
+			AffineTransform transform = null;
+//			transform = new AffineTransform(0, 0.5, -0.5, 0, cropBox.getWidth(), 0);
+//			transform = new AffineTransform();
+//			float w = cropBox.getWidth();
+//			float h = cropBox.getHeight();
+//			transform = AffineTransform.getScaleInstance(w/h, h/w);
+//			contentStream.transform(new Matrix(transform));
+			contentStream.transform(aPage.getMatrix());
 			contentStream.drawForm(mountable);
-			transform = new AffineTransform(0.5, 0.5, -0.5, 0.5, 0.5 * cropBox.getWidth(), 0.2 * cropBox.getHeight());
+//			transform = new AffineTransform(0.5, 0.5, -0.5, 0.5, 0.5 * cropBox.getWidth(), 0.2 * cropBox.getHeight());
 			// Restore graphics state to revert previous transform
-			contentStream.restoreGraphicsState();
-			contentStream.transform(new Matrix(transform));
-			contentStream.drawForm(mountable);
+//			contentStream.restoreGraphicsState();
+//			contentStream.transform(new Matrix(transform));
+//			contentStream.drawForm(mountable);
 			
 			// restore former graphics state
 			//contentStream.appendRawCommands("Q\n".getBytes("ISO-8859-1"));
@@ -103,7 +111,7 @@ public class SuperimposePage {
 			// close the imported document
 			toBeImported.close();
 
-			aDoc.save(args[1]);
+			aDoc.save(output);
 			aDoc.close();
 		}
 		catch (Exception e) {
