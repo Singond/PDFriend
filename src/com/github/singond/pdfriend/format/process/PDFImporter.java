@@ -42,7 +42,7 @@ public class PDFImporter implements Importer {
 		for (PDPage sourcePage : sourceDoc.getPages()) {
 			VirtualPage.Builder page = new VirtualPage.Builder();
 			double pageWidth, pageHeight;
-			PDRectangle box = sourcePage.getMediaBox();
+			PDRectangle box = PDFSettings.getBox(sourcePage);
 			/*
 			 * If the rotation is multiple of 180, the page is either
 			 * upright or upside down, ie. the width is width and
