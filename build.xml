@@ -16,7 +16,8 @@
 	<target name="compile" depends="" description="Compile Java source files">
 		<mkdir dir="build/classes"/>
 		<javac srcdir="src"
-			   destdir="build/classes">
+			   destdir="build/classes"
+			   includeantruntime="false">
 			<classpath>
 				<fileset dir="lib">
 					<exclude name="*-javadoc.jar"/>
