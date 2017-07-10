@@ -13,7 +13,7 @@
 		<ivy:cleancache/>
 	</target>
 	
-	<target name="compile" depends="resolve" description="Compile Java source files">
+	<target name="compile" depends="" description="Compile Java source files">
 		<mkdir dir="build/classes"/>
 		<javac srcdir="src"
 			   destdir="build/classes">
@@ -79,6 +79,10 @@
 				<include name="install.bat"/>
 			</fileset>
 		</zip>
+	</target>
+	
+	<target name="build" description="Resolve, compile and build a standalone jar"
+	        depends="resolve, jar-full">
 	</target>
 	
 	<target name="clean" description="Remove build files">
