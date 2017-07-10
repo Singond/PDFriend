@@ -1,8 +1,27 @@
 <project name="PDFriend"
-		 xmlns:ivy="antlib:org.apache.ivy.ant">
+         xmlns:ivy="antlib:org.apache.ivy.ant"
+         xmlns:if="ant:if"
+         xmlns:unless="ant:unless">
+<!-- Requires Ant version 1.9.1+ (xmlns:if, xmlns:unless) -->
 	
 	<property file="version.properties" prefix="version"/>
 	<property name="version" value="${version.major}.${version.minor}.${version.revision}"/>
+	
+	<!-- All own files necessary to run the application -->
+	<union id="exported-sources">
+		<fileset dir="build/classes">
+			<exclude name="cz/slanyj/pdfriend/test/"/>
+		</fileset>
+		<fileset dir="etc"/>
+		<fileset dir="loc"/>
+		<file file="version.properties"/>
+	</union>
+	
+	<!-- Libraries which are dependencies of this project -->
+	<fileset id="libraries" dir="lib">
+		<exclude name="*-javadoc.jar"/>
+		<exclude name="*-source.jar"/>
+	</fileset>
 	
 	<target name="resolve" description="Resolve dependencies with Ivy">
 		<ivy:resolve/>
@@ -36,21 +55,12 @@
 		</manifest>
 	</target>
 	
-	<union id="jar-contents">
-		<fileset dir="build/classes">
-			<exclude name="cz/slanyj/pdfriend/test/"/>
-		</fileset>
-		<fileset dir="etc"/>
-		<fileset dir="loc"/>
-		<file file="version.properties"/>
-	</union>
-	
 	<target name="jar-mini"
 	        depends="compile, manifest"
 	        description="Package into minimal Java archive">
 		<jar destfile="dist/pdfriend-minimal.jar"
 		     manifest="build/MANIFEST.MF">
-			<resources refid="jar-contents"/>
+			<resources refid="exported-sources"/>
 		</jar>
 	</target>
 	
@@ -58,12 +68,21 @@
 	        depends="compile, manifest"
 	        description="Package into a standalone Java archive, ie. with all libraries">
 		<!-- Unzip the contents of libraries to speed up loading -->
-		<unzip dest="build/lib">
-			<fileset dir="lib" excludes="*-javadoc.jar"/>
+		<condition property="libs-up-to-date">
+			<uptodate targetfile="build/lib.touch">
+				<srcfiles refid="libraries"/>
+			</uptodate>
+		</condition>
+		<echo>Extracted contents of libraries are up to date: ${libs-up-to-date}</echo>
+		<unzip dest="build/lib"
+		       unless:true="${libs-up-to-date}">
+			<fileset refid="libraries"/>
 		</unzip>
+		<touch file="build/lib.touch" unless:true="${libs-up-to-date}"/>
+		
 		<jar destfile="dist/pdfriend-standalone.jar"
 		     manifest="build/MANIFEST.MF">
-			<resources refid="jar-contents"/>
+			<resources refid="exported-sources"/>
 			<fileset dir="build/lib" excludes="META-INF/*.SF"/>
 		</jar>
 	</target>
