@@ -29,9 +29,4 @@ public class FileOutput implements Output {
 					+ file.toAbsolutePath(), this, e);
 		}
 	}
-
-	@Override
-	public <T, P> T invite(OutputVisitor<T, P> visitor, P param) throws OutputException {
-		return visitor.visit(this, param);
-	}
 }
