@@ -87,9 +87,12 @@ public abstract class Content {
 	 */
 	public final class Movable {
 		/**
-		 * Matrix accumulating the transformations.
-		 * This starts with identity transformation and in the end is
-		 * used to transform the current position of this Content element.
+		 * The current position of the Content element.
+		 * This is the transformation matrix representing the position of
+		 * this Content element if it were built at this moment using the
+		 * <code>transformed</code> method.
+		 * The matrix is initialized with the current transformation and
+		 * serves to accumulate transformations to the Content element.
 		 */
 		private final AffineTransform transform = new AffineTransform(position);
 		
@@ -97,7 +100,7 @@ public abstract class Content {
 		 * Provides direct access to the current position.
 		 * Changes to the returned object will be reflected in the Content's
 		 * position.
-		 * @return The internal transformation matrix.
+		 * @return the internal transformation matrix
 		 */
 		public AffineTransform getTransform() {
 			return transform;
