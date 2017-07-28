@@ -9,7 +9,7 @@ import java.nio.file.Paths;
  * Data output to a file.
  * @author Singon
  */
-public class FileOutput implements Output {
+class FileOutput implements OutputElement {
 	private final Path file;
 	
 	public FileOutput(Path file) {

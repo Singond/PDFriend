@@ -18,7 +18,7 @@ public class OutputException extends Exception {
 		super(message);
 	}
 	
-	public OutputException(String message, Output output, Throwable cause) {
+	public OutputException(String message, OutputElement output, Throwable cause) {
 		super(message, cause);
 	}
 	
