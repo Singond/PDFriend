@@ -73,7 +73,8 @@
 				<srcfiles refid="libraries"/>
 			</uptodate>
 		</condition>
-		<echo>Extracted contents of libraries are up to date: ${libs-up-to-date}</echo>
+		<echo if:true="${libs-up-to-date}">Extracted libraries are up to date, skipping extraction</echo>
+		<echo unless:true="${libs-up-to-date}">Extracted libraries are outdated. Re-extraction is necessary</echo>
 		<unzip dest="build/lib"
 		       unless:true="${libs-up-to-date}">
 			<fileset refid="libraries"/>
