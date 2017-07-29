@@ -7,6 +7,7 @@ import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.format.process.PDFImporter;
 //import com.github.singond.pdfriend.io.FileInput;
 import com.github.singond.pdfriend.io.Input;
+import com.github.singond.pdfriend.io.InputElement;
 import com.github.singond.pdfriend.io.InputException;
 //import com.github.singond.pdfriend.io.InputVisitor;
 
@@ -38,7 +39,7 @@ public class ImportManager {
 			throws InputException, ImportException {
 		List<VirtualDocument> docs = new ArrayList<>();
 		while (input.hasNext()) {
-			docs.add(bytesToDocument(input.next()));
+			docs.add(inputToDocument(input.next()));
 		}
 //		for (InputElement i : input) {
 //			VirtualDocument doc = i.invite(importProvider, null);
@@ -67,8 +68,16 @@ public class ImportManager {
 		}
 	};*/
 	
-	private VirtualDocument bytesToDocument(byte[] bytes) throws ImportException {
+	/**
+	 * Creates a new VirtualDocument from the given input data.
+	 * @return a VirtualDocument representing the input
+	 */
+	private VirtualDocument inputToDocument(InputElement input) throws ImportException {
 		// TODO Handle different file formats
-		return new PDFImporter().importDocument(bytes);
+		try {
+			return new PDFImporter().importDocument(input.getBytes());
+		} catch (InputException e) {
+			throw new ImportException(e);
+		}
 	}
 }

@@ -17,8 +17,8 @@ class MultiInput implements Input {
 	}
 
 	@Override
-	public byte[] next() throws InputException {
-		return inputIter.next().getBytes();
+	public InputElement next() {
+		return inputIter.next();
 	}
 
 	@Override

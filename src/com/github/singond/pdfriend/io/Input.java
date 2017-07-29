@@ -3,10 +3,10 @@ package com.github.singond.pdfriend.io;
 public interface Input {
 
 	/**
-	 * Returns the next piece of binary data (be it a file, a stream etc.).
+	 * Returns the next piece of input data.
 	 * @throws InputException 
 	 */
-	public byte[] next() throws InputException;
+	public InputElement next();
 	
 	/** Checks whether there is more data to be returned. */
 	public boolean hasNext();
