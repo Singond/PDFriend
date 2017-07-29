@@ -134,16 +134,17 @@ public class Console {
 //			List<VirtualDocument> docs = imgr.importAsDocuments(input);
 			VirtualDocument output;
 			pipe.setInput(inputFiles.getInput());
+			pipe.setOutput(outputFile.getOutput());
 			pipe.execute();
-			output = pipe.getOutput().get(0);
-			new PDFRenderer().renderAndSave(output, outputFile.getFile());
-		} catch (RenderingException e) {
+//			output = pipe.getOutput().get(0);
+//			new PDFRenderer().renderAndSave(output, outputFile.getFile());
+		} /*catch (RenderingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ModuleException e) {
+		}*/ catch (ModuleException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (PipeException e) {
