@@ -17,9 +17,9 @@ import com.github.singond.pdfriend.book.model.Signature;
 import com.github.singond.pdfriend.book.model.Volume;
 import com.github.singond.pdfriend.book.model.Leaf.Orientation;
 import com.github.singond.pdfriend.document.VirtualDocument;
-import com.github.singond.pdfriend.format.ImportException;
+import com.github.singond.pdfriend.format.ParsingException;
 import com.github.singond.pdfriend.format.RenderingException;
-import com.github.singond.pdfriend.format.process.PDFImporter;
+import com.github.singond.pdfriend.format.process.PDFParser;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
 import com.github.singond.geometry.plane.Line;
 import com.github.singond.geometry.plane.Point;
@@ -61,14 +61,14 @@ public class PrintStack {
 		try {
 			// Get content
 			File srcFile = new File("test/lorem-letter.pdf");
-			VirtualDocument source = new PDFImporter().importDocument(Files.readAllBytes(srcFile.toPath()));
+			VirtualDocument source = new PDFParser().parseDocument(Files.readAllBytes(srcFile.toPath()));
 			new SequentialSourceProvider(source).setSourceTo(volume.pages());
 			VirtualDocument output = volume.renderDocument();
 			new PDFRenderer().renderAndSave(output, new File("test/printed-stack.pdf"));
 			logger.info("Finished printing stack");
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (ImportException e) {
+		} catch (ParsingException e) {
 			e.printStackTrace();
 		} catch (RenderingException e) {
 			e.printStackTrace();

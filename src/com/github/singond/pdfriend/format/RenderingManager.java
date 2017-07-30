@@ -19,7 +19,7 @@ public class RenderingManager {
 	 * @param output
 	 * @return
 	 * @throws InputException
-	 * @throws ImportException 
+	 * @throws ParsingException 
 	 */
 	public final void renderDocuments(List<VirtualDocument> docs, Output output)
 			throws OutputException, RenderingException {

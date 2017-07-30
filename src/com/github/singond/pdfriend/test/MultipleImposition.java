@@ -16,18 +16,18 @@ import com.github.singond.pdfriend.book.model.Volume;
 import com.github.singond.pdfriend.book.model.Leaf.Orientation;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
-import com.github.singond.pdfriend.format.ImportException;
+import com.github.singond.pdfriend.format.ParsingException;
 import com.github.singond.pdfriend.format.RenderingException;
-import com.github.singond.pdfriend.format.process.PDFImporter;
+import com.github.singond.pdfriend.format.process.PDFParser;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
 
 public class MultipleImposition {
 	
 	private static ExtendedLogger logger = Log.logger(MultipleImposition.class);
 
-	public static void main(String[] args) throws ImportException, RenderingException, IOException {
+	public static void main(String[] args) throws ParsingException, RenderingException, IOException {
 		File srcFile = new File("test/lorem-letter.pdf");
-		VirtualDocument source = new PDFImporter().importDocument(Files.readAllBytes(srcFile.toPath()));
+		VirtualDocument source = new PDFParser().parseDocument(Files.readAllBytes(srcFile.toPath()));
 		VirtualPage page = source.getPage(1);
 		
 		/* First imposition */

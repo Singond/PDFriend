@@ -20,9 +20,9 @@ import com.github.singond.pdfriend.book.model.Leaf.Orientation;
 import com.github.singond.pdfriend.book.model.Page;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
-import com.github.singond.pdfriend.format.ImportException;
+import com.github.singond.pdfriend.format.ParsingException;
 import com.github.singond.pdfriend.format.RenderingException;
-import com.github.singond.pdfriend.format.process.PDFImporter;
+import com.github.singond.pdfriend.format.process.PDFParser;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
 
 /**
@@ -59,7 +59,7 @@ public class ImposeGridPage {
 		try {
 			// Get content
 			File srcFile = new File("test/lorem-letter.pdf");
-			VirtualDocument source = new PDFImporter().importDocument(Files.readAllBytes(srcFile.toPath()));
+			VirtualDocument source = new PDFParser().parseDocument(Files.readAllBytes(srcFile.toPath()));
 			SourceProvider<Page> sp = new SequentialSourceProvider(source);
 			sp.setSourceTo(page1);
 			sp.setSourceTo(page2);
@@ -80,7 +80,7 @@ public class ImposeGridPage {
 			e.printStackTrace();
 		} catch (RenderingException e) {
 			e.printStackTrace();
-		} catch (ImportException e) {
+		} catch (ParsingException e) {
 			e.printStackTrace();
 		}
 	}

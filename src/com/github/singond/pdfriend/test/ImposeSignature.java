@@ -17,9 +17,9 @@ import com.github.singond.pdfriend.book.model.Signature;
 import com.github.singond.pdfriend.book.model.Volume;
 import com.github.singond.pdfriend.book.model.Leaf.Orientation;
 import com.github.singond.pdfriend.document.VirtualDocument;
-import com.github.singond.pdfriend.format.ImportException;
+import com.github.singond.pdfriend.format.ParsingException;
 import com.github.singond.pdfriend.format.RenderingException;
-import com.github.singond.pdfriend.format.process.PDFImporter;
+import com.github.singond.pdfriend.format.process.PDFParser;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
 
 /**
@@ -75,7 +75,7 @@ public class ImposeSignature {
 		try {
 			// Get content
 			File src = new File("test/lorem-letter.pdf");
-			VirtualDocument doc = new PDFImporter().importDocument(Files.readAllBytes(src.toPath()));
+			VirtualDocument doc = new PDFParser().parseDocument(Files.readAllBytes(src.toPath()));
 			new SequentialSourceProvider(doc).setSourceTo(volume.pages());
 			
 			VirtualDocument.Builder outDoc = new VirtualDocument.Builder();
@@ -88,7 +88,7 @@ public class ImposeSignature {
 			logger.info("printDone", "imposed-signature.pdf");
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (ImportException e) {
+		} catch (ParsingException e) {
 			e.printStackTrace();
 		} catch (RenderingException e) {
 			e.printStackTrace();

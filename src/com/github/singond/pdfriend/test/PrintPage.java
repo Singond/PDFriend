@@ -10,17 +10,17 @@ import com.github.singond.pdfriend.book.model.GridPage;
 import com.github.singond.pdfriend.book.model.Page;
 import com.github.singond.pdfriend.book.model.SinglePage;
 import com.github.singond.pdfriend.document.VirtualDocument;
-import com.github.singond.pdfriend.format.ImportException;
+import com.github.singond.pdfriend.format.ParsingException;
 import com.github.singond.pdfriend.format.RenderingException;
-import com.github.singond.pdfriend.format.process.PDFImporter;
+import com.github.singond.pdfriend.format.process.PDFParser;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
 
 public class PrintPage {
 
-	public static void main(String[] args) throws ImportException, RenderingException, IOException {
+	public static void main(String[] args) throws ParsingException, RenderingException, IOException {
 		File srcFile = new File("test/lorem-letter.pdf");
 		File output = new File("test/printed-page.pdf");
-		VirtualDocument source = new PDFImporter().importDocument(Files.readAllBytes(srcFile.toPath()));
+		VirtualDocument source = new PDFParser().parseDocument(Files.readAllBytes(srcFile.toPath()));
 
 		SinglePage page1 = new SinglePage(612, 792);
 		GridPage page2 = new GridPage(2, 2, 306, 396);

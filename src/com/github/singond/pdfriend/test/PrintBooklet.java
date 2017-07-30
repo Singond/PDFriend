@@ -11,9 +11,9 @@ import com.github.singond.pdfriend.book.control.SourceProvider;
 import com.github.singond.pdfriend.book.model.Page;
 import com.github.singond.pdfriend.book.model.Volume;
 import com.github.singond.pdfriend.document.VirtualDocument;
-import com.github.singond.pdfriend.format.ImportException;
+import com.github.singond.pdfriend.format.ParsingException;
 import com.github.singond.pdfriend.format.RenderingException;
-import com.github.singond.pdfriend.format.process.PDFImporter;
+import com.github.singond.pdfriend.format.process.PDFParser;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
 import com.github.singond.pdfriend.imposition.Booklet;
 import com.github.singond.pdfriend.imposition.Booklet.Binding;
@@ -27,7 +27,7 @@ public class PrintBooklet {
 		File targetFile = new File("test/printed-booklet.pdf");
 		VirtualDocument source;
 		try {
-			source = new PDFImporter().importDocument(Files.readAllBytes(sourceFile.toPath()));
+			source = new PDFParser().parseDocument(Files.readAllBytes(sourceFile.toPath()));
 			Booklet booklet = Booklet.from(source, Binding.BOTTOM, false);
 			Volume volume = booklet.volume();
 			SourceProvider<Page> sp = new SequentialSourceProvider(source);
@@ -35,7 +35,7 @@ public class PrintBooklet {
 			VirtualDocument doc = volume.renderDocument();
 			new PDFRenderer().renderAndSave(doc, targetFile);
 			logger.info("Finished writing document");
-		} catch (ImportException e) {
+		} catch (ParsingException e) {
 			e.printStackTrace();
 		} catch (RenderingException e) {
 			e.printStackTrace();

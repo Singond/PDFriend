@@ -10,22 +10,22 @@ import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
-import com.github.singond.pdfriend.format.ImportException;
-import com.github.singond.pdfriend.format.Importer;
+import com.github.singond.pdfriend.format.ParsingException;
+import com.github.singond.pdfriend.format.Parser;
 import com.github.singond.pdfriend.format.content.PDFPage;
 
-public class PDFImporter implements Importer {
+public class PDFParser implements Parser {
 
-	private static ExtendedLogger logger = Log.logger(PDFImporter.class);
+	private static ExtendedLogger logger = Log.logger(PDFParser.class);
 	
-	public PDFImporter() {}
+	public PDFParser() {}
 	
 	/**
 	 * {@inheritDoc}
 	 * Imports the file given in constructor, if it is a PDF file.
 	 */
 	@Override
-	public VirtualDocument importDocument(byte[] bytes) throws ImportException {
+	public VirtualDocument parseDocument(byte[] bytes) throws ParsingException {
 		PDDocument sourceDoc = null;
 		try {
 			// TODO Log somewhere else
