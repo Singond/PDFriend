@@ -7,7 +7,9 @@ import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.cli.parsing.BookletBindingConverter;
 import com.github.singond.pdfriend.cli.parsing.IntegerDimensionsConverter;
+import com.github.singond.pdfriend.cli.parsing.PageSizeConverter;
 import com.github.singond.pdfriend.geometry.IntegerDimensions;
+import com.github.singond.pdfriend.geometry.PageSize;
 import com.github.singond.pdfriend.imposition.Booklet;
 import com.github.singond.pdfriend.modules.Impose;
 import com.github.singond.pdfriend.modules.Module;
@@ -37,6 +39,11 @@ public class ImposeCommand extends SubCommand {
 	
 	@Parameter(names="--pages", description="")
 	private int pages = -1;
+	
+	@Parameter(names="--size",
+			description="Size to be applied to the input pages",
+			converter=PageSizeConverter.class)
+	private PageSize pageSize = new PageSize.Scale(1);
 
 	@Override
 	public ImposeCommand newInstance() {
@@ -52,6 +59,7 @@ public class ImposeCommand extends SubCommand {
 		impose.setBinding(binding);
 		impose.setFlipVerso(flipVerso);
 		impose.setPages(pages);
+		impose.setSize(pageSize);
 		type.passToModule(impose);
 		return impose;
 	}

@@ -34,7 +34,7 @@ public class Impose implements Module {
 	/** Number of output pages */
 	private int pages = -1;
 	/** Size to be applied to pages of input */
-	private PageSize size;
+	private PageSize pageSize;
 	
 	private static ExtendedLogger logger = Log.logger(Impose.class);
 	
@@ -71,11 +71,11 @@ public class Impose implements Module {
 	}
 
 	public PageSize getSize() {
-		return size;
+		return pageSize;
 	}
 
 	public void setSize(PageSize size) {
-		this.size = size;
+		this.pageSize = size;
 	}
 
 	/**
@@ -191,6 +191,7 @@ public class Impose implements Module {
 			NUp.Builder nup = new NUp.Builder();
 			nup.setRows(rows);
 			nup.setCols(columns);
+			nup.setPageSize(pageSize);
 			if (pages > 0) {
 				nup.setNumberOfPages(pages);
 			}
