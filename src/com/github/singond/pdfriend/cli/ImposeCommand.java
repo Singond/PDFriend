@@ -35,7 +35,7 @@ public class ImposeCommand extends SubCommand {
 	@Parameter(names="--verso-opposite")
 	private boolean flipVerso = false;
 	
-	@Parameter(names="pages", description="")
+	@Parameter(names="--pages", description="")
 	private int pages = -1;
 
 	@Override
