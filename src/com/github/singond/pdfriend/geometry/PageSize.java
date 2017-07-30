@@ -2,7 +2,7 @@ package com.github.singond.pdfriend.geometry;
 
 import java.util.Collection;
 
-import com.github.singond.pdfriend.book.model.Page;
+import com.github.singond.pdfriend.document.VirtualPage;
 
 /**
  * Defines conditions for determining the output dimensions of a page.
@@ -16,15 +16,16 @@ public abstract class PageSize {
 	 * Invites a PageSize.Visitor.
 	 * @param <R> return type of the visitor
 	 */
-	protected abstract <R> R invite(Visitor<? extends R> visitor);
+	protected abstract <R, P> R invite(Visitor<? extends R, P> visitor, P param);
 	
 	/**
 	 * A Visitor interface for PageSize objects.
-	 * @param <R>
+	 * @param <R> return type of the visitor
+	 * @param <P> parameter type for the visitor
 	 */
-	public static interface Visitor<R> {
-		public R visit(Scale size);
-		public R visit(FitToLargest size);
+	public static interface Visitor<R, P> {
+		public R visit(Scale size, P param);
+		public R visit(FitToLargest size, P param);
 	}
 	
 	/**
@@ -53,8 +54,8 @@ public abstract class PageSize {
 		}
 		
 		@Override
-		protected <R> R invite(Visitor<? extends R> visitor) {
-			return visitor.visit(this);
+		protected <R, P> R invite(Visitor<? extends R, P> visitor, P param) {
+			return visitor.visit(this, param);
 		}
 	}
 	
@@ -74,13 +75,13 @@ public abstract class PageSize {
 		 * @param pages a collection of pages to define the circumscribed rectangle
 		 * @return the magnification to be applied to {@code page}
 		 */
-		public double scalePage(Page page, Collection<Page> pages) {
+		public double scalePage(VirtualPage page, Collection<VirtualPage> pages) {
 			/** The largest width in the collection of pages */
 			double largestWidth = -1;
 			/** The largest height in the collection of pages */
 			double largestHeight = -1;
 			
-			for (Page p : pages) {
+			for (VirtualPage p : pages) {
 				if (p.getWidth() > largestWidth)
 					largestWidth = p.getWidth();
 				if (p.getHeight() > largestHeight)
@@ -90,8 +91,8 @@ public abstract class PageSize {
 		}
 
 		@Override
-		protected <R> R invite(Visitor<? extends R> visitor) {
-			return visitor.visit(this);
+		protected <R, P> R invite(Visitor<? extends R, P> visitor, P param) {
+			return visitor.visit(this, param);
 		}
 	}
 }
