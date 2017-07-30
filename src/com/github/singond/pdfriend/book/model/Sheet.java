@@ -30,7 +30,7 @@ public class Sheet {
 	 */
 	private final List<Leaf> leaves;
 	
-	private static final ExtendedLogger logger = Log.logger(Sheet.class);
+	private static ExtendedLogger logger = Log.logger(Sheet.class);
 	
 	public Sheet(double width, double height) {
 		this.width = width;

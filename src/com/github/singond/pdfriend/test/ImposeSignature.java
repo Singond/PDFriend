@@ -2,6 +2,7 @@ package com.github.singond.pdfriend.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
@@ -15,9 +16,9 @@ import com.github.singond.pdfriend.book.model.Sheet;
 import com.github.singond.pdfriend.book.model.Signature;
 import com.github.singond.pdfriend.book.model.Volume;
 import com.github.singond.pdfriend.book.model.Leaf.Orientation;
-import com.github.singond.pdfriend.document.ImportException;
-import com.github.singond.pdfriend.document.RenderingException;
 import com.github.singond.pdfriend.document.VirtualDocument;
+import com.github.singond.pdfriend.format.ImportException;
+import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.process.PDFImporter;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
 
@@ -29,7 +30,7 @@ import com.github.singond.pdfriend.format.process.PDFRenderer;
  */
 public class ImposeSignature {
 	
-	private static final ExtendedLogger logger = Log.logger(ImposeSignature.class);
+	private static ExtendedLogger logger = Log.logger(ImposeSignature.class);
 
 	public static void main(String[] args) {
 		Leaf leaf = new Leaf(612, 792);
@@ -74,7 +75,7 @@ public class ImposeSignature {
 		try {
 			// Get content
 			File src = new File("test/lorem-letter.pdf");
-			VirtualDocument doc = new PDFImporter(src).importDocument();
+			VirtualDocument doc = new PDFImporter().importDocument(Files.readAllBytes(src.toPath()));
 			new SequentialSourceProvider(doc).setSourceTo(volume.pages());
 			
 			VirtualDocument.Builder outDoc = new VirtualDocument.Builder();

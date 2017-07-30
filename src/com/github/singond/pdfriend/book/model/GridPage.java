@@ -142,6 +142,28 @@ public class GridPage extends MultiPage {
 	}
 	
 	/**
+	 * A copy constructor.
+	 * @param original
+	 */
+	public GridPage(GridPage original) {
+		super(original.getWidth(), original.getHeight());
+		this.orientation = original.orientation;
+		this.direction = original.direction; // (This one's not final)
+		
+		int[] dimensions = ((ArrayMatrix<?>) original.matrix).getDimensions();
+		Matrix<Pagelet> cells = new ArrayMatrix<>(dimensions[0], dimensions[1]);
+		MatrixIterator<Pagelet> origIter = original.matrix.horizontallyAll().iterator();
+		
+		while (origIter.hasNext()) {
+			Pagelet p = new Pagelet(origIter.next());
+			int[] coords = origIter.previousIndex();
+			cells.set(coords[0], coords[1], p);
+			super.addPagelet(p);
+		}
+		this.matrix = cells;
+	}
+	
+	/**
 	 * Sets the order in which the cells of the grid should be visited
 	 * when iterating.
 	 * @param direction either by rows or by columns
@@ -187,10 +209,11 @@ public class GridPage extends MultiPage {
 
 	/**
 	 * Provides a way to iterate through the pages in the order specified
-	 * by {@code direction}.
-	 * @return an iterable traversing the grid left to right, top to bottom
+	 * by {@code direction} argument.
+	 * @param direction the manner in which to iterate
+	 * @return an iterable traversing the grid in {@code direction}
 	 */
-	public MatrixIterable<Pagelet> pagelets() {
+	public MatrixIterable<Pagelet> pagelets(Direction direction) {
 		switch (direction) {
 			case COLUMNS:
 				return matrix.vertically();
@@ -199,6 +222,16 @@ public class GridPage extends MultiPage {
 			default:
 				throw new AssertionError("Bad GridPage direction is set: "+direction);
 		}
+	}
+	
+	/**
+	 * Provides a way to iterate through the pages in the order specified
+	 * by the current value of the {@code direction} field.
+	 * @return an iterable traversing the grid according to current value
+	 *         of the {@code direction} field
+	 */
+	public MatrixIterable<Pagelet> pagelets() {
+		return pagelets(direction);
 	}
 	
 	/**

@@ -1,4 +1,4 @@
-package com.github.singond.pdfriend.document;
+package com.github.singond.pdfriend.format;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,7 +6,7 @@ import java.nio.file.Files;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.format.process.PDFRenderer;
+import com.github.singond.pdfriend.document.VirtualDocument;
 
 /**
  * Converts the virtual document into a document of a specific file format.
@@ -18,7 +18,7 @@ import com.github.singond.pdfriend.format.process.PDFRenderer;
  */
 public abstract class Renderer<T> {
 	
-	private static final ExtendedLogger logger = Log.logger(Renderer.class);
+	private static ExtendedLogger logger = Log.logger(Renderer.class);
 
 	/**
 	 * Renders the given virtual document into a real document.

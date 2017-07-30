@@ -2,6 +2,7 @@ package com.github.singond.pdfriend.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
@@ -13,9 +14,9 @@ import com.github.singond.pdfriend.book.model.Sheet;
 import com.github.singond.pdfriend.book.model.Signature;
 import com.github.singond.pdfriend.book.model.Volume;
 import com.github.singond.pdfriend.book.model.Leaf.Orientation;
-import com.github.singond.pdfriend.document.ImportException;
-import com.github.singond.pdfriend.document.RenderingException;
 import com.github.singond.pdfriend.document.VirtualDocument;
+import com.github.singond.pdfriend.format.ImportException;
+import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.process.PDFImporter;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
 
@@ -27,7 +28,7 @@ import com.github.singond.pdfriend.format.process.PDFRenderer;
  */
 public class PrintVolume {
 	
-	private static final ExtendedLogger logger = Log.logger(PrintVolume.class);
+	private static ExtendedLogger logger = Log.logger(PrintVolume.class);
 
 	public static void main(String[] args) {
 		Leaf leaf = new Leaf(612, 792);
@@ -73,7 +74,7 @@ public class PrintVolume {
 		try {
 			// Get content
 			File srcFile = new File("test/lorem-letter.pdf");
-			VirtualDocument source = new PDFImporter(srcFile).importDocument();
+			VirtualDocument source = new PDFImporter().importDocument(Files.readAllBytes(srcFile.toPath()));
 			new SequentialSourceProvider(source).setSourceTo(volume.pages());
 			VirtualDocument doc = volume.renderDocument();
 			new PDFRenderer().renderAndSave(doc, new File("test/printed-volume.pdf"));

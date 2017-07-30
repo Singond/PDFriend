@@ -2,6 +2,8 @@ package com.github.singond.pdfriend.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 import com.github.singond.pdfriend.ExtendedLogger;
@@ -15,10 +17,11 @@ import com.github.singond.pdfriend.book.model.Sheet;
 import com.github.singond.pdfriend.book.model.GridPage.Direction;
 import com.github.singond.pdfriend.book.model.GridPage.GridOrientation;
 import com.github.singond.pdfriend.book.model.Leaf.Orientation;
-import com.github.singond.pdfriend.document.ImportException;
-import com.github.singond.pdfriend.document.RenderingException;
+import com.github.singond.pdfriend.book.model.Page;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
+import com.github.singond.pdfriend.format.ImportException;
+import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.process.PDFImporter;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
 
@@ -30,7 +33,7 @@ import com.github.singond.pdfriend.format.process.PDFRenderer;
  */
 public class ImposeGridPage {
 	
-	private static final ExtendedLogger logger = Log.logger(ImposeGridPage.class);
+	private static ExtendedLogger logger = Log.logger(ImposeGridPage.class);
 
 	public static void main(String[] args) {
 		logger.info("This is a test of the GridPage class functionality");
@@ -56,8 +59,8 @@ public class ImposeGridPage {
 		try {
 			// Get content
 			File srcFile = new File("test/lorem-letter.pdf");
-			VirtualDocument source = new PDFImporter(srcFile).importDocument();
-			SourceProvider sp = new SequentialSourceProvider(source);
+			VirtualDocument source = new PDFImporter().importDocument(Files.readAllBytes(srcFile.toPath()));
+			SourceProvider<Page> sp = new SequentialSourceProvider(source);
 			sp.setSourceTo(page1);
 			sp.setSourceTo(page2);
 			

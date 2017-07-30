@@ -14,17 +14,18 @@ import org.apache.pdfbox.util.Matrix;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
+import com.github.singond.pdfriend.Util;
 import com.github.singond.pdfriend.document.AContentVisitor;
 import com.github.singond.pdfriend.document.Content;
-import com.github.singond.pdfriend.document.Renderer;
-import com.github.singond.pdfriend.document.RenderingException;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
+import com.github.singond.pdfriend.format.Renderer;
+import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.content.PDFPage;
 
 public class PDFRenderer extends Renderer<PDDocument> {
 	
-	private static final ExtendedLogger logger = Log.logger(PDFRenderer.class);
+	private static ExtendedLogger logger = Log.logger(PDFRenderer.class);
 
 	@Override
 	public PDDocument render(VirtualDocument document) throws RenderingException {
@@ -94,15 +95,33 @@ public class PDFRenderer extends Renderer<PDDocument> {
 			PDPageContentStream content = controller.cs;
 			AffineTransform trMatrix = source.getPosition();
 			
+			logger.debug("render-pdf-matrix", source, Util.toString(trMatrix));
+			PDPage page = source.getPage();
+			PDRectangle box = PDFSettings.getBox(page);
+			/*
+			 * HACK: Apparently, imposing a page with 90 or 270 degree rotation
+			 * stretches the page to fit the non-rotated rectangle, effectively
+			 * swapping height for width and vice versa. The following is
+			 * a hack to overcome this limitation of PDFBox.
+			 */
+			int rotation = page.getRotation();
+			if (rotation % 180 == 90) {
+				logger.debug("render-pdf-workaround", source, rotation);
+				float w = box.getWidth();
+				float h = box.getHeight();
+				trMatrix.scale(h/w, w/h);
+			} // End HACK
+			// Move to the box position
+			trMatrix.translate(box.getLowerLeftX(), box.getLowerLeftY());
+			
 			try {
-				PDFormXObject form = layerUtility.importPageAsForm(source.getDoc(), source.getPage());
+				PDFormXObject form = layerUtility.importPageAsForm(source.getDoc(), page);
 				content.saveGraphicsState();
 				content.transform(new Matrix(trMatrix));
 				content.drawForm(form);
 				content.restoreGraphicsState();
 			} catch (IOException e) {
-				logger.error("An I/O Exception occured when imposing PDFPage {} onto target page {}.",
-				          source, controller.page);
+				logger.error("render-pdf-ioException", source, controller.page);
 				throw new RenderingException("Error when writing the contents of page "+source, e);
 			}
 			

@@ -91,7 +91,7 @@ public class Leaf {
 	private int instanceNumber;
 	
 	private static int nextInstanceNumber = 1;
-	private static final ExtendedLogger logger = Log.logger(Leaf.class);
+	private static ExtendedLogger logger = Log.logger(Leaf.class);
 	
 	/**
 	 * Constructs a new Leaf of the given dimensions with each of the two

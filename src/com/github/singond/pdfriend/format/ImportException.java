@@ -1,4 +1,4 @@
-package com.github.singond.pdfriend.document;
+package com.github.singond.pdfriend.format;
 
 public class ImportException extends Exception {
 	

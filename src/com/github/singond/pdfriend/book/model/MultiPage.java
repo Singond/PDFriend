@@ -75,6 +75,7 @@ public abstract class MultiPage extends Page {
 	public Collection<Movable> getContent() {
 		Set<Content.Movable> contents = new HashSet<>();
 		for (Pagelet p : pagelets) {
+			if (p.source == null) continue;
 			for (Content.Movable cm : p.source.getMovableContent()) {
 //				cm.getTransform().preConcatenate(p.framePosition);
 				cm.getTransform().preConcatenate(p.getPositionInPage());
@@ -134,6 +135,18 @@ public abstract class MultiPage extends Page {
 			this.height = height;
 			this.framePosition = new AffineTransform(position);
 			this.positioner = new RectangleFrame(width, height);
+		}
+		
+		/**
+		 * A copy constructor.
+		 * Constructs a new Pagelet which is a copy of the given Pagelet.
+		 * The copy is a shallow one, ie. the source page reference is copied
+		 * to the new Pagelet.
+		 * @param original the pagelet to be copied
+		 */
+		public Pagelet(Pagelet original) {
+			this(original.width, original.height, original.framePosition);
+			this.source = original.source;
 		}
 
 		public double getWidth() {

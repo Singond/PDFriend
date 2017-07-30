@@ -24,7 +24,7 @@ public class VirtualDocument {
 	 */
 	private final List<VirtualPage> pages;
 	
-	private static final ExtendedLogger logger = Log.logger(VirtualDocument.class);
+	private static ExtendedLogger logger = Log.logger(VirtualDocument.class);
 	
 	
 	/**
@@ -82,6 +82,82 @@ public class VirtualDocument {
 			}
 		}
 		return new double[]{width, height};
+	}
+	
+	/**
+	 * Joins several virtual document into one in the order they are given.
+	 * @param docs a list of virtual documents to be joined, listed in the
+	 *        order they should appear in the output
+	 * @return a new instance of VirtualDocument containing all input
+	 *         documents merged into one
+	 */
+	public static VirtualDocument concatenate(List<VirtualDocument> docs) {
+		logger.debug("vdoc_concatenating", docs.size());
+		final List<VirtualPage> pages = new ArrayList<>();
+		for (VirtualDocument doc : docs) {
+			pages.addAll(doc.getPages());
+		}
+		return new VirtualDocument(pages);
+	}
+	
+	/**
+	 * Joins several virtual document into one in the order they are given.
+	 * @param docs virtual documents to be joined, listed in the order they
+	 *        should appear in the output
+	 * @return a new instance of VirtualDocument containing all input
+	 *         documents merged into one
+	 */
+	public static VirtualDocument concatenate(VirtualDocument... docs) {
+		final List<VirtualPage> pages = new ArrayList<>();
+		for (VirtualDocument doc : docs) {
+			pages.addAll(doc.getPages());
+		}
+		return new VirtualDocument(pages);
+	}
+	
+	/**
+	 * Returns the dimensions of the minimal rectangle into which any page
+	 * of the given documents can fit.
+	 * @return the pair of dimensions [width, height]
+	 */
+	public static double[] maxPageDimensions(List<VirtualDocument> docs) {
+		double[] max = new double[2];
+		for (VirtualDocument doc : docs) {
+			double[] docSize = doc.maxPageDimensions();
+			if (docSize[0] > max[0])
+				max[0] = docSize[0];
+			if (docSize[1] > max[1])
+				max[1] = docSize[1];
+		}
+		return max;
+	}
+	
+	/**
+	 * Returns the total number of pages in the given documents.
+	 * @param docs
+	 * @return the sum of lengths of the given documents
+	 */
+	public static int totalLength(List<VirtualDocument> docs) {
+		int count = 0;
+		for (VirtualDocument doc : docs) {
+			count += doc.getLength();
+		}
+		return count;
+	}
+	
+	/**
+	 * Returns the length of the longest document from the list.
+	 * @param docs the list of document to be searched
+	 * @return the length of the longest document
+	 */
+	public static int maxLength(List<VirtualDocument> docs) {
+		int max = 0;
+		for (VirtualDocument doc : docs) {
+			int length = doc.getLength();
+			if (length > max)
+				max = length;
+		}
+		return max;
 	}
 	
 	@Override

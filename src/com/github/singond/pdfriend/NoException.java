@@ -1,4 +1,4 @@
-package com.github.singond.pdfriend.document;
+package com.github.singond.pdfriend;
 
 /**
  * Class signifying that no exceptions can be thrown from a piece of code.
@@ -12,5 +12,7 @@ package com.github.singond.pdfriend.document;
 public class NoException extends RuntimeException {
 
 	/** Not instantiable: Will never be thrown. */
-	private NoException(){};
+	private NoException(){
+		throw new AssertionError("The NoException class should not be instantiated");
+	};
 }

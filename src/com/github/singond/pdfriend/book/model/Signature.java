@@ -31,7 +31,7 @@ public class Signature {
 	 */
 	private Order<Leaf> leafOrder;
 	
-	private static final ExtendedLogger logger = Log.logger(Signature.class);
+	private static ExtendedLogger logger = Log.logger(Signature.class);
 	
 	public Signature() {
 		this.sheets = SetUniqueList.setUniqueList(new LinkedList<Sheet>());

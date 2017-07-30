@@ -26,7 +26,7 @@ public class VirtualPage {
 	/** A collection of all pages along with their positions. */
 	private final Collection<Content> content;
 	
-	private static final ExtendedLogger logger = Log.logger(VirtualPage.class);
+	private static ExtendedLogger logger = Log.logger(VirtualPage.class);
 
 
 	/**
@@ -69,6 +69,17 @@ public class VirtualPage {
 		this.height = height;
 		this.content = new HashSet<>();
 		this.content.add(content);
+	}
+	
+	/**
+	 * A copy constructor.
+	 * Creates a new instance of VirtualPagae which is a copy of the given
+	 * VirtualPage, including all its content.
+	 */
+	public VirtualPage(VirtualPage original) {
+		this.width = original.width;
+		this.height = original.height;
+		this.content = new HashSet<>(original.content);
 	}
 
 
@@ -201,8 +212,8 @@ public class VirtualPage {
 		 * @return A new instance of VirtualPage.
 		 */
 		public VirtualPage build() {
-			logger.verbose("vpage_building",
-			            width, height, content.size());
+			logger.debug("vpage_building",
+			             width, height, content.size());
 			return new VirtualPage(width, height, content);
 		}
 	}

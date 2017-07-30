@@ -12,8 +12,8 @@ import com.github.singond.pdfriend.book.model.Leaf;
 import com.github.singond.pdfriend.book.model.Signature;
 import com.github.singond.pdfriend.book.model.Volume;
 import com.github.singond.pdfriend.document.VirtualDocument;
-import com.github.singond.pdfriend.geometry.Line;
-import com.github.singond.pdfriend.geometry.Point;
+import com.github.singond.geometry.plane.Line;
+import com.github.singond.geometry.plane.Point;
 
 /**
  * A booklet with one page of input per one page of output.
@@ -32,7 +32,7 @@ public class Booklet {
 	private final Volume volume;
 	
 	/** Logger */
-	private static final ExtendedLogger logger = Log.logger(Booklet.class);
+	private static ExtendedLogger logger = Log.logger(Booklet.class);
 	
 	/**
 	 * Constructs a new Booklet without content.

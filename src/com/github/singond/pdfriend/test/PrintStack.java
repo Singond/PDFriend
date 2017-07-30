@@ -2,6 +2,7 @@ package com.github.singond.pdfriend.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,13 +16,13 @@ import com.github.singond.pdfriend.book.model.Leaf;
 import com.github.singond.pdfriend.book.model.Signature;
 import com.github.singond.pdfriend.book.model.Volume;
 import com.github.singond.pdfriend.book.model.Leaf.Orientation;
-import com.github.singond.pdfriend.document.ImportException;
-import com.github.singond.pdfriend.document.RenderingException;
 import com.github.singond.pdfriend.document.VirtualDocument;
+import com.github.singond.pdfriend.format.ImportException;
+import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.process.PDFImporter;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
-import com.github.singond.pdfriend.geometry.Line;
-import com.github.singond.pdfriend.geometry.Point;
+import com.github.singond.geometry.plane.Line;
+import com.github.singond.geometry.plane.Point;
 
 /**
  * A sample signature of two sheets.
@@ -31,7 +32,7 @@ import com.github.singond.pdfriend.geometry.Point;
  */
 public class PrintStack {
 	
-	private static final ExtendedLogger logger = Log.logger(PrintStack.class);
+	private static ExtendedLogger logger = Log.logger(PrintStack.class);
 
 	public static void main(String[] args) {
 		Leaf leaf = new Leaf(612, 792);
@@ -60,7 +61,7 @@ public class PrintStack {
 		try {
 			// Get content
 			File srcFile = new File("test/lorem-letter.pdf");
-			VirtualDocument source = new PDFImporter(srcFile).importDocument();
+			VirtualDocument source = new PDFImporter().importDocument(Files.readAllBytes(srcFile.toPath()));
 			new SequentialSourceProvider(source).setSourceTo(volume.pages());
 			VirtualDocument output = volume.renderDocument();
 			new PDFRenderer().renderAndSave(output, new File("test/printed-stack.pdf"));
