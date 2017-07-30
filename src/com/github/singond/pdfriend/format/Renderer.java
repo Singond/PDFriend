@@ -40,6 +40,6 @@ public abstract class Renderer<T> {
 	public void renderAndSave(VirtualDocument document, File output) throws RenderingException, IOException {
 		byte[] data = renderRaw(document);
 		Files.write(output.toPath(), data);
-		logger.info("write-file-done", output);
+		logger.info("writeFile_done", output);
 	}
 }

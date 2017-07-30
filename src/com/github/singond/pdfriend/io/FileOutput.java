@@ -27,9 +27,9 @@ class FileOutput implements OutputElement {
 	@Override
 	public void acceptBytes(byte[] bytes) throws OutputException {
 		try {
-			logger.info("write-file", file);
+			logger.info("writeFile", file);
 			Files.write(file, bytes);
-			logger.info("write-file-done", file);
+			logger.info("writeFile_done", file);
 		} catch (IOException e) {
 			throw new OutputException("Error when writing to output file "
 					+ file.toAbsolutePath(), this, e);

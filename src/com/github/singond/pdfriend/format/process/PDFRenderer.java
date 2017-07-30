@@ -29,7 +29,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 
 	@Override
 	public PDDocument render(VirtualDocument document) throws RenderingException {
-		logger.verbose("render-doc-start", document);
+		logger.verbose("render_doc", document);
 		
 		PDDocument targetDoc = new PDDocument();
 		LayerUtility lutil = new LayerUtility(targetDoc);
@@ -56,13 +56,13 @@ public class PDFRenderer extends Renderer<PDDocument> {
 
 
 	private PDPage renderPage(VirtualPage page, DocumentController docCtrl) throws RenderingException {
-		logger.verbose("render-page-start", page);
+		logger.verbose("render_page", page);
 		PDPage targetPage = new PDPage();
 		targetPage.setMediaBox(new PDRectangle((float) page.getWidth(), (float) page.getHeight()));
 		ContentRenderer contentRndr = new ContentRenderer();
 		
 		if (page.getContent().isEmpty()) {
-			logger.debug("render-blank", page);
+			logger.debug("render_pageBlank", page);
 			return targetPage;
 		}
 		try {
@@ -70,7 +70,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 			PageController pageCtrl = new PageController(docCtrl, targetPage, content);
 			
 			if (logger.isDebugEnabled()) {
-				logger.debug("render-page-content", page.getContent().size(), page);
+				logger.debug("render_content", page.getContent().size(), page);
 			}
 			for (Content c : page.getContent()) {
 				c.invite(contentRndr, pageCtrl);
@@ -95,7 +95,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 			PDPageContentStream content = controller.cs;
 			AffineTransform trMatrix = source.getPosition();
 			
-			logger.debug("render-pdf-matrix", source, Util.toString(trMatrix));
+			logger.debug("render_pdf_matrix", source, Util.toString(trMatrix));
 			PDPage page = source.getPage();
 			PDRectangle box = PDFSettings.getBox(page);
 			/*
@@ -106,7 +106,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 			 */
 			int rotation = page.getRotation();
 			if (rotation % 180 == 90) {
-				logger.debug("render-pdf-workaround", source, rotation);
+				logger.debug("render_pdf_workaround", source, rotation);
 				float w = box.getWidth();
 				float h = box.getHeight();
 				trMatrix.scale(h/w, w/h);
@@ -121,7 +121,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 				content.drawForm(form);
 				content.restoreGraphicsState();
 			} catch (IOException e) {
-				logger.error("render-pdf-ioException", source, controller.page);
+				logger.error("render_pdf_ioException", source, controller.page);
 				throw new RenderingException("Error when writing the contents of page "+source, e);
 			}
 			

@@ -32,7 +32,7 @@ class FileInput implements InputElement {
 	@Override
 	public byte[] getBytes() throws InputException {
 		try {
-			logger.info("read-file", file);
+			logger.info("readFile", file);
 			return Files.readAllBytes(file);
 		} catch (IOException e) {
 			throw new InputException("Error when reading input file "

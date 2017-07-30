@@ -28,7 +28,7 @@ public class PDFParser implements Parser {
 	public VirtualDocument parseDocument(byte[] bytes) throws ParsingException {
 		PDDocument sourceDoc = null;
 		try {
-			logger.info("parse-pdf");
+			logger.info("parse_pdf");
 			sourceDoc = PDDocument.load(bytes);
 		} catch (IOException e) {
 			logger.error("Error when parsing the file", e);
