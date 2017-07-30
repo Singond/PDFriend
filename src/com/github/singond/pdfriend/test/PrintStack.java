@@ -2,6 +2,7 @@ package com.github.singond.pdfriend.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class PrintStack {
 		try {
 			// Get content
 			File srcFile = new File("test/lorem-letter.pdf");
-			VirtualDocument source = new PDFImporter(srcFile).importDocument();
+			VirtualDocument source = new PDFImporter().importDocument(Files.readAllBytes(srcFile.toPath()));
 			new SequentialSourceProvider(source).setSourceTo(volume.pages());
 			VirtualDocument output = volume.renderDocument();
 			new PDFRenderer().renderAndSave(output, new File("test/printed-stack.pdf"));

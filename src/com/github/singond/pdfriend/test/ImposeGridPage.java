@@ -2,6 +2,8 @@ package com.github.singond.pdfriend.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 import com.github.singond.pdfriend.ExtendedLogger;
@@ -57,7 +59,7 @@ public class ImposeGridPage {
 		try {
 			// Get content
 			File srcFile = new File("test/lorem-letter.pdf");
-			VirtualDocument source = new PDFImporter(srcFile).importDocument();
+			VirtualDocument source = new PDFImporter().importDocument(Files.readAllBytes(srcFile.toPath()));
 			SourceProvider<Page> sp = new SequentialSourceProvider(source);
 			sp.setSourceTo(page1);
 			sp.setSourceTo(page2);

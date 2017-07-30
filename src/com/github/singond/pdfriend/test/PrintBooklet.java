@@ -2,6 +2,7 @@ package com.github.singond.pdfriend.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
@@ -26,7 +27,7 @@ public class PrintBooklet {
 		File targetFile = new File("test/printed-booklet.pdf");
 		VirtualDocument source;
 		try {
-			source = new PDFImporter(sourceFile).importDocument();
+			source = new PDFImporter().importDocument(Files.readAllBytes(sourceFile.toPath()));
 			Booklet booklet = Booklet.from(source, Binding.BOTTOM, false);
 			Volume volume = booklet.volume();
 			SourceProvider<Page> sp = new SequentialSourceProvider(source);

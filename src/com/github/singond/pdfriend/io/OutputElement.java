@@ -1,11 +1,11 @@
 package com.github.singond.pdfriend.io;
 
 /**
- * Represents data output.
+ * Represents a single piece of data output.
  * @author Singon
  */
-public interface Output {
+interface OutputElement {
 	
-	/** Outputs the given byte array */
+	/** Returns the input as a byte array */
 	public void acceptBytes(byte[] bytes) throws OutputException;
 }

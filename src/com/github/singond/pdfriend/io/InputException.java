@@ -18,7 +18,7 @@ public class InputException extends Exception {
 		super(message);
 	}
 	
-	public InputException(String message, Input input, Throwable cause) {
+	public InputException(String message, InputElement input, Throwable cause) {
 		super(message, cause);
 	}
 	

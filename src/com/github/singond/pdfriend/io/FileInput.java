@@ -6,10 +6,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * An input to a pipe from a file.
+ * Data input from a file.
  * @author Singon
  */
-public class FileInput implements Input {
+class FileInput implements InputElement {
 	private final Path file;
 	
 	public FileInput(Path file) {
@@ -33,10 +33,5 @@ public class FileInput implements Input {
 			throw new InputException("Error when reading input file "
 					+ file.toAbsolutePath(), this, e);
 		}
-	}
-
-	@Override
-	public <T, P> T invite(InputVisitor<T, P> visitor, P param) throws InputException {
-		return visitor.visit(this, param);
 	}
 }

@@ -6,10 +6,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * An input to a pipe from a file.
+ * Data output to a file.
  * @author Singon
  */
-public class FileOutput implements Output {
+class FileOutput implements OutputElement {
 	private final Path file;
 	
 	public FileOutput(Path file) {
@@ -28,10 +28,5 @@ public class FileOutput implements Output {
 			throw new OutputException("Error when writing to output file "
 					+ file.toAbsolutePath(), this, e);
 		}
-	}
-
-	@Override
-	public <T, P> T invite(OutputVisitor<T, P> visitor, P param) throws OutputException {
-		return visitor.visit(this, param);
 	}
 }
