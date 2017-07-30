@@ -16,7 +16,7 @@ public abstract class PageSize {
 	 * Invites a PageSize.Visitor.
 	 * @param <R> return type of the visitor
 	 */
-	protected abstract <R, P> R invite(Visitor<? extends R, P> visitor, P param);
+	public abstract <R, P> R invite(Visitor<? extends R, P> visitor, P param);
 	
 	/**
 	 * A Visitor interface for PageSize objects.
@@ -54,7 +54,7 @@ public abstract class PageSize {
 		}
 		
 		@Override
-		protected <R, P> R invite(Visitor<? extends R, P> visitor, P param) {
+		public <R, P> R invite(Visitor<? extends R, P> visitor, P param) {
 			return visitor.visit(this, param);
 		}
 	}
@@ -91,7 +91,7 @@ public abstract class PageSize {
 		}
 
 		@Override
-		protected <R, P> R invite(Visitor<? extends R, P> visitor, P param) {
+		public <R, P> R invite(Visitor<? extends R, P> visitor, P param) {
 			return visitor.visit(this, param);
 		}
 	}
