@@ -2,7 +2,6 @@ package com.github.singond.pdfriend.modules;
 
 import java.util.List;
 
-import com.beust.jcommander.Parameters;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.control.SequentialSourceProvider;
@@ -20,8 +19,6 @@ import com.github.singond.pdfriend.imposition.Overlay;
  * @author Singon
  *
  */
-@Parameters(separators="=",
-		commandDescription="Lay out pages of the source documents onto pages of a new document")
 public class Impose implements Module {
 
 	/** A pre-defined type of imposition: booklet, n-up etc. */
