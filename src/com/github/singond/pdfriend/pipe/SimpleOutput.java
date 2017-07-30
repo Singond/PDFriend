@@ -1,8 +1,10 @@
 package com.github.singond.pdfriend.pipe;
 
+import java.util.List;
+
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.format.RenderingException;
-import com.github.singond.pdfriend.format.process.PDFRenderer;
+import com.github.singond.pdfriend.format.RenderingManager;
 import com.github.singond.pdfriend.io.Output;
 import com.github.singond.pdfriend.io.OutputException;
 
@@ -13,6 +15,7 @@ import com.github.singond.pdfriend.io.OutputException;
 class SimpleOutput implements PipeOutput {
 	private Output output;
 	private boolean written = false;
+	private RenderingManager rmgr = new RenderingManager();
 	
 	SimpleOutput(Output output) {
 		this.output = output;
@@ -23,10 +26,9 @@ class SimpleOutput implements PipeOutput {
 		if (written) {
 			throw new IllegalStateException("This output has already been written out");
 		}
-		VirtualDocument doc = data.getModuleData().asSingleDocument();
+		List<VirtualDocument> docs = data.getModuleData().asMultipleDocuments();
 		try {
-			output.acceptBytes(new PDFRenderer().renderRaw(doc));
-			written = true;
+			rmgr.renderDocuments(docs, output);
 		} catch (OutputException | RenderingException e) {
 			throw new PipeException(e);
 		}
