@@ -22,7 +22,10 @@ class MultiDocModuleData implements ModuleData {
 
 	@Override
 	public VirtualDocument asSingleDocument() {
-		return VirtualDocument.concatenate(documents);
+		if (documents.size() == 1)
+			return documents.get(0);
+		else
+			return VirtualDocument.concatenate(documents);
 	}
 
 	@Override
