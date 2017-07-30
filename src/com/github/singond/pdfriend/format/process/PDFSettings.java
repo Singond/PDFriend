@@ -11,7 +11,7 @@ public class PDFSettings {
 	 * @param page the PDF page whose governing box is to be obtained
 	 * @return a PDRectangle representing the governing box
 	 */
-	public static final PDRectangle getBox(PDPage page) {
+	static final PDRectangle getBox(PDPage page) {
 		return page.getCropBox();
 	}
 }
