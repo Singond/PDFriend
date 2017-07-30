@@ -5,12 +5,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import com.github.singond.pdfriend.ExtendedLogger;
+import com.github.singond.pdfriend.Log;
+
 /**
  * Data input from a file.
  * @author Singon
  */
 class FileInput implements InputElement {
 	private final Path file;
+	private static ExtendedLogger logger = Log.logger(FileInput.class);
 	
 	public FileInput(Path file) {
 		this.file = file;
@@ -28,6 +32,7 @@ class FileInput implements InputElement {
 	@Override
 	public byte[] getBytes() throws InputException {
 		try {
+			logger.info("read-file", file);
 			return Files.readAllBytes(file);
 		} catch (IOException e) {
 			throw new InputException("Error when reading input file "

@@ -28,11 +28,10 @@ public class PDFParser implements Parser {
 	public VirtualDocument parseDocument(byte[] bytes) throws ParsingException {
 		PDDocument sourceDoc = null;
 		try {
-			// TODO Log somewhere else
-//			logger.info("load-file-start", file);
+			logger.info("parse-pdf");
 			sourceDoc = PDDocument.load(bytes);
 		} catch (IOException e) {
-			logger.error("Error when loading the file", e);
+			logger.error("Error when parsing the file", e);
 		}
 		VirtualDocument.Builder result = new VirtualDocument.Builder();
 		for (PDPage sourcePage : sourceDoc.getPages()) {

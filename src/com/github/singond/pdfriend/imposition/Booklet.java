@@ -70,8 +70,9 @@ public class Booklet {
 			throw new IllegalArgumentException
 				("A booklet must have at least one page");
 		} else if (pages % 4 != 0) {
-			logger.warn("booklet-padding");
+			int oldPages = pages;
 			pages = ((pages / 4) + 1) * 4;
+			logger.warn("booklet_padding", pages-oldPages);
 		}
 		assert (pages >= 1) && (pages % 4 == 0) : pages;
 		

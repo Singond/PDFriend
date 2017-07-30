@@ -85,7 +85,7 @@ public class ImposeSignature {
 			PDDocument output = new PDFRenderer().render(outDoc.build());
 			output.save(new File("test/imposed-signature.pdf"));
 			output.close();
-			logger.info("printDone", "imposed-signature.pdf");
+			logger.info("write-file-done", "imposed-signature.pdf");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ParsingException e) {
