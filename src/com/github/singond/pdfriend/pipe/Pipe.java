@@ -7,7 +7,6 @@ import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.io.Input;
 import com.github.singond.pdfriend.io.Output;
 import com.github.singond.pdfriend.modules.Module;
-import com.github.singond.pdfriend.modules.ModuleDataFactory;
 import com.github.singond.pdfriend.modules.ModuleException;
 
 public class Pipe {
@@ -58,6 +57,5 @@ public class Pipe {
 			data = op.process(data);
 		}
 		outputConsumer.consumePipeData(data);
-//		output = data.getModuleData().asMultipleDocuments();
 	}
 }
