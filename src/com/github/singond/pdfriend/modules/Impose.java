@@ -80,33 +80,6 @@ public class Impose implements Module {
 		}
 	}
 	
-	private VirtualDocument imposeBooklet(VirtualDocument source)
-			throws RenderingException {
-		logger.info("Imposing booklet...");
-		
-		Booklet booklet = Booklet.from(source, binding, flipVerso);
-		Volume volume = booklet.volume();
-		SourceProvider<Page> sp = new SequentialSourceProvider(source);
-		sp.setSourceTo(volume.pages());
-		VirtualDocument imposed = volume.renderDocument();
-		return imposed;
-	}
-	
-	private VirtualDocument imposeNUp(VirtualDocument source, int rows, int columns)
-			throws RenderingException {
-		logger.info("Imposing n-up...");
-		int pages = this.pages;
-		
-		NUp.Builder nup = new NUp.Builder();
-		nup.setRows(rows);
-		nup.setCols(columns);
-		if (pages > 0) {
-			nup.setNumberOfPages(pages);
-		}
-		VirtualDocument imposed = nup.buildFor(source).getDocument();
-		return imposed;
-	}
-	
 	/**
 	 * The type of document to be produced by imposition (a booklet, n-up etc).
 	 * Each class of this interface represents one type of imposed document
@@ -128,7 +101,7 @@ public class Impose implements Module {
 	}
 	
 	/**
-	 * The type of document to be produced by imposition (a booklet, n-up etc).
+	 * A booklet document.
 	 */
 	public class TypeBooklet implements Type {
 		/** The name of the document type */
@@ -141,12 +114,19 @@ public class Impose implements Module {
 		
 		@Override
 		public VirtualDocument impose(ModuleData data) throws RenderingException {
-			return imposeBooklet(data.asSingleDocument());
+			logger.info("Imposing booklet...");
+			VirtualDocument source = data.asSingleDocument();
+			Booklet booklet = Booklet.from(source, binding, flipVerso);
+			Volume volume = booklet.volume();
+			SourceProvider<Page> sp = new SequentialSourceProvider(source);
+			sp.setSourceTo(volume.pages());
+			VirtualDocument imposed = volume.renderDocument();
+			return imposed;
 		}
 	}
 	
 	/**
-	 * The type of document to be produced by imposition (a booklet, n-up etc).
+	 * An n-up document.
 	 */
 	public class TypeNUp implements Type {
 		/** The name of the document type */
@@ -168,12 +148,23 @@ public class Impose implements Module {
 		
 		@Override
 		public VirtualDocument impose(ModuleData data) throws RenderingException {
-			return imposeNUp(data.asSingleDocument(), rows, columns);
+			VirtualDocument source = data.asSingleDocument();
+			logger.info("Imposing n-up...");
+			int pages = Impose.this.pages;
+			
+			NUp.Builder nup = new NUp.Builder();
+			nup.setRows(rows);
+			nup.setCols(columns);
+			if (pages > 0) {
+				nup.setNumberOfPages(pages);
+			}
+			VirtualDocument imposed = nup.buildFor(source).getDocument();
+			return imposed;
 		}
 	}
 	
 	/**
-	 * The type of document to be produced by imposition (a booklet, n-up etc).
+	 * A layered document (several documents whose corresponding pages are overlaid).
 	 */
 	public class TypeOverlay implements Type {
 		/** The name of the document type */
