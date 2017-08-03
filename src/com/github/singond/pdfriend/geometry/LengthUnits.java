@@ -25,16 +25,24 @@ public enum LengthUnits implements LengthUnit {
 	
 	/** The reference value of this length unit in metres */
 	private final double value;
+	/** The textual symbol for this unit */
+	private final String symbol;
 	
 	/**
 	 * @param valueInMetres the value of the new length unit in metres
 	 */
 	private LengthUnits(double valueInMetres, String symbol) {
 		this.value = valueInMetres;
+		this.symbol = symbol;
 	}
 
 	@Override
 	public double inMetres() {
 		return value;
+	}
+	
+	@Override
+	public String getSymbol() {
+		return symbol;
 	}
 }

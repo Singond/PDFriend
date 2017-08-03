@@ -7,4 +7,9 @@ public interface LengthUnit {
 	 * This value is used as the reference when comparing and converting units.
 	 */
 	public double inMetres();
+	
+	/**
+	 * Returns the textual symbol for the unit.
+	 */
+	public String getSymbol();
 }

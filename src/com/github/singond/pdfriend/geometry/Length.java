@@ -30,4 +30,9 @@ public final class Length {
 	public double in(LengthUnit otherUnit) {
 		return value * unit.inMetres()/otherUnit.inMetres();
 	}
+	
+	@Override
+	public String toString() {
+		return value + unit.getSymbol();
+	}
 }
