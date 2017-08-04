@@ -65,4 +65,14 @@ public class Dimensions {
 	public double heightInPoints() {
 		return height.in(dfltUnit);
 	}
+	
+	/**
+	 * Returns a string representation of the pair of dimensions.
+	 * The format is subject to change, but the following is usual:
+	 * {@code width x height}
+	 */
+	@Override
+	public String toString() {
+		return width + " x " + height;
+	}
 }
