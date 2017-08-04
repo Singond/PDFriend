@@ -42,4 +42,8 @@ public final class Length {
 	public String toString() {
 		return value + unit.symbol();
 	}
+	
+	public String toString(LengthUnit u) {
+		return in(u) + u.symbol();
+	}
 }

@@ -75,4 +75,12 @@ public class Dimensions {
 	public String toString() {
 		return width + " x " + height;
 	}
+	
+	public String toString(LengthUnit widthUnit, LengthUnit heightUnit) {
+		return width.toString(widthUnit) + " x " + height.toString(heightUnit);
+	}
+	
+	public String toString(LengthUnit unit) {
+		return toString(unit, unit);
+	}
 }
