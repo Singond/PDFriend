@@ -29,12 +29,12 @@ class RectangleSizeConverter {
 			 * number as well. This enables shorhand notation like 20x30cm
 			 * to actually mean "20 cm by 30 cm".
 			 */
-			ParsingResult<Length> len1 = dimParser.parseLength(parts[1]);
-			ParsingResult<Length> len2;
-			if (len1.parsedSuccessfully()) {
+			ParsingResult<Length> len2 = dimParser.parseLength(parts[1]);
+			ParsingResult<Length> len1;
+			if (len2.parsedSuccessfully()) {
 				// Use the unit from the 2nd part as the default for the 1st
-				len2 = dimParser.parseLength(parts[0], len1.getResult().unit());
-				if (len2.parsedSuccessfully()) {
+				len1 = dimParser.parseLength(parts[0], len2.getResult().unit());
+				if (len1.parsedSuccessfully()) {
 					Length length1 = len1.getResult();
 					Length length2 = len2.getResult();
 					Dimensions dims = new Dimensions(length1, length2);
