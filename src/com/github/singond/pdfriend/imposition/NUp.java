@@ -47,8 +47,8 @@ public class NUp implements Imposable {
 		@Override
 		public GridPage visit(Scale size, GridPageParams template) {
 			GridPage grid = gridFromTemplate(template,
-			                                 template.cell.width()*size.scalePage(),
-			                                 template.cell.height()*size.scalePage());
+			                                 template.cell.widthInPoints()*size.scalePage(),
+			                                 template.cell.heightInPoints()*size.scalePage());
 			grid.scalePages(size.scalePage());
 			return grid;
 		}
@@ -56,8 +56,8 @@ public class NUp implements Imposable {
 		@Override
 		public GridPage visit(FitToLargest size, GridPageParams template) {
 			GridPage grid = gridFromTemplate(template,
-			                                 template.cell.width(),
-			                                 template.cell.height());
+			                                 template.cell.widthInPoints(),
+			                                 template.cell.heightInPoints());
 			grid.fitPages();
 			return grid;
 		}
