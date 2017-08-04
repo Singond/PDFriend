@@ -14,7 +14,7 @@ class RectangleSizeConverter {
 	private static ExtendedLogger logger = Log.logger(RectangleSizeConverter.class);
 	
 	public static ParsingResult<Dimensions> convert(String arg) {
-		logger.debug("parse-rectangle", arg);
+		logger.debug("parse_rectangle", arg);
 		ParsingResult<Dimensions> result =
 				new Unparsable<>("Unknown format definition: " + arg);
 		
@@ -38,7 +38,7 @@ class RectangleSizeConverter {
 					Length length1 = len1.getResult();
 					Length length2 = len2.getResult();
 					Dimensions dims = new Dimensions(length1, length2);
-					logger.debug("parse-rectangle-success", dims);
+					logger.debug("parse_rectangle_success", dims);
 					result = new Parsed<>(dims);
 				}
 			}

@@ -47,7 +47,7 @@ class DimensionsParser {
 	 *         an {@code Unparsable} instance if the string cannot be parsed.
 	 */
 	ParsingResult<Length> parseLength(String arg, LengthUnit defaultUnit) {
-		logger.debug("parse-length", arg);
+		logger.debug("parse_length", arg);
 		Matcher matcher = NUMERIC_START.matcher(arg);
 		if (matcher.find()) {
 			String numericPart = matcher.group();
