@@ -11,12 +11,12 @@ import com.github.singond.pdfriend.geometry.LengthUnits;
 
 class DimensionsParser {
 	/** An integer or decimal number with dot as decimal separator */
-	public static final Pattern NUMBER = Pattern.compile("\\d*(.\\d*)?");
+	public static final Pattern NUMBER = Pattern.compile("\\d*(\\.\\d*)?");
 	/**
 	 * An integer or decimal number (with dot as decimal separator) at the
 	 * beginning of a string
 	 */
-	private static final Pattern NUMERIC_START = Pattern.compile("^\\d*(.\\d*)?");
+	private static final Pattern NUMERIC_START = Pattern.compile("^\\d*(\\.\\d*)?");
 
 	private static ExtendedLogger logger = Log.logger(DimensionsParser.class);
 
