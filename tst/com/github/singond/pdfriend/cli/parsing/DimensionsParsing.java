@@ -18,6 +18,8 @@ public class DimensionsParsing {
 	private static List<TestedDimension> dims = new ArrayList<>();
 	static {
 		dims.add(new TestedDimension("12x50mm", 12, 50));
+		dims.add(new TestedDimension("20cmx0.3m", 200, 300));
+		dims.add(new TestedDimension("8x11.5in", 203.2, 292.1));
 	}
 	
 	@Test
@@ -45,9 +47,10 @@ public class DimensionsParsing {
 			ParsingResult<Dimensions> parsed = RectangleSizeConverter.convert(input);
 			assertTrue(parsed.parsedSuccessfully());
 			Dimensions d = parsed.getResult();
+			System.out.println("Parsed dimension: " + d.toString(LengthUnits.MILLIMETRE));
 			assertEquals(d.width().in(dfltUnit), width, precision);
 			assertEquals(d.height().in(dfltUnit), height, precision);
-			System.out.format("Successfully parsed " + input + " => " + d);
+			System.out.println("Successfully parsed " + input + " => " + d.toString(LengthUnits.MILLIMETRE));
 		}
 	}
 }

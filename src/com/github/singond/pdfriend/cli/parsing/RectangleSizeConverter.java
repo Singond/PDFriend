@@ -9,7 +9,7 @@ import com.github.singond.pdfriend.geometry.Length;
 
 class RectangleSizeConverter {
 	private static DimensionsParser dimParser = new DimensionsParser();
-	private static final Pattern TWO_DIMENSIONS = Pattern.compile("\\d*(\\.\\d*)?x\\d*(\\.\\d*)?.*");
+	private static final Pattern TWO_DIMENSIONS = Pattern.compile("\\d*(\\.\\d*)?.*x\\d*(\\.\\d*)?.*");
 	
 	private static ExtendedLogger logger = Log.logger(RectangleSizeConverter.class);
 	
