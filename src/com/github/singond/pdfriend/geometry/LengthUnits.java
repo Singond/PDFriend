@@ -42,7 +42,7 @@ public enum LengthUnits implements LengthUnit {
 	}
 	
 	@Override
-	public String getSymbol() {
+	public String symbol() {
 		return symbol;
 	}
 }

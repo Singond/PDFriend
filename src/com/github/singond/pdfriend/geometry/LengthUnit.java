@@ -11,5 +11,5 @@ public interface LengthUnit {
 	/**
 	 * Returns the textual symbol for the unit.
 	 */
-	public String getSymbol();
+	public String symbol();
 }

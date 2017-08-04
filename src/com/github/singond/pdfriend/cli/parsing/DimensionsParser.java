@@ -28,7 +28,7 @@ class DimensionsParser {
 	 */
 	ParsingResult<LengthUnit> parseLengthUnit(String arg) {
 		for (LengthUnit u : LengthUnits.values()) {
-			if (u.getSymbol().equals(arg)) {
+			if (u.symbol().equals(arg)) {
 				return new Parsed<LengthUnit>(u);
 			}
 		}

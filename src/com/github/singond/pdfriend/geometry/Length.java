@@ -40,6 +40,6 @@ public final class Length {
 	
 	@Override
 	public String toString() {
-		return value + unit.getSymbol();
+		return value + unit.symbol();
 	}
 }
