@@ -23,6 +23,13 @@ public final class Length {
 	}
 	
 	/**
+	 * Returns the unit this length is expressed in.
+	 */
+	public LengthUnit unit() {
+		return unit;
+	}
+	
+	/**
 	 * Converts this length into the given units.
 	 * @param otherUnit he unit to convert into
 	 * @return this length expressed in terms of {@code otherUnit}
