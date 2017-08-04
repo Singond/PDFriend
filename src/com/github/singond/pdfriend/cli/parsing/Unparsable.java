@@ -35,7 +35,7 @@ final class Unparsable<T> implements ParsingResult<T> {
 	 * Returns a message explaining why the conversion failed.
 	 */
 	@Override
-	public String getMessage() {
+	public String getErrorMessage() {
 		return message;
 	}
 }

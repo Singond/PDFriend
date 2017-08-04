@@ -63,14 +63,14 @@ class DimensionsParser {
 						return new Parsed<Length>(new Length(value, defaultUnit));
 					}
 				} else {
-    				ParsingResult<LengthUnit> parsedUnit = parseLengthUnit(rest);
-    				if (parsedUnit.parsedSuccessfully()) {
-    					Length length = new Length(value, parsedUnit.getResult());
-    					return new Parsed<Length>(length);
-    				} else {
-    					// Bad unit
-    					return new Unparsable<Length>(parsedUnit.getMessage());
-    				}
+					ParsingResult<LengthUnit> parsedUnit = parseLengthUnit(rest);
+					if (parsedUnit.parsedSuccessfully()) {
+						Length length = new Length(value, parsedUnit.getResult());
+						return new Parsed<Length>(length);
+					} else {
+						// Bad unit
+						return new Unparsable<Length>(parsedUnit.getErrorMessage());
+					}
 				}
 			} catch (NumberFormatException e) {
 				return new Unparsable<Length>("Unknown number format: " + numericPart);

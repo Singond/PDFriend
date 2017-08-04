@@ -22,7 +22,7 @@ interface ParsingResult<T> {
 	public T getResult();
 	
 	/**
-	 * Returns a message explaining the parsing result.
+	 * Returns a message explaining the parsing error.
 	 */
-	public String getMessage();
+	public String getErrorMessage();
 }

@@ -39,8 +39,8 @@ class Parsed<T> implements ParsingResult<T> {
 	}
 
 	@Override
-	public String getMessage() {
-		return "Everything went fine when parsing, so why do you bother me?";
+	public String getErrorMessage() {
+		throw new UnsupportedOperationException("There was no error in parsing");
 	}
 
 }
