@@ -9,8 +9,16 @@ package com.github.singond.pdfriend.cli.parsing;
  * @param <T> the type of the parsing result
  */
 final class Unparsable<T> implements ParsingResult<T> {
-	/** Constructs a new instance  */
-	Unparsable() {}
+	/** An error message to be returned in {@code getMessage} */
+	private final String message;
+	
+	/**
+	 * Constructs a new instance
+	 * @param msg message explaining why the conversion failed
+	 */
+	Unparsable(String msg) {
+		this.message = msg;
+	}
 	
 	@Override
 	public boolean parsedSuccessfully() {
@@ -21,5 +29,13 @@ final class Unparsable<T> implements ParsingResult<T> {
 	public T getResult() {
 		throw new UnsupportedOperationException(
 				"The string could not be parsed by the given parser");
+	}
+
+	/**
+	 * Returns a message explaining why the conversion failed.
+	 */
+	@Override
+	public String getMessage() {
+		return message;
 	}
 }

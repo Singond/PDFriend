@@ -38,4 +38,9 @@ class Parsed<T> implements ParsingResult<T> {
 		return result;
 	}
 
+	@Override
+	public String getMessage() {
+		return "Everything went fine when parsing, so why do you bother me?";
+	}
+
 }

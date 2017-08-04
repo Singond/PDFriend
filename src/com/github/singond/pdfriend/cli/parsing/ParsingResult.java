@@ -20,4 +20,9 @@ interface ParsingResult<T> {
 	 * @return the parsed result
 	 */
 	public T getResult();
+	
+	/**
+	 * Returns a message explaining the parsing result.
+	 */
+	public String getMessage();
 }
