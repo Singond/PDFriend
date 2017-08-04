@@ -22,15 +22,15 @@ public class Dimensions {
 	
 	/**
 	 * Constructs a new object representing the pair of dimensions given.
-	 * @param width width in PS points
-	 * @param height height in PS points
+	 * @param width width in PostScript points
+	 * @param height height in PostScript points
 	 */
 	public Dimensions(double width, double height) {
 		if (width < 0) {
 			throw new IllegalArgumentException("Width must not be a negative number");
 		}
 		if (height < 0) {
-			throw new IllegalArgumentException("Heiight must not be a negative number");
+			throw new IllegalArgumentException("Height must not be a negative number");
 		}
 		this.width = new Length(width, dfltUnit);
 		this.height = new Length(height, dfltUnit);
