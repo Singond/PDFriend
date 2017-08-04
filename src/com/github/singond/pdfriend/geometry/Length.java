@@ -31,11 +31,11 @@ public final class Length {
 	
 	/**
 	 * Converts this length into the given units.
-	 * @param otherUnit he unit to convert into
+	 * @param toUnit the unit to convert into
 	 * @return this length expressed in terms of {@code otherUnit}
 	 */
-	public double in(LengthUnit otherUnit) {
-		return value * unit.inMetres()/otherUnit.inMetres();
+	public double in(LengthUnit toUnit) {
+		return value * unit.inMetres()/toUnit.inMetres();
 	}
 	
 	@Override
