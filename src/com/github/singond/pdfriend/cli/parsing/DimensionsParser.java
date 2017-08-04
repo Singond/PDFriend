@@ -18,11 +18,6 @@ class DimensionsParser {
 	 */
 	private static final Pattern NUMERIC_START = Pattern.compile("^\\d*(.\\d*)?");
 
-	/** Instance to be returned if the length unit cannot be parsed */
-	private static final Unparsable<LengthUnit> BAD_LENGTH_UNIT = new Unparsable<LengthUnit>();
-	/** Instance to be returned if the length cannot be parsed */
-	private static final Unparsable<Length> BAD_LENGTH = new Unparsable<Length>();
-	
 	private static ExtendedLogger logger = Log.logger(DimensionsParser.class);
 
 	/**
@@ -37,7 +32,7 @@ class DimensionsParser {
 				return new Parsed<LengthUnit>(u);
 			}
 		}
-		return BAD_LENGTH_UNIT;
+		return new Unparsable<LengthUnit>("Unknown unit symbol: " + arg);
 	}
 
 	/**
@@ -55,14 +50,15 @@ class DimensionsParser {
 		logger.debug("parse-length", arg);
 		Matcher matcher = NUMERIC_START.matcher(arg);
 		if (matcher.find()) {
+			String numericPart = matcher.group();
 			try {
-				double value = Double.parseDouble(matcher.group());
+				double value = Double.parseDouble(numericPart);
 				String rest = arg.substring(matcher.end());
 				if (rest.length() == 0) {
 					if (defaultUnit == null)
-						return BAD_LENGTH;
-//						throw new ArgumentParsingException
-//								("There is no unit specified in the string, nor any default unit set");
+						return new Unparsable<Length>(
+								"There is no unit specified in the string, nor any default unit set: "
+								+ arg);
 					else {
 						return new Parsed<Length>(new Length(value, defaultUnit));
 					}
@@ -73,16 +69,14 @@ class DimensionsParser {
     					return new Parsed<Length>(length);
     				} else {
     					// Bad unit
-    					return BAD_LENGTH;
+    					return new Unparsable<Length>(parsedUnit.getMessage());
     				}
 				}
 			} catch (NumberFormatException e) {
-				// The string
-				return BAD_LENGTH;
+				return new Unparsable<Length>("Unknown number format: " + numericPart);
 			}
 		} else {
-			// The string does not start with a number
-			return BAD_LENGTH;
+			return new Unparsable<Length>("The string does not start with a number: " + arg);
 		}
 	}
 	
