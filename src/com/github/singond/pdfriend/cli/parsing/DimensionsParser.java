@@ -163,7 +163,7 @@ class DimensionsParser {
 		 * number as well. This enables shorhand notation like 20x30cm
 		 * to actually mean "20 cm by 30 cm". (See method docs.)
 		 */
-		ParsingResult<Length> len2 = parseLength(parts[1]);
+		ParsingResult<Length> len2 = parseLength(parts[1], dfltUnit);
 		ParsingResult<Length> len1;
 		if (len2.parsedSuccessfully()) {
 			// Use the unit from the 2nd part as the default for the 1st
@@ -208,7 +208,7 @@ class DimensionsParser {
 		// Parse standard formats like A-series or US Letter
 		ParsingResult<PaperFormat> format = parsePaperFormat(arg);
 		if (format.parsedSuccessfully())
-			return new Parsed<>(format.getResult().dimensions(PaperFormat.Orientation.PORTRAIT));
+			return new Parsed<>(format.getResult().dimensions(dfltOrientation));
 		
 		// Parse the string as two dimensions (width x height)
 		if (TWO_DIMENSIONS.matcher(arg).matches()) {
