@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
@@ -14,10 +18,13 @@ import com.github.singond.pdfriend.geometry.PaperFormat;
 
 import static org.junit.Assert.*;
 
+@RunWith(Parameterized.class)
 public class DimensionsParsing {
 	private static LengthUnit dfltUnit = LengthUnits.MILLIMETRE;
 	private static PaperFormat.Orientation dfltOr = PaperFormat.Orientation.PORTRAIT;
 	private static double precision = 1e-12;
+	private static DimensionsParser dimParser = new DimensionsParser();
+	private static ExtendedLogger logger = Log.logger(DimensionsParsing.class);
 
 	private static List<TestedDimension> dims = new ArrayList<>();
 	static {
@@ -28,15 +35,25 @@ public class DimensionsParsing {
 		dims.add(new TestedDimension("A4", 210, 297));
 		dims.add(new TestedDimension("Letter", 215.9, 279.4));
 	}
-	
-	private static ExtendedLogger logger = Log.logger(DimensionsParsing.class);
+	@Parameters
+	public static Iterable<? extends Object> data() {
+		return dims;
+	}
+	@Parameter(0)
+	public TestedDimension dim;
 	
 	@Test
 	public void conversions() {
-		DimensionsParser dimParser = new DimensionsParser();
-		for (TestedDimension dim : dims) {
-			dim.test(dimParser);
+		ParsingResult<Dimensions> parsed =
+				dimParser.parseRectangleSize(dim.input, dfltUnit, dfltOr);
+		if (!parsed.parsedSuccessfully()) {
+			logger.info("Parsing failed: "+parsed.getErrorMessage());
 		}
+		Dimensions d = parsed.getResult();
+		logger.info("Parsed dimension: {}", d.toString(LengthUnits.MILLIMETRE));
+		assertEquals(d.width().in(dfltUnit), dim.width, precision);
+		assertEquals(d.height().in(dfltUnit), dim.height, precision);
+		logger.info("Successfully parsed {} => {}", dim.input, d.toString(LengthUnits.MILLIMETRE));
 	}
 	
 	private static class TestedDimension {
@@ -51,19 +68,6 @@ public class DimensionsParsing {
 			this.input = input;
 			this.width = width;
 			this.height = height;
-		}
-		
-		void test(DimensionsParser parser) {
-			ParsingResult<Dimensions> parsed =
-					parser.parseRectangleSize(input, dfltUnit, dfltOr);
-			if (!parsed.parsedSuccessfully()) {
-				logger.info("Parsing failed: "+parsed.getErrorMessage());
-			}
-			Dimensions d = parsed.getResult();
-			logger.info("Parsed dimension: {}", d.toString(LengthUnits.MILLIMETRE));
-			assertEquals(d.width().in(dfltUnit), width, precision);
-			assertEquals(d.height().in(dfltUnit), height, precision);
-			logger.info("Successfully parsed {} => {}", input, d.toString(LengthUnits.MILLIMETRE));
 		}
 	}
 }
