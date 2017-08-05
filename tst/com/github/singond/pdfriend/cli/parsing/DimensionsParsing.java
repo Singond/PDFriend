@@ -5,14 +5,18 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.github.singond.pdfriend.ExtendedLogger;
+import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
+import com.github.singond.pdfriend.geometry.PaperFormat;
 
 import static org.junit.Assert.*;
 
 public class DimensionsParsing {
 	private static LengthUnit dfltUnit = LengthUnits.MILLIMETRE;
+	private static PaperFormat.Orientation dfltOr = PaperFormat.Orientation.PORTRAIT;
 	private static double precision = 1e-12;
 
 	private static List<TestedDimension> dims = new ArrayList<>();
@@ -20,12 +24,16 @@ public class DimensionsParsing {
 		dims.add(new TestedDimension("12x50mm", 12, 50));
 		dims.add(new TestedDimension("20cmx0.3m", 200, 300));
 		dims.add(new TestedDimension("8x11.5in", 203.2, 292.1));
+		dims.add(new TestedDimension("A4", 210, 297));
 	}
+	
+	private static ExtendedLogger logger = Log.logger(DimensionsParsing.class);
 	
 	@Test
 	public void conversions() {
+		DimensionsParser dimParser = new DimensionsParser();
 		for (TestedDimension dim : dims) {
-			dim.test();
+			dim.test(dimParser);
 		}
 	}
 	
@@ -43,14 +51,17 @@ public class DimensionsParsing {
 			this.height = height;
 		}
 		
-		void test() {
-			ParsingResult<Dimensions> parsed = RectangleSizeConverter.convert(input);
-			assertTrue(parsed.parsedSuccessfully());
+		void test(DimensionsParser parser) {
+			ParsingResult<Dimensions> parsed =
+					parser.parseRectangleSize(input, dfltUnit, dfltOr);
+			if (!parsed.parsedSuccessfully()) {
+				logger.info("Parsing failed: "+parsed.getErrorMessage());
+			}
 			Dimensions d = parsed.getResult();
-			System.out.println("Parsed dimension: " + d.toString(LengthUnits.MILLIMETRE));
+			logger.info("Parsed dimension: {}", d.toString(LengthUnits.MILLIMETRE));
 			assertEquals(d.width().in(dfltUnit), width, precision);
 			assertEquals(d.height().in(dfltUnit), height, precision);
-			System.out.println("Successfully parsed " + input + " => " + d.toString(LengthUnits.MILLIMETRE));
+			logger.info("Successfully parsed {} => {}", input, d.toString(LengthUnits.MILLIMETRE));
 		}
 	}
 }

@@ -25,7 +25,9 @@ class DimensionsParser {
 	/** Two length dimensions separated by 'x' */
 	private static final Pattern TWO_DIMENSIONS = Pattern.compile("\\d*(\\.\\d*)?.*x\\d*(\\.\\d*)?.*");
 	/**
-	 * A lookup of paper formats
+	 * A lookup of paper formats.
+	 * All the formats names are stored in lower-case here to provide
+	 * case independent matching.
 	 */
 	private static final Map<String, PaperFormat> formats = new HashMap<>();
 
@@ -33,7 +35,7 @@ class DimensionsParser {
 
 	static {
 		for (PaperFormat format : PaperFormats.values()) {
-			formats.put(format.formatName(), format);
+			formats.put(format.formatName().toLowerCase(), format);
 		}
 		formats.put("letter", PaperFormats.LETTER);
 		formats.put("legal", PaperFormats.LEGAL);
@@ -123,8 +125,9 @@ class DimensionsParser {
 	 *         an {@code Unparsable} instance if the string cannot be parsed
 	 */
 	ParsingResult<PaperFormat> parsePaperFormat(String arg) {
-		if (formats.containsKey(arg.toLowerCase()))
-			return new Parsed<>(formats.get(arg));
+		String argCanonical = arg.toLowerCase();
+		if (formats.containsKey(argCanonical))
+			return new Parsed<>(formats.get(argCanonical));
 		else
 			return new Unparsable<>("Unknown format name: " + arg);
 	}
