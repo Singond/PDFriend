@@ -25,7 +25,7 @@ public class SheetSize implements ParameterDelegate {
 	
 	@Override
 	public void postParse() throws ArgumentParsingException {
-		widthHeight = getDimensions();
+		widthHeight = resolveDimensions();
 	}
 	
 	/**
@@ -34,7 +34,7 @@ public class SheetSize implements ParameterDelegate {
 	 * @throws ArgumentParsingException if both --portrait and --landscape
 	 *         options are set to true
 	 */
-	private double[] getDimensions() throws ArgumentParsingException {
+	private double[] resolveDimensions() throws ArgumentParsingException {
 		if (portrait && landscape) {
 			throw new ArgumentParsingException(
 					"Cannot provide both portrait and landscape options",
@@ -62,7 +62,7 @@ public class SheetSize implements ParameterDelegate {
 	 */
 	public double getWidth() throws ArgumentParsingException {
 		if (widthHeight == null) {
-			double[] dims = getDimensions();
+			double[] dims = resolveDimensions();
 			widthHeight = dims;
 			return dims[0];
 		} else {
@@ -77,7 +77,7 @@ public class SheetSize implements ParameterDelegate {
 	 */
 	public double getHeight() throws ArgumentParsingException {
 		if (widthHeight == null) {
-			double[] dims = getDimensions();
+			double[] dims = resolveDimensions();
 			widthHeight = dims;
 			return dims[1];
 		} else {
