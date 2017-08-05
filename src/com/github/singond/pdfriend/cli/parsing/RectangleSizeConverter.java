@@ -6,6 +6,8 @@ import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.Length;
+import com.github.singond.pdfriend.geometry.LengthUnit;
+import com.github.singond.pdfriend.geometry.PaperFormat;
 
 class RectangleSizeConverter {
 	private static DimensionsParser dimParser = new DimensionsParser();
@@ -13,13 +15,35 @@ class RectangleSizeConverter {
 	
 	private static ExtendedLogger logger = Log.logger(RectangleSizeConverter.class);
 	
-	public static ParsingResult<Dimensions> convert(String arg) {
+	/**
+	 * <p>
+	 * If the size is given as a standard format designation, like "A4",
+	 * it is assumed to be in portrait orientation. The task of providing the
+	 * correct page rotation is left to the responsibility of the client.
+	 * </p>
+	 * <p>
+	 * If the size is given as two dimensions in the form NxM, then N is
+	 * interpreted as width and M as height. A length unit can be specified
+	 * for both N and M independently, for example {@code 20cmx0.3m} is
+	 * translated as 200 mm (width) by 300 mm (height). If the unit for N
+	 * is omitted, it is assumed to be the same as the unit given with M.
+	 * If both units are omitted, the default unit given in argument is used.
+	 * </p>
+	 * @param arg the string to be parsed
+	 * @param dfltUnit the default length unit to be used if none is given
+	 * @return
+	 */
+	public static ParsingResult<Dimensions> convert(String arg, LengthUnit dfltUnit) {
 		logger.debug("parse_rectangle", arg);
 		ParsingResult<Dimensions> result =
 				new Unparsable<>("Unknown format definition: " + arg);
 		
-		// TODO Parse standard formats like A-series
-		if (TWO_DIMENSIONS.matcher(arg).matches()) {
+		ParsingResult<PaperFormat> format = dimParser.parsePaperFormat(arg);
+		if (format.parsedSuccessfully()) {
+			// Parse standard formats like A-series or US Letter
+			result = new Parsed<>(format.getResult().dimensions(PaperFormat.Orientation.PORTRAIT));
+		} else if (TWO_DIMENSIONS.matcher(arg).matches()) {
+			// Parse the string as two dimensions (width x height)
 			String[] parts = arg.split("x", 2);
 			assert parts.length == 2 : parts;
 			
