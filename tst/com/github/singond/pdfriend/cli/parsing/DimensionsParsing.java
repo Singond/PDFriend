@@ -24,7 +24,9 @@ public class DimensionsParsing {
 		dims.add(new TestedDimension("12x50mm", 12, 50));
 		dims.add(new TestedDimension("20cmx0.3m", 200, 300));
 		dims.add(new TestedDimension("8x11.5in", 203.2, 292.1));
+		dims.add(new TestedDimension("8.5x11in", 215.9, 279.4));
 		dims.add(new TestedDimension("A4", 210, 297));
+		dims.add(new TestedDimension("Letter", 215.9, 279.4));
 	}
 	
 	private static ExtendedLogger logger = Log.logger(DimensionsParsing.class);
