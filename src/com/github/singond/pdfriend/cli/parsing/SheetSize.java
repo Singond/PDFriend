@@ -2,14 +2,20 @@ package com.github.singond.pdfriend.cli.parsing;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.github.singond.pdfriend.ExtendedLogger;
+import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.LengthUnits;
 
 @Parameters(separators="=")
 public class SheetSize implements ParameterDelegate {
 	
+	/** Marks that sheet size has been set */
+	private boolean isSet = false;
 	/** The width and height in points */
 	private double[] widthHeight;
+	/** Logger instance */
+	private static ExtendedLogger logger = Log.logger(SheetSize.class);
 	
 	@Parameter(names="--sheet-size", description="The size of the output sheets",
 	           converter=DimensionsConverter.class)
@@ -23,18 +29,35 @@ public class SheetSize implements ParameterDelegate {
 	           description="Forces the sheet format to be in landscape orientation")
 	private boolean landscape = false;
 	
+	/**
+	 * Resolves the separate parameters into a consistent state of this object.
+	 */
 	@Override
 	public void postParse() throws ArgumentParsingException {
-		widthHeight = resolveDimensions();
+		if (dimensions == null) {
+			if (portrait || landscape) {
+				// These switches have no meaning now, inform the user
+				StringBuilder switches = new StringBuilder();
+				if (portrait)switches.append("--portrait").append(" ");
+				if (landscape) switches.append("--landscape");
+				logger.warn("parse_orientation_ignored", switches.toString().trim());
+			}
+			// Nothing has been specified, sheet size remains unset
+		} else {
+			isSet = true;
+			widthHeight = resolveDimensions();
+		}
 	}
 	
 	/**
-	 * Sets the width and height based on orientation
+	 * Resolves the width and height based on orientation.
+	 * This method assumes that {@code dimensions} is not null.
 	 * @return the dimensions as an array: {width, height}
 	 * @throws ArgumentParsingException if both --portrait and --landscape
 	 *         options are set to true
 	 */
 	private double[] resolveDimensions() throws ArgumentParsingException {
+		assert (dimensions != null) : dimensions;
 		if (portrait && landscape) {
 			throw new ArgumentParsingException(
 					"Cannot provide both portrait and landscape options",
@@ -56,12 +79,22 @@ public class SheetSize implements ParameterDelegate {
 	}
 	
 	/**
+	 * Returns whether the sheet size has been set in the arguments.
+	 * @return {@code true} if a valid dimension has been parsed
+	 */
+	public boolean isSet() {
+		return isSet;
+	}
+	
+	/**
 	 * Returns the parsed width in PostScript points.
 	 * @throws ArgumentParsingException if both --portrait and --landscape
 	 *         options are set to true
 	 */
 	public double getWidth() throws ArgumentParsingException {
-		if (widthHeight == null) {
+		if (!isSet) {
+			throw new IllegalStateException("The sheet size has not been set");
+		} else if (widthHeight == null) {
 			double[] dims = resolveDimensions();
 			widthHeight = dims;
 			return dims[0];
@@ -76,7 +109,9 @@ public class SheetSize implements ParameterDelegate {
 	 *         options are set to true
 	 */
 	public double getHeight() throws ArgumentParsingException {
-		if (widthHeight == null) {
+		if (!isSet) {
+			throw new IllegalStateException("The sheet size has not been set");
+		} else if (widthHeight == null) {
 			double[] dims = resolveDimensions();
 			widthHeight = dims;
 			return dims[1];
