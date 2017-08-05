@@ -1,5 +1,7 @@
 package com.github.singond.pdfriend.cli.parsing;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,6 +10,8 @@ import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
+import com.github.singond.pdfriend.geometry.PaperFormat;
+import com.github.singond.pdfriend.geometry.PaperFormats;
 
 class DimensionsParser {
 	/** An integer or decimal number with dot as decimal separator */
@@ -17,14 +21,28 @@ class DimensionsParser {
 	 * beginning of a string
 	 */
 	private static final Pattern NUMERIC_START = Pattern.compile("^\\d*(\\.\\d*)?");
+	/**
+	 * A lookup of paper formats
+	 */
+	private static final Map<String, PaperFormat> formats = new HashMap<>();
 
 	private static ExtendedLogger logger = Log.logger(DimensionsParser.class);
 
+	static {
+		for (PaperFormat format : PaperFormats.values()) {
+			formats.put(format.formatName(), format);
+		}
+		formats.put("letter", PaperFormats.LETTER);
+		formats.put("legal", PaperFormats.LEGAL);
+		formats.put("ledger", PaperFormats.LEDGER);
+		formats.put("tabloid", PaperFormats.LEDGER); // Tabloid and Ledger are the same size, only rotated
+	}
+	
 	/**
 	 * Converts a string to a length unit object.
 	 * @param the string to be parsed
 	 * @return a {@code Parsed} object wrapping the parsed result, or
-	 *         an {@code Unparsable} instance if the string cannot be parsed.
+	 *         an {@code Unparsable} instance if the string cannot be parsed
 	 */
 	ParsingResult<LengthUnit> parseLengthUnit(String arg) {
 		for (LengthUnit u : LengthUnits.values()) {
@@ -44,7 +62,7 @@ class DimensionsParser {
 	 *        If this argument is null and there is no unit given in {@code arg},
 	 *        this method will return an {@code Unparsable} object.
 	 * @return a {@code Parsed} object wrapping the parsed result, or
-	 *         an {@code Unparsable} instance if the string cannot be parsed.
+	 *         an {@code Unparsable} instance if the string cannot be parsed
 	 */
 	ParsingResult<Length> parseLength(String arg, LengthUnit defaultUnit) {
 		logger.debug("parse_length", arg);
@@ -86,9 +104,22 @@ class DimensionsParser {
 	 * an {@code Unparsable} object.
 	 * @param arg the string to be parsed
 	 * @return a {@code Parsed} object wrapping the parsed result, or
-	 *         an {@code Unparsable} instance if the string cannot be parsed.
+	 *         an {@code Unparsable} instance if the string cannot be parsed
 	 */
 	ParsingResult<Length> parseLength(String arg) {
 		return parseLength(arg, null);
+	}
+	
+	/**
+	 * Converts a string to a paper format object.
+	 * @param arg the string to be parsed
+	 * @return a {@code Parsed} object wrapping the parsed result, or
+	 *         an {@code Unparsable} instance if the string cannot be parsed
+	 */
+	ParsingResult<PaperFormat> parsePaperFormat(String arg) {
+		if (formats.containsKey(arg.toLowerCase()))
+			return new Parsed<>(formats.get(arg));
+		else
+			return new Unparsable<>("Unknown format name: " + arg);
 	}
 }
