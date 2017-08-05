@@ -40,8 +40,6 @@ public abstract class SubCommand {
 	public void setOutputFile(OutputFile outputFile) {
 		this.outputFile = outputFile;
 	}
-
-	/* Abstract methods */
 	
 	/**
 	 * Creates a new instance of this SubCommand.
@@ -49,10 +47,22 @@ public abstract class SubCommand {
 	public abstract SubCommand newInstance();
 	
 	/**
-	 * Method to be invoked after the SubCommand object is built
+	 * Method to be invoked after this SubCommand object is built
 	 * and initialized with values from the command line.
 	 */
-	public abstract void postParse();
+	public void postParse() {
+		inputFiles.postParse();
+		outputFile.postParse();
+		postParseSpecific();
+	}
+	
+	/**
+	 * Method to be invoked after the SubCommand subclass object is built
+	 * and initialized with values from the command line.
+	 * This is a subclass-specific implementation which is invoked by
+	 * {@code postParseDefault} in {@SubCommand}.
+	 */
+	protected abstract void postParseSpecific();
 	
 	/**
 	 * Returns a PDFriend module which performs the task represented

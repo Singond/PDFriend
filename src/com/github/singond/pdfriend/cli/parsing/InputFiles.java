@@ -17,13 +17,14 @@ import com.github.singond.pdfriend.io.InputFactory;
  * of input files based on these arguments.
  * @author Singon
  */
-public class InputFiles {
+public class InputFiles implements ParameterDelegate {
 
 	private static ExtendedLogger logger = Log.logger(InputFiles.class);
 	
 	@Parameter(description="The list of input files")
 	private List<File> files = new ArrayList<>();
 	
+	@Override
 	public void postParse() {
 		logger.verbose(listFiles(files));
 	}

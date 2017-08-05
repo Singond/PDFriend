@@ -11,7 +11,7 @@ import com.github.singond.pdfriend.io.OutputFactory;
  * The command-line argument for the output file.
  * @author Singon
  */
-public class OutputFile {
+public class OutputFile implements ParameterDelegate {
 	
 	private static ExtendedLogger logger = Log.logger(OutputFile.class);
 
@@ -19,6 +19,7 @@ public class OutputFile {
 	@Parameter(names={"-o", "--output"}, description="Output file name")
 	private File outputFile;
 	
+	@Override
 	public void postParse() {
 		logger.verbose("The output file:" + outputFile.getAbsolutePath());
 	}

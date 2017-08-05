@@ -71,6 +71,7 @@ public class SheetSizeParsing {
 		String[] args = arg.split(" ");
 		try {
 			cmdr.parse(args);
+			size.postParse();
 			w = size.getWidth();
 			h = size.getHeight();
 			assertEquals("Parsed width is not equal to intended width:",

@@ -6,7 +6,7 @@ import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.LengthUnits;
 
 @Parameters(separators="=")
-public class SheetSize {
+public class SheetSize implements ParameterDelegate {
 	
 	/** The width and height in points */
 	private double[] widthHeight;
@@ -22,6 +22,11 @@ public class SheetSize {
 	@Parameter(names="--landscape",
 	           description="Forces the sheet format to be in landscape orientation")
 	private boolean landscape = false;
+	
+	@Override
+	public void postParse() throws ArgumentParsingException {
+		widthHeight = getDimensions();
+	}
 	
 	/**
 	 * Sets the width and height based on orientation

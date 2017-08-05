@@ -8,6 +8,7 @@ import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.cli.parsing.BookletBindingConverter;
 import com.github.singond.pdfriend.cli.parsing.IntegerDimensionsConverter;
 import com.github.singond.pdfriend.cli.parsing.PageSizeConverter;
+import com.github.singond.pdfriend.cli.parsing.ParameterDelegate;
 import com.github.singond.pdfriend.geometry.IntegerDimensions;
 import com.github.singond.pdfriend.geometry.PageSize;
 import com.github.singond.pdfriend.imposition.Booklet;
@@ -52,7 +53,9 @@ public class ImposeCommand extends SubCommand {
 	}
 	
 	@Override
-	public void postParse() {}
+	protected void postParseSpecific() {
+		type.postParse();
+	}
 	
 	@Override
 	public Module getModule() {
@@ -70,7 +73,7 @@ public class ImposeCommand extends SubCommand {
 	 * only one imposition type should be selected.
 	 */
 	@Parameters(separators=" ")
-	public class TypeArgument {
+	public class TypeArgument implements ParameterDelegate {
 		@Parameter(names="--booklet", description="A simple stack of sheets folded in half")
 		private boolean booklet = false;
 		
@@ -111,5 +114,8 @@ public class ImposeCommand extends SubCommand {
 				throw new IllegalStateException("No imposition type has been set");
 			}
 		}
+
+		@Override
+		public void postParse() {}
 	}
 }
