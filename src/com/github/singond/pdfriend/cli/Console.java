@@ -57,14 +57,22 @@ public class Console {
 		 * @param key
 		 * @return
 		 */
-		public SubCommand getAndReplace(Object key) {
-			SubCommand value = get(key);
+		public SubCommand getAndReplace(String key) {
+			SubCommand value = super.get(key);
 			if (value != null) {
-				// It should be safe to cast because if the key is not
-				// a string, the value variable is null.
 				put((String) key, value.newInstance());
 			}
 			return value;
+		}
+		
+		/**
+		 * Prevents calling get().
+		 * @throws UnsupportedOperationException on every invocation
+		 */
+		@Override
+		public SubCommand get(Object key) {
+			throw new UnsupportedOperationException(
+					"Cannot retrieve key from this map without replacing it. Use getAndReplace.");
 		}
 	}
 	
