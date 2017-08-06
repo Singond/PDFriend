@@ -21,7 +21,8 @@ public class OutputFile implements ParameterDelegate {
 	
 	@Override
 	public void postParse() {
-		logger.verbose("The output file:" + outputFile.getAbsolutePath());
+		if (outputFile != null)
+			logger.verbose("The output file:" + outputFile.getAbsolutePath());
 	}
 	
 	/**

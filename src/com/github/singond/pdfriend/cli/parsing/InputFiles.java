@@ -26,7 +26,8 @@ public class InputFiles implements ParameterDelegate {
 	
 	@Override
 	public void postParse() {
-		logger.verbose(listFiles(files));
+		if (!files.isEmpty())
+			logger.verbose(listFiles(files));
 	}
 	
 	/**
