@@ -22,7 +22,7 @@ import com.github.singond.geometry.plane.Point;
  * @author Singon
  *
  */
-public class Booklet {
+public class Booklet implements Imposable {
 
 	/** Width of single Page. */
 	private final double pageWidth;
@@ -257,6 +257,12 @@ public class Booklet {
 		return volume;
 	}
 	
+	@Override
+	public VirtualDocument getDocument() {
+		// FIXME Fill the document with content before returning it!
+		return volume.renderDocument();
+	}
+
 	/**
 	 * Specifies where the booklet binding is located.
 	 * Specifically, this value indicated on which edge of the folded
