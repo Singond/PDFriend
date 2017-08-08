@@ -7,6 +7,9 @@ import java.util.regex.Pattern;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
+import com.github.singond.pdfriend.geometry.Angle;
+import com.github.singond.pdfriend.geometry.AngularUnit;
+import com.github.singond.pdfriend.geometry.AngularUnits;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
@@ -219,5 +222,79 @@ class DimensionsParser {
 		
 		// Don't know how to parse this
 		return new Unparsable<>("Unknown format definition: " + arg);
+	}
+	
+	/**
+	 * Converts a string to an angular unit object.
+	 * @param the string to be parsed
+	 * @return a {@code Parsed} object wrapping the parsed result, or
+	 *         an {@code Unparsable} instance if the string cannot be parsed
+	 */
+	ParsingResult<AngularUnit> parseAngularUnit(String arg) {
+		for (AngularUnit u : AngularUnits.values()) {
+			if (u.symbol().equals(arg)) {
+				return new Parsed<AngularUnit>(u);
+			}
+		}
+		return new Unparsable<AngularUnit>("Unknown angular unit symbol: " + arg);
+	}
+	
+	/**
+	 * Converts a string to an angle object.
+	 * 
+	 * This variant allows to specify a default angular unit, which will be
+	 * used to interpret the string if no other unit is found therein.
+	 * @param arg the string to be parsed
+	 * @param defaultUnit the default angular unit to be used if none is given.
+	 *        If this argument is null and there is no unit given in {@code arg},
+	 *        this method will return an {@code Unparsable} object.
+	 * @return a {@code Parsed} object wrapping the parsed result, or
+	 *         an {@code Unparsable} instance if the string cannot be parsed
+	 */
+	ParsingResult<Angle> parseAngle(String arg, AngularUnit defaultUnit) {
+		logger.debug("parse_angle", arg);
+		Matcher matcher = NUMERIC_START.matcher(arg);
+		if (matcher.find()) {
+			String numericPart = matcher.group();
+			try {
+				double value = Double.parseDouble(numericPart);
+				String rest = arg.substring(matcher.end());
+				if (rest.length() == 0) {
+					if (defaultUnit == null)
+						return new Unparsable<Angle>(
+								"There is no unit specified in the string, nor any default unit set: "
+								+ arg);
+					else {
+						return new Parsed<Angle>(new Angle(value, defaultUnit));
+					}
+				} else {
+					ParsingResult<AngularUnit> parsedUnit = parseAngularUnit(rest);
+					if (parsedUnit.parsedSuccessfully()) {
+						Angle length = new Angle(value, parsedUnit.getResult());
+						return new Parsed<Angle>(length);
+					} else {
+						// Bad unit
+						return new Unparsable<Angle>(parsedUnit.getErrorMessage());
+					}
+				}
+			} catch (NumberFormatException e) {
+				return new Unparsable<Angle>("Unknown number format: " + numericPart);
+			}
+		} else {
+			return new Unparsable<Angle>("The string does not start with a number: " + arg);
+		}
+	}
+	
+	/**
+	 * Converts a string to an angle object.
+	 * 
+	 * If no unit is given in {@code arg}, this method will return
+	 * an {@code Unparsable} object.
+	 * @param arg the string to be parsed
+	 * @return a {@code Parsed} object wrapping the parsed result, or
+	 *         an {@code Unparsable} instance if the string cannot be parsed
+	 */
+	ParsingResult<Length> parseAngle(String arg) {
+		return parseLength(arg, null);
 	}
 }
