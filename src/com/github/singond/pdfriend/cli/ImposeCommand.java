@@ -45,6 +45,7 @@ public class ImposeCommand extends SubCommand {
 			description="Size to be applied to the input pages. This is"
 					+ " currently supported only in the n-up imposition.",
 			converter=PageSizeConverter.class)
+	@Deprecated
 	private PageSize pageSize = new PageSize.Scale(1);
 
 	@Override
