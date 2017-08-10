@@ -22,18 +22,28 @@ public class Dimensions {
 	
 	/**
 	 * Constructs a new object representing the pair of dimensions given.
-	 * @param width width in PostScript points
-	 * @param height height in PostScript points
+	 * @param width width in {@code unit}s
+	 * @param height height in {@code unit}s
+	 * @param unit the length unit of both width and height
 	 */
-	public Dimensions(double width, double height) {
+	public Dimensions(double width, double height, LengthUnit unit) {
 		if (width < 0) {
 			throw new IllegalArgumentException("Width must not be a negative number");
 		}
 		if (height < 0) {
 			throw new IllegalArgumentException("Height must not be a negative number");
 		}
-		this.width = new Length(width, dfltUnit);
-		this.height = new Length(height, dfltUnit);
+		this.width = new Length(width, unit);
+		this.height = new Length(height, unit);
+	}
+	
+	/**
+	 * Constructs a new object representing the pair of dimensions given.
+	 * @param width width in PostScript points
+	 * @param height height in PostScript points
+	 */
+	public Dimensions(double width, double height) {
+		this(width, height, dfltUnit);
 	}
 
 	/**
