@@ -1,6 +1,11 @@
 package com.github.singond.pdfriend.imposition;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.github.singond.pdfriend.book.model.MultiPage;
+import com.github.singond.pdfriend.document.VirtualDocument;
+import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.geometry.Dimensions;
 
 /**
@@ -29,6 +34,65 @@ import com.github.singond.pdfriend.geometry.Dimensions;
  *
  */
 public class Preprocessor {
+	
+	/**
+	 * The settings used when processing pages.
+	 * This is a mutable object and therefore should stay private!
+	 */
+	private final Settings settings;
+	/**
+	 * The list of VirtualDocuments to be processed by this preprocessor.
+	 * These documents are used in determining the cell dimensions before
+	 * the page processing begins. However, there is no guarantee that the
+	 * pages passed to the preprocessor in the processing phase are part
+	 * of these documents. This responsibility is left to the client code.
+	 */
+	private final List<VirtualDocument> documents;
+	/**
+	 * The resolved dimensions of the cell.
+	 */
+	private final Dimensions cell;
+	
+	Preprocessor(List<VirtualDocument> documents, Settings settings) {
+		// Storing these objects might not be necessary if the cell
+		// dimension is determined now.
+		this.documents = new ArrayList<>(documents);
+		this.settings = settings.copy();
+		this.cell = resolveCellDimensions(this.documents, this.settings);
+	}
+	
+	/**
+	 * Resolves the dimensions of the cell for the given collection of pages
+	 * and settings.
+	 * @param documents
+	 * @param settings
+	 * @return
+	 */
+	private static final Dimensions resolveCellDimensions(
+			List<VirtualDocument> documents, Settings settings) {
+		// TODO Implement
+		return null;
+	}
+	
+	/**
+	 * Returns the cell dimensions resolved for the list of documents
+	 * and settings specified during initialization.
+	 */
+	public Dimensions getResolvedCellDimensions() {
+		return cell;
+	}
+	
+	/**
+	 * Performs the pre-processing on a pagelet instance.
+	 * The result is based on the resolved cell dimension and settings
+	 * given during the initialization of this {@code Preprocessor}.
+	 * @param page the page to be processed
+	 * @param pagelet the pagelet containing {@code page}
+	 */
+	public void processPageInPagelet(VirtualPage page,
+	                                 MultiPage.Pagelet pagelet) {
+		// TODO Implement
+	}
 	
 	/**
 	 * A reusable container of all the settings available for page preprocessing.
@@ -68,7 +132,7 @@ public class Preprocessor {
 		/**
 		 * Returns a new {@code Preprocessor.Settings} object initialized
 		 * to the current state of this instance.
-		 * @return a copy of this instance
+		 * @return a new copy of this instance
 		 */
 		public Settings copy() {
 			Settings copy = new Settings();
