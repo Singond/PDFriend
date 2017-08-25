@@ -19,186 +19,195 @@ import com.github.singond.pdfriend.geometry.Dimensions;
  *
  */
 public class Preprocessor {
-
-	/** A uniform scale to be applied to the page. */
-	private double scale;
-	/**
-	 * Required dimensions of every page.
-	 * This property can be set to override the preferred dimensions
-	 * as calculated from the other settings.
-	 */
-	private Dimensions pageDimensions = null;
-	/** Rotation of the page in radians in the direction from x-axis to y-axis. */
-	private double rotation;
-	/**
-	 * Behaviour for page size.
-	 * This is applied after scaling each page by {@code scale}.
-	 */
-	private Resizing resizing;
-	/** Page alignment within the rectangle given by resolved dimensions */
-	private Alignment alignment = new HorizontalVerticalAlignment(
-			new Center(0), new Middle(0));
-	/**
-	 * Required dimensions of the circumscribed rectangle (the cell).
-	 * This property can be set to override the preferred dimensions
-	 * as calculated from the other settings.
-	 */
-	private Dimensions cellDimensions = null;
-	
-	public void setScale(double scale) {
-		if (scale <= 0)
-			throw new IllegalArgumentException("scale must be a positive number");
-		this.scale = scale;
-	}
-
-	/**
-	 * Sets the dimensions of every page.
-	 * This overrides the preferred dimensions which would otherwise be
-	 * calculated from the initial dimensions, scale and cell dimensions.
-	 * @param dimensions the required cell dimensions
-	 */
-	public void setPageDimensions(Dimensions dimensions) {
-		this.pageDimensions = dimensions;
-	}
-
-	public void setRotation(double rotation) {
-		this.rotation = rotation;
-	}
-
-	/**
-	 * Sets the dimensions of the circumscribed rectangle (the cell).
-	 * This overrides the preferred dimensions which would otherwise be
-	 * calculated from either the initial page dimensions and scale,
-	 * or the required page dimensions.
-	 * @param dimensions the required cell dimensions
-	 */
-	public void setCellDimensions(Dimensions dimensions) {
-		this.pageDimensions = dimensions;
-	}
-
-	// TODO Make something useful of these
-	private static interface Resizing {}
-	
-	private static interface Alignment {
-		void accept(MultiPage.Pagelet pagelet);
-	}
-	
-	private static interface HorizontalAlign {
-		void accept(MultiPage.Pagelet pagelet);
-	}
-	private static interface VerticalAlign {
-		void accept(MultiPage.Pagelet pagelet);
-	}
 	
 	/**
-	 * A basic alignment consisting of two separate values for the horizontal
-	 * and vertical alignment.
+	 * A reusable container of all the settings available for page preprocessing.
+	 *
+	 * @author Singon
+	 *
 	 */
-	private static class HorizontalVerticalAlignment implements Alignment {
-		private final HorizontalAlign horizontalAlign;
-		private final VerticalAlign verticalAlign;
-		
-		private HorizontalVerticalAlignment(HorizontalAlign horizontalAlign,
-		                                   VerticalAlign verticalAlign) {
-			if (horizontalAlign == null)
-				throw new NullPointerException("Horizontal alignment cannot be null");
-			if (verticalAlign == null)
-				throw new NullPointerException("Vertical alignment cannot be null");
-			this.horizontalAlign = horizontalAlign;
-			this.verticalAlign = verticalAlign;
-		}
-		
-		@Override
-		public void accept(MultiPage.Pagelet pagelet) {
-			horizontalAlign.accept(pagelet);
-			verticalAlign.accept(pagelet);
-		}
-	}
+	public static class Settings {
 	
-	/** A class with a single scalar value */
-	private abstract static class SingleValued {
-		private final double value;
+		/** A uniform scale to be applied to the page. */
+		private double scale;
+		/**
+		 * Required dimensions of every page.
+		 * This property can be set to override the preferred dimensions
+		 * as calculated from the other settings.
+		 */
+		private Dimensions pageDimensions = null;
+		/** Rotation of the page in radians in the direction from x-axis to y-axis. */
+		private double rotation;
+		/**
+		 * Behaviour for page size.
+		 * This is applied after scaling each page by {@code scale}.
+		 */
+		private Resizing resizing;
+		/** Page alignment within the rectangle given by resolved dimensions */
+		private Alignment alignment = new HorizontalVerticalAlignment(
+				new Center(0), new Middle(0));
+		/**
+		 * Required dimensions of the circumscribed rectangle (the cell).
+		 * This property can be set to override the preferred dimensions
+		 * as calculated from the other settings.
+		 */
+		private Dimensions cellDimensions = null;
 		
-		private SingleValued(double value) {
-			this.value = value;
+		public void setScale(double scale) {
+			if (scale <= 0)
+				throw new IllegalArgumentException("scale must be a positive number");
+			this.scale = scale;
 		}
-	}
 	
-	/** Alignment by distance from the left edge */
-	private static class Left extends SingleValued implements HorizontalAlign {
-		private Left(double value) {
-			super(value);
+		/**
+		 * Sets the dimensions of every page.
+		 * This overrides the preferred dimensions which would otherwise be
+		 * calculated from the initial dimensions, scale and cell dimensions.
+		 * @param dimensions the required cell dimensions
+		 */
+		public void setPageDimensions(Dimensions dimensions) {
+			this.pageDimensions = dimensions;
 		}
-		
-		@Override
-		public void accept(MultiPage.Pagelet pagelet) {
-			// TODO Implement!
-			throw new UnsupportedOperationException("Not implemented yet");
-		}
-	}
 	
-	/** Alignment by offset (to right) from the center */
-	private static class Center extends SingleValued implements HorizontalAlign {
-		private Center(double value) {
-			super(value);
+		public void setRotation(double rotation) {
+			this.rotation = rotation;
 		}
-		
-		@Override
-		public void accept(MultiPage.Pagelet pagelet) {
-			// TODO Implement!
-			throw new UnsupportedOperationException("Not implemented yet");
-		}
-	}
 	
-	/** Alignment by distance from the right edge */
-	private static class Right extends SingleValued implements HorizontalAlign {
-		private Right(double value) {
-			super(value);
+		/**
+		 * Sets the dimensions of the circumscribed rectangle (the cell).
+		 * This overrides the preferred dimensions which would otherwise be
+		 * calculated from either the initial page dimensions and scale,
+		 * or the required page dimensions.
+		 * @param dimensions the required cell dimensions
+		 */
+		public void setCellDimensions(Dimensions dimensions) {
+			this.pageDimensions = dimensions;
 		}
-		
-		@Override
-		public void accept(MultiPage.Pagelet pagelet) {
-			// TODO Implement!
-			throw new UnsupportedOperationException("Not implemented yet");
-		}
-	}
 	
-	/** Alignment by distance from the top edge */
-	private static class Top extends SingleValued implements VerticalAlign {
-		private Top(double value) {
-			super(value);
+		// TODO Make something useful of these
+		private static interface Resizing {}
+		
+		private static interface Alignment {
+			void accept(MultiPage.Pagelet pagelet);
 		}
 		
-		@Override
-		public void accept(MultiPage.Pagelet pagelet) {
-			// TODO Implement!
-			throw new UnsupportedOperationException("Not implemented yet");
+		private static interface HorizontalAlign {
+			void accept(MultiPage.Pagelet pagelet);
 		}
-	}
-	
-	/** Alignment by offset (upwards) from the center */
-	private static class Middle extends SingleValued implements VerticalAlign {
-		private Middle(double value) {
-			super(value);
+		private static interface VerticalAlign {
+			void accept(MultiPage.Pagelet pagelet);
 		}
 		
-		@Override
-		public void accept(MultiPage.Pagelet pagelet) {
-			// TODO Implement!
-			throw new UnsupportedOperationException("Not implemented yet");
-		}
-	}
-	
-	/** Alignment by distance from the bottom edge */
-	private static class Bottom extends SingleValued implements VerticalAlign {
-		private Bottom(double value) {
-			super(value);
+		/**
+		 * A basic alignment consisting of two separate values for the horizontal
+		 * and vertical alignment.
+		 */
+		private static class HorizontalVerticalAlignment implements Alignment {
+			private final HorizontalAlign horizontalAlign;
+			private final VerticalAlign verticalAlign;
+			
+			private HorizontalVerticalAlignment(HorizontalAlign horizontalAlign,
+			                                    VerticalAlign verticalAlign) {
+				if (horizontalAlign == null)
+					throw new NullPointerException("Horizontal alignment cannot be null");
+				if (verticalAlign == null)
+					throw new NullPointerException("Vertical alignment cannot be null");
+				this.horizontalAlign = horizontalAlign;
+				this.verticalAlign = verticalAlign;
+			}
+			
+			@Override
+			public void accept(MultiPage.Pagelet pagelet) {
+				horizontalAlign.accept(pagelet);
+				verticalAlign.accept(pagelet);
+			}
 		}
 		
-		@Override
-		public void accept(MultiPage.Pagelet pagelet) {
-			// TODO Implement!
-			throw new UnsupportedOperationException("Not implemented yet");
+		/** A class with a single scalar value */
+		private abstract static class SingleValued {
+			private final double value;
+			
+			private SingleValued(double value) {
+				this.value = value;
+			}
+		}
+		
+		/** Alignment by distance from the left edge */
+		private static class Left extends SingleValued implements HorizontalAlign {
+			private Left(double value) {
+				super(value);
+			}
+			
+			@Override
+			public void accept(MultiPage.Pagelet pagelet) {
+				// TODO Implement!
+				throw new UnsupportedOperationException("Not implemented yet");
+			}
+		}
+		
+		/** Alignment by offset (to right) from the center */
+		private static class Center extends SingleValued implements HorizontalAlign {
+			private Center(double value) {
+				super(value);
+			}
+			
+			@Override
+			public void accept(MultiPage.Pagelet pagelet) {
+				// TODO Implement!
+				throw new UnsupportedOperationException("Not implemented yet");
+			}
+		}
+		
+		/** Alignment by distance from the right edge */
+		private static class Right extends SingleValued implements HorizontalAlign {
+			private Right(double value) {
+				super(value);
+			}
+			
+			@Override
+			public void accept(MultiPage.Pagelet pagelet) {
+				// TODO Implement!
+				throw new UnsupportedOperationException("Not implemented yet");
+			}
+		}
+		
+		/** Alignment by distance from the top edge */
+		private static class Top extends SingleValued implements VerticalAlign {
+			private Top(double value) {
+				super(value);
+			}
+			
+			@Override
+			public void accept(MultiPage.Pagelet pagelet) {
+				// TODO Implement!
+				throw new UnsupportedOperationException("Not implemented yet");
+			}
+		}
+		
+		/** Alignment by offset (upwards) from the center */
+		private static class Middle extends SingleValued implements VerticalAlign {
+			private Middle(double value) {
+				super(value);
+			}
+			
+			@Override
+			public void accept(MultiPage.Pagelet pagelet) {
+				// TODO Implement!
+				throw new UnsupportedOperationException("Not implemented yet");
+			}
+		}
+		
+		/** Alignment by distance from the bottom edge */
+		private static class Bottom extends SingleValued implements VerticalAlign {
+			private Bottom(double value) {
+				super(value);
+			}
+			
+			@Override
+			public void accept(MultiPage.Pagelet pagelet) {
+				// TODO Implement!
+				throw new UnsupportedOperationException("Not implemented yet");
+			}
 		}
 	}
 }
