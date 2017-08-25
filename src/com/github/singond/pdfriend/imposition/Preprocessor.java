@@ -13,6 +13,16 @@ import com.github.singond.pdfriend.geometry.Dimensions;
  * imposition.
  * Because the class is mutable, the options can be set one by one.
  * <p>
+ * This class introduces a notion of a so-called "cell", which is a rectangle
+ * of specific dimensions which forms a reference in which the position
+ * of a page is expressed.
+ * This cell is the same (or equal in terms of properties) for all pages
+ * processed by a single pre-processor instance.
+ * <p>
+ * The page pre-processing involves first determining the dimensions of the
+ * cell to be used and then calculating the position of each page given with
+ * respect to this cell.
+ * <p>
  * This class is not thread-safe.
  *
  * @author Singon
