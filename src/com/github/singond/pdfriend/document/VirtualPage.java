@@ -17,7 +17,7 @@ import com.github.singond.pdfriend.Log;
  * @author Singon
  *
  */
-public class VirtualPage {
+public final class VirtualPage {
 
 	/** The width of the output. */
 	private final double width;

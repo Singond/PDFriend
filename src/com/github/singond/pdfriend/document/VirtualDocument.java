@@ -15,7 +15,7 @@ import com.github.singond.pdfriend.Log;
  * @author Singon
  *
  */
-public class VirtualDocument {
+public final class VirtualDocument {
 
 	/**
 	 * The list of pages comprising this document.
@@ -166,7 +166,7 @@ public class VirtualDocument {
 	}
 	
 	/**
-	 * Mutable class for constructing Document objects easily and incrementally. 
+	 * Mutable class for constructing Document objects easily and incrementally.
 	 * @author Singon
 	 *
 	 */
