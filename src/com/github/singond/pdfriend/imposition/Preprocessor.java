@@ -20,9 +20,15 @@ import com.github.singond.pdfriend.geometry.Dimensions;
  */
 public class Preprocessor {
 
-	/** A uniform scale to be applied to the page */
+	/** A uniform scale to be applied to the page. */
 	private double scale;
-	/** Rotation of the page */
+	/**
+	 * Required dimensions of every page.
+	 * This property can be set to override the preferred dimensions
+	 * as calculated from the other settings.
+	 */
+	private Dimensions pageDimensions = null;
+	/** Rotation of the page in radians in the direction from x-axis to y-axis. */
 	private double rotation;
 	/**
 	 * Behaviour for page size.
@@ -33,12 +39,43 @@ public class Preprocessor {
 	private Alignment alignment = new HorizontalVerticalAlignment(
 			new Center(0), new Middle(0));
 	/**
-	 * Required dimensions.
+	 * Required dimensions of the circumscribed rectangle (the cell).
 	 * This property can be set to override the preferred dimensions
 	 * as calculated from the other settings.
 	 */
-	private Dimensions requiredDims = null;
+	private Dimensions cellDimensions = null;
 	
+	public void setScale(double scale) {
+		if (scale <= 0)
+			throw new IllegalArgumentException("scale must be a positive number");
+		this.scale = scale;
+	}
+
+	/**
+	 * Sets the dimensions of every page.
+	 * This overrides the preferred dimensions which would otherwise be
+	 * calculated from the initial dimensions, scale and cell dimensions.
+	 * @param dimensions the required cell dimensions
+	 */
+	public void setPageDimensions(Dimensions dimensions) {
+		this.pageDimensions = dimensions;
+	}
+
+	public void setRotation(double rotation) {
+		this.rotation = rotation;
+	}
+
+	/**
+	 * Sets the dimensions of the circumscribed rectangle (the cell).
+	 * This overrides the preferred dimensions which would otherwise be
+	 * calculated from either the initial page dimensions and scale,
+	 * or the required page dimensions.
+	 * @param dimensions the required cell dimensions
+	 */
+	public void setCellDimensions(Dimensions dimensions) {
+		this.pageDimensions = dimensions;
+	}
+
 	// TODO Make something useful of these
 	private static interface Resizing {}
 	
