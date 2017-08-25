@@ -63,6 +63,26 @@ public class Preprocessor {
 		 */
 		private Dimensions cellDimensions = null;
 		
+		public Settings() {}
+		
+		/**
+		 * Returns a new {@code Preprocessor.Settings} object initialized
+		 * to the current state of this instance.
+		 * @return a copy of this instance
+		 */
+		public Settings copy() {
+			Settings copy = new Settings();
+			copy.scale = scale;
+			// Dimensions class is considered immutable (will be truly once it's fixed)
+			copy.pageDimensions = pageDimensions;
+			copy.rotation = rotation;
+			copy.resizing = resizing;
+			copy.alignment = alignment;
+			copy.pageDimensions = pageDimensions;
+			copy.cellDimensions = cellDimensions;
+			return copy;
+		}
+		
 		public void setScale(double scale) {
 			if (scale <= 0)
 				throw new IllegalArgumentException("scale must be a positive number");
@@ -95,8 +115,18 @@ public class Preprocessor {
 		}
 	
 		// TODO Make something useful of these
+		/**
+		 * Specifies behaviour for page size.
+		 * In order to be able to share instances, all implementing classes
+		 * are required to be immutable and private to Preprocessor.
+		 */
 		private static interface Resizing {}
 		
+		/**
+		 * Specifies page alignment within the cell.
+		 * In order to be able to share instances, all implementing classes
+		 * are required to be immutable and private to Preprocessor.
+		 */
 		private static interface Alignment {
 			void accept(MultiPage.Pagelet pagelet);
 		}
