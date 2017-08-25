@@ -3,6 +3,10 @@ package com.github.singond.pdfriend.geometry;
 /**
  * Represents a value of length with units.
  * Instances of this class are immutable.
+ * 
+ * // FIXME LengthUnit is used to store the value but is an interface!
+ * This breaks the immutability guarantee.
+ * // TODO Also add some comparison methods?
  * @author Singon
  *
  */

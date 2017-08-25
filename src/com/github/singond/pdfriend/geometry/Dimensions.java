@@ -5,7 +5,7 @@ package com.github.singond.pdfriend.geometry;
  *
  * @author Singon
  */
-public class Dimensions {
+public final class Dimensions {
 	private final Length width;
 	private final Length height;
 	private static final LengthUnit dfltUnit = LengthUnits.POINT_POSTSCRIPT;
