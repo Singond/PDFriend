@@ -1,5 +1,6 @@
 package com.github.singond.pdfriend.imposition;
 
+import com.github.singond.pdfriend.book.model.MultiPage;
 import com.github.singond.pdfriend.geometry.Dimensions;
 
 /**
@@ -29,7 +30,8 @@ public class Preprocessor {
 	 */
 	private Resizing resizing;
 	/** Page alignment within the rectangle given by resolved dimensions */
-	private Alignment alignment;
+	private Alignment alignment = new HorizontalVerticalAlignment(
+			new Center(0), new Middle(0));
 	/**
 	 * Required dimensions.
 	 * This property can be set to override the preferred dimensions
@@ -38,20 +40,41 @@ public class Preprocessor {
 	private Dimensions requiredDims = null;
 	
 	// TODO Make something useful of these
-	public static interface Resizing {}
-	public static interface Alignment {}
-	private static interface HorizontalAlign {}
-	private static interface VerticalAlign {}
+	private static interface Resizing {}
 	
-	public static class HorizontalVerticalAlignment implements Alignment {
+	private static interface Alignment {
+		void accept(MultiPage.Pagelet pagelet);
+	}
+	
+	private static interface HorizontalAlign {
+		void accept(MultiPage.Pagelet pagelet);
+	}
+	private static interface VerticalAlign {
+		void accept(MultiPage.Pagelet pagelet);
+	}
+	
+	/**
+	 * A basic alignment consisting of two separate values for the horizontal
+	 * and vertical alignment.
+	 */
+	private static class HorizontalVerticalAlignment implements Alignment {
 		private final HorizontalAlign horizontalAlign;
 		private final VerticalAlign verticalAlign;
 		
-		public HorizontalVerticalAlignment(HorizontalAlign horizontalAlign,
+		private HorizontalVerticalAlignment(HorizontalAlign horizontalAlign,
 		                                   VerticalAlign verticalAlign) {
-			super();
+			if (horizontalAlign == null)
+				throw new NullPointerException("Horizontal alignment cannot be null");
+			if (verticalAlign == null)
+				throw new NullPointerException("Vertical alignment cannot be null");
 			this.horizontalAlign = horizontalAlign;
 			this.verticalAlign = verticalAlign;
+		}
+		
+		@Override
+		public void accept(MultiPage.Pagelet pagelet) {
+			horizontalAlign.accept(pagelet);
+			verticalAlign.accept(pagelet);
 		}
 	}
 	
@@ -65,44 +88,80 @@ public class Preprocessor {
 	}
 	
 	/** Alignment by distance from the left edge */
-	public static class Left extends SingleValued implements HorizontalAlign {
-		public Left(double value) {
+	private static class Left extends SingleValued implements HorizontalAlign {
+		private Left(double value) {
 			super(value);
+		}
+		
+		@Override
+		public void accept(MultiPage.Pagelet pagelet) {
+			// TODO Implement!
+			throw new UnsupportedOperationException("Not implemented yet");
 		}
 	}
 	
 	/** Alignment by offset (to right) from the center */
-	public static class Center extends SingleValued implements HorizontalAlign {
-		public Center(double value) {
+	private static class Center extends SingleValued implements HorizontalAlign {
+		private Center(double value) {
 			super(value);
+		}
+		
+		@Override
+		public void accept(MultiPage.Pagelet pagelet) {
+			// TODO Implement!
+			throw new UnsupportedOperationException("Not implemented yet");
 		}
 	}
 	
 	/** Alignment by distance from the right edge */
-	public static class Right extends SingleValued implements HorizontalAlign {
-		public Right(double value) {
+	private static class Right extends SingleValued implements HorizontalAlign {
+		private Right(double value) {
 			super(value);
+		}
+		
+		@Override
+		public void accept(MultiPage.Pagelet pagelet) {
+			// TODO Implement!
+			throw new UnsupportedOperationException("Not implemented yet");
 		}
 	}
 	
 	/** Alignment by distance from the top edge */
-	public static class Top extends SingleValued implements VerticalAlign {
-		public Top(double value) {
+	private static class Top extends SingleValued implements VerticalAlign {
+		private Top(double value) {
 			super(value);
+		}
+		
+		@Override
+		public void accept(MultiPage.Pagelet pagelet) {
+			// TODO Implement!
+			throw new UnsupportedOperationException("Not implemented yet");
 		}
 	}
 	
 	/** Alignment by offset (upwards) from the center */
-	public static class Middle extends SingleValued implements VerticalAlign {
-		public Middle(double value) {
+	private static class Middle extends SingleValued implements VerticalAlign {
+		private Middle(double value) {
 			super(value);
+		}
+		
+		@Override
+		public void accept(MultiPage.Pagelet pagelet) {
+			// TODO Implement!
+			throw new UnsupportedOperationException("Not implemented yet");
 		}
 	}
 	
 	/** Alignment by distance from the bottom edge */
-	public static class Bottom extends SingleValued implements VerticalAlign {
-		public Bottom(double value) {
+	private static class Bottom extends SingleValued implements VerticalAlign {
+		private Bottom(double value) {
 			super(value);
+		}
+		
+		@Override
+		public void accept(MultiPage.Pagelet pagelet) {
+			// TODO Implement!
+			throw new UnsupportedOperationException("Not implemented yet");
 		}
 	}
 }
