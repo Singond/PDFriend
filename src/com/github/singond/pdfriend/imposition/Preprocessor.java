@@ -72,7 +72,7 @@ public class Preprocessor {
 	 * @param documents
 	 * @param settings
 	 * @return
-	 * @throws IllegalArgumentException if the document list contains no pages
+	 * @throws NoSuchElementException if the document list contains no pages
 	 */
 	private static final Dimensions resolveCellDimensions(
 			List<VirtualDocument> documents, Settings settings) {
@@ -92,7 +92,7 @@ public class Preprocessor {
 							page.getWidth(), page.getHeight(), rotation))
 					.max().getAsDouble();
 		} catch (NoSuchElementException e) {
-			throw new IllegalArgumentException(
+			throw new NoSuchElementException(
 					"The documents are empty (they contain no pages): " + documents);
 		}
 		return new Dimensions(2 * halfHorizontalExtent, 2 * halfVerticalExtent,
