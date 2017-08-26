@@ -64,6 +64,18 @@ public class Preprocessor {
 	}
 	
 	/**
+	 * Checks whether this preprocessor was initialized with this page
+	 * in mind, ie. if this page is contained in the documents passed
+	 * to this {@code Preprocessor} during its initialization.
+	 * @param page the page to be tested
+	 * @return true if the page was present in the initialization documents
+	 */
+	public boolean hasPage(VirtualPage page) {
+		return documents.stream()
+				.anyMatch(doc -> doc.getPages().contains(page));
+	}
+	
+	/**
 	 * Resolves the dimensions of the cell for the given collection of pages
 	 * and settings.
 	 * @param documents
