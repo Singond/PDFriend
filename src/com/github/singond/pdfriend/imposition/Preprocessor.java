@@ -3,9 +3,6 @@ package com.github.singond.pdfriend.imposition;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import com.github.singond.geometry.plane.Rectangles;
 import com.github.singond.pdfriend.book.model.MultiPage;
 import com.github.singond.pdfriend.document.VirtualDocument;
