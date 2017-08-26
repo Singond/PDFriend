@@ -11,6 +11,8 @@ import com.github.singond.pdfriend.book.model.Volume;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.format.RenderingException;
+import com.github.singond.pdfriend.geometry.LengthUnit;
+import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.geometry.PageSize;
 import com.github.singond.pdfriend.geometry.PageSize.FitToLargest;
 import com.github.singond.pdfriend.geometry.PageSize.Scale;
@@ -36,6 +38,10 @@ public class Impose implements Module {
 	/** Size to be applied to pages of input */
 	private PageSize pageSize;
 	
+	/** The unit used in working with book object model */
+	public static final LengthUnit WORKING_LENGTH_UNIT = LengthUnits.POINT_POSTSCRIPT;
+	
+	/** Logger instance */
 	private static ExtendedLogger logger = Log.logger(Impose.class);
 	
 	public Type getType() {

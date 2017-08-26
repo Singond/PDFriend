@@ -2,11 +2,16 @@ package com.github.singond.pdfriend.imposition;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import com.github.singond.geometry.plane.Rectangles;
 import com.github.singond.pdfriend.book.model.MultiPage;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.geometry.Dimensions;
+import com.github.singond.pdfriend.modules.Impose;
 
 /**
  * Pre-processes pages of input document prior to imposition.
@@ -67,11 +72,31 @@ public class Preprocessor {
 	 * @param documents
 	 * @param settings
 	 * @return
+	 * @throws IllegalArgumentException if the document list contains no pages
 	 */
 	private static final Dimensions resolveCellDimensions(
 			List<VirtualDocument> documents, Settings settings) {
-		// TODO Implement
-		return null;
+		final double rotation = settings.rotation;
+		
+		double halfHorizontalExtent;
+		double halfVerticalExtent;
+		try {
+			halfHorizontalExtent = documents.stream()
+					.flatMap(doc -> doc.getPages().stream())
+					.mapToDouble(page -> Rectangles.getHorizontalExtent(
+							page.getWidth(), page.getHeight(), rotation))
+					.max().getAsDouble();
+			halfVerticalExtent = documents.stream()
+					.flatMap(doc -> doc.getPages().stream())
+					.mapToDouble(page -> Rectangles.getVerticalExtent(
+							page.getWidth(), page.getHeight(), rotation))
+					.max().getAsDouble();
+		} catch (NoSuchElementException e) {
+			throw new IllegalArgumentException(
+					"The documents are empty (they contain no pages): " + documents);
+		}
+		return new Dimensions(2 * halfHorizontalExtent, 2 * halfVerticalExtent,
+							  Impose.WORKING_LENGTH_UNIT);
 	}
 	
 	/**
