@@ -1,20 +1,18 @@
 package com.github.singond.pdfriend.geometry;
 
 /**
- * Represents a value of length with units.
+ * Represents length in the geometric sense, ie. a single spatial dimension.
  * Instances of this class are immutable.
  * 
- * // FIXME LengthUnit is used to store the value but is an interface!
- * This breaks the immutability guarantee.
  * // TODO Also add some comparison methods?
  * @author Singon
  *
  */
 public final class Length {
-	/** The numeric value of the length */
+	/** The value of this length normalized to reference units */
 	private final double value;
-	/** The unit of the numeric value */
-	private final LengthUnit unit;
+	/** The reference length unit used for the internal representation */
+	private static final LengthUnit REFERENCE_UNIT = LengthUnits.METRE;
 	
 	/**
 	 * Constructs a new object representing the given length.
@@ -22,29 +20,51 @@ public final class Length {
 	 * @param unit the unit
 	 */
 	public Length(double value, LengthUnit unit) {
-		this.value = value;
-		this.unit = unit;
-	}
-	
-	/**
-	 * Returns the unit this length is expressed in.
-	 */
-	public LengthUnit unit() {
-		return unit;
+		this.value = convertUnits(value, unit, REFERENCE_UNIT);
 	}
 	
 	/**
 	 * Converts this length into the given units.
-	 * @param toUnit the unit to convert into
+	 * @param unit the unit to convert into
 	 * @return this length expressed in terms of {@code otherUnit}
 	 */
-	public double in(LengthUnit toUnit) {
-		return value * unit.inMetres()/toUnit.inMetres();
+	public double in(LengthUnit unit) {
+		return convertUnits(value, REFERENCE_UNIT, unit);
+	}
+	
+	/**
+	 * Converts a length between units.
+	 * @param value the numeric value of the length
+	 * @param fromUnit the unit of the length
+	 * @param toUnit the unit to convert into
+	 * @return the length of {@code value [fromUnit]} expressed
+	 *         in terms of {@code otherUnit}
+	 */
+	private static double convertUnits(double value, LengthUnit fromUnit, LengthUnit toUnit) {
+		if (fromUnit == toUnit) {
+			return value;
+		} else {
+			return value * fromUnit.inMetres()/toUnit.inMetres();
+		}
 	}
 	
 	@Override
+	public int hashCode() {
+		long temp = Double.doubleToLongBits(value);
+		return 31 + (int) (temp ^ (temp >>> 32));
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (!(obj instanceof Length)) return false;
+		Length other = (Length) obj;
+		return (Double.doubleToLongBits(value) == Double.doubleToLongBits(other.value));
+	}
+
+	@Override
 	public String toString() {
-		return value + unit.symbol();
+		return value + REFERENCE_UNIT.symbol();
 	}
 	
 	public String toString(LengthUnit u) {
