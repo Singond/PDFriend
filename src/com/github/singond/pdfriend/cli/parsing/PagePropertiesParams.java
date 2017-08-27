@@ -15,6 +15,7 @@ import com.github.singond.pdfriend.geometry.LengthUnits;
  * @author Singon
  *
  */
+@Deprecated
 public class PagePropertiesParams implements ParameterDelegate {
 
 	/**
@@ -30,7 +31,7 @@ public class PagePropertiesParams implements ParameterDelegate {
 	public Angle rotation = new Angle(0);
 	
 	/**
-	 * TODO Change the name to something more meaningful. 
+	 * TODO Change the name to something more meaningful.
 	 * Warning! The name of this parameter is expected to change.
 	 */
 	@Parameter(names="--extents",
