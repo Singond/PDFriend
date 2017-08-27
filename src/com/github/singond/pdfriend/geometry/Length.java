@@ -4,7 +4,6 @@ package com.github.singond.pdfriend.geometry;
  * Represents length in the geometric sense, ie. a single spatial dimension.
  * Instances of this class are immutable.
  * 
- * // TODO Also add some comparison methods?
  * @author Singon
  *
  */
