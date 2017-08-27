@@ -1,5 +1,6 @@
 package com.github.singond.pdfriend.imposition;
 
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -117,15 +118,22 @@ public class Preprocessor {
 	}
 	
 	/**
-	 * Performs the pre-processing on a pagelet instance.
-	 * The result is based on the resolved cell dimension and settings
-	 * given during the initialization of this {@code Preprocessor}.
-	 * @param page the page to be processed
-	 * @param pagelet the pagelet containing {@code page}
+	 * Performs the pre-processing of a given page to resolve its position
+	 * inside the cell.
+	 * <p>
+	 * This method does not perform data consistency check, ie. whether the
+	 * given page was present in the initialization data of this
+	 * {@code Preprocessor} instance, ie. it does not include calling
+	 * {@code hasPage()}.
+	 * @param page the page whose pposition in the cell is to be obtained
+	 * @return the position as a transformation matrix for the coordinate
+	 *         system originating in the lower bottom corner of the cell,
+	 *         with x-axis pointing right and y-axis pointing up
 	 */
-	public void processPageInPagelet(VirtualPage page,
-	                                 MultiPage.Pagelet pagelet) {
+	public AffineTransform getResolvedPositionInCell(VirtualPage page) {
 		// TODO Implement
+		// TODO Cache frequently used values of Dimensions and their results
+		throw new UnsupportedOperationException("This method has not been implemented yet");
 	}
 	
 	/**
