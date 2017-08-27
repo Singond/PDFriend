@@ -8,7 +8,7 @@ package com.github.singond.pdfriend.geometry;
  * @author Singon
  *
  */
-public final class Length {
+public final class Length implements Comparable<Length> {
 	/** The value of this length normalized to reference units */
 	private final double value;
 	/** The reference length unit used for the internal representation */
@@ -67,6 +67,11 @@ public final class Length {
 		return value + REFERENCE_UNIT.symbol();
 	}
 	
+	@Override
+	public int compareTo(Length other) {
+		return Double.compare(value, other.value);
+	}
+
 	public String toString(LengthUnit u) {
 		return in(u) + u.symbol();
 	}
