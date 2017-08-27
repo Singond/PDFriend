@@ -39,7 +39,7 @@ public class Impose implements Module {
 	private PageSize pageSize;
 	
 	/** The unit used in working with book object model */
-	public static final LengthUnit WORKING_LENGTH_UNIT = LengthUnits.POINT_POSTSCRIPT;
+	public static final LengthUnit LENGTH_UNIT = LengthUnits.POINT_POSTSCRIPT;
 	
 	/** Logger instance */
 	private static ExtendedLogger logger = Log.logger(Impose.class);

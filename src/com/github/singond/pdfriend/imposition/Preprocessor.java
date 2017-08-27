@@ -106,7 +106,7 @@ public class Preprocessor {
 					"The documents are empty (they contain no pages): " + documents);
 		}
 		return new Dimensions(2 * halfHorizontalExtent, 2 * halfVerticalExtent,
-							  Impose.WORKING_LENGTH_UNIT);
+							  Impose.LENGTH_UNIT);
 	}
 	
 	/**

@@ -8,6 +8,7 @@ package com.github.singond.pdfriend.geometry;
 public final class Dimensions {
 	private final Length width;
 	private final Length height;
+	@Deprecated
 	private static final LengthUnit dfltUnit = LengthUnits.POINT_POSTSCRIPT;
 	
 	/**
@@ -42,6 +43,7 @@ public final class Dimensions {
 	 * @param width width in PostScript points
 	 * @param height height in PostScript points
 	 */
+	@Deprecated
 	public Dimensions(double width, double height) {
 		this(width, height, dfltUnit);
 	}

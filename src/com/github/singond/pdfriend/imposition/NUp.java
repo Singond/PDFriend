@@ -14,6 +14,7 @@ import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.PageSize;
 import com.github.singond.pdfriend.geometry.PageSize.FitToLargest;
 import com.github.singond.pdfriend.geometry.PageSize.Scale;
+import com.github.singond.pdfriend.modules.Impose;
 
 /**
  * An n-up layout.
@@ -47,8 +48,8 @@ public class NUp implements Imposable {
 		@Override
 		public GridPage visit(Scale size, GridPageParams template) {
 			GridPage grid = gridFromTemplate(template,
-			                                 template.cell.widthInPoints()*size.scalePage(),
-			                                 template.cell.heightInPoints()*size.scalePage());
+			                                 template.cell.width().in(Impose.LENGTH_UNIT)*size.scalePage(),
+			                                 template.cell.height().in(Impose.LENGTH_UNIT)*size.scalePage());
 			grid.scalePages(size.scalePage());
 			return grid;
 		}
@@ -56,8 +57,8 @@ public class NUp implements Imposable {
 		@Override
 		public GridPage visit(FitToLargest size, GridPageParams template) {
 			GridPage grid = gridFromTemplate(template,
-			                                 template.cell.widthInPoints(),
-			                                 template.cell.heightInPoints());
+			                                 template.cell.width().in(Impose.LENGTH_UNIT),
+			                                 template.cell.height().in(Impose.LENGTH_UNIT));
 			grid.fitPages();
 			return grid;
 		}
@@ -207,7 +208,7 @@ public class NUp implements Imposable {
 			int rows = this.rows;
 			int cols = this.cols;
 			
-			// The rows and cols arguments should be OK, but check them anyway 
+			// The rows and cols arguments should be OK, but check them anyway
 			if (rows < 1 || cols < 1) {
 				throw new IllegalArgumentException(String.format
 						("Wrong number of cells in grid: %dx%d", rows, cols));
@@ -225,7 +226,7 @@ public class NUp implements Imposable {
 			
 			// Determine grid cell dimensions
 			double[] docFormat = doc.maxPageDimensions();
-			Dimensions cell = new Dimensions(docFormat[0], docFormat[1]);
+			Dimensions cell = new Dimensions(docFormat[0], docFormat[1], Impose.LENGTH_UNIT);
 			
 			NUp result = new NUp(pages, cols, rows, cell,
 			                     horizontalOffset, verticalOffset,
