@@ -87,6 +87,19 @@ public final class Dimensions {
 		// Reuse instances?
 		return new Dimensions(width, height);
 	}
+	
+	/**
+	 * Returns a new dummy {@code Dimensions} object.
+	 * The returned object is always a new instance which is not equal to
+	 * any other instance of this class in terms of {@code equals}
+	 * and does not have any valid behaviour except for {@code equals()}
+	 * and {@code hashCode()}.
+	 * It is intended to be used as a placeholder, for example in the
+	 * null object design pattern.
+	 */
+	public static final Dimensions dummy() {
+		return new Dimensions();
+	}
 
 	/**
 	 * Returns the width.
