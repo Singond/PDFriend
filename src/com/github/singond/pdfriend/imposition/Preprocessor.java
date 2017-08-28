@@ -202,6 +202,8 @@ public class Preprocessor {
 		 * @param dimensions the required cell dimensions
 		 */
 		public void setPageDimensions(Dimensions dimensions) {
+			if (dimensions == null)
+				throw new IllegalArgumentException("Page dimensions cannot be null");
 			this.pageDimensions = dimensions;
 		}
 	
@@ -217,6 +219,8 @@ public class Preprocessor {
 		 * @param dimensions the required cell dimensions
 		 */
 		public void setCellDimensions(Dimensions dimensions) {
+			if (dimensions == null)
+				throw new IllegalArgumentException("Cell dimensions cannot be null");
 			this.pageDimensions = dimensions;
 		}
 	
