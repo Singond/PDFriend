@@ -58,9 +58,23 @@ public final class Dimensions {
 	 * @param unit the length unit of both width and height
 	 * @return an instance of Dimensions representing the given dimensions
 	 */
-	public static Dimensions of(double width, double height, LengthUnit unit) {
+	public static final Dimensions of(double width, double height, LengthUnit unit) {
 		// Reuse instances?
 		return new Dimensions(width, height, unit);
+	}
+	
+	/**
+	 * A factory method.
+	 * Returns a Dimensions object representing the pair of dimensions given.
+	 * In the current implementation, a new instance is created each time,
+	 * but this is subject to change in future.
+	 * @param width the width
+	 * @param height the height
+	 * @return an instance of Dimensions representing the given dimensions
+	 */
+	public static final Dimensions of(Length width, Length height) {
+		// Reuse instances?
+		return new Dimensions(width, height);
 	}
 
 	/**
