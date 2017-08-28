@@ -9,6 +9,7 @@ import com.github.singond.pdfriend.book.model.MultiPage;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.geometry.Dimensions;
+import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.modules.Impose;
 
 /**
@@ -56,6 +57,9 @@ public class Preprocessor {
 	 */
 	private final Dimensions cell;
 	
+	/** Specifies that the dimensions are not given and should be calculated */
+	private static final Dimensions AUTO = Dimensions.dummy();
+	
 	Preprocessor(List<VirtualDocument> documents, Settings settings) {
 		// Storing these objects might not be necessary if the cell
 		// dimension is determined now.
@@ -86,27 +90,30 @@ public class Preprocessor {
 	 */
 	private static final Dimensions resolveCellDimensions(
 			List<VirtualDocument> documents, Settings settings) {
-		final double rotation = settings.rotation;
-		
-		double halfHorizontalExtent;
-		double halfVerticalExtent;
-		try {
-			halfHorizontalExtent = documents.stream()
-					.flatMap(doc -> doc.getPages().stream())
-					.mapToDouble(page -> Rectangles.getHorizontalExtent(
-							page.getWidth(), page.getHeight(), rotation))
-					.max().getAsDouble();
-			halfVerticalExtent = documents.stream()
-					.flatMap(doc -> doc.getPages().stream())
-					.mapToDouble(page -> Rectangles.getVerticalExtent(
-							page.getWidth(), page.getHeight(), rotation))
-					.max().getAsDouble();
-		} catch (NoSuchElementException e) {
-			throw new NoSuchElementException(
-					"The documents are empty (they contain no pages): " + documents);
+		if (settings.cellDimensions == AUTO) {
+			final double rotation = settings.rotation;
+			double halfHorizontalExtent;
+			double halfVerticalExtent;
+			try {
+				halfHorizontalExtent = documents.stream()
+						.flatMap(doc -> doc.getPages().stream())
+						.mapToDouble(page -> Rectangles.getHorizontalExtent(
+								page.getWidth(), page.getHeight(), rotation))
+						.max().getAsDouble();
+				halfVerticalExtent = documents.stream()
+						.flatMap(doc -> doc.getPages().stream())
+						.mapToDouble(page -> Rectangles.getVerticalExtent(
+								page.getWidth(), page.getHeight(), rotation))
+						.max().getAsDouble();
+			} catch (NoSuchElementException e) {
+				throw new NoSuchElementException(
+						"The documents are empty (they contain no pages): " + documents);
+			}
+			return new Dimensions(2 * halfHorizontalExtent, 2 * halfVerticalExtent,
+			                      Impose.LENGTH_UNIT);
+		} else {
+			return settings.cellDimensions;
 		}
-		return new Dimensions(2 * halfHorizontalExtent, 2 * halfVerticalExtent,
-							  Impose.LENGTH_UNIT);
 	}
 	
 	/**
@@ -125,14 +132,27 @@ public class Preprocessor {
 	 * given page was present in the initialization data of this
 	 * {@code Preprocessor} instance, ie. it does not include calling
 	 * {@code hasPage()}.
-	 * @param page the page whose pposition in the cell is to be obtained
+	 * @param page the page whose position in the cell is to be obtained
 	 * @return the position as a transformation matrix for the coordinate
 	 *         system originating in the lower bottom corner of the cell,
 	 *         with x-axis pointing right and y-axis pointing up
 	 */
 	public AffineTransform getResolvedPositionInCell(VirtualPage page) {
-		// TODO Implement
+		// TODO Implement using resolvePositionInCell()
 		// TODO Cache frequently used values of Dimensions and their results
+		throw new UnsupportedOperationException("This method has not been implemented yet");
+	}
+	
+	/**
+	 * Resolves the position of a rectangle of the given dimensions
+	 * inside the cell.
+	 * @param rect the rectangle whose position in the cell is to be obtained
+	 * @return the position as a transformation matrix for the coordinate
+	 *         system originating in the lower bottom corner of the cell,
+	 *         with x-axis pointing right and y-axis pointing up
+	 */
+	private AffineTransform resolvePositionInCell(Dimensions rect) {
+		// TODO Implement
 		throw new UnsupportedOperationException("This method has not been implemented yet");
 	}
 	
@@ -151,7 +171,7 @@ public class Preprocessor {
 		 * This property can be set to override the preferred dimensions
 		 * as calculated from the other settings.
 		 */
-		private Dimensions pageDimensions = null;
+		private Dimensions pageDimensions = AUTO;
 		/** Rotation of the page in radians in the direction from x-axis to y-axis. */
 		private double rotation;
 		/**
@@ -167,7 +187,7 @@ public class Preprocessor {
 		 * This property can be set to override the preferred dimensions
 		 * as calculated from the other settings.
 		 */
-		private Dimensions cellDimensions = null;
+		private Dimensions cellDimensions = AUTO;
 		
 		public Settings() {}
 		
