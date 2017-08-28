@@ -49,6 +49,17 @@ public final class Dimensions {
 	}
 	
 	/**
+	 * Constructs a dummy object.
+	 * This object is not equal to any other instance and does not have
+	 * valid behaviour except for {@code equals()} and {@code hashCode()}.
+	 * It is intended to be used as a placeholder, for example in the
+	 * null object design pattern.
+	 */
+	private Dimensions() {
+		width = height = null;
+	}
+	
+	/**
 	 * A factory method.
 	 * Returns a Dimensions object representing the pair of dimensions given.
 	 * In the current implementation, a new instance is created each time,
