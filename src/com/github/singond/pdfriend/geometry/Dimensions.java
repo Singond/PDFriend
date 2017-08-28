@@ -47,6 +47,21 @@ public final class Dimensions {
 	public Dimensions(double width, double height) {
 		this(width, height, dfltUnit);
 	}
+	
+	/**
+	 * A factory method.
+	 * Returns a Dimensions object representing the pair of dimensions given.
+	 * In the current implementation, a new instance is created each time,
+	 * but this is subject to change in future.
+	 * @param width width in {@code unit}s
+	 * @param height height in {@code unit}s
+	 * @param unit the length unit of both width and height
+	 * @return an instance of Dimensions representing the given dimensions
+	 */
+	public static Dimensions of(double width, double height, LengthUnit unit) {
+		// Reuse instances?
+		return new Dimensions(width, height, unit);
+	}
 
 	/**
 	 * Returns the width.
