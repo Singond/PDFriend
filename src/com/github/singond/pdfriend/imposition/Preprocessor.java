@@ -91,27 +91,44 @@ public class Preprocessor {
 	private static final Dimensions resolveCellDimensions(
 			List<VirtualDocument> documents, Settings settings) {
 		if (settings.cellDimensions == AUTO) {
+			// Calculate preferred cell dimensions
 			final double rotation = settings.rotation;
 			double halfHorizontalExtent;
 			double halfVerticalExtent;
-			try {
-				halfHorizontalExtent = documents.stream()
-						.flatMap(doc -> doc.getPages().stream())
-						.mapToDouble(page -> Rectangles.getHorizontalExtent(
-								page.getWidth(), page.getHeight(), rotation))
-						.max().getAsDouble();
-				halfVerticalExtent = documents.stream()
-						.flatMap(doc -> doc.getPages().stream())
-						.mapToDouble(page -> Rectangles.getVerticalExtent(
-								page.getWidth(), page.getHeight(), rotation))
-						.max().getAsDouble();
-			} catch (NoSuchElementException e) {
-				throw new NoSuchElementException(
-						"The documents are empty (they contain no pages): " + documents);
+			if (settings.pageDimensions == AUTO) {
+				// Circumscribe the cell to the pages scaled by {@code settings.scale}
+				// and rotated by {@code settings.rotation}
+				try {
+					halfHorizontalExtent = documents.stream()
+							.flatMap(doc -> doc.getPages().stream())
+							.mapToDouble(page -> Rectangles.getHorizontalExtent(
+									page.getWidth(), page.getHeight(), rotation))
+							.max().getAsDouble();
+					halfVerticalExtent = documents.stream()
+							.flatMap(doc -> doc.getPages().stream())
+							.mapToDouble(page -> Rectangles.getVerticalExtent(
+									page.getWidth(), page.getHeight(), rotation))
+							.max().getAsDouble();
+				} catch (NoSuchElementException e) {
+					throw new NoSuchElementException(
+							"The documents are empty (they contain no pages): " + documents);
+				}
+			} else {
+				// Page dimensions are given explicitly: circumscribe the cell
+				// to a page of these dimensions rotated by {@code settings.rotation}
+				halfHorizontalExtent = Rectangles.getHorizontalExtent(
+						settings.pageDimensions.width().in(Impose.LENGTH_UNIT),
+						settings.pageDimensions.height().in(Impose.LENGTH_UNIT),
+						rotation);
+				halfVerticalExtent = Rectangles.getVerticalExtent(
+						settings.pageDimensions.width().in(Impose.LENGTH_UNIT),
+						settings.pageDimensions.height().in(Impose.LENGTH_UNIT),
+						rotation);
 			}
 			return new Dimensions(2 * halfHorizontalExtent, 2 * halfVerticalExtent,
 			                      Impose.LENGTH_UNIT);
 		} else {
+			// Cell dimensions are given explicitly; return the value
 			return settings.cellDimensions;
 		}
 	}
