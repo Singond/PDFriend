@@ -131,6 +131,19 @@ public final class Dimensions {
 		return height.in(dfltUnit);
 	}
 	
+	/**
+	 * Returns a Dimensions instace representing a rectangle which has been
+	 * scaled up by the given constant, ie. whose sides are a multiple
+	 * of the corresponding side in this rectangle and the magnification.
+	 * @param magnification the constant to scale up by
+	 * @return a rectangle resulting by scaling this rectangle up by
+	 *         {@code magnification}
+	 */
+	public Dimensions scaleUp(double magnification) {
+		return new Dimensions(width.multiply(magnification),
+		                      height.multiply(magnification));
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

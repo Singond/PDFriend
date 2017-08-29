@@ -47,6 +47,16 @@ public final class Length implements Comparable<Length> {
 		}
 	}
 	
+	/**
+	 * Returns a product of this length and a given scalar
+	 * @param factor the number to multiply this length by
+	 * @return a {@code Length} instance whose value is {@code factor}
+	 *         times larger than the value of this instance
+	 */
+	public Length multiply(double factor) {
+		return new Length(value*factor, REFERENCE_UNIT);
+	}
+	
 	@Override
 	public int hashCode() {
 		long temp = Double.doubleToLongBits(value);
