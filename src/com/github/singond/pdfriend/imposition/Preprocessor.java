@@ -61,7 +61,7 @@ public class Preprocessor {
 	private static final Dimensions AUTO = Dimensions.dummy();
 	
 	Preprocessor(List<VirtualDocument> documents, Settings settings) {
-		// Storing these objects might not be necessary if the cell
+		// Storing documents and settings might not be necessary if the cell
 		// dimension is determined now.
 		this.documents = new ArrayList<>(documents);
 		this.settings = settings.copy();
@@ -174,7 +174,8 @@ public class Preprocessor {
 	}
 	
 	/**
-	 * A reusable container of all the settings available for page preprocessing.
+	 * A reusable container of all the settings available for preprocessing
+	 * the input pages.
 	 *
 	 * @author Singon
 	 *
@@ -184,9 +185,13 @@ public class Preprocessor {
 		/** A uniform scale to be applied to the page. */
 		private double scale;
 		/**
-		 * Required dimensions of every page.
-		 * This property can be set to override the preferred dimensions
-		 * as calculated from the other settings.
+		 * Required dimensions of the input page on the output sheet.
+		 * If set, this value will cause the image of each input page
+		 * to be rendered at the given dimensions in the output.
+		 * <p>
+		 * The special value {@code AUTO} gives no explicit size for the pages,
+		 * it is an instruction to render the image of each page in the
+		 * preferred dimensions as calculated from the other settings.
 		 */
 		private Dimensions pageDimensions = AUTO;
 		/** Rotation of the page in radians in the direction from x-axis to y-axis. */
