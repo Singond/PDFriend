@@ -8,6 +8,8 @@ import java.util.NoSuchElementException;
 
 import com.github.singond.geometry.plane.RectangleFrame;
 import com.github.singond.geometry.plane.Rectangles;
+import com.github.singond.geometry.plane.RectangleFrame.OuterAlignment;
+import com.github.singond.geometry.plane.RectangleFrame.OuterAlignment.Left;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.document.VirtualDocument;
@@ -441,10 +443,61 @@ public class Preprocessor {
 		abstract R visit(MiddleAlignment align, P param);
 		abstract R visit(BottomAlignment align, P param);
 	}
+	
+	private static class InnerAligner implements AlignmentVisitor<Void, Void> {
+		private final RectangleFrame frame;
+		private final RectangleFrame.InnerAlignment alignment;
+		
+		InnerAligner(RectangleFrame frame) {
+			this.frame = frame;
+			this.alignment = frame.new InnerAlignment();
+		}
+
+		@Override
+		public Void visit(LeftAlignment align, Void param) {
+			alignment.setHorizontalAlignment(alignment.new Left(align.value));
+			return null;
+		}
+
+		@Override
+		public Void visit(CenterAlignment align, Void param) {
+			alignment.setHorizontalAlignment(alignment.new Center(align.value));
+			return null;
+		}
+
+		@Override
+		public Void visit(RightAlignment align, Void param) {
+			alignment.setHorizontalAlignment(alignment.new Right(align.value));
+			return null;
+		}
+
+		@Override
+		public Void visit(TopAlignment align, Void param) {
+			alignment.setVerticalAlignment(alignment.new Top(align.value));
+			return null;
+		}
+
+		@Override
+		public Void visit(MiddleAlignment align, Void param) {
+			alignment.setVerticalAlignment(alignment.new Middle(align.value));
+			return null;
+		}
+
+		@Override
+		public Void visit(BottomAlignment align, Void param) {
+			alignment.setVerticalAlignment(alignment.new Bottom(align.value));
+			return null;
+		}
+
+		RectangleFrame prepareRectangleFrame() {
+			frame.setAlignment(alignment);
+			return frame;
+		}
+	}
 
 	/** A class with a single scalar value */
 	private abstract static class SingleValued {
-		private final double value;
+		final double value;
 		
 		private SingleValued(double value) {
 			this.value = value;
