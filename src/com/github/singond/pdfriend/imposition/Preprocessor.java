@@ -7,6 +7,8 @@ import java.util.NoSuchElementException;
 
 import com.github.singond.geometry.plane.RectangleFrame;
 import com.github.singond.geometry.plane.Rectangles;
+import com.github.singond.pdfriend.ExtendedLogger;
+import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.model.MultiPage;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
@@ -62,6 +64,9 @@ public class Preprocessor {
 	
 	/** Specifies that the dimensions are not given and should be calculated */
 	private static final Dimensions AUTO = Dimensions.dummy();
+	
+	/** Logger instance */
+	private static ExtendedLogger logger = Log.logger(Preprocessor.class);
 	
 	Preprocessor(List<VirtualDocument> documents, Settings settings) {
 		// Storing documents and settings might not be necessary if the cell
@@ -183,6 +188,8 @@ public class Preprocessor {
 		final RectangleFrame frame = new RectangleFrame
 				(cell.width().in(unit), cell.height().in(unit));
 
+		if (logger.isDebugEnabled())
+			logger.debug("preprocess_resolvingPositionInCell", orig, cell);
 		AffineTransform correction = resize.setSizeInFrame(
 				frame, orig, scale, scaleExplicit, pageDimensions);
 		frame.setRotation(rotation);
