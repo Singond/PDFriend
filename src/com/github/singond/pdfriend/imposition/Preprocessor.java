@@ -2,6 +2,7 @@ package com.github.singond.pdfriend.imposition;
 
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -9,7 +10,6 @@ import com.github.singond.geometry.plane.RectangleFrame;
 import com.github.singond.geometry.plane.Rectangles;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.book.model.MultiPage;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.geometry.Dimensions;
@@ -182,7 +182,7 @@ public class Preprocessor {
 		final double rotation = settings.rotation;
 		final Dimensions pageDimensions = settings.pageDimensions;
 		final Resizing resize = settings.resizing;
-		final Alignment align = settings.alignment;
+		final List<Alignment> align = settings.alignment;
 		
 		final LengthUnit unit = Impose.LENGTH_UNIT;
 		final RectangleFrame frame = new RectangleFrame
@@ -255,8 +255,8 @@ public class Preprocessor {
 		 */
 		private Resizing resizing;
 		/** Page alignment within the rectangle given by resolved dimensions */
-		private Alignment alignment = new HorizontalVerticalAlignment(
-				new Center(0), new Middle(0));
+		private List<Alignment> alignment = Arrays.asList
+				(new CenterAlignment(0), new MiddleAlignment(0));
 		/**
 		 * Required dimensions of the circumscribed rectangle (the cell).
 		 * This property can be set to override the preferred dimensions
@@ -274,11 +274,11 @@ public class Preprocessor {
 		public Settings copy() {
 			Settings copy = new Settings();
 			copy.scale = scale;
-			// Dimensions class is considered immutable (will be truly once it's fixed)
+			// Dimensions class is immutable
 			copy.pageDimensions = pageDimensions;
 			copy.rotation = rotation;
 			copy.resizing = resizing;
-			copy.alignment = alignment;
+			copy.alignment = new ArrayList<>(alignment);
 			copy.pageDimensions = pageDimensions;
 			copy.cellDimensions = cellDimensions;
 			return copy;
@@ -428,40 +428,18 @@ public class Preprocessor {
 	 * are required to be immutable and private to Preprocessor.
 	 */
 	private static interface Alignment {
-		void accept(MultiPage.Pagelet pagelet);
+		/** Invite a visitor */
+		<P, R> R invite(AlignmentVisitor<P, R> visitor, P param);
 	}
-
-	private static interface HorizontalAlign {
-		void accept(MultiPage.Pagelet pagelet);
-	}
-
-	private static interface VerticalAlign {
-		void accept(MultiPage.Pagelet pagelet);
-	}
-
-	/**
-	 * A basic alignment consisting of two separate values for the horizontal
-	 * and vertical alignment.
-	 */
-	private static class HorizontalVerticalAlignment implements Alignment {
-		private final HorizontalAlign horizontalAlign;
-		private final VerticalAlign verticalAlign;
-		
-		private HorizontalVerticalAlignment(HorizontalAlign horizontalAlign,
-		                                    VerticalAlign verticalAlign) {
-			if (horizontalAlign == null)
-				throw new NullPointerException("Horizontal alignment cannot be null");
-			if (verticalAlign == null)
-				throw new NullPointerException("Vertical alignment cannot be null");
-			this.horizontalAlign = horizontalAlign;
-			this.verticalAlign = verticalAlign;
-		}
-		
-		@Override
-		public void accept(MultiPage.Pagelet pagelet) {
-			horizontalAlign.accept(pagelet);
-			verticalAlign.accept(pagelet);
-		}
+	
+	private static interface AlignmentVisitor<P, R> {
+		// Implement for all subclasses of Alignment
+		abstract R visit(LeftAlignment align, P param);
+		abstract R visit(CenterAlignment align, P param);
+		abstract R visit(RightAlignment align, P param);
+		abstract R visit(TopAlignment align, P param);
+		abstract R visit(MiddleAlignment align, P param);
+		abstract R visit(BottomAlignment align, P param);
 	}
 
 	/** A class with a single scalar value */
@@ -474,80 +452,74 @@ public class Preprocessor {
 	}
 
 	/** Alignment by distance from the left edge */
-	private static class Left extends SingleValued implements HorizontalAlign {
-		private Left(double value) {
+	private static class LeftAlignment extends SingleValued implements Alignment {
+		private LeftAlignment(double value) {
 			super(value);
 		}
-		
+
 		@Override
-		public void accept(MultiPage.Pagelet pagelet) {
-			// TODO Implement!
-			throw new UnsupportedOperationException("Not implemented yet");
+		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
+			return visitor.visit(this, param);
 		}
 	}
 
 	/** Alignment by offset (to right) from the center */
-	private static class Center extends SingleValued implements HorizontalAlign {
-		private Center(double value) {
+	private static class CenterAlignment extends SingleValued implements Alignment {
+		private CenterAlignment(double value) {
 			super(value);
 		}
 		
 		@Override
-		public void accept(MultiPage.Pagelet pagelet) {
-			// TODO Implement!
-			throw new UnsupportedOperationException("Not implemented yet");
+		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
+			return visitor.visit(this, param);
 		}
 	}
 
 	/** Alignment by distance from the right edge */
-	private static class Right extends SingleValued implements HorizontalAlign {
-		private Right(double value) {
+	private static class RightAlignment extends SingleValued implements Alignment {
+		private RightAlignment(double value) {
 			super(value);
 		}
 		
 		@Override
-		public void accept(MultiPage.Pagelet pagelet) {
-			// TODO Implement!
-			throw new UnsupportedOperationException("Not implemented yet");
+		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
+			return visitor.visit(this, param);
 		}
 	}
 
 	/** Alignment by distance from the top edge */
-	private static class Top extends SingleValued implements VerticalAlign {
-		private Top(double value) {
+	private static class TopAlignment extends SingleValued implements Alignment {
+		private TopAlignment(double value) {
 			super(value);
 		}
 		
 		@Override
-		public void accept(MultiPage.Pagelet pagelet) {
-			// TODO Implement!
-			throw new UnsupportedOperationException("Not implemented yet");
+		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
+			return visitor.visit(this, param);
 		}
 	}
 
 	/** Alignment by offset (upwards) from the center */
-	private static class Middle extends SingleValued implements VerticalAlign {
-		private Middle(double value) {
+	private static class MiddleAlignment extends SingleValued implements Alignment {
+		private MiddleAlignment(double value) {
 			super(value);
 		}
 		
 		@Override
-		public void accept(MultiPage.Pagelet pagelet) {
-			// TODO Implement!
-			throw new UnsupportedOperationException("Not implemented yet");
+		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
+			return visitor.visit(this, param);
 		}
 	}
 
 	/** Alignment by distance from the bottom edge */
-	private static class Bottom extends SingleValued implements VerticalAlign {
-		private Bottom(double value) {
+	private static class BottomAlignment extends SingleValued implements Alignment {
+		private BottomAlignment(double value) {
 			super(value);
 		}
 		
 		@Override
-		public void accept(MultiPage.Pagelet pagelet) {
-			// TODO Implement!
-			throw new UnsupportedOperationException("Not implemented yet");
+		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
+			return visitor.visit(this, param);
 		}
 	}
 }
