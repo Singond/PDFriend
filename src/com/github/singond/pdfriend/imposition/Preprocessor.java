@@ -195,10 +195,16 @@ public class Preprocessor {
 		AffineTransform correction = resize.setSizeInFrame(
 				frame, orig, scale, scaleExplicit, pageDimensions);
 		frame.setRotation(rotation);
+		Aligner aligner = resize.getAligner(frame);
+		for (Alignment a : align) {
+			a.invite(aligner, null);
+		}
+		aligner.prepareRectangleFrame();        // We already have the value
 		
-		
-		// TODO Implement
-		throw new UnsupportedOperationException("This method has not been implemented yet");
+		AffineTransform result = frame.positionInFrame
+				(orig.width().in(unit), orig.height().in(unit));
+		result.concatenate(correction);
+		return result;
 	}
 	
 	/**
@@ -365,6 +371,11 @@ public class Preprocessor {
 				}
 				return correction;
 			}
+			
+			@Override
+			Aligner getAligner(RectangleFrame frame) {
+				return new InnerAligner(frame);
+			}
 		},
 		/**
 		 * Ensures that the whole area of the page fits into the cell,
@@ -383,6 +394,11 @@ public class Preprocessor {
 				frame.setSize(frame.new Fit());
 				return null;
 			}
+			
+			@Override
+			Aligner getAligner(RectangleFrame frame) {
+				return new InnerAligner(frame);
+			}
 		},
 		/**
 		 * Ensures that the page covers the whole area of the cell,
@@ -399,6 +415,12 @@ public class Preprocessor {
 					final boolean scaleExplicit,
 					final Dimensions pageDimensions) {
 				frame.setSize(frame.new Fill());
+				return null;
+			}
+			
+			@Override
+			Aligner getAligner(RectangleFrame frame) {
+				// TODO Implement
 				return null;
 			}
 		};
@@ -420,6 +442,8 @@ public class Preprocessor {
 		                                         final double scale,
 		                                         final boolean scaleExplicit,
 		                                         final Dimensions pageDimensions);
+		
+		abstract Aligner getAligner(RectangleFrame frame);
 	}
 
 	/* Alignment */
@@ -444,7 +468,11 @@ public class Preprocessor {
 		abstract R visit(BottomAlignment align, P param);
 	}
 	
-	private static class InnerAligner implements AlignmentVisitor<Void, Void> {
+	private static interface Aligner extends AlignmentVisitor<Void, Void> {
+		RectangleFrame prepareRectangleFrame();
+	}
+	
+	private static class InnerAligner implements Aligner {
 		private final RectangleFrame frame;
 		private final RectangleFrame.InnerAlignment alignment;
 		
@@ -489,7 +517,8 @@ public class Preprocessor {
 			return null;
 		}
 
-		RectangleFrame prepareRectangleFrame() {
+		@Override
+		public RectangleFrame prepareRectangleFrame() {
 			frame.setAlignment(alignment);
 			return frame;
 		}
