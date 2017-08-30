@@ -4,11 +4,15 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+
+import com.github.singond.geometry.plane.RectangleFrame;
 import com.github.singond.geometry.plane.Rectangles;
 import com.github.singond.pdfriend.book.model.MultiPage;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.geometry.Dimensions;
+import com.github.singond.pdfriend.geometry.LengthUnit;
+import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.modules.Impose;
 
 /**
@@ -162,14 +166,98 @@ public class Preprocessor {
 	/**
 	 * Resolves the position of a rectangle of the given dimensions
 	 * inside the cell.
-	 * @param rect the rectangle whose position in the cell is to be obtained
+	 * @param orig the rectangle whose position in the cell is to be obtained
 	 * @return the position as a transformation matrix for the coordinate
 	 *         system originating in the lower bottom corner of the cell,
 	 *         with x-axis pointing right and y-axis pointing up
 	 */
-	private AffineTransform resolvePositionInCell(Dimensions rect) {
+	private AffineTransform resolvePositionInCell(final Dimensions orig) {
+		final double scale = settings.scale;
+		final boolean scaleExplicit = settings.isScaleGiven();
+		final double rotation = settings.rotation;
+		final Dimensions pageDimensions = settings.pageDimensions;
+		final Dimensions cellDimensions = settings.cellDimensions;
+		final Settings.Resizing resize = settings.resizing;
+		final Settings.Alignment align = settings.alignment;
+		
+		final LengthUnit unit = Impose.LENGTH_UNIT;
+		final RectangleFrame frame = new RectangleFrame
+				(cell.width().in(unit), cell.height().in(unit));
+
+		/**
+		 * The rectangle which is positioned in the frame.
+		 * This mostly coincides with the scaled page,
+		 * unless both the scale and pageDimensions have been given explicitly,
+		 * in which case the pageDimensions takes precedence for positioning
+		 * tasks.
+		 */
+//		Dimensions controlRect;
+		AffineTransform correction = null;
+		if (scaleExplicit) {
+			frame.setSize(frame.new Scale(scale));
+			if (pageDimensions != AUTO) {
+				// Rescale to make scaling by {@code scale} also result in correct page size
+				// TODO Check reasoning
+				/**
+				 * Magnification needed to make the original dimensions
+				 * fit the page dimensions.
+				 */
+				double s = scaleFromDimensions(pageDimensions, orig);
+				double scaleCorrection= scale/s;
+				correction = AffineTransform.getScaleInstance(scaleCorrection, scaleCorrection);
+			}
+		} else {
+			if (pageDimensions == AUTO) {
+				frame.setSize(frame.new Scale(1));
+			} else {
+				double s = scaleFromDimensions(pageDimensions, orig);
+				frame.setSize(frame.new Scale(s));
+			}
+		}
+//		if (pageDimensions==AUTO) {
+//			if (scaleExplicit) {
+//    			frame.setSize(frame.new Scale(scale));
+////    			controlRect = rect;
+//    		} else {
+//				frame.setSize(frame.new Scale(1));
+////    			controlRect = rect;
+//    		}
+//		} else {
+//			if (scaleExplicit) {
+//    			frame.setSize(frame.new Scale(scale));
+////    			controlRect = rect;
+//    			// Apply scale correction
+//    		} else {
+//    			double s = scaleFromDimensions(pageDimensions, orig);
+//    			frame.setSize(frame.new Scale(s));
+//    		}
+//		}
+		
+		frame.setRotation(rotation);
+		
 		// TODO Implement
 		throw new UnsupportedOperationException("This method has not been implemented yet");
+	}
+	
+	/**
+	 * When only page dimensions are given, calculate the scale.
+	 * @param dim target page dimensions
+	 * @return scale needed to fit
+	 */
+	private static double scaleFromDimensions(Dimensions dim, Dimensions orig) {
+		LengthUnit u = LengthUnits.METRE;
+		double scaleX = dim.width().in(u)/orig.width().in(u);
+		double scaleY = dim.height().in(u)/orig.height().in(u);
+		return Math.min(scaleX, scaleY);
+	}
+	
+	/**
+	 * When only scale is given, calculate page dimensions.
+	 * @param scale
+	 * @return
+	 */
+	private static Dimensions dimensionsFromScale(double scale, Dimensions orig) {
+		return orig.scaleUp(scale);
 	}
 	
 	/**
@@ -181,7 +269,11 @@ public class Preprocessor {
 	 */
 	public static class Settings {
 	
-		/** A uniform scale to be applied to the page. */
+		/**
+		 * A uniform scale to be applied to the page.
+		 * Setting this value to negative means that scale is not given
+		 * and should be determined from the other settings.
+		 */
 		private double scale;
 		/**
 		 * Required dimensions of the input page on the output sheet.
@@ -232,7 +324,7 @@ public class Preprocessor {
 		
 		public void setScale(double scale) {
 			if (scale <= 0)
-				throw new IllegalArgumentException("scale must be a positive number");
+				throw new IllegalArgumentException("Scale must be a positive number");
 			this.scale = scale;
 		}
 	
@@ -264,14 +356,26 @@ public class Preprocessor {
 				throw new IllegalArgumentException("Cell dimensions cannot be null");
 			this.pageDimensions = dimensions;
 		}
+		
+		/** Checks whether scale has been explicitly set to a valid value */
+		public boolean isScaleGiven() {
+			return scale > 0;
+		}
 	
-		// TODO Make something useful of these
+		/* Resizing */
+		
 		/**
 		 * Specifies behaviour for page size.
 		 * In order to be able to share instances, all implementing classes
 		 * are required to be immutable and private to Preprocessor.
 		 */
-		private static interface Resizing {}
+		private static enum Resizing {
+			NONE,
+			FIT,
+			FILL;
+		}
+		
+		/* Alignment */
 		
 		/**
 		 * Specifies page alignment within the cell.
