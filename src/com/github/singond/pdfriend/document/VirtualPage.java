@@ -106,7 +106,7 @@ public class VirtualPage {
 	 * @return a non-live view (but see {@link #Contents}) of the content
 	 */
 	public Contents getContents() {
-		return new Contents(getMovableContent());
+		return new ContentsMovable(getMovableContent());
 	}
 	
 	/**
