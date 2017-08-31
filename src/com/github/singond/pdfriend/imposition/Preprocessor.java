@@ -233,7 +233,9 @@ public class Preprocessor {
 		
 		AffineTransform result = frame.positionInFrame
 				(orig.width().in(unit), orig.height().in(unit));
-		result.concatenate(correction);
+		if (correction != null) {
+			result.concatenate(correction);
+		}
 		return result;
 	}
 	
