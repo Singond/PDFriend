@@ -103,10 +103,29 @@ public class VirtualPage {
 	
 	/**
 	 * Returns an object representing all content elements of this page.
+	 * The returned object allows transforming the content using arbitrary
+	 * affine transform, but this ability is associated with some overhead
+	 * in both object construction and method execution.
+	 * In case that transformable content is not required, the method
+	 * {@link #getContentStatic} should be preferred for better performance.
 	 * @return a non-live view (but see {@link #Contents}) of the content
 	 */
 	public Contents getContents() {
 		return new ContentsMovable(getMovableContent());
+	}
+	
+	/**
+	 * Returns an object representing all content elements of this page.
+	 * The returned object does not permit transformations and throws
+	 * {@code UnsupportedOperationException} on invocation of the
+	 * {@link Content#transform} method.
+	 * The object returned by this method is expected to perform better when
+	 * compared to that returned by {@link #getContents}, both in instance
+	 * creation and method execution.
+	 * @return a non-live view (but see {@link #Contents}) of the content
+	 */
+	public Contents getContentStatic() {
+		return new ContentsStatic(new HashSet<>(content));
 	}
 	
 	/**
