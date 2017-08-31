@@ -3,6 +3,7 @@ package com.github.singond.pdfriend.imposition;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -12,6 +13,7 @@ import com.github.singond.geometry.plane.RectangleFrame.OuterAlignment;
 import com.github.singond.geometry.plane.RectangleFrame.OuterAlignment.Left;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
+import com.github.singond.pdfriend.document.Content;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.geometry.Dimensions;
@@ -152,27 +154,52 @@ public class Preprocessor {
 	}
 	
 	/**
-	 * Performs the pre-processing of a given page to resolve its position
-	 * inside the cell.
+	 * Performs the pre-processing of a given page and returns the result.
 	 * <p>
 	 * This method does not perform data consistency check, ie. whether the
 	 * given page was present in the initialization data of this
 	 * {@code Preprocessor} instance, ie. it does not include calling
 	 * {@code hasPage()}.
-	 * @param page the page whose position in the cell is to be obtained
+	 * @param page the page which is to be preprocessed
+	 * @return a new page with the dimensions of the cell, whose content is
+	 *         the same as that of the input page, but moved, scaled and
+	 *         rotated according to the preprocess settings given during
+	 *         the initialization of this {@code Preprocessor} instance
+	 */
+	public VirtualPage process(VirtualPage page) {
+		Dimensions pageDims = new Dimensions
+				(page.getWidth(), page.getHeight(), Impose.LENGTH_UNIT);
+		AffineTransform position = getResolvedPositionInCell(pageDims);
+		Collection<Content.Movable> content = page.getMovableContent();
+		Collection<Content> transformedContent = new ArrayList<>(content.size());
+		for (Content.Movable c : content) {
+			c.getTransform().preConcatenate(position);
+			transformedContent.add(c.transformed());
+		}
+		throw new UnsupportedOperationException("This method has not been implemented yet");
+	}
+	
+	/**
+	 * Returns the position of a rectangle of the given dimensions
+	 * inside the cell; looking it up in cached values and calculating
+	 * it if necessary.
+	 * @param dims the rectangle whose position in the cell is to be obtained
 	 * @return the position as a transformation matrix for the coordinate
 	 *         system originating in the lower bottom corner of the cell,
 	 *         with x-axis pointing right and y-axis pointing up
 	 */
-	public AffineTransform getResolvedPositionInCell(VirtualPage page) {
-		// TODO Implement using resolvePositionInCell()
+	private AffineTransform getResolvedPositionInCell(Dimensions dims) {
 		// TODO Cache frequently used values of Dimensions and their results
-		throw new UnsupportedOperationException("This method has not been implemented yet");
+		return resolvePositionInCell(dims);
 	}
 	
 	/**
 	 * Resolves the position of a rectangle of the given dimensions
 	 * inside the cell.
+	 * This method always performs the full calculation. If the result
+	 * has already been computed for given dimensions (specified in the
+	 * argument), using {@link #getResolvedPositionInCell} is preferable
+	 * because it caches the computed values.
 	 * @param orig the rectangle whose position in the cell is to be obtained
 	 * @return the position as a transformation matrix for the coordinate
 	 *         system originating in the lower bottom corner of the cell,
