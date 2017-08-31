@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.github.singond.pdfriend.document.Content.Movable;
+
 /**
  * Represents the whole content in a document page.
  * The view is not live, ie. adding or removing content elements
@@ -18,7 +20,7 @@ import java.util.Set;
  * @author Singon
  *
  */
-class ContentsMovable implements Contents {
+class ContentsMovable extends Contents {
 
 	private final Set<Content.Movable> contents;
 	
@@ -31,11 +33,7 @@ class ContentsMovable implements Contents {
 		this.contents = new HashSet<>(contents);
 	}
 	
-	/**
-	 * Returns all pieces of content represented by this object.
-	 * @return a shallow copy of the internal collection of content elements.
-	 *         The returned collection can be empty, but will not be null.
-	 */
+	@Override
 	public Collection<Content> get() {
 		Collection<Content> result = new ArrayList<>(contents.size());
 		for (Content.Movable cm : contents) {
@@ -44,18 +42,15 @@ class ContentsMovable implements Contents {
 		return result;
 	}
 	
-	/**
-	 * Transforms all contents using the given transformation.
-	 * If the original transformation matrix is T, this method moves each
-	 * content element to the position given by matrix T2, such that T2 is
-	 * the product of {@code transform} and T. In mathematical formulation:
-	 * <pre>[T2] = [trans] x [T]</pre>
-	 * @param transform the transformation matrix to be applied on top of
-	 *        the current transformation in each content element
-	 */
+	@Override
 	public void transform(AffineTransform transform) {
 		for (Content.Movable cm : contents) {
 			cm.getTransform().preConcatenate(transform);
 		}
+	}
+
+	@Override
+	Collection<Movable> getMovable() {
+		return contents;
 	}
 }

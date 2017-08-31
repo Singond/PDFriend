@@ -2,6 +2,8 @@ package com.github.singond.pdfriend.document;
 
 import java.awt.geom.AffineTransform;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Represents the whole content in a document page.
@@ -16,14 +18,14 @@ import java.util.Collection;
  * @author Singon
  *
  */
-public interface Contents {
+public abstract class Contents {
 	
 	/**
 	 * Returns all pieces of content represented by this object.
 	 * @return a shallow copy of the internal collection of content elements.
 	 *         The returned collection can be empty, but will not be null.
 	 */
-	public Collection<Content> get();
+	public abstract Collection<Content> get();
 	
 	/**
 	 * Transforms all contents using the given transformation.
@@ -34,5 +36,25 @@ public interface Contents {
 	 * @param transform the transformation matrix to be applied on top of
 	 *        the current transformation in each content element
 	 */
-	public void transform(AffineTransform transform);
+	public abstract void transform(AffineTransform transform);
+	
+	/**
+	 * Gets the collection of all content elements wrapped in movable wrapper.
+	 * @return
+	 */
+	abstract Collection<Content.Movable> getMovable();
+	
+	/**
+	 * Returns a new instance of Contents containing all content elements
+	 * given in the argument. The returned object allows transformations.
+	 * @param contents
+	 * @return a new instance of Contents
+	 */
+	public static Contents of(Contents... contents) {
+		Set<Content.Movable> all = new HashSet<>();
+		for (Contents c : contents) {
+			all.addAll(c.getMovable());
+		}
+		return new ContentsMovable(all);
+	}
 }
