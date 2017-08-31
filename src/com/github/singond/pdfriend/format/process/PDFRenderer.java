@@ -61,7 +61,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 		targetPage.setMediaBox(new PDRectangle((float) page.getWidth(), (float) page.getHeight()));
 		ContentRenderer contentRndr = new ContentRenderer();
 		
-		if (page.getContent().isEmpty()) {
+		if (page.getContents().isEmpty()) {
 			logger.debug("render_pageBlank", page);
 			return targetPage;
 		}
@@ -70,9 +70,9 @@ public class PDFRenderer extends Renderer<PDDocument> {
 			PageController pageCtrl = new PageController(docCtrl, targetPage, content);
 			
 			if (logger.isDebugEnabled()) {
-				logger.debug("render_content", page.getContent().size(), page);
+				logger.debug("render_content", page.getContents().get().size(), page);
 			}
-			for (Content c : page.getContent()) {
+			for (Content c : page.getContents().get()) {
 				c.invite(contentRndr, pageCtrl);
 			}
 			content.close();

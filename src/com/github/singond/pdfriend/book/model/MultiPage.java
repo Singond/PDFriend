@@ -2,7 +2,6 @@ package com.github.singond.pdfriend.book.model;
 
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -10,9 +9,8 @@ import java.util.Set;
 
 import com.github.singond.geometry.plane.RectangleFrame;
 import com.github.singond.pdfriend.book.control.PageVisitor;
-import com.github.singond.pdfriend.document.Content;
 import com.github.singond.pdfriend.document.VirtualPage;
-import com.github.singond.pdfriend.document.Content.Movable;
+import com.github.singond.pdfriend.document.Contents;
 
 
 /**
@@ -72,17 +70,19 @@ public abstract class MultiPage extends Page {
 	}
 	
 	@Override
-	public Collection<Movable> getContent() {
-		Set<Content.Movable> contents = new HashSet<>();
+	public Contents getContents() {
+		Set<Contents> contents = new HashSet<>();
 		for (Pagelet p : pagelets) {
 			if (p.source == null) continue;
-			for (Content.Movable cm : p.source.getMovableContent()) {
-//				cm.getTransform().preConcatenate(p.framePosition);
-				cm.getTransform().preConcatenate(p.getPositionInPage());
-				contents.add(cm);
-			}
+			Contents c = p.source.getContents();
+			c.transform(p.getPositionInPage());
+			contents.add(c);
+//			for (Content.Movable cm : p.source.getContents().get()) {
+//				cm.getTransform().preConcatenate(p.getPositionInPage());
+//				contents.add(cm);
+//			}
 		}
-		return contents;
+		return Contents.of(contents);
 	}
 
 	@Override

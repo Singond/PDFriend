@@ -90,14 +90,32 @@ public final class VirtualPage {
 	public double getHeight() {
 		return height;
 	}
-
+	
 	/**
-	 * Returns the content of the sheet as a collection of all content elements.
-	 * @return a shallow copy of the internal collection of content elements.
-	 *         The returned collection can be empty, but will not be null.
+	 * Returns an object representing all content elements of this page.
+	 * The returned object allows transforming the content using arbitrary
+	 * affine transform, but this ability is associated with some overhead
+	 * in both object construction and method execution.
+	 * In case that transformable content is not required, the method
+	 * {@link #getContentStatic} should be preferred for better performance.
+	 * @return a non-live view (but see {@link #Contents}) of the content
 	 */
-	public Collection<Content> getContent() {
-		return new HashSet<>(content);
+	public Contents getContents() {
+		return new ContentsMovable(getMovableContent());
+	}
+	
+	/**
+	 * Returns an object representing all content elements of this page.
+	 * The returned object does not permit transformations and throws
+	 * {@code UnsupportedOperationException} on invocation of the
+	 * {@link Content#transform} method.
+	 * The object returned by this method is expected to perform better when
+	 * compared to that returned by {@link #getContents}, both in instance
+	 * creation and method execution.
+	 * @return a non-live view (but see {@link #Contents}) of the content
+	 */
+	public Contents getContentStatic() {
+		return new ContentsStatic(new HashSet<>(content));
 	}
 	
 	/**
@@ -106,7 +124,7 @@ public final class VirtualPage {
 	 * @return a shallow copy of the internal collection of content
 	 *         elements, each converted to a new Content.Movable
 	 */
-	public Collection<Content.Movable> getMovableContent() {
+	Collection<Content.Movable> getMovableContent() {
 		return content.stream()
 		              .map(c -> c.new Movable())
 		              .collect(Collectors.toSet());
@@ -190,13 +208,13 @@ public final class VirtualPage {
 		 * of content elements.
 		 * <p><b>Warning:</b> This removes all previously set content
 		 * in this page!</p>
-		 * @param content
+		 * @param contents
 		 */
-		public void setContent(List<Content> content) {
+		public void setContent(Contents contents) {
 			if (!this.content.isEmpty()) {
 				logger.warn("vpage_overwritingContent", Builder.this);
 			}
-			this.content = content;
+			this.content = new ArrayList<>(contents.get());
 		}
 
 		/**
@@ -205,6 +223,14 @@ public final class VirtualPage {
 		 */
 		public void addContent(Content content) {
 			this.content.add(content);
+		}
+		
+		/**
+		 * Adds all given contents.
+		 * @param contents
+		 */
+		public void addContent(Contents contents) {
+			this.content.addAll(contents.get());
 		}
 		
 		/**
