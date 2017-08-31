@@ -58,6 +58,7 @@ public class SinglePage extends Page {
 	 * @return The collection of Content obtained from the source page.
 	 */
 	@Override
+	@Deprecated
 	public Collection<Content.Movable> getContent() {
 		return source.getMovableContent();
 	}

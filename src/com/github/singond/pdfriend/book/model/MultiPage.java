@@ -73,6 +73,7 @@ public abstract class MultiPage extends Page {
 	}
 	
 	@Override
+	@Deprecated
 	public Collection<Movable> getContent() {
 		Set<Content.Movable> contents = new HashSet<>();
 		for (Pagelet p : pagelets) {
