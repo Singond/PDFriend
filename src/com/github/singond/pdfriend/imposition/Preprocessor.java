@@ -293,7 +293,7 @@ public class Preprocessor {
 		 * Behaviour for page size.
 		 * This is applied after scaling each page by {@code scale}.
 		 */
-		private Resizing resizing;
+		private Resizing resizing = Resizing.NONE;
 		/** Page alignment within the rectangle given by resolved dimensions */
 		private List<Alignment> alignment = Arrays.asList
 				(new CenterAlignment(0), new MiddleAlignment(0));
