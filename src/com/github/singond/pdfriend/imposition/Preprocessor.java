@@ -129,9 +129,9 @@ public class Preprocessor {
 				halfHorizontalExtent *= settings.scale;
 				halfVerticalExtent *= settings.scale;
 			} else {
-				logger.verbose("preprocess_pageSize_explicit");
 				// Page dimensions are given explicitly: circumscribe the cell
 				// to a page of these dimensions rotated by {@code settings.rotation}
+				logger.verbose("preprocess_pageSize_explicit");
 				halfHorizontalExtent = Rectangles.getHorizontalExtent(
 						settings.pageDimensions.width().in(Impose.LENGTH_UNIT),
 						settings.pageDimensions.height().in(Impose.LENGTH_UNIT),
@@ -229,7 +229,7 @@ public class Preprocessor {
 				(cell.width().in(unit), cell.height().in(unit));
 
 		if (logger.isDebugEnabled())
-			logger.debug("preprocess_resolvingPositionInCell", orig, cell);
+			logger.debug("preprocess_page_inCell", orig, cell);
 		AffineTransform correction = resize.setSizeInFrame(
 				frame, orig, scale, scaleExplicit, pageDimensions);
 		frame.setRotation(rotation);
@@ -244,6 +244,8 @@ public class Preprocessor {
 		if (correction != null) {
 			result.concatenate(correction);
 		}
+		if (logger.isDebugEnabled())
+			logger.debug("preprocess_page_calculated", orig, result);
 		return result;
 	}
 	
