@@ -34,6 +34,7 @@ public class PreprocessDocument {
 			
 			Preprocessor.Settings settings = new Preprocessor.Settings();
 			settings.setScale(2);
+			settings.setRotation(Math.PI/2);
 //			settings.setCellDimensions(new Dimensions(200, 100, MM));
 			Preprocessor pp = new Preprocessor(Arrays.asList(inDoc), settings);
 			

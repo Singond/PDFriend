@@ -17,6 +17,7 @@ import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.modules.Impose;
+import com.sun.glass.ui.GestureSupport;
 
 /**
  * Pre-processes pages of input document prior to imposition.
@@ -244,8 +245,8 @@ public class Preprocessor {
 		if (correction != null) {
 			result.concatenate(correction);
 		}
-		if (logger.isDebugEnabled())
-			logger.debug("preprocess_page_calculated", orig, result);
+//		if (logger.isDebugEnabled())
+//			logger.debug("preprocess_page_calculated", orig, result);
 		return result;
 	}
 	
@@ -404,6 +405,8 @@ public class Preprocessor {
 					final double scale,
 					final boolean scaleExplicit,
 					final Dimensions pageDimensions) {
+//				if (logger.isDebugEnabled())
+//					logger.debug("preprocess_page_resizeNone");
 				AffineTransform correction = null;
 				if (scaleExplicit) {
 					frame.setSize(frame.new Scale(scale));
@@ -414,6 +417,8 @@ public class Preprocessor {
 						double s = scaleFromDimensions(pageDimensions, orig);
 						double scaleCorrection = scale/s;
 						correction = AffineTransform.getScaleInstance(scaleCorrection, scaleCorrection);
+						if (logger.isDebugEnabled())
+							logger.debug("preprocess_page_correction", pageDimensions, scaleCorrection);
 					}
 				} else {
 					if (pageDimensions == AUTO) {
@@ -445,6 +450,8 @@ public class Preprocessor {
 					final double scale,
 					final boolean scaleExplicit,
 					final Dimensions pageDimensions) {
+				if (logger.isDebugEnabled())
+					logger.debug("preprocess_page_resizeFit", orig);
 				frame.setSize(frame.new Fit());
 				return null;
 			}
@@ -468,6 +475,8 @@ public class Preprocessor {
 					final double scale,
 					final boolean scaleExplicit,
 					final Dimensions pageDimensions) {
+				if (logger.isDebugEnabled())
+					logger.debug("preprocess_page_resizeFill", orig);
 				frame.setSize(frame.new Fill());
 				return null;
 			}
