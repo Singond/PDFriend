@@ -90,16 +90,6 @@ public class VirtualPage {
 	public double getHeight() {
 		return height;
 	}
-
-	/**
-	 * Returns the content of the sheet as a collection of all content elements.
-	 * @return a shallow copy of the internal collection of content elements.
-	 *         The returned collection can be empty, but will not be null.
-	 */
-	@Deprecated
-	public Collection<Content> getContent() {
-		return new HashSet<>(content);
-	}
 	
 	/**
 	 * Returns an object representing all content elements of this page.
@@ -134,8 +124,7 @@ public class VirtualPage {
 	 * @return a shallow copy of the internal collection of content
 	 *         elements, each converted to a new Content.Movable
 	 */
-	@Deprecated // Will remain, but package-scoped
-	public Collection<Content.Movable> getMovableContent() {
+	Collection<Content.Movable> getMovableContent() {
 		return content.stream()
 		              .map(c -> c.new Movable())
 		              .collect(Collectors.toSet());
