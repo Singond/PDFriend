@@ -13,6 +13,7 @@ import com.github.singond.pdfriend.book.control.PageVisitor;
 import com.github.singond.pdfriend.document.Content;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.document.Content.Movable;
+import com.github.singond.pdfriend.document.Contents;
 
 
 /**
@@ -83,6 +84,22 @@ public abstract class MultiPage extends Page {
 			}
 		}
 		return contents;
+	}
+	
+	@Override
+	public Contents getContents() {
+		Set<Contents> contents = new HashSet<>();
+		for (Pagelet p : pagelets) {
+			if (p.source == null) continue;
+			Contents c = p.source.getContents();
+			c.transform(p.getPositionInPage());
+			contents.add(c);
+//			for (Content.Movable cm : p.source.getContents().get()) {
+//				cm.getTransform().preConcatenate(p.getPositionInPage());
+//				contents.add(cm);
+//			}
+		}
+		return Contents.of(contents);
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.control.PageVisitor;
 import com.github.singond.pdfriend.document.Content;
+import com.github.singond.pdfriend.document.Contents;
 import com.github.singond.pdfriend.document.VirtualPage;
 
 /**
@@ -20,7 +21,7 @@ public abstract class Page {
 	/** The page width (x-direction) */
 	private final double width;
 	/** The page height (y-direction) */
-	private final double height; 
+	private final double height;
 	
 	private static ExtendedLogger logger = Log.logger(Page.class);
 	
@@ -82,10 +83,23 @@ public abstract class Page {
 	 * It intentionally returns a collection of Content instead of
 	 * a VirtualPage, because the representation of content as VirtualPages
 	 * should remain an implementation detail. This is to enable subclasses
-	 * use more than one VirtualPage.</p> 
+	 * use more than one VirtualPage.</p>
 	 * @return The collection of Content obtained from the source page.
 	 */
+	@Deprecated
 	public abstract Collection<Content.Movable> getContent();
+	
+	/**
+	 * Returns the content of this page collected from its VirtualPage(s)
+	 * as a container of transformable pieces of content.
+	 * <p>This is the main interface for retrieving this Page's content.
+	 * It intentionally returns a container of Content instead of
+	 * a VirtualPage, because the representation of content as VirtualPages
+	 * should remain an implementation detail. This is to enable subclasses
+	 * use more than one VirtualPage.</p>
+	 * @return The collection of Content obtained from the source page.
+	 */
+	public abstract Contents getContents();
 	
 	/**
 	 * Renders this page directly into a new virtual page.

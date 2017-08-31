@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import com.github.singond.pdfriend.book.control.PageVisitor;
 import com.github.singond.pdfriend.document.Content;
+import com.github.singond.pdfriend.document.Contents;
 import com.github.singond.pdfriend.document.VirtualPage;
 
 /**
@@ -53,7 +54,7 @@ public class SinglePage extends Page {
 	 * It intentionally returns a collection of Content instead of
 	 * a VirtualPage, because the representation of content as VirtualPages
 	 * should remain an implementation detail. This is to enable subclasses
-	 * use more than one VirtualPage.</p> 
+	 * use more than one VirtualPage.</p>
 	 * @return The collection of Content obtained from the source page.
 	 */
 	@Override
@@ -61,6 +62,11 @@ public class SinglePage extends Page {
 		return source.getMovableContent();
 	}
 	
+	@Override
+	public Contents getContents() {
+		return source.getContents();
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * <p>
@@ -71,7 +77,7 @@ public class SinglePage extends Page {
 	 */
 	@Override
 	public VirtualPage render() {
-		return new VirtualPage(getWidth(), getHeight(), source.getContent());
+		return new VirtualPage(getWidth(), getHeight(), source.getContentStatic().get());
 	}
 	
 	/**
@@ -88,7 +94,7 @@ public class SinglePage extends Page {
 	 */
 	@Override
 	public String toString() {
-		try {	
+		try {
 			return "Page " + getNumber();
 		} catch(IllegalStateException e) {
 			return "Page ?";

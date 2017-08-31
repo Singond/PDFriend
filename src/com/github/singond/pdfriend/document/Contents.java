@@ -50,7 +50,7 @@ public abstract class Contents {
 	 * @param contents
 	 * @return a new instance of Contents
 	 */
-	public static Contents of(Contents... contents) {
+	public static Contents of(Collection<Contents> contents) {
 		Set<Content.Movable> all = new HashSet<>();
 		for (Contents c : contents) {
 			all.addAll(c.getMovable());
