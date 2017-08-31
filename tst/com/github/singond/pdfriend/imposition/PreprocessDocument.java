@@ -14,9 +14,16 @@ import com.github.singond.pdfriend.format.ParsingException;
 import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.process.PDFParser;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
+import com.github.singond.pdfriend.geometry.Dimensions;
+import com.github.singond.pdfriend.geometry.LengthUnit;
+import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.imposition.Preprocessor;
+import com.github.singond.pdfriend.modules.Impose;
 
 public class PreprocessDocument {
+	
+	private static final LengthUnit PT = LengthUnits.POINT_POSTSCRIPT;
+	private static final LengthUnit MM = LengthUnits.MILLIMETRE;
 
 	public static void main(String[] args) {
 		File input = new File("test/lorem-letter.pdf");
@@ -26,6 +33,8 @@ public class PreprocessDocument {
 			VirtualDocument inDoc = new PDFParser().parseDocument(Files.readAllBytes(input.toPath()));
 			
 			Preprocessor.Settings settings = new Preprocessor.Settings();
+			settings.setScale(2);
+//			settings.setCellDimensions(new Dimensions(200, 100, MM));
 			Preprocessor pp = new Preprocessor(Arrays.asList(inDoc), settings);
 			
 			/* Output */
