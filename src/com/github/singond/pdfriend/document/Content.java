@@ -85,7 +85,7 @@ public abstract class Content {
 	 * 
 	 * @author Singon
 	 */
-	public final class Movable {
+	final class Movable {
 		/**
 		 * The current position of the Content element.
 		 * This is the transformation matrix representing the position of

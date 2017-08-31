@@ -1,11 +1,8 @@
 package com.github.singond.pdfriend.book.model;
 
-import java.util.Collection;
-
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.control.PageVisitor;
-import com.github.singond.pdfriend.document.Content;
 import com.github.singond.pdfriend.document.Contents;
 import com.github.singond.pdfriend.document.VirtualPage;
 
@@ -76,19 +73,7 @@ public abstract class Page {
 	 */
 	public abstract boolean isBlank();
 	
-	/**
-	 * Returns the content of this page collected from its VirtualPage(s)
-	 * as a collection of transformable pieces of content.
-	 * <p>This is the main interface for retrieving this Page's content.
-	 * It intentionally returns a collection of Content instead of
-	 * a VirtualPage, because the representation of content as VirtualPages
-	 * should remain an implementation detail. This is to enable subclasses
-	 * use more than one VirtualPage.</p>
-	 * @return The collection of Content obtained from the source page.
-	 */
-	@Deprecated
-	public abstract Collection<Content.Movable> getContent();
-	
+
 	/**
 	 * Returns the content of this page collected from its VirtualPage(s)
 	 * as a container of transformable pieces of content.

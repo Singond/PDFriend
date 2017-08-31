@@ -1,9 +1,6 @@
 package com.github.singond.pdfriend.book.model;
 
-import java.util.Collection;
-
 import com.github.singond.pdfriend.book.control.PageVisitor;
-import com.github.singond.pdfriend.document.Content;
 import com.github.singond.pdfriend.document.Contents;
 import com.github.singond.pdfriend.document.VirtualPage;
 
@@ -45,22 +42,6 @@ public class SinglePage extends Page {
 	@Override
 	public boolean isBlank() {
 		return source == null;
-	}
-	
-	/**
-	 * Returns the content of this page collected from its VirtualPage(s)
-	 * as a collection of transformable pieces of content.
-	 * <p>This is the main interface for retrieveing this Page's content.
-	 * It intentionally returns a collection of Content instead of
-	 * a VirtualPage, because the representation of content as VirtualPages
-	 * should remain an implementation detail. This is to enable subclasses
-	 * use more than one VirtualPage.</p>
-	 * @return The collection of Content obtained from the source page.
-	 */
-	@Override
-	@Deprecated
-	public Collection<Content.Movable> getContent() {
-		return source.getMovableContent();
 	}
 	
 	@Override
