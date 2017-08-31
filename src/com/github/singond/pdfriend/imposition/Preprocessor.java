@@ -179,6 +179,8 @@ public class Preprocessor {
 		AffineTransform position = getResolvedPositionInCell(pageDims);
 		Contents contents = page.getContents();
 		contents.transform(position);
+		if (logger.isDebugEnabled())
+			logger.debug("preprocess_page_position", page, position);
 
 		VirtualPage.Builder result = new VirtualPage.Builder();
 		Dimensions d = getResolvedCellDimensions();
