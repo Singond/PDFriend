@@ -53,4 +53,9 @@ class ContentsMovable extends Contents {
 	Collection<Movable> getMovable() {
 		return contents;
 	}
+
+	@Override
+	public boolean isEmpty() {
+		return contents.isEmpty();
+	}
 }

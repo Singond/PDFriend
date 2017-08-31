@@ -57,4 +57,6 @@ public abstract class Contents {
 		}
 		return new ContentsMovable(all);
 	}
+	
+	public abstract boolean isEmpty();
 }

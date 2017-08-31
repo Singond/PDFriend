@@ -46,4 +46,8 @@ class ContentsStatic extends Contents {
 		               .collect(Collectors.toSet());
 	}
 
+	@Override
+	public boolean isEmpty() {
+		return contents.isEmpty();
+	}
 }
