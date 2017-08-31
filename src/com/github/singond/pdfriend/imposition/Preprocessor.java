@@ -3,17 +3,13 @@ package com.github.singond.pdfriend.imposition;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import com.github.singond.geometry.plane.RectangleFrame;
 import com.github.singond.geometry.plane.Rectangles;
-import com.github.singond.geometry.plane.RectangleFrame.OuterAlignment;
-import com.github.singond.geometry.plane.RectangleFrame.OuterAlignment.Left;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.document.Content;
 import com.github.singond.pdfriend.document.Contents;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
