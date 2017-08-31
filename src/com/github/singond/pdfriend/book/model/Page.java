@@ -117,9 +117,7 @@ public abstract class Page {
 		paper.setHeight(height);
 		
 		if (!isBlank()) {
-			for (Content.Movable cm : getContent()) {
-				paper.addContent(cm.transformed());
-			}
+			paper.addContent(getContents());
 		}
 		return paper.build();
 	}

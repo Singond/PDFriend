@@ -11,6 +11,7 @@ import org.apache.commons.collections4.list.SetUniqueList;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.control.BookUtils;
+import com.github.singond.pdfriend.document.Contents;
 import com.github.singond.pdfriend.document.VirtualPage;
 
 /**
@@ -79,9 +80,9 @@ public class Sheet {
 			/** The page to be imposed */
 			Page page = leaf.getFrontPage();
 			if (!page.isBlank()) {
-				page.getContent().stream()
-						.peek(cm -> cm.getTransform().preConcatenate(leaf.getFrontPosition()))
-						.forEach(cm -> paper.addContent(cm.transformed()));
+				Contents contents = page.getContents();
+				contents.transform(leaf.getFrontPosition());
+				paper.addContent(contents);
 			}
 		}
 		return paper.build();
@@ -104,10 +105,10 @@ public class Sheet {
 			/** The page to be imposed */
 			Page page = leaf.getBackPage();
 			if (!page.isBlank()) {
-				page.getContent().stream()
-						.peek(cm -> cm.getTransform().preConcatenate(leaf.getBackPosition()))
-						.peek(cm -> cm.getTransform().preConcatenate(backside))
-						.forEach(cm -> paper.addContent(cm.transformed()));
+				Contents contents = page.getContents();
+				contents.transform(leaf.getBackPosition());
+				contents.transform(backside);
+				paper.addContent(contents);
 			}
 		}
 		return paper.build();

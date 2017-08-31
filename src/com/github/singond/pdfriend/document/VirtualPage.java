@@ -219,13 +219,13 @@ public class VirtualPage {
 		 * of content elements.
 		 * <p><b>Warning:</b> This removes all previously set content
 		 * in this page!</p>
-		 * @param content
+		 * @param contents
 		 */
-		public void setContent(List<Content> content) {
+		public void setContent(Contents contents) {
 			if (!this.content.isEmpty()) {
 				logger.warn("vpage_overwritingContent", Builder.this);
 			}
-			this.content = content;
+			this.content = new ArrayList<>(contents.get());
 		}
 
 		/**
@@ -234,6 +234,14 @@ public class VirtualPage {
 		 */
 		public void addContent(Content content) {
 			this.content.add(content);
+		}
+		
+		/**
+		 * Adds all given contents.
+		 * @param contents
+		 */
+		public void addContent(Contents contents) {
+			this.content.addAll(contents.get());
 		}
 		
 		/**
