@@ -199,7 +199,7 @@ public class Preprocessor {
 		for (Alignment a : align) {
 			a.invite(aligner, null);
 		}
-		aligner.prepareRectangleFrame();        // We already have the value
+		aligner.prepareRectangleFrame();        // We already have the return value
 		
 		AffineTransform result = frame.positionInFrame
 				(orig.width().in(unit), orig.height().in(unit));
