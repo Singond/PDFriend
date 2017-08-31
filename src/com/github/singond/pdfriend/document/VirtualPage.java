@@ -96,8 +96,17 @@ public class VirtualPage {
 	 * @return a shallow copy of the internal collection of content elements.
 	 *         The returned collection can be empty, but will not be null.
 	 */
+	@Deprecated
 	public Collection<Content> getContent() {
 		return new HashSet<>(content);
+	}
+	
+	/**
+	 * Returns an object representing all content elements of this page.
+	 * @return a non-live view (but see {@link #Contents}) of the content
+	 */
+	public Contents getContents() {
+		return new Contents(getMovableContent());
 	}
 	
 	/**
@@ -106,6 +115,7 @@ public class VirtualPage {
 	 * @return a shallow copy of the internal collection of content
 	 *         elements, each converted to a new Content.Movable
 	 */
+	@Deprecated // Will remain, but package-scoped
 	public Collection<Content.Movable> getMovableContent() {
 		return content.stream()
 		              .map(c -> c.new Movable())
