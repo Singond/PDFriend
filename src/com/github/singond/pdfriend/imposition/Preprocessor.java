@@ -99,6 +99,7 @@ public class Preprocessor {
 	 */
 	private static final Dimensions resolveCellDimensions(
 			List<VirtualDocument> documents, Settings settings) {
+		logger.verbose("preprocess_resolvingCell", documents, settings);
 		if (settings.cellDimensions == AUTO) {
 			// Calculate preferred cell dimensions
 			final double rotation = settings.rotation;
@@ -360,7 +361,19 @@ public class Preprocessor {
 			return scale > 0;
 		}
 	
-		/* Alignment */
+		@Override
+		public String toString() {
+			return new StringBuilder()
+			.append("scale: ").append(scale).append(", ")
+			.append("rotation: ").append(rotation).append(" rad, ")
+			.append("resizing: ").append(resizing).append(", ")
+			.append("alignment: ").append(alignment).append(", ")
+			.append("page dimensions: ").append((pageDimensions==AUTO)
+			                                    ? "AUTO" : pageDimensions).append(", ")
+			.append("cell dimensions: ").append((cellDimensions==AUTO)
+			                                    ? "AUTO" : pageDimensions)
+			.toString();
+		}
 	}
 
 	/**
@@ -571,6 +584,9 @@ public class Preprocessor {
 		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
 			return visitor.visit(this, param);
 		}
+		
+		@Override
+		public String toString() {return "Left " + value;}
 	}
 
 	/** Alignment by offset (to right) from the center */
@@ -583,6 +599,9 @@ public class Preprocessor {
 		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
 			return visitor.visit(this, param);
 		}
+		
+		@Override
+		public String toString() {return "Center " + value;}
 	}
 
 	/** Alignment by distance from the right edge */
@@ -595,6 +614,9 @@ public class Preprocessor {
 		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
 			return visitor.visit(this, param);
 		}
+		
+		@Override
+		public String toString() {return "Right " + value;}
 	}
 
 	/** Alignment by distance from the top edge */
@@ -607,6 +629,9 @@ public class Preprocessor {
 		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
 			return visitor.visit(this, param);
 		}
+		
+		@Override
+		public String toString() {return "Top " + value;}
 	}
 
 	/** Alignment by offset (upwards) from the center */
@@ -619,6 +644,9 @@ public class Preprocessor {
 		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
 			return visitor.visit(this, param);
 		}
+		
+		@Override
+		public String toString() {return "Middle " + value;}
 	}
 
 	/** Alignment by distance from the bottom edge */
@@ -631,5 +659,8 @@ public class Preprocessor {
 		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
 			return visitor.visit(this, param);
 		}
+		
+		@Override
+		public String toString() {return "Bottom " + value;}
 	}
 }
