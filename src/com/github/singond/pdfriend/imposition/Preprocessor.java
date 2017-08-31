@@ -14,6 +14,7 @@ import com.github.singond.geometry.plane.RectangleFrame.OuterAlignment.Left;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.document.Content;
+import com.github.singond.pdfriend.document.Contents;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.geometry.Dimensions;
@@ -170,13 +171,15 @@ public class Preprocessor {
 		Dimensions pageDims = new Dimensions
 				(page.getWidth(), page.getHeight(), Impose.LENGTH_UNIT);
 		AffineTransform position = getResolvedPositionInCell(pageDims);
-		Collection<Content.Movable> content = page.getMovableContent();
-		Collection<Content> transformedContent = new ArrayList<>(content.size());
-		for (Content.Movable c : content) {
-			c.getTransform().preConcatenate(position);
-			transformedContent.add(c.transformed());
-		}
-		throw new UnsupportedOperationException("This method has not been implemented yet");
+		Contents contents = page.getContents();
+		contents.transform(position);
+
+		VirtualPage.Builder result = new VirtualPage.Builder();
+		Dimensions d = getResolvedCellDimensions();
+		result.setWidth(d.width().in(Impose.LENGTH_UNIT));
+		result.setHeight(d.height().in(Impose.LENGTH_UNIT));
+		result.addContent(contents);
+		return result.build();
 	}
 	
 	/**
