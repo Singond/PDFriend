@@ -3,8 +3,13 @@ package com.github.singond.pdfriend.imposition;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
@@ -20,6 +25,7 @@ import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.imposition.Preprocessor;
 import com.github.singond.pdfriend.modules.Impose;
 
+@SuppressWarnings("unused")
 public class PreprocessDocument {
 	
 	private static final LengthUnit PT = LengthUnits.POINT_POSTSCRIPT;
@@ -35,6 +41,11 @@ public class PreprocessDocument {
 			Preprocessor.Settings settings = new Preprocessor.Settings();
 			settings.setScale(2);
 			settings.setRotation(Math.PI/2);
+			AlignmentSetter align = new AlignmentSetter();
+			align.addAlignment("LeftAlignment", 0);
+			align.addAlignment("TopAlignment", 0);
+			align.setAlignment(settings);
+			
 //			settings.setCellDimensions(new Dimensions(200, 100, MM));
 			Preprocessor pp = new Preprocessor(Arrays.asList(inDoc), settings);
 			
@@ -55,6 +66,35 @@ public class PreprocessDocument {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	private static class AlignmentSetter {
+		private List<Object> align = new ArrayList<>(2);
+		
+		private void addAlignment(String className, double value) {
+			Class<?> class1;
+			try {
+				class1 = Class.forName(Preprocessor.class.getName()+"$"+className);
+				Constructor<?> constr1 = class1.getDeclaredConstructor(double.class);
+				constr1.setAccessible(true);
+				align.add(constr1.newInstance(0));
+			} catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException
+			         | InvocationTargetException | InstantiationException | SecurityException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		private void setAlignment(Preprocessor.Settings target) {
+			Field alignment;
+			try {
+				alignment = Preprocessor.Settings.class.getDeclaredField("alignment");
+				alignment.setAccessible(true);
+				alignment.set(target, align);
+			} catch (NoSuchFieldException | SecurityException
+			         | IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 }
