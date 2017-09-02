@@ -251,6 +251,53 @@ public class Preprocessor {
 	}
 	
 	/**
+	 * Resolves the position of a rectangle of the given dimensions
+	 * inside the cell.
+	 * This method always performs the full calculation. If the result
+	 * has already been computed for given dimensions (specified in the
+	 * argument), using {@link #getResolvedPositionInCell} is preferable
+	 * because it caches the computed values.
+	 * @param orig the rectangle whose position in the cell is to be obtained
+	 * @return the position as a transformation matrix for the coordinate
+	 *         system originating in the lower bottom corner of the cell,
+	 *         with x-axis pointing right and y-axis pointing up
+	 */
+	private AffineTransform resolvePositionInCellNew(final Dimensions orig) {
+		final double scale = settings.scale;
+		final boolean scaleExplicit = settings.isScaleGiven();
+		final double rotation = settings.rotation;
+		final Dimensions pageDimensions = settings.pageDimensions;
+		final Resizing resize = settings.resizing;
+		final List<Alignment> align = settings.alignment;
+		final LengthUnit unit = Impose.LENGTH_UNIT;
+		
+		if (logger.isDebugEnabled())
+			logger.debug("preprocess_page_inCell", orig, cell);
+		/*
+		 * To position the page box we are using a RectangleFrame object.
+		 * Its "frame" represents the cell, whose dimensions are now known.
+		 * This frame is used to position the page box according to some
+		 * constraints which will be specified now.
+		 */
+		final RectangleFrame frame = new RectangleFrame
+				(cell.width().in(unit), cell.height().in(unit));
+		
+		/*
+		 * The easiest constraint to resolve is the rotation, because it
+		 * is not dependent on anything else. We can set it now.
+		 */
+		if (rotation != 0) {
+			frame.setRotation(rotation);
+		}
+
+		switch (resize) {
+			
+		}
+		
+		throw new UnsupportedOperationException("Not implemented yet");
+	}
+	
+	/**
 	 * When only page dimensions are given, calculate the scale.
 	 * @param dim target page dimensions
 	 * @return scale needed to fit
