@@ -302,17 +302,45 @@ public class Preprocessor {
 		 * {@code scale} and {@code pageDimensions}. If only one of the two
 		 * values is given, the other value can easily be calculated from the
 		 * first and the original page dimensions, but if both values are set,
-		 * they pose a conflict: Which one to prefer?
+		 * they pose a conflict: Which one to prefer when setting page box?
 		 * <p>
-		 * The decision is that the page will be positioned using the size
-		 * declared in {@code pageDimensions}, but its content will be drawn
-		 * with the scale declared in {@code scale}. Unless we're really
+		 * The decision is that the page box will honor the value declared
+		 * in {@code pageDimensions}, but the contents of the page will be
+		 * drawn with the scale declared in {@code scale}. Unless we're really
 		 * lucky and the {@code scale} and {@code pageDimensions} actually
-		 * lead to the same page size (ie. original size of the page scaled
-		 * by {@code scale} equals {@code pageDimensions}, this means that
-		 * some parts of the page will overflow the page's rectangle (ie.
-		 * the rectangle given by {@code pageDimensions}
+		 * resolve to the same page size (ie. original size of the page scaled
+		 * by {@code scale} equals {@code pageDimensions}), this means that
+		 * some parts of the page content will overflow the page box
+		 * (if original page size scaled by {@code scale} is larger than
+		 * {@code pageDimensions}), or some part of the page box will not be
+		 * covered by the page contents and will remain blank (in the opposite
+		 * case).
+		 * <p>
+		 * First, determine the dimensions of the page box.
 		 */
+		boolean scaleCorrectionNeeded = false;
+		double scaleCorrection;
+		
+		// TODO Transferred from setSizeInFrame(), finish reworking
+		if (scaleExplicit) {
+			frame.setSize(frame.new Scale(scale));
+			if (pageDimensions != AUTO) {
+				/* Rescale to make scaling by {@code scale} also result in correct page size */
+				// TODO Check reasoning
+				// Magnification needed to make the orig fit the pageDimensions
+				double s = scaleFromDimensions(pageDimensions, orig);
+				scaleCorrection = scale/s;
+				if (logger.isDebugEnabled())
+					logger.debug("preprocess_page_correction", pageDimensions, scaleCorrection);
+			}
+		} else {
+			if (pageDimensions == AUTO) {
+				frame.setSize(frame.new Scale(1));
+			} else {
+				double s = scaleFromDimensions(pageDimensions, orig);
+				frame.setSize(frame.new Scale(s));
+			}
+		}
 
 		switch (resize) {
 			
