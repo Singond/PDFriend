@@ -289,6 +289,30 @@ public class Preprocessor {
 		if (rotation != 0) {
 			frame.setRotation(rotation);
 		}
+		
+		/*
+		 * Another constraint which needs to be set is the scale of the page.
+		 * For the purpose of this method, define a "page box" as the
+		 * rectangle which represents the boundary of the positioned page.
+		 * In most cases this box will be equal to the actual border of the
+		 * page, but see below.
+		 * This "page box" is what is used in positioning the page in the cell.
+		 * <p>
+		 * Resolving the scale is not trivial, because it can be set by both
+		 * {@code scale} and {@code pageDimensions}. If only one of the two
+		 * values is given, the other value can easily be calculated from the
+		 * first and the original page dimensions, but if both values are set,
+		 * they pose a conflict: Which one to prefer?
+		 * <p>
+		 * The decision is that the page will be positioned using the size
+		 * declared in {@code pageDimensions}, but its content will be drawn
+		 * with the scale declared in {@code scale}. Unless we're really
+		 * lucky and the {@code scale} and {@code pageDimensions} actually
+		 * lead to the same page size (ie. original size of the page scaled
+		 * by {@code scale} equals {@code pageDimensions}, this means that
+		 * some parts of the page will overflow the page's rectangle (ie.
+		 * the rectangle given by {@code pageDimensions}
+		 */
 
 		switch (resize) {
 			
