@@ -421,24 +421,16 @@ public class Preprocessor {
 	}
 	
 	/**
-	 * When only page dimensions are given, calculate the scale.
-	 * @param dim target page dimensions
-	 * @return scale needed to fit
+	 * Calculates the scale corresponding to given output page dimensions.
+	 * @param dim output page dimensions
+	 * @param orig input page dimensions
+	 * @return the scale necessary to make {@code orig} fit {@code dim}
 	 */
 	private static double scaleFromDimensions(Dimensions dim, Dimensions orig) {
 		LengthUnit u = LengthUnits.METRE;
 		double scaleX = dim.width().in(u)/orig.width().in(u);
 		double scaleY = dim.height().in(u)/orig.height().in(u);
 		return Math.min(scaleX, scaleY);
-	}
-	
-	/**
-	 * When only scale is given, calculate page dimensions.
-	 * @param scale
-	 * @return
-	 */
-	private static Dimensions dimensionsFromScale(double scale, Dimensions orig) {
-		return orig.scaleUp(scale);
 	}
 	
 	/* Resizing */
