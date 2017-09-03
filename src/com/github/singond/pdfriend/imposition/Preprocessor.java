@@ -298,17 +298,18 @@ public class Preprocessor {
 		 * in a completely unrelated manner. The following is the default
 		 * behaviour:
 		 * <p>
-		 * For the purpose of this method, define a "page box" as the
-		 * rectangle which represents the boundary of the positioned page.
-		 * In most cases this box will be equal to the actual border of the
-		 * page, but see below.
-		 * This "page box" is what is used in positioning the page in the cell.
+		 * For the purpose of this method, define a "page box" as that part
+		 * of the page, whose dimensions when rendered will be equal to the
+		 * {@code pageDimensions}, and which will be considered when placing
+		 * the page into the cell.
+		 * In most cases the "page box" will coincide with the actual border
+		 * of the page, but see below.
 		 * <p>
 		 * Resolving the scale is not trivial, because it can be set by both
 		 * {@code scale} and {@code pageDimensions}. If only one of the two
 		 * values is given, the other value can easily be calculated from the
 		 * first and the original page dimensions, but if both values are set,
-		 * they pose a conflict: Which one to prefer when setting page box?
+		 * they pose a conflict: Which one to prefer when setting the size?
 		 * <p>
 		 * The decision is that the page box will honor the value declared
 		 * in {@code pageDimensions}, but the contents of the page will be
@@ -356,17 +357,22 @@ public class Preprocessor {
 		}
 		
 		/*
-		 * If page dimensions have been set to an explicit size as well,
-		 * we need to take some measures to get the correct result:
+		 * Up to now, the size of the page box is still unknown.
+		 * By default, this will be equal to the original page dimensions.
 		 * 
-		 * The RectangleFrame needs simply a rectangle, which it will
-		 * then position into itself (ie. the "cell"), completely
-		 * agnostic of the contents of the rectangle.
+		 * However, if both {@code pageDimensions} and {@code scale} have
+		 * been set to an explicit size, we need to take some measures to
+		 * obtain the correct result:
+		 * 
+		 * The RectangleFrame (representing the "cell") simply takes
+		 * a rectangle, and positions it into itself, completely agnostic
+		 * of the contents of the rectangle.
 		 * That "rectangle" is the page box.
 		 * The positioning performed by RectangleFrame will also set
 		 * the scale of the contents to an exact value, which will most
 		 * probably not be the desired value specified in {@code scale}.
-		 * In order to make the contents appear rendered in {@code scale},
+		 * In order to make the page box, after scaling it by {@code scale},
+		 * equal in size to the desired {@code pageDimensions},
 		 * we need to change the size of the page box passed to the frame.
 		 * If, for example, the {@code pageDimensions} are two times
 		 * the original dimensions of the page ({@code orig}), but the
@@ -377,23 +383,41 @@ public class Preprocessor {
 		 * result in output page dimensions of (2/3) * 3 = 2 times the
 		 * original dimensions, which is the desired result.
 		 */
-		boolean scaleCorrectionNeeded = false;
-		double scaleCorrection;
+		Dimensions pageBox = orig;
 		if (pageDimensions != AUTO) {
-			
 			// TODO Check reasoning
 			// Magnification needed to make the orig fit the pageDimensions
 			double s = scaleFromDimensions(pageDimensions, orig);
-			scaleCorrection = declaredScale/s;
+			pageBox = orig.scaleUp(s/declaredScale);
 			if (logger.isDebugEnabled())
-				logger.debug("preprocess_page_correction", pageDimensions, scaleCorrection);
-		}
-
-		switch (resize) {
-			
+				logger.debug("preprocess_page_correction", pageDimensions, s/declaredScale);
 		}
 		
-		throw new UnsupportedOperationException("Not implemented yet");
+		/*
+		 * By now, the size and rotation of the page are known as well as
+		 * the page box size.
+		 * The constraint remaining to be set in RectangleFrame is alignment.
+		 */
+		Aligner aligner;
+		switch (resize) {
+			case FIT:
+			case NONE:
+				// Interpret alignment as from the inside of the cell
+				aligner = new InnerAligner(frame);
+				break;
+			case FILL:
+			default:
+				throw new UnsupportedOperationException("Not implemented yet");
+		}
+		for (Alignment a : align) {
+			a.invite(aligner, null);
+		}
+		aligner.prepareRectangleFrame();    // The return value is the frame, which we already have
+		
+		// Now just let RectangleFrame do its job
+		AffineTransform result = frame.positionRectangle
+				(pageBox.width().in(unit), pageBox.height().in(unit));
+		return result;
 	}
 	
 	/**
