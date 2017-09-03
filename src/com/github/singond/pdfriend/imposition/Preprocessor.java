@@ -303,17 +303,17 @@ public class Preprocessor {
 				// Honor the given value
 				scale = declaredScale;
 				if (logger.isDebugEnabled())
-					logger.debug("preprocess_pageSize_scaleExplicit", scale);
+					logger.debug("preprocess_pageScale_explicit", scale);
 			} else if (pageDimensions != AUTO) {
 				// No scale given, calculate it from output page size
 				scale = scaleFromDimensions(pageDimensions, orig);
 				if (logger.isDebugEnabled())
-					logger.debug("preprocess_pageSize_scaleFromPage", pageDimensions, scale);
+					logger.debug("preprocess_pageScale_fromPage", pageDimensions, scale);
 			} else {
 				// Nothing to determine scale from, use default
 				scale = 1;
 				if (logger.isDebugEnabled())
-					logger.debug("preprocess_pageSize_scaleDefault", scale);
+					logger.debug("preprocess_pageScale_default", scale);
 			}
 			// Use the determined scale in the frame
 			frame.setSize(frame.new Scale(scale));
