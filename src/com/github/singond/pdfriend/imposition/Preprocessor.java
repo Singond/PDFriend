@@ -345,10 +345,14 @@ public class Preprocessor {
 		 * Then scaling the page box of 2/3 of original dimensions will
 		 * result in output page dimensions of (2/3) * 3 = 2 times the
 		 * original dimensions, which is the desired result.
+		 * 
+		 * TODO When the page box is resized, the center of scaling does
+		 * not lie in the pages' center, but in its lower left corner.
+		 * Consider placing it in the page center (this will require some
+		 * tinkering with the internal workings of RectangleFrame).
 		 */
 		Dimensions pageBox;
 		if (pageDimensions != AUTO && scaleExplicit) {
-			// TODO Check reasoning
 			// Magnification needed to make the input page fit the pageDimensions
 			double s = scaleFromDimensions(pageDimensions, orig);
 			double correction = s/declaredScale;
