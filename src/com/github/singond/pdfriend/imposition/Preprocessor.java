@@ -17,7 +17,6 @@ import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.modules.Impose;
-import com.sun.glass.ui.GestureSupport;
 
 /**
  * Pre-processes pages of input document prior to imposition.
