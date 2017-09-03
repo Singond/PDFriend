@@ -362,37 +362,6 @@ public class Preprocessor {
 				logger.debug("preprocess_pageSize_fromPage", declaredScale);
 		}
 		
-		/*if (pageDimensions == AUTO) {
-			if (!scaleExplicit) {
-				// No page size or scale given: no change
-				pageBox = orig;
-				if (logger.isDebugEnabled())
-					logger.debug("preprocess_pageSize_sizeFromPage");
-			} else {
-				// Scale given, page size is auto: Calculate page size from scale
-//				pageBox = orig.scaleUp(declaredScale);
-				pageBox = orig;
-				if (logger.isDebugEnabled())
-					logger.debug("preprocess_pageSize_sizeFromScale", orig, declaredScale, pageBox);
-			}
-		} else {
-			if (!scaleExplicit) {
-//				pageBox = pageDimensions;
-				pageBox = orig;
-				if (logger.isDebugEnabled())
-					logger.debug("preprocess_pageSize_sizeExplicit", pageDimensions);
-			} else {
-				// TODO Check reasoning
-				// Magnification needed to make the orig fit the pageDimensions
-				double s = scaleFromDimensions(pageDimensions, orig);
-				double correction = s/declaredScale;
-				pageBox = orig.scaleUp(correction);
-				if (logger.isDebugEnabled())
-					logger.debug("preprocess_pageSize_sizeFromPageAndScale", declaredScale,
-					             pageDimensions, s, correction);
-			}
-		}*/
-		
 		/*
 		 * By now, the size and rotation of the page are known as well as
 		 * the page box size.
@@ -540,15 +509,15 @@ public class Preprocessor {
 		@Override
 		public String toString() {
 			return new StringBuilder()
-			.append("scale: ").append(scale).append(", ")
-			.append("rotation: ").append(rotation).append(" rad, ")
-			.append("resizing: ").append(resizing).append(", ")
-			.append("alignment: ").append(alignment).append(", ")
-			.append("page dimensions: ").append((pageDimensions==AUTO)
-			                                    ? "AUTO" : pageDimensions).append(", ")
-			.append("cell dimensions: ").append((cellDimensions==AUTO)
-			                                    ? "AUTO" : pageDimensions)
-			.toString();
+					.append("scale: ").append(scale).append(", ")
+					.append("rotation: ").append(rotation).append(" rad, ")
+					.append("resizing: ").append(resizing).append(", ")
+					.append("alignment: ").append(alignment).append(", ")
+					.append("page dimensions: ").append((pageDimensions==AUTO)
+					                                    ? "AUTO" : pageDimensions).append(", ")
+					.append("cell dimensions: ").append((cellDimensions==AUTO)
+					                                    ? "AUTO" : pageDimensions)
+					.toString();
 		}
 	}
 
