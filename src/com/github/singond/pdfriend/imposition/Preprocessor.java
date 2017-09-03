@@ -263,7 +263,7 @@ public class Preprocessor {
 	 *         with x-axis pointing right and y-axis pointing up
 	 */
 	private AffineTransform resolvePositionInCellNew(final Dimensions orig) {
-		final double scale = settings.scale;
+		final double declaredScale = settings.scale;
 		final boolean scaleExplicit = settings.isScaleGiven();
 		final double rotation = settings.rotation;
 		final Dimensions pageDimensions = settings.pageDimensions;
@@ -317,64 +317,53 @@ public class Preprocessor {
 		 * covered by the page contents and will remain blank (in the opposite
 		 * case).
 		 * <p>
-		 * First, determine the dimensions of the page box, the scale at
-		 * which the contents of the page will be drawn and whether the
-		 * values of {@code scale} and {@code pageDimensions} present
-		 * a conflict. In that is the case, we need to make it work with
-		 * {@code RectangleFrame} using a "scale correction", as explained
-		 * below.
+		 * First, determine the scale at which the contents of the page will
+		 * be drawn:
 		 */
+		double scale;
+		if (scaleExplicit) {
+			// Honor the given value
+			scale = declaredScale;
+		} else if (pageDimensions != AUTO) {
+			// No scale given, calculate it from output page size
+			scale = scaleFromDimensions(pageDimensions, orig);
+		} else {
+			// Nothing to determine scale from, use default
+			scale = 1;
+		}
 		
-		// The scale of the contents of the page
-		double contentsScale;
+		/*
+		 * If page dimensions have been set to an explicit size as well,
+		 * we need to take some measures to get the correct result:
+		 * 
+		 * The RectangleFrame needs simply a rectangle, which it will
+		 * then position into itself (ie. the "cell"), completely
+		 * agnostic of the contents of the rectangle.
+		 * That "rectangle" is the page box.
+		 * The positioning performed by RectangleFrame will also set
+		 * the scale of the contents to an exact value, which will most
+		 * probably not be the desired value specified in {@code scale}.
+		 * In order to make the contents appear rendered in {@code scale},
+		 * we need to change the size of the page box passed to the frame.
+		 * If, for example, the {@code pageDimensions} are two times
+		 * the original dimensions of the page ({@code orig}), but the
+		 * value of {@code scale} is three, we need to use a page box
+		 * which is 2/3 of the original page dimensions and pass it to
+		 * the rectangle frame along with the scale of 3.
+		 * Then scaling the page box of 2/3 of original dimensions will
+		 * result in output page dimensions of (2/3) * 3 = 2 times the
+		 * original dimensions, which is the desired result.
+		 */
 		boolean scaleCorrectionNeeded = false;
 		double scaleCorrection;
-		
-		// TODO Transferred from setSizeInFrame(), finish reworking
-		if (scaleExplicit) {
-			/*
-			 * Scale is given explicitly: honor it even in the case that
-			 * {@code pageDimensions} is set as well, as per comment above
-			 */
-			contentsScale = scale;
+		if (pageDimensions != AUTO) {
 			
-			/*
-			 * If page dimensions has been set to an explicit size as well,
-			 * we need to take some measures to get the correct result:
-			 * 
-			 * The RectangleFrame needs simply a rectangle, which it will
-			 * then position into itself (ie. the "cell"), completely
-			 * agnostic of the contents of the rectangle.
-			 * That "rectangle" is the page box.
-			 * The positioning performed by RectangleFrame will also set
-			 * the scale of the contents to an exact value, which will most
-			 * probably not be the desired value specified in {@code scale}.
-			 * In order to make the contents appear rendered in {@code scale},
-			 * we need to change the size of the page box passed to the frame.
-			 * If, for example, the {@code pageDimensions} are two times
-			 * the original dimensions of the page ({@code orig}), but the
-			 * value of {@code scale} is three, we need to use a page box
-			 * which is 2/3 of the original page dimensions and pass it to
-			 * the rectangle frame along with the scale of 3.
-			 * Then scaling the page box of 2/3 of original dimensions will
-			 * result in output page dimensions of (2/3) * 3 = 2 times the
-			 * original dimensions, which is the desired result.
-			 */
-			if (pageDimensions != AUTO) {
-				
-				// TODO Check reasoning
-				// Magnification needed to make the orig fit the pageDimensions
-				double s = scaleFromDimensions(pageDimensions, orig);
-				scaleCorrection = scale/s;
-				if (logger.isDebugEnabled())
-					logger.debug("preprocess_page_correction", pageDimensions, scaleCorrection);
-			}
-		} else {
-			if (pageDimensions == AUTO) {
-				contentsScale = 1;
-			} else {
-				contentsScale = scaleFromDimensions(pageDimensions, orig);
-			}
+			// TODO Check reasoning
+			// Magnification needed to make the orig fit the pageDimensions
+			double s = scaleFromDimensions(pageDimensions, orig);
+			scaleCorrection = declaredScale/s;
+			if (logger.isDebugEnabled())
+				logger.debug("preprocess_page_correction", pageDimensions, scaleCorrection);
 		}
 
 		switch (resize) {
