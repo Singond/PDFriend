@@ -109,7 +109,8 @@ public class Preprocessor {
 			if (settings.pageDimensions == AUTO) {
 				// Circumscribe the cell to the pages scaled by {@code settings.scale}
 				// and rotated by {@code settings.rotation}
-				logger.verbose("preprocess_pageSize_resolve");
+				logger.verbose("preprocess_cellSize_fromPageScale", settings.scale, rotation);
+				// TODO: Merge to one loop?
 				try {
 					halfHorizontalExtent = documents.stream()
 							.flatMap(doc -> doc.getPages().stream())
@@ -133,7 +134,7 @@ public class Preprocessor {
 			} else {
 				// Page dimensions are given explicitly: circumscribe the cell
 				// to a page of these dimensions rotated by {@code settings.rotation}
-				logger.verbose("preprocess_pageSize_sizeExplicit", settings.pageDimensions);
+				logger.verbose("preprocess_cellSize_fromPageDimensions", settings.pageDimensions, rotation);
 				halfHorizontalExtent = Rectangles.getHorizontalExtent(
 						settings.pageDimensions.width().in(Impose.LENGTH_UNIT),
 						settings.pageDimensions.height().in(Impose.LENGTH_UNIT),
