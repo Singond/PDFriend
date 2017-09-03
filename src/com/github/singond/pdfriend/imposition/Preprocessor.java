@@ -132,7 +132,7 @@ public class Preprocessor {
 			} else {
 				// Page dimensions are given explicitly: circumscribe the cell
 				// to a page of these dimensions rotated by {@code settings.rotation}
-				logger.verbose("preprocess_pageSize_explicit", settings.pageDimensions);
+				logger.verbose("preprocess_pageSize_sizeExplicit", settings.pageDimensions);
 				halfHorizontalExtent = Rectangles.getHorizontalExtent(
 						settings.pageDimensions.width().in(Impose.LENGTH_UNIT),
 						settings.pageDimensions.height().in(Impose.LENGTH_UNIT),
@@ -344,16 +344,34 @@ public class Preprocessor {
 		 * result in output page dimensions of (2/3) * 3 = 2 times the
 		 * original dimensions, which is the desired result.
 		 */
-		Dimensions pageBox = orig;
-		if (pageDimensions != AUTO) {
-			// TODO Check reasoning
-			// Magnification needed to make the orig fit the pageDimensions
-			double s = scaleFromDimensions(pageDimensions, orig);
-			double correction = s/declaredScale;
-			pageBox = orig.scaleUp(correction);
-			if (logger.isDebugEnabled())
-				logger.debug("preprocess_pageSize_correction", declaredScale,
-				             pageDimensions, s, correction);
+		Dimensions pageBox;
+		if (pageDimensions == AUTO) {
+			if (!scaleExplicit) {
+				// No page size or scale given: no change
+				pageBox = orig;
+				if (logger.isDebugEnabled())
+					logger.debug("preprocess_pageSize_sizeFromPage");
+			} else {
+				// Scale given, page size is auto: Calculate page size from scale
+				pageBox = orig.scaleUp(declaredScale);
+				if (logger.isDebugEnabled())
+					logger.debug("preprocess_pageSize_sizeFromScale", orig, declaredScale, pageBox);
+			}
+		} else {
+			if (!scaleExplicit) {
+				pageBox = pageDimensions;
+				if (logger.isDebugEnabled())
+					logger.debug("preprocess_pageSize_sizeExplicit", pageDimensions);
+			} else {
+				// TODO Check reasoning
+				// Magnification needed to make the orig fit the pageDimensions
+				double s = scaleFromDimensions(pageDimensions, orig);
+				double correction = s/declaredScale;
+				pageBox = orig.scaleUp(correction);
+				if (logger.isDebugEnabled())
+					logger.debug("preprocess_pageSize_sizeFromPageAndScale", declaredScale,
+					             pageDimensions, s, correction);
+			}
 		}
 		
 		/*
