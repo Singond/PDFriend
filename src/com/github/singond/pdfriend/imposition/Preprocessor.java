@@ -528,116 +528,21 @@ public class Preprocessor {
 	 */
 	private static enum Resizing {
 		/** Respects pageDimensions and scale. */
-		NONE {
-			@Override
-			AffineTransform setSizeInFrame (
-					final RectangleFrame frame,
-					final Dimensions orig,
-					final double scale,
-					final boolean scaleExplicit,
-					final Dimensions pageDimensions) {
-//				if (logger.isDebugEnabled())
-//					logger.debug("preprocess_page_resizeNone");
-				AffineTransform correction = null;
-				if (scaleExplicit) {
-					frame.setSize(frame.new Scale(scale));
-					if (pageDimensions != AUTO) {
-						/* Rescale to make scaling by {@code scale} also result in correct page size */
-						// TODO Check reasoning
-						// Magnification needed to make the orig fit the pageDimensions
-						double s = scaleFromDimensions(pageDimensions, orig);
-						double scaleCorrection = scale/s;
-						correction = AffineTransform.getScaleInstance(scaleCorrection, scaleCorrection);
-						if (logger.isDebugEnabled())
-							logger.debug("preprocess_page_correction", pageDimensions, scaleCorrection);
-					}
-				} else {
-					if (pageDimensions == AUTO) {
-						frame.setSize(frame.new Scale(1));
-					} else {
-						double s = scaleFromDimensions(pageDimensions, orig);
-						frame.setSize(frame.new Scale(s));
-					}
-				}
-				return correction;
-			}
-			
-			@Override
-			Aligner getAligner(RectangleFrame frame) {
-				return new InnerAligner(frame);
-			}
-		},
+		NONE,
 		/**
 		 * Ensures that the whole area of the page fits into the cell,
 		 * respecting the page's rotation but ignoring its scale and dimensions.
 		 * If the rotation is not a multiple of right angle, this resizing
 		 * will leave blank areas in the cell, which are not covered by the page.
 		 */
-		FIT {
-			@Override
-			AffineTransform setSizeInFrame (
-					final RectangleFrame frame,
-					final Dimensions orig,
-					final double scale,
-					final boolean scaleExplicit,
-					final Dimensions pageDimensions) {
-				if (logger.isDebugEnabled())
-					logger.debug("preprocess_page_resizeFit", orig);
-				frame.setSize(frame.new Fit());
-				return null;
-			}
-			
-			@Override
-			Aligner getAligner(RectangleFrame frame) {
-				return new InnerAligner(frame);
-			}
-		},
+		FIT,
 		/**
 		 * Ensures that the page covers the whole area of the cell,
 		 * respecting the page's rotation but ignoring its scale and dimensions.
 		 * If the rotation is not a multiple of right angle, this resizing
 		 * will result in the page overflowing the cell.
 		 */
-		FILL {
-			@Override
-			AffineTransform setSizeInFrame (
-					final RectangleFrame frame,
-					final Dimensions orig,
-					final double scale,
-					final boolean scaleExplicit,
-					final Dimensions pageDimensions) {
-				if (logger.isDebugEnabled())
-					logger.debug("preprocess_page_resizeFill", orig);
-				frame.setSize(frame.new Fill());
-				return null;
-			}
-			
-			@Override
-			Aligner getAligner(RectangleFrame frame) {
-				// TODO Implement
-				return null;
-			}
-		};
-		
-		/**
-		 * In the frame given as argument, sets the constraint for page size.
-		 * @param frame the frame in which the constraint is to be set
-		 * @param orig original dimensions of the page (before pre-processing)
-		 * @param scale uniform scale to be applied (as maginfication)
-		 * @param scaleExplicit flag indicating that {@code scale} is given explicitly
-		 * @param pageDimensions required page dimensions
-		 * @return a correction transformation to be applied to the page
-		 *         before transforming it with the {@code frame} output.
-		 *         This is needed in some types; the other types return null,
-		 *         indicating that no correction is necessary.
-		 */
-		abstract AffineTransform setSizeInFrame (final RectangleFrame frame,
-		                                         final Dimensions orig,
-		                                         final double scale,
-		                                         final boolean scaleExplicit,
-		                                         final Dimensions pageDimensions);
-		
-		abstract Aligner getAligner(RectangleFrame frame);
+		FILL;
 	}
 
 	/* Alignment */
