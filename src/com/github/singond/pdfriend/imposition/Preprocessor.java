@@ -126,8 +126,10 @@ public class Preprocessor {
 							"The documents are empty (they contain no pages): " + documents);
 				}
 				// Scale it
-				halfHorizontalExtent *= settings.scale;
-				halfVerticalExtent *= settings.scale;
+				if (settings.isScaleGiven()) {
+					halfHorizontalExtent *= settings.scale;
+					halfVerticalExtent *= settings.scale;
+				}
 			} else {
 				// Page dimensions are given explicitly: circumscribe the cell
 				// to a page of these dimensions rotated by {@code settings.rotation}
