@@ -42,9 +42,10 @@ public class PreprocessDocument {
 			
 			Preprocessor.Settings settings = new Preprocessor.Settings();
 			settings.setScale(1);
-			settings.setRotation(Math.PI/2);
-			settings.setPageDimensions(new Dimensions(306, 396, PT));
-//			settings.setPageDimensions(new Dimensions(612, 792, PT));
+//			settings.setRotation(Math.PI/2);
+			settings.setRotation(0.1);
+//			settings.setPageDimensions(new Dimensions(306, 396, PT));
+			settings.setPageDimensions(new Dimensions(612, 792, PT));
 //			settings.setPageDimensions(new Dimensions(612, 792, PT));
 			AlignmentSetter align = new AlignmentSetter();
 			align.addAlignment("LeftAlignment", 0);

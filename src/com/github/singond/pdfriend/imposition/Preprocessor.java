@@ -227,7 +227,7 @@ public class Preprocessor {
 		final LengthUnit unit = Impose.LENGTH_UNIT;
 		
 		if (logger.isDebugEnabled())
-			logger.debug("preprocess_page_inCell", orig, cell);
+			logger.debug("preprocess_pageSize_cell", orig, cell);
 		
 		/*
 		 * To position the page box we are using a RectangleFrame object.
@@ -300,12 +300,18 @@ public class Preprocessor {
 			if (scaleExplicit) {
 				// Honor the given value
 				scale = declaredScale;
+				if (logger.isDebugEnabled())
+					logger.debug("preprocess_pageSize_scaleExplicit", scale);
 			} else if (pageDimensions != AUTO) {
 				// No scale given, calculate it from output page size
 				scale = scaleFromDimensions(pageDimensions, orig);
+				if (logger.isDebugEnabled())
+					logger.debug("preprocess_pageSize_scaleFromPage", pageDimensions, scale);
 			} else {
 				// Nothing to determine scale from, use default
 				scale = 1;
+				if (logger.isDebugEnabled())
+					logger.debug("preprocess_pageSize_scaleDefault", scale);
 			}
 			// Use the determined scale in the frame
 			frame.setSize(frame.new Scale(scale));
@@ -343,9 +349,11 @@ public class Preprocessor {
 			// TODO Check reasoning
 			// Magnification needed to make the orig fit the pageDimensions
 			double s = scaleFromDimensions(pageDimensions, orig);
-			pageBox = orig.scaleUp(s/declaredScale);
+			double correction = s/declaredScale;
+			pageBox = orig.scaleUp(correction);
 			if (logger.isDebugEnabled())
-				logger.debug("preprocess_page_correction", pageDimensions, s/declaredScale);
+				logger.debug("preprocess_pageSize_correction", declaredScale,
+				             pageDimensions, s, correction);
 		}
 		
 		/*
