@@ -406,6 +406,14 @@ public class Preprocessor {
 		return Math.min(scaleX, scaleY);
 	}
 	
+	@Override
+	public String toString() {
+		return new StringBuilder()
+				.append("cell dimensions: ").append(cell).append(", ")
+				.append("settings: ").append(settings)
+				.toString();
+	}
+	
 	/* Resizing */
 	
 	/**
@@ -624,6 +632,11 @@ public class Preprocessor {
 		public RectangleFrame prepareRectangleFrame() {
 			frame.setAlignment(alignment);
 			return frame;
+		}
+		
+		@Override
+		public String toString() {
+			return "Inner aligner for frame" + frame;
 		}
 	}
 
