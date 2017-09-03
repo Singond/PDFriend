@@ -347,7 +347,22 @@ public class Preprocessor {
 		 * original dimensions, which is the desired result.
 		 */
 		Dimensions pageBox;
-		if (pageDimensions == AUTO) {
+		if (pageDimensions != AUTO && scaleExplicit) {
+			// TODO Check reasoning
+			// Magnification needed to make the input page fit the pageDimensions
+			double s = scaleFromDimensions(pageDimensions, orig);
+			double correction = s/declaredScale;
+			pageBox = orig.scaleUp(correction);
+			if (logger.isDebugEnabled())
+				logger.debug("preprocess_pageSize_fromPageAndScale", declaredScale,
+				             pageDimensions, s, correction);
+		} else {
+			pageBox = orig;
+			if (logger.isDebugEnabled())
+				logger.debug("preprocess_pageSize_fromPage", declaredScale);
+		}
+		
+		/*if (pageDimensions == AUTO) {
 			if (!scaleExplicit) {
 				// No page size or scale given: no change
 				pageBox = orig;
@@ -355,13 +370,15 @@ public class Preprocessor {
 					logger.debug("preprocess_pageSize_sizeFromPage");
 			} else {
 				// Scale given, page size is auto: Calculate page size from scale
-				pageBox = orig.scaleUp(declaredScale);
+//				pageBox = orig.scaleUp(declaredScale);
+				pageBox = orig;
 				if (logger.isDebugEnabled())
 					logger.debug("preprocess_pageSize_sizeFromScale", orig, declaredScale, pageBox);
 			}
 		} else {
 			if (!scaleExplicit) {
-				pageBox = pageDimensions;
+//				pageBox = pageDimensions;
+				pageBox = orig;
 				if (logger.isDebugEnabled())
 					logger.debug("preprocess_pageSize_sizeExplicit", pageDimensions);
 			} else {
@@ -374,7 +391,7 @@ public class Preprocessor {
 					logger.debug("preprocess_pageSize_sizeFromPageAndScale", declaredScale,
 					             pageDimensions, s, correction);
 			}
-		}
+		}*/
 		
 		/*
 		 * By now, the size and rotation of the page are known as well as
