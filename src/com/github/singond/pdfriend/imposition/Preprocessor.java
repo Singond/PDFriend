@@ -132,7 +132,7 @@ public class Preprocessor {
 			} else {
 				// Page dimensions are given explicitly: circumscribe the cell
 				// to a page of these dimensions rotated by {@code settings.rotation}
-				logger.verbose("preprocess_pageSize_explicit");
+				logger.verbose("preprocess_pageSize_explicit", settings.pageDimensions);
 				halfHorizontalExtent = Rectangles.getHorizontalExtent(
 						settings.pageDimensions.width().in(Impose.LENGTH_UNIT),
 						settings.pageDimensions.height().in(Impose.LENGTH_UNIT),
