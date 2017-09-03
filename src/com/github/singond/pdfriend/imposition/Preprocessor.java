@@ -292,7 +292,12 @@ public class Preprocessor {
 		}
 		
 		/*
-		 * Another constraint which needs to be set is the scale of the page.
+		 * Another constraint which needs to be set is the size of the page.
+		 * However, this applies only for some values of {@code resizing},
+		 * because some other values might set the output size of the page
+		 * in a completely unrelated manner. The following is the default
+		 * behaviour:
+		 * <p>
 		 * For the purpose of this method, define a "page box" as the
 		 * rectangle which represents the boundary of the positioned page.
 		 * In most cases this box will be equal to the actual border of the
@@ -317,19 +322,37 @@ public class Preprocessor {
 		 * covered by the page contents and will remain blank (in the opposite
 		 * case).
 		 * <p>
-		 * First, determine the scale at which the contents of the page will
-		 * be drawn:
+		 * However, some resizing options will bypass this behvaiour, because
+		 * they, by definition, resize the pages when applied.
+		 * Note that this does not mean that those options disregard the size
+		 * settings completely: The values of both {@code scale} and
+		 * {@code pageDimensions} are reflected in the size of the cell.
+		 * <p>
+		 * First, rule out those resizing options which operate solely with
+		 * the size of the cell. For the rest, determine the scale at which
+		 * the contents of the page will be drawn:
 		 */
-		double scale;
-		if (scaleExplicit) {
-			// Honor the given value
-			scale = declaredScale;
-		} else if (pageDimensions != AUTO) {
-			// No scale given, calculate it from output page size
-			scale = scaleFromDimensions(pageDimensions, orig);
+		if (resize == Resizing.FIT) {
+			// Fit the pages into the cell, no scale needed
+			frame.setSize(frame.new Fit());
+		} else if (resize == Resizing.FILL) {
+			// Fill the cell with the page, no scale needed
+			frame.setSize(frame.new Fill());
 		} else {
-			// Nothing to determine scale from, use default
-			scale = 1;
+			// No resizing is applied, respect the settings in full
+			double scale;
+			if (scaleExplicit) {
+				// Honor the given value
+				scale = declaredScale;
+			} else if (pageDimensions != AUTO) {
+				// No scale given, calculate it from output page size
+				scale = scaleFromDimensions(pageDimensions, orig);
+			} else {
+				// Nothing to determine scale from, use default
+				scale = 1;
+			}
+			// Use the determined scale in the frame
+			frame.setSize(frame.new Scale(scale));
 		}
 		
 		/*
