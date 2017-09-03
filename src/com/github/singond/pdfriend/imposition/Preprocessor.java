@@ -502,7 +502,7 @@ public class Preprocessor {
 		public void setCellDimensions(Dimensions dimensions) {
 			if (dimensions == null)
 				throw new IllegalArgumentException("Cell dimensions cannot be null");
-			this.pageDimensions = dimensions;
+			this.cellDimensions = dimensions;
 		}
 		
 		/** Checks whether scale has been explicitly set to a valid value */

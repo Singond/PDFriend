@@ -41,16 +41,20 @@ public class PreprocessDocument {
 			VirtualDocument inDoc = new PDFParser().parseDocument(Files.readAllBytes(input.toPath()));
 			
 			Preprocessor.Settings settings = new Preprocessor.Settings();
-			settings.setScale(2);
+//			settings.setScale(1);
 //			settings.setRotation(Math.PI/2);
-//			settings.setRotation(-0.1);
-//			settings.setPageDimensions(new Dimensions(306, 396, PT));
-			settings.setPageDimensions(new Dimensions(612, 792, PT));
+//			settings.setRotation(0.6);
+			settings.setPageDimensions(new Dimensions(306, 396, PT));
+//			settings.setPageDimensions(new Dimensions(612, 792, PT));
 //			settings.setPageDimensions(new Dimensions(1224, 1584, PT));
+			//
+//			settings.setCellDimensions(new Dimensions(306, 396, PT));
+//			settings.setCellDimensions(new Dimensions(612, 792, PT));
+			settings.setCellDimensions(new Dimensions(1224, 1584, PT));
 			AlignmentSetter align = new AlignmentSetter();
-			align.addAlignment("LeftAlignment", 0);
+			align.addAlignment("CenterAlignment", 0);
 			align.addAlignment("TopAlignment", 0);
-//			align.setAlignment(settings);
+			align.setAlignment(settings);
 			
 //			settings.setCellDimensions(new Dimensions(200, 100, MM));
 			Preprocessor pp = new Preprocessor(Arrays.asList(inDoc), settings);
