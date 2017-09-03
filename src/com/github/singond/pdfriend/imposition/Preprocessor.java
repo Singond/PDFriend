@@ -218,51 +218,6 @@ public class Preprocessor {
 	 *         with x-axis pointing right and y-axis pointing up
 	 */
 	private AffineTransform resolvePositionInCell(final Dimensions orig) {
-		final double scale = settings.scale;
-		final boolean scaleExplicit = settings.isScaleGiven();
-		final double rotation = settings.rotation;
-		final Dimensions pageDimensions = settings.pageDimensions;
-		final Resizing resize = settings.resizing;
-		final List<Alignment> align = settings.alignment;
-		
-		final LengthUnit unit = Impose.LENGTH_UNIT;
-		final RectangleFrame frame = new RectangleFrame
-				(cell.width().in(unit), cell.height().in(unit));
-
-		if (logger.isDebugEnabled())
-			logger.debug("preprocess_page_inCell", orig, cell);
-		AffineTransform correction = resize.setSizeInFrame(
-				frame, orig, scale, scaleExplicit, pageDimensions);
-		frame.setRotation(rotation);
-		Aligner aligner = resize.getAligner(frame);
-		for (Alignment a : align) {
-			a.invite(aligner, null);
-		}
-		aligner.prepareRectangleFrame();        // We already have the return value
-		
-		AffineTransform result = frame.positionInFrame
-				(orig.width().in(unit), orig.height().in(unit));
-		if (correction != null) {
-			result.concatenate(correction);
-		}
-//		if (logger.isDebugEnabled())
-//			logger.debug("preprocess_page_calculated", orig, result);
-		return result;
-	}
-	
-	/**
-	 * Resolves the position of a rectangle of the given dimensions
-	 * inside the cell.
-	 * This method always performs the full calculation. If the result
-	 * has already been computed for given dimensions (specified in the
-	 * argument), using {@link #getResolvedPositionInCell} is preferable
-	 * because it caches the computed values.
-	 * @param orig the rectangle whose position in the cell is to be obtained
-	 * @return the position as a transformation matrix for the coordinate
-	 *         system originating in the lower bottom corner of the cell,
-	 *         with x-axis pointing right and y-axis pointing up
-	 */
-	private AffineTransform resolvePositionInCellNew(final Dimensions orig) {
 		final double declaredScale = settings.scale;
 		final boolean scaleExplicit = settings.isScaleGiven();
 		final double rotation = settings.rotation;
