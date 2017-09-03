@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-
+import com.github.singond.pdfriend.ExtendedLogger;
+import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.format.ParsingException;
@@ -23,28 +23,33 @@ import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.imposition.Preprocessor;
-import com.github.singond.pdfriend.modules.Impose;
 
 @SuppressWarnings("unused")
 public class PreprocessDocument {
+	
+	private static ExtendedLogger logger = Log.logger(PreprocessDocument.class);
 	
 	private static final LengthUnit PT = LengthUnits.POINT_POSTSCRIPT;
 	private static final LengthUnit MM = LengthUnits.MILLIMETRE;
 
 	public static void main(String[] args) {
-		File input = new File("test/lorem-letter.pdf");
+		File input = new File("test/lorem-letter-bg.pdf");
+		File output = new File("test/preprocessed-doc.pdf");
 		
 		try {
 			/* Input Document */
 			VirtualDocument inDoc = new PDFParser().parseDocument(Files.readAllBytes(input.toPath()));
 			
 			Preprocessor.Settings settings = new Preprocessor.Settings();
-			settings.setScale(2);
+			settings.setScale(1);
 			settings.setRotation(Math.PI/2);
+			settings.setPageDimensions(new Dimensions(306, 396, PT));
+//			settings.setPageDimensions(new Dimensions(612, 792, PT));
+//			settings.setPageDimensions(new Dimensions(612, 792, PT));
 			AlignmentSetter align = new AlignmentSetter();
 			align.addAlignment("LeftAlignment", 0);
 			align.addAlignment("TopAlignment", 0);
-			align.setAlignment(settings);
+//			align.setAlignment(settings);
 			
 //			settings.setCellDimensions(new Dimensions(200, 100, MM));
 			Preprocessor pp = new Preprocessor(Arrays.asList(inDoc), settings);
@@ -55,9 +60,8 @@ public class PreprocessDocument {
 				outDoc.addPage(pp.process(pg));
 			}
 			
-			PDDocument out = new PDFRenderer().render(outDoc.build());
-			out.save(new File("test/preprocessed-doc.pdf"));
-			out.close();
+			new PDFRenderer().renderAndSave(outDoc.build(), output);
+			logger.info("Finished writing document");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (RenderingException e) {
@@ -96,5 +100,4 @@ public class PreprocessDocument {
 			}
 		}
 	}
-
 }
