@@ -17,7 +17,6 @@ import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.modules.Impose;
-import com.sun.glass.ui.GestureSupport;
 
 /**
  * Pre-processes pages of input document prior to imposition.
@@ -110,7 +109,8 @@ public class Preprocessor {
 			if (settings.pageDimensions == AUTO) {
 				// Circumscribe the cell to the pages scaled by {@code settings.scale}
 				// and rotated by {@code settings.rotation}
-				logger.verbose("preprocess_pageSize_resolve");
+				logger.verbose("preprocess_cellSize_fromPageScale", settings.scale, rotation);
+				// TODO: Merge to one loop?
 				try {
 					halfHorizontalExtent = documents.stream()
 							.flatMap(doc -> doc.getPages().stream())
@@ -127,12 +127,14 @@ public class Preprocessor {
 							"The documents are empty (they contain no pages): " + documents);
 				}
 				// Scale it
-				halfHorizontalExtent *= settings.scale;
-				halfVerticalExtent *= settings.scale;
+				if (settings.isScaleGiven()) {
+					halfHorizontalExtent *= settings.scale;
+					halfVerticalExtent *= settings.scale;
+				}
 			} else {
 				// Page dimensions are given explicitly: circumscribe the cell
 				// to a page of these dimensions rotated by {@code settings.rotation}
-				logger.verbose("preprocess_pageSize_explicit");
+				logger.verbose("preprocess_cellSize_fromPageDimensions", settings.pageDimensions, rotation);
 				halfHorizontalExtent = Rectangles.getHorizontalExtent(
 						settings.pageDimensions.width().in(Impose.LENGTH_UNIT),
 						settings.pageDimensions.height().in(Impose.LENGTH_UNIT),
@@ -218,42 +220,184 @@ public class Preprocessor {
 	 *         with x-axis pointing right and y-axis pointing up
 	 */
 	private AffineTransform resolvePositionInCell(final Dimensions orig) {
-		final double scale = settings.scale;
+		final double declaredScale = settings.scale;
 		final boolean scaleExplicit = settings.isScaleGiven();
 		final double rotation = settings.rotation;
 		final Dimensions pageDimensions = settings.pageDimensions;
 		final Resizing resize = settings.resizing;
 		final List<Alignment> align = settings.alignment;
-		
 		final LengthUnit unit = Impose.LENGTH_UNIT;
+		
+		if (logger.isDebugEnabled())
+			logger.debug("preprocess_pageSize_cell", orig, cell);
+		
+		/*
+		 * To position the page box we are using a RectangleFrame object.
+		 * Its "frame" represents the cell, whose dimensions are now known.
+		 * This frame is used to position the page box according to some
+		 * constraints which will be specified now.
+		 */
 		final RectangleFrame frame = new RectangleFrame
 				(cell.width().in(unit), cell.height().in(unit));
-
-		if (logger.isDebugEnabled())
-			logger.debug("preprocess_page_inCell", orig, cell);
-		AffineTransform correction = resize.setSizeInFrame(
-				frame, orig, scale, scaleExplicit, pageDimensions);
-		frame.setRotation(rotation);
-		Aligner aligner = resize.getAligner(frame);
+		
+		/*
+		 * The easiest constraint to resolve is the rotation, because it
+		 * is not dependent on anything else. We can set it now.
+		 */
+		if (rotation != 0) {
+			frame.setRotation(rotation);
+		}
+		
+		/*
+		 * Another constraint which needs to be set is the size of the page.
+		 * However, this applies only for some values of {@code resizing},
+		 * because some other values might set the output size of the page
+		 * in a completely unrelated manner. The following is the default
+		 * behaviour:
+		 * <p>
+		 * For the purpose of this method, define a "page box" as that part
+		 * of the page, whose dimensions when rendered will be equal to the
+		 * {@code pageDimensions}, and which will be considered when placing
+		 * the page into the cell.
+		 * In most cases the "page box" will coincide with the actual border
+		 * of the page, but see below.
+		 * <p>
+		 * Resolving the scale is not trivial, because it can be set by both
+		 * {@code scale} and {@code pageDimensions}. If only one of the two
+		 * values is given, the other value can easily be calculated from the
+		 * first and the original page dimensions, but if both values are set,
+		 * they pose a conflict: Which one to prefer when setting the size?
+		 * <p>
+		 * The decision is that the page box will honor the value declared
+		 * in {@code pageDimensions}, but the contents of the page will be
+		 * drawn with the scale declared in {@code scale}. Unless we're really
+		 * lucky and the {@code scale} and {@code pageDimensions} actually
+		 * resolve to the same page size (ie. original size of the page scaled
+		 * by {@code scale} equals {@code pageDimensions}), this means that
+		 * some parts of the page content will overflow the page box
+		 * (if original page size scaled by {@code scale} is larger than
+		 * {@code pageDimensions}), or some part of the page box will not be
+		 * covered by the page contents and will remain blank (in the opposite
+		 * case).
+		 * <p>
+		 * However, some resizing options will bypass this behvaiour, because
+		 * they, by definition, resize the pages when applied.
+		 * Note that this does not mean that those options disregard the size
+		 * settings completely: The values of both {@code scale} and
+		 * {@code pageDimensions} are reflected in the size of the cell.
+		 * <p>
+		 * First, rule out those resizing options which operate solely with
+		 * the size of the cell. For the rest, determine the scale at which
+		 * the contents of the page will be drawn:
+		 */
+		if (resize == Resizing.FIT) {
+			// Fit the pages into the cell, no scale needed
+			frame.setSize(frame.new Fit());
+		} else if (resize == Resizing.FILL) {
+			// Fill the cell with the page, no scale needed
+			frame.setSize(frame.new Fill());
+		} else {
+			// No resizing is applied, respect the settings in full
+			double scale;
+			if (scaleExplicit) {
+				// Honor the given value
+				scale = declaredScale;
+				if (logger.isDebugEnabled())
+					logger.debug("preprocess_pageScale_explicit", scale);
+			} else if (pageDimensions != AUTO) {
+				// No scale given, calculate it from output page size
+				scale = scaleFromDimensions(pageDimensions, orig);
+				if (logger.isDebugEnabled())
+					logger.debug("preprocess_pageScale_fromPage", pageDimensions, scale);
+			} else {
+				// Nothing to determine scale from, use default
+				scale = 1;
+				if (logger.isDebugEnabled())
+					logger.debug("preprocess_pageScale_default", scale);
+			}
+			// Use the determined scale in the frame
+			frame.setSize(frame.new Scale(scale));
+		}
+		
+		/*
+		 * Up to now, the size of the page box is still unknown.
+		 * By default, this will be equal to the original page dimensions.
+		 * 
+		 * However, if both {@code pageDimensions} and {@code scale} have
+		 * been set to an explicit size, we need to take some measures to
+		 * obtain the correct result:
+		 * 
+		 * The RectangleFrame (representing the "cell") simply takes
+		 * a rectangle, and positions it into itself, completely agnostic
+		 * of the contents of the rectangle.
+		 * That "rectangle" is the page box.
+		 * The positioning performed by RectangleFrame will also set
+		 * the scale of the contents to an exact value, which will most
+		 * probably not be the desired value specified in {@code scale}.
+		 * In order to make the page box, after scaling it by {@code scale},
+		 * equal in size to the desired {@code pageDimensions},
+		 * we need to change the size of the page box passed to the frame.
+		 * If, for example, the {@code pageDimensions} are two times
+		 * the original dimensions of the page ({@code orig}), but the
+		 * value of {@code scale} is three, we need to use a page box
+		 * which is 2/3 of the original page dimensions and pass it to
+		 * the rectangle frame along with the scale of 3.
+		 * Then scaling the page box of 2/3 of original dimensions will
+		 * result in output page dimensions of (2/3) * 3 = 2 times the
+		 * original dimensions, which is the desired result.
+		 * 
+		 * TODO When the page box is resized, the center of scaling does
+		 * not lie in the pages' center, but in its lower left corner.
+		 * Consider placing it in the page center (this will require some
+		 * tinkering with the internal workings of RectangleFrame).
+		 */
+		Dimensions pageBox;
+		if (pageDimensions != AUTO && scaleExplicit) {
+			// Magnification needed to make the input page fit the pageDimensions
+			double s = scaleFromDimensions(pageDimensions, orig);
+			double correction = s/declaredScale;
+			pageBox = orig.scaleUp(correction);
+			if (logger.isDebugEnabled())
+				logger.debug("preprocess_pageSize_fromPageAndScale", declaredScale,
+				             pageDimensions, s, correction);
+		} else {
+			pageBox = orig;
+			if (logger.isDebugEnabled())
+				logger.debug("preprocess_pageSize_fromPage", declaredScale);
+		}
+		
+		/*
+		 * By now, the size and rotation of the page are known as well as
+		 * the page box size.
+		 * The constraint remaining to be set in RectangleFrame is alignment.
+		 */
+		Aligner aligner;
+		switch (resize) {
+			case FIT:
+			case NONE:
+				// Interpret alignment as from the inside of the cell
+				aligner = new InnerAligner(frame);
+				break;
+			case FILL:
+			default:
+				throw new UnsupportedOperationException("Not implemented yet");
+		}
 		for (Alignment a : align) {
 			a.invite(aligner, null);
 		}
-		aligner.prepareRectangleFrame();        // We already have the return value
+		aligner.prepareRectangleFrame();    // The return value is the frame, which we already have
 		
-		AffineTransform result = frame.positionInFrame
-				(orig.width().in(unit), orig.height().in(unit));
-		if (correction != null) {
-			result.concatenate(correction);
-		}
-//		if (logger.isDebugEnabled())
-//			logger.debug("preprocess_page_calculated", orig, result);
+		// Now just let RectangleFrame do its job
+		AffineTransform result = frame.positionRectangle
+				(pageBox.width().in(unit), pageBox.height().in(unit));
 		return result;
 	}
 	
 	/**
-	 * When only page dimensions are given, calculate the scale.
-	 * @param dim target page dimensions
-	 * @return scale needed to fit
+	 * Calculates the scale corresponding to given output page dimensions.
+	 * @param dim output page dimensions
+	 * @param orig input page dimensions
+	 * @return the scale necessary to make {@code orig} fit {@code dim}
 	 */
 	private static double scaleFromDimensions(Dimensions dim, Dimensions orig) {
 		LengthUnit u = LengthUnits.METRE;
@@ -262,13 +406,12 @@ public class Preprocessor {
 		return Math.min(scaleX, scaleY);
 	}
 	
-	/**
-	 * When only scale is given, calculate page dimensions.
-	 * @param scale
-	 * @return
-	 */
-	private static Dimensions dimensionsFromScale(double scale, Dimensions orig) {
-		return orig.scaleUp(scale);
+	@Override
+	public String toString() {
+		return new StringBuilder()
+				.append("cell dimensions: ").append(cell).append(", ")
+				.append("settings: ").append(settings)
+				.toString();
 	}
 	
 	/* Resizing */
@@ -367,7 +510,7 @@ public class Preprocessor {
 		public void setCellDimensions(Dimensions dimensions) {
 			if (dimensions == null)
 				throw new IllegalArgumentException("Cell dimensions cannot be null");
-			this.pageDimensions = dimensions;
+			this.cellDimensions = dimensions;
 		}
 		
 		/** Checks whether scale has been explicitly set to a valid value */
@@ -378,15 +521,15 @@ public class Preprocessor {
 		@Override
 		public String toString() {
 			return new StringBuilder()
-			.append("scale: ").append(scale).append(", ")
-			.append("rotation: ").append(rotation).append(" rad, ")
-			.append("resizing: ").append(resizing).append(", ")
-			.append("alignment: ").append(alignment).append(", ")
-			.append("page dimensions: ").append((pageDimensions==AUTO)
-			                                    ? "AUTO" : pageDimensions).append(", ")
-			.append("cell dimensions: ").append((cellDimensions==AUTO)
-			                                    ? "AUTO" : pageDimensions)
-			.toString();
+					.append("scale: ").append(scale).append(", ")
+					.append("rotation: ").append(rotation).append(" rad, ")
+					.append("resizing: ").append(resizing).append(", ")
+					.append("alignment: ").append(alignment).append(", ")
+					.append("page dimensions: ").append((pageDimensions==AUTO)
+					                                    ? "AUTO" : pageDimensions).append(", ")
+					.append("cell dimensions: ").append((cellDimensions==AUTO)
+					                                    ? "AUTO" : pageDimensions)
+					.toString();
 		}
 	}
 
@@ -397,116 +540,21 @@ public class Preprocessor {
 	 */
 	private static enum Resizing {
 		/** Respects pageDimensions and scale. */
-		NONE {
-			@Override
-			AffineTransform setSizeInFrame (
-					final RectangleFrame frame,
-					final Dimensions orig,
-					final double scale,
-					final boolean scaleExplicit,
-					final Dimensions pageDimensions) {
-//				if (logger.isDebugEnabled())
-//					logger.debug("preprocess_page_resizeNone");
-				AffineTransform correction = null;
-				if (scaleExplicit) {
-					frame.setSize(frame.new Scale(scale));
-					if (pageDimensions != AUTO) {
-						/* Rescale to make scaling by {@code scale} also result in correct page size */
-						// TODO Check reasoning
-						// Magnification needed to make the orig fit the pageDimensions
-						double s = scaleFromDimensions(pageDimensions, orig);
-						double scaleCorrection = scale/s;
-						correction = AffineTransform.getScaleInstance(scaleCorrection, scaleCorrection);
-						if (logger.isDebugEnabled())
-							logger.debug("preprocess_page_correction", pageDimensions, scaleCorrection);
-					}
-				} else {
-					if (pageDimensions == AUTO) {
-						frame.setSize(frame.new Scale(1));
-					} else {
-						double s = scaleFromDimensions(pageDimensions, orig);
-						frame.setSize(frame.new Scale(s));
-					}
-				}
-				return correction;
-			}
-			
-			@Override
-			Aligner getAligner(RectangleFrame frame) {
-				return new InnerAligner(frame);
-			}
-		},
+		NONE,
 		/**
 		 * Ensures that the whole area of the page fits into the cell,
 		 * respecting the page's rotation but ignoring its scale and dimensions.
 		 * If the rotation is not a multiple of right angle, this resizing
 		 * will leave blank areas in the cell, which are not covered by the page.
 		 */
-		FIT {
-			@Override
-			AffineTransform setSizeInFrame (
-					final RectangleFrame frame,
-					final Dimensions orig,
-					final double scale,
-					final boolean scaleExplicit,
-					final Dimensions pageDimensions) {
-				if (logger.isDebugEnabled())
-					logger.debug("preprocess_page_resizeFit", orig);
-				frame.setSize(frame.new Fit());
-				return null;
-			}
-			
-			@Override
-			Aligner getAligner(RectangleFrame frame) {
-				return new InnerAligner(frame);
-			}
-		},
+		FIT,
 		/**
 		 * Ensures that the page covers the whole area of the cell,
 		 * respecting the page's rotation but ignoring its scale and dimensions.
 		 * If the rotation is not a multiple of right angle, this resizing
 		 * will result in the page overflowing the cell.
 		 */
-		FILL {
-			@Override
-			AffineTransform setSizeInFrame (
-					final RectangleFrame frame,
-					final Dimensions orig,
-					final double scale,
-					final boolean scaleExplicit,
-					final Dimensions pageDimensions) {
-				if (logger.isDebugEnabled())
-					logger.debug("preprocess_page_resizeFill", orig);
-				frame.setSize(frame.new Fill());
-				return null;
-			}
-			
-			@Override
-			Aligner getAligner(RectangleFrame frame) {
-				// TODO Implement
-				return null;
-			}
-		};
-		
-		/**
-		 * In the frame given as argument, sets the constraint for page size.
-		 * @param frame the frame in which the constraint is to be set
-		 * @param orig original dimensions of the page (before pre-processing)
-		 * @param scale uniform scale to be applied (as maginfication)
-		 * @param scaleExplicit flag indicating that {@code scale} is given explicitly
-		 * @param pageDimensions required page dimensions
-		 * @return a correction transformation to be applied to the page
-		 *         before transforming it with the {@code frame} output.
-		 *         This is needed in some types; the other types return null,
-		 *         indicating that no correction is necessary.
-		 */
-		abstract AffineTransform setSizeInFrame (final RectangleFrame frame,
-		                                         final Dimensions orig,
-		                                         final double scale,
-		                                         final boolean scaleExplicit,
-		                                         final Dimensions pageDimensions);
-		
-		abstract Aligner getAligner(RectangleFrame frame);
+		FILL;
 	}
 
 	/* Alignment */
@@ -584,6 +632,11 @@ public class Preprocessor {
 		public RectangleFrame prepareRectangleFrame() {
 			frame.setAlignment(alignment);
 			return frame;
+		}
+		
+		@Override
+		public String toString() {
+			return "Inner aligner for frame" + frame;
 		}
 	}
 
