@@ -345,20 +345,15 @@ public class Preprocessor {
 		 * Then scaling the page box of 2/3 of original dimensions will
 		 * result in output page dimensions of (2/3) * 3 = 2 times the
 		 * original dimensions, which is the desired result.
-		 * 
-		 * TODO When the page box is resized, the center of scaling does
-		 * not lie in the pages' center, but in its lower left corner.
-		 * Consider placing it in the page center (this will require some
-		 * tinkering with the internal workings of RectangleFrame).
 		 */
 		Dimensions pageBox;
-		boolean pageBoxResized = false;
+		boolean pageBoxOffset = false;  // Page box coincides with page border
 		if (pageDimensions != AUTO && scaleExplicit) {
 			// Magnification needed to make the input page fit the pageDimensions
 			double s = scaleFromDimensions(pageDimensions, orig);
 			double correction = s/declaredScale;
 			pageBox = orig.scaleUp(correction);
-			pageBoxResized = true;
+			pageBoxOffset = true;
 			if (logger.isDebugEnabled())
 				logger.debug("preprocess_pageSize_fromPageAndScale", declaredScale,
 				             pageDimensions, s, correction);
@@ -398,7 +393,7 @@ public class Preprocessor {
 		 * (ie. if scale correction has been applied), shift the page
 		 * to align the page box over the center of the page.
 		 */
-		if (pageBoxResized) {
+		if (pageBoxOffset) {
 			double horizontalShift =
 					(pageBox.width().in(unit) - orig.width().in(unit)) / 2;
 			double verticalShift =
@@ -407,6 +402,7 @@ public class Preprocessor {
 					(horizontalShift, verticalShift));
 		}
 		
+		/* Phew, done */
 		return result;
 	}
 	
