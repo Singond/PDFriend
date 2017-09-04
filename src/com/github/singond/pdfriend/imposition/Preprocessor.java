@@ -352,11 +352,13 @@ public class Preprocessor {
 		 * tinkering with the internal workings of RectangleFrame).
 		 */
 		Dimensions pageBox;
+		boolean pageBoxResized = false;
 		if (pageDimensions != AUTO && scaleExplicit) {
 			// Magnification needed to make the input page fit the pageDimensions
 			double s = scaleFromDimensions(pageDimensions, orig);
 			double correction = s/declaredScale;
 			pageBox = orig.scaleUp(correction);
+			pageBoxResized = true;
 			if (logger.isDebugEnabled())
 				logger.debug("preprocess_pageSize_fromPageAndScale", declaredScale,
 				             pageDimensions, s, correction);
@@ -387,9 +389,24 @@ public class Preprocessor {
 		}
 		aligner.prepareRectangleFrame();    // The return value is the frame, which we already have
 		
-		// Now just let RectangleFrame do its job
+		// Now let RectangleFrame do its job
 		AffineTransform result = frame.positionRectangle
 				(pageBox.width().in(unit), pageBox.height().in(unit));
+		
+		/*
+		 * If the page box does not coincide with the page border,
+		 * (ie. if scale correction has been applied), shift the page
+		 * to align the page box over the center of the page.
+		 */
+		if (pageBoxResized) {
+			double horizontalShift =
+					(pageBox.width().in(unit) - orig.width().in(unit)) / 2;
+			double verticalShift =
+					(pageBox.height().in(unit) - orig.height().in(unit)) / 2;
+			result.concatenate(AffineTransform.getTranslateInstance
+					(horizontalShift, verticalShift));
+		}
+		
 		return result;
 	}
 	
