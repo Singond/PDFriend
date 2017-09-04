@@ -33,12 +33,12 @@ public class PreprocessDocument {
 	private static final LengthUnit MM = LengthUnits.MILLIMETRE;
 
 	public static void main(String[] args) {
-		File input = new File("test/lorem-letter-bg.pdf");
+		File input1 = new File("test/lorem-letter-bg.pdf");
 		File output = new File("test/preprocessed-doc.pdf");
 		
 		try {
 			/* Input Document */
-			VirtualDocument inDoc = new PDFParser().parseDocument(Files.readAllBytes(input.toPath()));
+			VirtualDocument inDoc1 = new PDFParser().parseDocument(Files.readAllBytes(input1.toPath()));
 			
 			Preprocessor.Settings settings = new Preprocessor.Settings();
 			settings.setScale(1);
@@ -57,11 +57,11 @@ public class PreprocessDocument {
 			align.setAlignment(settings);
 			
 //			settings.setCellDimensions(new Dimensions(200, 100, MM));
-			Preprocessor pp = new Preprocessor(Arrays.asList(inDoc), settings);
+			Preprocessor pp = new Preprocessor(Arrays.asList(inDoc1), settings);
 			
 			/* Output */
 			VirtualDocument.Builder outDoc = new VirtualDocument.Builder();
-			for (VirtualPage pg : inDoc.getPages()) {
+			for (VirtualPage pg : inDoc1.getPages()) {
 				outDoc.addPage(pp.process(pg));
 			}
 			
