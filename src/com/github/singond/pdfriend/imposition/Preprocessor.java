@@ -3,7 +3,9 @@ package com.github.singond.pdfriend.imposition;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import com.github.singond.geometry.plane.RectangleFrame;
@@ -62,6 +64,10 @@ public class Preprocessor {
 	 * The resolved dimensions of the cell.
 	 */
 	private final Dimensions cell;
+	/**
+	 * The cache of resolved page positions.
+	 */
+	private final Map<Dimensions, AffineTransform> positionsCache;
 	
 	/** Specifies that the dimensions are not given and should be calculated */
 	private static final Dimensions AUTO = Dimensions.dummy();
@@ -75,6 +81,7 @@ public class Preprocessor {
 		this.documents = new ArrayList<>(documents);
 		this.settings = settings.copy();
 		this.cell = resolveCellDimensions(this.documents, this.settings);
+		this.positionsCache = new HashMap<>();
 	}
 	
 	/**
@@ -183,7 +190,7 @@ public class Preprocessor {
 		Contents contents = page.getContents();
 		contents.transform(position);
 		if (logger.isDebugEnabled())
-			logger.debug("preprocess_page_position", page, position);
+			logger.debug("preprocess_position_final", page, position);
 
 		VirtualPage.Builder result = new VirtualPage.Builder();
 		Dimensions d = getResolvedCellDimensions();
@@ -203,8 +210,17 @@ public class Preprocessor {
 	 *         with x-axis pointing right and y-axis pointing up
 	 */
 	private AffineTransform getResolvedPositionInCell(Dimensions dims) {
-		// TODO Cache frequently used values of Dimensions and their results
-		return resolvePositionInCell(dims);
+		if (positionsCache.containsKey(dims)) {
+			// Return cached value
+			if (logger.isDebugEnabled())
+				logger.debug("preprocess_position_cached", positionsCache.get(dims));
+			return positionsCache.get(dims);
+		} else {
+			// Calculate it
+			AffineTransform position = resolvePositionInCell(dims);
+			positionsCache.put(dims, position);
+			return position;
+		}
 	}
 	
 	/**
