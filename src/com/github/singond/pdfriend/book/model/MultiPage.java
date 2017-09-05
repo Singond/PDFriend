@@ -96,7 +96,7 @@ public abstract class MultiPage extends Page {
 	 * This frame has well-defined dimensions and position on the parent page.
 	 * @param <T> the concrete subtype of Pagelet
 	 */
-	private interface Pagelet {
+	protected interface Pagelet {
 
 		/**
 		 * A copy method.
@@ -139,7 +139,7 @@ public abstract class MultiPage extends Page {
 	}
 	
 	/** A skeletal implementation of a pagelet */
-	private static abstract class APagelet implements Pagelet {
+	protected static abstract class APagelet implements Pagelet {
 		/** Width of this pagelet */
 		final double width;
 		/** Height of this pagelet */
@@ -203,7 +203,7 @@ public abstract class MultiPage extends Page {
 	 * are carried out internally by the pagelet according to constraints
 	 * given by calling methods on this pagelet.
 	 */
-	public static class AutoPagelet extends APagelet implements Pagelet {
+	protected static class AutoPagelet extends APagelet implements Pagelet {
 		/** A helper object for positioning the source page in the frame */
 		private final RectangleFrame positioner;
 		/**
@@ -313,7 +313,7 @@ public abstract class MultiPage extends Page {
 	 * In this pagelet the source page position is the same as the pagelet
 	 * position.
 	 */
-	public static class SimplePagelet extends APagelet implements Pagelet {
+	protected static class SimplePagelet extends APagelet implements Pagelet {
 
 		public SimplePagelet(double width, double height, AffineTransform position) {
 			super(width, height, position);
