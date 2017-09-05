@@ -330,4 +330,51 @@ public abstract class MultiPage extends Page {
 		}
 		
 	}
+	
+	/**
+	 * Represents a slot for a page in this {@code MultiPage},
+	 * along with a position.
+	 * This is a publicly accessible view of the underlying pagelets,
+	 * exposing part of its interface.
+	 */
+	public static final class PageletView {
+		/** The target of this view */
+		private final Pagelet pagelet;
+		
+		protected PageletView(Pagelet pagelet) {
+			this.pagelet = pagelet;
+		}
+		
+		/**
+		 * Returns the width of this pagelet.
+		 */
+		public double getWidth() {
+			return pagelet.getWidth();
+		}
+
+		/**
+		 * Returns the height of this pagelet.
+		 */
+		public double getHeight() {
+			return pagelet.getHeight();
+		}
+		
+		/**
+		 * Returns the position of the source page on the parent Page.
+		 * This is the transformation needed to transform the page from
+		 * its initial position with lower left corner in [0, 0] to the
+		 * desired position specified by this pagelet.
+		 */
+		public AffineTransform getPosition() {
+			return pagelet.getPosition();
+		}
+		
+		/**
+		 * Sets the given virtual page into the
+		 * @param source
+		 */
+		public void setSource(VirtualPage source) {
+			pagelet.setSource(source);
+		}
+	}
 }
