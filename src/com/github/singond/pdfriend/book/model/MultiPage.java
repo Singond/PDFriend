@@ -124,18 +124,18 @@ public abstract class MultiPage extends Page {
 		public VirtualPage getSource();
 		
 		/**
-		 * Sets the given VirtualPage as the content source for this Pagelet.
-		 * @param source the page to be used as the source
-		 */
-		public void setSource(VirtualPage source);
-
-		/**
 		 * Returns the position of the source page on the parent Page.
 		 * This is the transformation needed to transform the page from
 		 * its initial position with lower left corner in [0, 0] to the
 		 * desired position specified by this pagelet.
 		 */
 		public AffineTransform getPosition();
+
+		/**
+		 * Sets the given VirtualPage as the content source for this Pagelet.
+		 * @param source the page to be used as the source
+		 */
+		public void setSource(VirtualPage source);
 	}
 	
 	/** A skeletal implementation of a pagelet */
@@ -175,6 +175,15 @@ public abstract class MultiPage extends Page {
 			return height;
 		}
 
+		/**
+		 * This method simply returns a defensive copy of the internal
+		 * matrix of the pagelet position.
+		 */
+		@Override
+		public AffineTransform getPosition() {
+			return new AffineTransform(position);
+		}
+
 		@Override
 		public VirtualPage getSource() {
 			return source;
@@ -183,15 +192,6 @@ public abstract class MultiPage extends Page {
 		@Override
 		public void setSource(VirtualPage source) {
 			this.source = source;
-		}
-		
-		/**
-		 * This method simply returns a defensive copy of the internal
-		 * matrix of the pagelet position.
-		 */
-		@Override
-		public AffineTransform getPosition() {
-			return new AffineTransform(position);
 		}
 	}
 	
@@ -243,16 +243,6 @@ public abstract class MultiPage extends Page {
 		}
 
 		/**
-		 * Returns the position of this pagelet frame on the page.
-		 * This is <strong>not</strong> the final position of the source page,
-		 * see {@link #getPosition}.
-		 * @return a copy of the internal transformation matrix
-		 */
-		public AffineTransform getFramePosition() {
-			return new AffineTransform(position);
-		}
-		
-		/**
 		 * Returns the position of the source page on the parent Page.
 		 * The position of the source page is based on the pagelet position
 		 * (see {@link #getFramePosition}), but further transformed with
@@ -278,6 +268,16 @@ public abstract class MultiPage extends Page {
 				positionValid = true;
 				return new AffineTransform(result);
 			}
+		}
+
+		/**
+		 * Returns the position of this pagelet frame on the page.
+		 * This is <strong>not</strong> the final position of the source page,
+		 * see {@link #getPosition}.
+		 * @return a copy of the internal transformation matrix
+		 */
+		public AffineTransform getFramePosition() {
+			return new AffineTransform(position);
 		}
 		
 		/** Makes the source page fit this frame. */
