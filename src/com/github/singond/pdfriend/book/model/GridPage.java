@@ -91,7 +91,8 @@ public class GridPage extends MultiPage {
 			int[] index = iterator.previousIndex();
 			AffineTransform position = new AffineTransform(gridPos);
 			position.translate(cellWidth*index[1], cellHeight*(rows-index[0]-1));
-			Pagelet pagelet = new Pagelet(cellWidth, cellHeight, position);
+			// TODO Use SimplePagelet
+			Pagelet pagelet = new AutoPagelet(cellWidth, cellHeight, position);
 			cells.set(index[0], index[1], pagelet);
 			super.addPagelet(pagelet);
 		}
@@ -155,7 +156,7 @@ public class GridPage extends MultiPage {
 		MatrixIterator<Pagelet> origIter = original.matrix.horizontallyAll().iterator();
 		
 		while (origIter.hasNext()) {
-			Pagelet p = new Pagelet(origIter.next());
+			Pagelet p = origIter.next().copy();
 			int[] coords = origIter.previousIndex();
 			cells.set(coords[0], coords[1], p);
 			super.addPagelet(p);
@@ -213,12 +214,12 @@ public class GridPage extends MultiPage {
 	 * @param direction the manner in which to iterate
 	 * @return an iterable traversing the grid in {@code direction}
 	 */
-	public MatrixIterable<Pagelet> pagelets(Direction direction) {
+	public MatrixIterable<PageletView> pagelets(Direction direction) {
 		switch (direction) {
 			case COLUMNS:
-				return matrix.vertically();
+				return pageletViewIterator(matrix.vertically());
 			case ROWS:
-				return matrix.horizontally();
+				return pageletViewIterator(matrix.horizontally());
 			default:
 				throw new AssertionError("Bad GridPage direction is set: "+direction);
 		}
@@ -230,16 +231,22 @@ public class GridPage extends MultiPage {
 	 * @return an iterable traversing the grid according to current value
 	 *         of the {@code direction} field
 	 */
-	public MatrixIterable<Pagelet> pagelets() {
+	public MatrixIterable<PageletView> pagelets() {
 		return pagelets(direction);
 	}
+	
+	/*
+	 * TODO Remove these methods. We assume pre-processing will be used
+	 * to control input page position in the slots.
+	 */
 	
 	/**
 	 * Makes all pages fit their cell.
 	 */
+	@Deprecated
 	public void fitPages() {
 		for (Pagelet p : getPagelets()) {
-			p.fitPage();
+			((AutoPagelet) p).fitPage();
 		}
 	}
 	
@@ -247,9 +254,10 @@ public class GridPage extends MultiPage {
 	 * Scales up all pages by a fixed amount.
 	 * @param scale magnification to be applied to all pages
 	 */
+	@Deprecated
 	public void scalePages(double scale) {
 		for (Pagelet p : getPagelets()) {
-			p.scalePage(scale);
+			((AutoPagelet) p).scalePage(scale);
 		}
 	}
 	
@@ -258,9 +266,10 @@ public class GridPage extends MultiPage {
 	 * @param angle the angle of rotation in counter-clockwise direction
 	 *        in radians to be applied to all pages
 	 */
+	@Deprecated
 	public void rotatePages(double angle) {
 		for (Pagelet p : getPagelets()) {
-			p.rotatePage(angle);
+			((AutoPagelet) p).rotatePage(angle);
 		}
 	}
 	

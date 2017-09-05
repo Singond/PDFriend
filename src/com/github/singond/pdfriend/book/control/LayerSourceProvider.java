@@ -8,7 +8,7 @@ import java.util.Queue;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.model.LayeredPage;
-import com.github.singond.pdfriend.book.model.MultiPage.Pagelet;
+import com.github.singond.pdfriend.book.model.MultiPage.PageletView;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 
@@ -53,7 +53,7 @@ public class LayerSourceProvider implements SourceProvider<LayeredPage>{
 			logger.debug("layerSP_tooManyLayersInPage", layersInPage, layers);
 		}
 		int layerNo = 0;
-		for (Pagelet layer : page.getLayers()) {
+		for (PageletView layer : page.getLayers()) {
 			if (layerNo < layers) {
 				Queue<VirtualPage> pageQueue = sourcePages.get(layerNo);
 				if (!pageQueue.isEmpty()) {
