@@ -7,8 +7,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.github.singond.collections.MatrixIterable;
+import com.github.singond.collections.MatrixIterator;
 import com.github.singond.geometry.plane.RectangleFrame;
 import com.github.singond.pdfriend.book.control.PageVisitor;
+import com.github.singond.pdfriend.book.model.GridPage.Direction;
+import com.github.singond.pdfriend.book.model.MultiPage.Pagelet;
+import com.github.singond.pdfriend.book.model.MultiPage.PageletView;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.document.Contents;
 
@@ -58,6 +63,40 @@ public abstract class MultiPage extends Page {
 	 */
 	protected final List<Pagelet> getPagelets() {
 		return new ArrayList<>(pagelets);
+	}
+	
+	/**
+	 * Wraps a {@code Pagelet} iterable in a {@code PageletView} iterable.
+	 * @param pagelets the iterable of pagelets
+	 * @return an iterable, whose iterator returns the pagelets wrapped
+	 *         in {@code PageletView} objects
+	 */
+	protected MatrixIterable<PageletView> pageletViewIterator(MatrixIterable<Pagelet> pagelets) {
+		return new MatrixIterable<PageletView>() {
+			private final MatrixIterable<Pagelet> iterable = pagelets;
+			
+			@Override
+			public MatrixIterator<PageletView> iterator() {
+				return new MatrixIterator<PageletView>() {
+					private final MatrixIterator<Pagelet> iterator = iterable.iterator();
+
+					@Override
+					public boolean hasNext() {
+						return iterator.hasNext();
+					}
+
+					@Override
+					public PageletView next() {
+						return new PageletView(iterator.next());
+					}
+
+					@Override
+					public int[] previousIndex() {
+						return iterator.previousIndex();
+					}
+				};
+			}
+		};
 	}
 
 	/**
