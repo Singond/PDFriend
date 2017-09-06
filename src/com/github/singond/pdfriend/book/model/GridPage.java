@@ -311,6 +311,8 @@ public class GridPage extends MultiPage {
 	 * This builder is reusable, ie. a single instance can generate
 	 * {@code GridPage} objects repeatedly, possibly changing settings
 	 * between each invocation of {@link #build}.
+	 * All the {@code setXXX} methods return this builder object so as
+	 * to enable chaining invocations.
 	 */
 	public static final class Builder {
 		private int columns;
@@ -331,26 +333,33 @@ public class GridPage extends MultiPage {
 					horizontalOffset, verticalOffset, orientation);
 		}
 		
-		public void setColumns(int columns) {
+		public Builder setColumns(int columns) {
 			this.columns = columns;
+			return this;
 		}
-		public void setRows(int rows) {
+		public Builder setRows(int rows) {
 			this.rows = rows;
+			return this;
 		}
-		public void setCellWidth(double cellWidth) {
+		public Builder setCellWidth(double cellWidth) {
 			this.cellWidth = cellWidth;
+			return this;
 		}
-		public void setCellHeight(double cellHeight) {
+		public Builder setCellHeight(double cellHeight) {
 			this.cellHeight = cellHeight;
+			return this;
 		}
-		public void setHorizontalOffset(double horizontalOffset) {
+		public Builder setHorizontalOffset(double horizontalOffset) {
 			this.horizontalOffset = horizontalOffset;
+			return this;
 		}
-		public void setVerticalOffset(double verticalOffset) {
+		public Builder setVerticalOffset(double verticalOffset) {
 			this.verticalOffset = verticalOffset;
+			return this;
 		}
-		public void setOrientation(GridOrientation orientation) {
+		public Builder setOrientation(GridOrientation orientation) {
 			this.orientation = orientation;
+			return this;
 		}
 	}
 }

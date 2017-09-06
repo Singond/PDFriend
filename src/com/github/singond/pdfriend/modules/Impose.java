@@ -9,13 +9,9 @@ import com.github.singond.pdfriend.book.control.SourceProvider;
 import com.github.singond.pdfriend.book.model.Page;
 import com.github.singond.pdfriend.book.model.Volume;
 import com.github.singond.pdfriend.document.VirtualDocument;
-import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
-import com.github.singond.pdfriend.geometry.PageSize;
-import com.github.singond.pdfriend.geometry.PageSize.FitToLargest;
-import com.github.singond.pdfriend.geometry.PageSize.Scale;
 import com.github.singond.pdfriend.imposition.Booklet;
 import com.github.singond.pdfriend.imposition.NUp;
 import com.github.singond.pdfriend.imposition.Overlay;
@@ -35,8 +31,6 @@ public class Impose implements Module {
 	private boolean flipVerso = false;
 	/** Number of output pages */
 	private int pages = -1;
-	/** Size to be applied to pages of input */
-	private PageSize pageSize;
 	
 	/** The unit used in working with book object model */
 	public static final LengthUnit LENGTH_UNIT = LengthUnits.POINT_POSTSCRIPT;
@@ -74,36 +68,6 @@ public class Impose implements Module {
 
 	public void setPages(int pages) {
 		this.pages = pages;
-	}
-
-	public PageSize getSize() {
-		return pageSize;
-	}
-
-	public void setSize(PageSize size) {
-		this.pageSize = size;
-	}
-
-	/**
-	 * Returns a default PageSize.Visitor to provide resizing for pages.
-	 * @param docs the list of virtual documents to be used in evaluating the
-	 *        scale. This will usually be the list of documents being imposed.
-	 * @return a PageSize.Visitor instance which returns the scale value
-	 */
-	public PageSize.Visitor<Double, VirtualPage> getDefaultPageSizer(final List<VirtualDocument> docs) {
-		return new PageSize.Visitor<Double, VirtualPage>() {
-			private final List<VirtualDocument> documents = docs;
-			
-			@Override
-			public Double visit(Scale size, VirtualPage page) {
-				return size.scalePage();
-			}
-
-			@Override
-			public Double visit(FitToLargest size, VirtualPage page) {
-				return size.scalePage(page, VirtualDocument.concatenate(documents).getPages());
-			}
-		};
 	}
 
 	@Override
@@ -197,7 +161,6 @@ public class Impose implements Module {
 			NUp.Builder nup = new NUp.Builder();
 			nup.setRows(rows);
 			nup.setCols(columns);
-			nup.setPageSize(pageSize);
 			if (pages > 0) {
 				nup.setNumberOfPages(pages);
 			}
