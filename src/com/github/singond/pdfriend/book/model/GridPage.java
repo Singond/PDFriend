@@ -305,4 +305,52 @@ public class GridPage extends MultiPage {
 			this.angle = angle;
 		}
 	}
+	
+	/**
+	 * A builder of {@code GridPage} objects.
+	 * This builder is reusable, ie. a single instance can generate
+	 * {@code GridPage} objects repeatedly, possibly changing settings
+	 * between each invocation of {@link #build}.
+	 */
+	public static final class Builder {
+		private int columns;
+		private int rows;
+		private double cellWidth;
+		private double cellHeight;
+		private double horizontalOffset;
+		private double verticalOffset;
+		private GridOrientation orientation;
+		
+		/**
+		 * Builds a new instance of {@code GridPage} according to current
+		 * settings of this {@code Builder}.
+		 * @return
+		 */
+		public GridPage build() {
+			return new GridPage(columns, rows, cellWidth, cellHeight,
+					horizontalOffset, verticalOffset, orientation);
+		}
+		
+		public void setColumns(int columns) {
+			this.columns = columns;
+		}
+		public void setRows(int rows) {
+			this.rows = rows;
+		}
+		public void setCellWidth(double cellWidth) {
+			this.cellWidth = cellWidth;
+		}
+		public void setCellHeight(double cellHeight) {
+			this.cellHeight = cellHeight;
+		}
+		public void setHorizontalOffset(double horizontalOffset) {
+			this.horizontalOffset = horizontalOffset;
+		}
+		public void setVerticalOffset(double verticalOffset) {
+			this.verticalOffset = verticalOffset;
+		}
+		public void setOrientation(GridOrientation orientation) {
+			this.orientation = orientation;
+		}
+	}
 }
