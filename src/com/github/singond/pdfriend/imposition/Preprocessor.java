@@ -507,6 +507,12 @@ public class Preprocessor {
 			return copy;
 		}
 		
+		/**
+		 * Sets the uniform scale to be applied to the pages.
+		 * Note that this may not the final scale at which a page is
+		 * rendered, because after scaling the page, its size may be further
+		 * modified by resizing behaviour, (see {@link #setResizing}).
+		 */
 		public void setScale(double scale) {
 			if (scale <= 0)
 				throw new IllegalArgumentException("Scale must be a positive number");
@@ -525,10 +531,23 @@ public class Preprocessor {
 			this.pageDimensions = dimensions;
 		}
 	
+		/** Sets the rotation of the page */
 		public void setRotation(double rotation) {
 			this.rotation = rotation;
 		}
 	
+		/**
+		 * Sets the behaviour to be applied to page size.
+		 * This behaviour takes effect after the pages have been rotated
+		 * and scaled. The default value is {@link #resizing.NONE}, which
+		 * has no effect on the pages, leaving them in the original state
+		 * determined by scaling and rotating.
+		 * @param resizing an object describing the behaviour
+		 */
+		public void setResizing(Resizing resizing) {
+			this.resizing = resizing;
+		}
+
 		/**
 		 * Sets the dimensions of the circumscribed rectangle (the cell).
 		 * This overrides the preferred dimensions which would otherwise be
@@ -564,10 +583,8 @@ public class Preprocessor {
 
 	/**
 	 * Specifies behaviour for page size.
-	 * In order to be able to share instances, all implementing classes
-	 * are required to be immutable and private to Preprocessor.
 	 */
-	private static enum Resizing {
+	public static enum Resizing {
 		/** Respects pageDimensions and scale. */
 		NONE,
 		/**
