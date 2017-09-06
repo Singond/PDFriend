@@ -15,4 +15,10 @@ public class Bundle {
 	 * command-line interface.
 	 */
 	public static ResourceBundle console = ResourceBundle.getBundle("Console");
+	
+	/**
+	 * The {@code Help} resource bundle, intended for help for the
+	 * command-line interface.
+	 */
+	public static ResourceBundle help = ResourceBundle.getBundle("Help");
 }
