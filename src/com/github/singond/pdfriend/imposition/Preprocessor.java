@@ -549,6 +549,26 @@ public class Preprocessor {
 		}
 
 		/**
+		 * Sets the horizontal and vertical alignment by setting weights
+		 * which determine how the free space is distributed in the direction
+		 * in question.
+		 * <li>In horizontal direction, parameter value of {@code -1} means
+		 * left alignment, {@code 0} is centered and {@code 1} means right
+		 * alignment.
+		 * <li>In vertical direction, parameter value of {@code -1} means
+		 * bottom alignment, {@code 0} is centered and {@code 1} means top
+		 * alignment.
+		 * @param horizontalWeight parameter for horizontal alignment as described above
+		 * @param verticalWeight parameter for vertical alignment as described above
+		 */
+		public void setHorizontalAndVerticalAlignment
+				(double horizontalWeight, double verticalWeight) {
+			Alignment horizontal = new HorizontalWeightedAlignment(horizontalWeight);
+			Alignment vertical = new VerticalWeightedAlignment(verticalWeight);
+			this.alignment = Arrays.asList(horizontal, vertical);
+		}
+		
+		/**
 		 * Sets the dimensions of the circumscribed rectangle (the cell).
 		 * This overrides the preferred dimensions which would otherwise be
 		 * calculated from either the initial page dimensions and scale,
@@ -620,9 +640,11 @@ public class Preprocessor {
 		abstract R visit(LeftAlignment align, P param);
 		abstract R visit(CenterAlignment align, P param);
 		abstract R visit(RightAlignment align, P param);
+		abstract R visit(HorizontalWeightedAlignment align, P param);
 		abstract R visit(TopAlignment align, P param);
 		abstract R visit(MiddleAlignment align, P param);
 		abstract R visit(BottomAlignment align, P param);
+		abstract R visit(VerticalWeightedAlignment align, P param);
 	}
 	
 	private static interface Aligner extends AlignmentVisitor<Void, Void> {
@@ -657,6 +679,12 @@ public class Preprocessor {
 		}
 
 		@Override
+		public Void visit(HorizontalWeightedAlignment align, Void param) {
+			alignment.setHorizontalAlignment(alignment.new HorizontalWeighted(align.value));
+			return null;
+		}
+
+		@Override
 		public Void visit(TopAlignment align, Void param) {
 			alignment.setVerticalAlignment(alignment.new Top(align.value));
 			return null;
@@ -671,6 +699,12 @@ public class Preprocessor {
 		@Override
 		public Void visit(BottomAlignment align, Void param) {
 			alignment.setVerticalAlignment(alignment.new Bottom(align.value));
+			return null;
+		}
+
+		@Override
+		public Void visit(VerticalWeightedAlignment align, Void param) {
+			alignment.setVerticalAlignment(alignment.new VerticalWeighted(align.value));
 			return null;
 		}
 
@@ -739,6 +773,21 @@ public class Preprocessor {
 		@Override
 		public String toString() {return "Right " + value;}
 	}
+	
+	/** Alignment by weighted distribution of the free space */
+	private static class HorizontalWeightedAlignment extends SingleValued implements Alignment {
+		private HorizontalWeightedAlignment(double value) {
+			super(value);
+		}
+		
+		@Override
+		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
+			return visitor.visit(this, param);
+		}
+		
+		@Override
+		public String toString() {return "Right " + value;}
+	}
 
 	/** Alignment by distance from the top edge */
 	private static class TopAlignment extends SingleValued implements Alignment {
@@ -773,6 +822,21 @@ public class Preprocessor {
 	/** Alignment by distance from the bottom edge */
 	private static class BottomAlignment extends SingleValued implements Alignment {
 		private BottomAlignment(double value) {
+			super(value);
+		}
+		
+		@Override
+		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
+			return visitor.visit(this, param);
+		}
+		
+		@Override
+		public String toString() {return "Bottom " + value;}
+	}
+	
+	/** Alignment by weighted distribution of the free space */
+	private static class VerticalWeightedAlignment extends SingleValued implements Alignment {
+		private VerticalWeightedAlignment(double value) {
 			super(value);
 		}
 		
