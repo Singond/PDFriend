@@ -121,12 +121,12 @@ public class Preprocessor {
 				try {
 					halfHorizontalExtent = documents.stream()
 							.flatMap(doc -> doc.getPages().stream())
-							.mapToDouble(page -> Rectangles.getHorizontalExtent(
+							.mapToDouble(page -> Rectangles.getHalfHorizontalExtent(
 									page.getWidth(), page.getHeight(), rotation))
 							.max().getAsDouble();
 					halfVerticalExtent = documents.stream()
 							.flatMap(doc -> doc.getPages().stream())
-							.mapToDouble(page -> Rectangles.getVerticalExtent(
+							.mapToDouble(page -> Rectangles.getHalfVerticalExtent(
 									page.getWidth(), page.getHeight(), rotation))
 							.max().getAsDouble();
 				} catch (NoSuchElementException e) {
@@ -142,11 +142,11 @@ public class Preprocessor {
 				// Page dimensions are given explicitly: circumscribe the cell
 				// to a page of these dimensions rotated by {@code settings.rotation}
 				logger.verbose("preprocess_cellSize_fromPageDimensions", settings.pageDimensions, rotation);
-				halfHorizontalExtent = Rectangles.getHorizontalExtent(
+				halfHorizontalExtent = Rectangles.getHalfHorizontalExtent(
 						settings.pageDimensions.width().in(Impose.LENGTH_UNIT),
 						settings.pageDimensions.height().in(Impose.LENGTH_UNIT),
 						rotation);
-				halfVerticalExtent = Rectangles.getVerticalExtent(
+				halfVerticalExtent = Rectangles.getHalfVerticalExtent(
 						settings.pageDimensions.width().in(Impose.LENGTH_UNIT),
 						settings.pageDimensions.height().in(Impose.LENGTH_UNIT),
 						rotation);
