@@ -49,12 +49,13 @@ public class PreprocessDocument {
 //			settings.setPageDimensions(new Dimensions(1224, 1584, PT));
 			//
 //			settings.setCellDimensions(new Dimensions(306, 396, PT));
-			settings.setCellDimensions(new Dimensions(612, 792, PT));
-//			settings.setCellDimensions(new Dimensions(1224, 1584, PT));
-			AlignmentSetter align = new AlignmentSetter();
-			align.addAlignment("CenterAlignment", 0);
-			align.addAlignment("MiddleAlignment", 0);
-			align.setAlignment(settings);
+//			settings.setCellDimensions(new Dimensions(612, 792, PT));
+			settings.setCellDimensions(new Dimensions(1224, 1584, PT));
+//			AlignmentSetter align = new AlignmentSetter();
+//			align.addAlignment("CenterAlignment", 0);
+//			align.addAlignment("MiddleAlignment", 0);
+//			align.setAlignment(settings);
+			settings.setHorizontalAndVerticalAlignment(0, -1);
 			
 //			settings.setCellDimensions(new Dimensions(200, 100, MM));
 			Preprocessor pp = new Preprocessor(Arrays.asList(inDoc1), settings);
