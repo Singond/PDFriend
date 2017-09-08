@@ -84,6 +84,10 @@ public class Preprocessor {
 		this.positionsCache = new HashMap<>();
 	}
 	
+	Preprocessor(VirtualDocument document, Settings settings) {
+		this(Arrays.asList(document), settings);
+	}
+	
 	/**
 	 * Checks whether this preprocessor was initialized with this page
 	 * in mind, ie. if this page is contained in the documents passed
@@ -198,6 +202,30 @@ public class Preprocessor {
 		result.setHeight(d.height().in(Impose.LENGTH_UNIT));
 		result.addContent(contents);
 		return result.build();
+	}
+	
+	/**
+	 * Processes all pages of the given document.
+	 */
+	public VirtualDocument processDocument(VirtualDocument doc) {
+		VirtualDocument.Builder processed = new VirtualDocument.Builder();
+		for (VirtualPage pg : doc) {
+			processed.addPage(process(pg));
+		}
+		return processed.build();
+	}
+	
+	/**
+	 * Processes all pages of all documents given during initialization.
+	 */
+	public VirtualDocument processAll() {
+		VirtualDocument.Builder processed = new VirtualDocument.Builder();
+		for (VirtualDocument doc : documents) {
+			for (VirtualPage pg : doc) {
+				processed.addPage(process(pg));
+			}
+		}
+		return processed.build();
 	}
 	
 	/**
