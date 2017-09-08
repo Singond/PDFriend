@@ -4,7 +4,6 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.github.singond.pdfriend.geometry.Angle;
 import com.github.singond.pdfriend.geometry.AngularUnits;
-import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.imposition.Preprocessor;
 
 @Parameters(resourceBundle = "Help", separators="=")
@@ -12,7 +11,6 @@ public class PageOptions implements ParameterDelegate {
 	
 	private static final Angle DEFAULT_ROTATION = new Angle(0);
 	private static final TwoNumbers DEFAULT_ALIGNMENT = new TwoNumbers(0,0);
-	private static final Dimensions AUTO = Dimensions.dummy();
 
 	@Parameter(names={"-s", "--scale"},
 	           description="The scale of the content",
@@ -38,8 +36,7 @@ public class PageOptions implements ParameterDelegate {
 	
 	@Override
 	public void postParse() throws ArgumentParsingException {
-		// TODO Auto-generated method stub
-		
+		// Do nothing
 	}
 	
 	public Preprocessor.Settings getPreprocessorSettings() {
