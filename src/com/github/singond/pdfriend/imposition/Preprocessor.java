@@ -786,7 +786,7 @@ public class Preprocessor {
 		}
 		
 		@Override
-		public String toString() {return "Right " + value;}
+		public String toString() {return "Horizontal weighted " + value;}
 	}
 
 	/** Alignment by distance from the top edge */
@@ -846,6 +846,6 @@ public class Preprocessor {
 		}
 		
 		@Override
-		public String toString() {return "Bottom " + value;}
+		public String toString() {return "Vertical weighted " + value;}
 	}
 }
