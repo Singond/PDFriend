@@ -24,7 +24,7 @@ public class PageOptionsParsing {
 	public void prepare() {
 		cmdr = JCommander.newBuilder()
 				.addObject(this)
-				.acceptUnknownOptions(true)
+				.acceptUnknownOptions(false)
 				.build();
 	}
 	
@@ -40,12 +40,27 @@ public class PageOptionsParsing {
 	
 	@Test
 	public void test3() {
-		testParseability("--align 0,0");
+		testParseability("--align 0,0 --rotation=down");
 	}
 	
 	@Test
 	public void test4() {
 		testParseability("--align -1,0 --resize=fit");
+	}
+	
+	@Test
+	public void test5() {
+		testParseability("--rotate=90deg --align -1,0 --resize=fit");
+	}
+	
+	@Test
+	public void test6() {
+		testParseability("--rotate=100gon --align -1,0 --resize=fit");
+	}
+	
+	@Test
+	public void test7() {
+		testParseability("--rotate=left --align -1,0 --resize=fit");
 	}
 	
 	/**

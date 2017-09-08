@@ -2,12 +2,15 @@ package com.github.singond.pdfriend.cli.parsing;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.github.singond.pdfriend.geometry.Angle;
+import com.github.singond.pdfriend.geometry.AngularUnits;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.imposition.Preprocessor;
 
 @Parameters(resourceBundle = "Help", separators="=")
 public class PageOptions implements ParameterDelegate {
 	
+	private static final Angle DEFAULT_ROTATION = new Angle(0);
 	private static final TwoNumbers DEFAULT_ALIGNMENT = new TwoNumbers(0,0);
 	private static final Dimensions AUTO = Dimensions.dummy();
 
@@ -16,10 +19,11 @@ public class PageOptions implements ParameterDelegate {
 	           descriptionKey="param-scale")
 	private double scale = -1;
 	
-	@Parameter(names={"-r", "--rotation"},
+	@Parameter(names={"-r", "--rotate", "--rotation"},
 	           description="Rotation of the pages in radians in counter-clockwise direction",
-	           descriptionKey="param-rotation")
-	private double rotation;
+	           descriptionKey="param-rotation",
+	           converter=RotationConverter.class)
+	private Angle rotation = DEFAULT_ROTATION;
 	
 	@Parameter(names={"--resize"},
 	           description="Page size behaviour after scaling and rotating",
@@ -43,11 +47,11 @@ public class PageOptions implements ParameterDelegate {
 		if (scale > 0) {
 			settings.setScale(scale);
 		}
-		if (rotation != 0) {
-			settings.setRotation(rotation);
+		if (rotation != null && rotation != DEFAULT_ROTATION) {
+			settings.setRotation(rotation.in(AngularUnits.RADIAN));
 		}
 		settings.setResizing(resize.value);
-		if (align != DEFAULT_ALIGNMENT) {
+		if (align != null && align != DEFAULT_ALIGNMENT) {
 			settings.setHorizontalAndVerticalAlignment
 				(align.getFirst(), align.getSecond());
 		}
