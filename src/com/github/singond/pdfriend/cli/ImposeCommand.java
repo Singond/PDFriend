@@ -60,7 +60,9 @@ public class ImposeCommand extends SubCommand {
 		impose.setBinding(binding);
 		impose.setFlipVerso(flipVerso);
 		impose.setPages(pages);
-		impose.setPreprocessing(pageOpts.getPreprocessorSettings());
+		if (pageOpts.isSet()) {
+			impose.setPreprocessing(pageOpts.getPreprocessorSettings());
+		}
 		type.passToModule(impose);
 		return impose;
 	}

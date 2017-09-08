@@ -137,6 +137,8 @@ public class Impose implements Module {
 				// TODO Hide constructor to package after moving Impose into impose package
 				Preprocessor preprocessor = new Preprocessor(source, preprocess);
 				source = preprocessor.processAll();
+			} else {
+				logger.verbose("preprocess_skip");
 			}
 			logger.info("Imposing booklet...");
 			Booklet booklet = Booklet.from(source, binding, flipVerso);

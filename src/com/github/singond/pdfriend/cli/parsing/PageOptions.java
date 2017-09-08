@@ -47,6 +47,19 @@ public class PageOptions implements ParameterDelegate {
 		// Do nothing
 	}
 	
+	public boolean isSet() {
+		return scale > 0
+		       && rotation != DEFAULT_ROTATION
+		       && resize != ResizingBehaviour.NONE
+		       && align != DEFAULT_ALIGNMENT
+		       && pageSize != AUTO;
+	}
+	
+	/**
+	 * Combines the command-line arguments into a new
+	 * {@code Preprocessor.Settings} object.
+	 * @return a new instance of preprocessor settings
+	 */
 	public Preprocessor.Settings getPreprocessorSettings() {
 		Preprocessor.Settings settings = new Preprocessor.Settings();
 		if (scale > 0) {
