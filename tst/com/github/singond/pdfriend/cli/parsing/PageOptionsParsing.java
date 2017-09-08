@@ -33,6 +33,21 @@ public class PageOptionsParsing {
 		testParseability("--scale 2");
 	}
 	
+	@Test
+	public void test2() {
+		testParseability("--scale=2");
+	}
+	
+	@Test
+	public void test3() {
+		testParseability("--align 0,0");
+	}
+	
+	@Test
+	public void test4() {
+		testParseability("--align -1,0 --resize=fit");
+	}
+	
 	/**
 	 * 
 	 * @param arg

@@ -5,7 +5,7 @@ import com.beust.jcommander.Parameters;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.imposition.Preprocessor;
 
-@Parameters(resourceBundle = "Help")
+@Parameters(resourceBundle = "Help", separators="=")
 public class PageOptions implements ParameterDelegate {
 	
 	private static final TwoNumbers DEFAULT_ALIGNMENT = new TwoNumbers(0,0);
@@ -14,7 +14,7 @@ public class PageOptions implements ParameterDelegate {
 	@Parameter(names={"-s", "--scale"},
 	           description="The scale of the content",
 	           descriptionKey="param-scale")
-	private double scale;
+	private double scale = -1;
 	
 	@Parameter(names={"-r", "--rotation"},
 	           description="Rotation of the pages in radians in counter-clockwise direction",
@@ -40,11 +40,17 @@ public class PageOptions implements ParameterDelegate {
 	
 	public Preprocessor.Settings getPreprocessorSettings() {
 		Preprocessor.Settings settings = new Preprocessor.Settings();
-		settings.setScale(scale);
-		settings.setRotation(rotation);
+		if (scale > 0) {
+			settings.setScale(scale);
+		}
+		if (rotation != 0) {
+			settings.setRotation(rotation);
+		}
 		settings.setResizing(resize.value);
-		settings.setHorizontalAndVerticalAlignment
+		if (align != DEFAULT_ALIGNMENT) {
+			settings.setHorizontalAndVerticalAlignment
 				(align.getFirst(), align.getSecond());
+		}
 		return settings;
 	}
 	

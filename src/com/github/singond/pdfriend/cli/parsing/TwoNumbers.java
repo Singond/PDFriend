@@ -23,7 +23,7 @@ public class TwoNumbers {
 	}
 
 	public static class Converter implements IStringConverter<TwoNumbers> {
-    	private static final Pattern TWO_NUMBERS = Pattern.compile("\\d*,\\d*");
+    	private static final Pattern TWO_NUMBERS = Pattern.compile("-?\\d*,-?\\d*");
     	
     	@Override
     	public TwoNumbers convert(String arg) {
