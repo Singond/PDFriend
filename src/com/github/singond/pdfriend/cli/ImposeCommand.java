@@ -7,6 +7,7 @@ import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.cli.parsing.BookletBindingConverter;
 import com.github.singond.pdfriend.cli.parsing.IntegerDimensionsConverter;
+import com.github.singond.pdfriend.cli.parsing.PageOptions;
 import com.github.singond.pdfriend.cli.parsing.ParameterDelegate;
 import com.github.singond.pdfriend.geometry.IntegerDimensions;
 import com.github.singond.pdfriend.imposition.Booklet;
@@ -36,6 +37,10 @@ public class ImposeCommand extends SubCommand {
 	@Parameter(names="--verso-opposite")
 	private boolean flipVerso = false;
 	
+	/** Page pre-processing settings */
+	@ParametersDelegate
+	private PageOptions pageOpts = null;
+	
 	@Parameter(names="--pages", description="")
 	private int pages = -1;
 
@@ -55,6 +60,7 @@ public class ImposeCommand extends SubCommand {
 		impose.setBinding(binding);
 		impose.setFlipVerso(flipVerso);
 		impose.setPages(pages);
+		impose.setPreprocessing(pageOpts.getPreprocessorSettings());
 		type.passToModule(impose);
 		return impose;
 	}

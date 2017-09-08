@@ -15,6 +15,7 @@ import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.imposition.Booklet;
 import com.github.singond.pdfriend.imposition.NUp;
 import com.github.singond.pdfriend.imposition.Overlay;
+import com.github.singond.pdfriend.imposition.Preprocessor;
 
 /**
  * The impose command of pdfriend.
@@ -31,6 +32,8 @@ public class Impose implements Module {
 	private boolean flipVerso = false;
 	/** Number of output pages */
 	private int pages = -1;
+	/** Pre-processing settings like scale, rotation or resizing */
+	private Preprocessor.Settings preprocess;
 	
 	/** The unit used in working with book object model */
 	public static final LengthUnit LENGTH_UNIT = LengthUnits.POINT_POSTSCRIPT;
@@ -68,6 +71,14 @@ public class Impose implements Module {
 
 	public void setPages(int pages) {
 		this.pages = pages;
+	}
+
+	public Preprocessor.Settings getPreprocessing() {
+		return preprocess;
+	}
+
+	public void setPreprocessing(Preprocessor.Settings preprocess) {
+		this.preprocess = preprocess;
 	}
 
 	@Override
@@ -120,8 +131,14 @@ public class Impose implements Module {
 		
 		@Override
 		public VirtualDocument impose(ModuleData data) throws RenderingException {
-			logger.info("Imposing booklet...");
 			VirtualDocument source = data.asSingleDocument();
+			if (preprocess != null) {
+				logger.info("preprocess_start");
+				// TODO Hide constructor to package after moving Impose into impose package
+				Preprocessor preprocessor = new Preprocessor(source, preprocess);
+				source = preprocessor.processAll();
+			}
+			logger.info("Imposing booklet...");
 			Booklet booklet = Booklet.from(source, binding, flipVerso);
 			Volume volume = booklet.volume();
 			SourceProvider<Page> sp = new SequentialSourceProvider(source);
