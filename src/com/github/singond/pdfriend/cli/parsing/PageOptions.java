@@ -49,10 +49,10 @@ public class PageOptions implements ParameterDelegate {
 	
 	public boolean isSet() {
 		return scale > 0
-		       && rotation != DEFAULT_ROTATION
-		       && resize != ResizingBehaviour.NONE
-		       && align != DEFAULT_ALIGNMENT
-		       && pageSize != AUTO;
+		       || rotation != DEFAULT_ROTATION
+		       || resize != ResizingBehaviour.NONE
+		       || align != DEFAULT_ALIGNMENT
+		       || pageSize != AUTO;
 	}
 	
 	/**
