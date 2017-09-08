@@ -63,6 +63,11 @@ public class PageOptionsParsing {
 		testParseability("--rotate=left --align -1,0 --resize=fit");
 	}
 	
+	@Test
+	public void test8() {
+		testParseability("--rotate=right --align -1,-1 --resize=fill --size=A4");
+	}
+	
 	/**
 	 * 
 	 * @param arg
