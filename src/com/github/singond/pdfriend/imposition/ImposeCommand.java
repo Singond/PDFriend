@@ -1,21 +1,21 @@
-package com.github.singond.pdfriend.cli;
+package com.github.singond.pdfriend.imposition;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
+import com.github.singond.pdfriend.cli.SubCommand;
 import com.github.singond.pdfriend.cli.parsing.BookletBindingConverter;
 import com.github.singond.pdfriend.cli.parsing.IntegerDimensionsConverter;
 import com.github.singond.pdfriend.cli.parsing.PageOptions;
 import com.github.singond.pdfriend.cli.parsing.ParameterDelegate;
 import com.github.singond.pdfriend.geometry.IntegerDimensions;
-import com.github.singond.pdfriend.imposition.Booklet;
-import com.github.singond.pdfriend.imposition.Imposition;
 import com.github.singond.pdfriend.modules.Module;
 
 /**
- * The impose command of pdfriend.
+ * A command-line interface for the imposition module.
+ * This handles the {@code pdfriend impose} command.
  * @author Singon
  *
  */

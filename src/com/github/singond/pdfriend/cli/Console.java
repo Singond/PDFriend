@@ -17,6 +17,7 @@ import com.github.singond.pdfriend.Version;
 import com.github.singond.pdfriend.cli.parsing.GlobalOptions;
 import com.github.singond.pdfriend.cli.parsing.InputFiles;
 import com.github.singond.pdfriend.cli.parsing.OutputFile;
+import com.github.singond.pdfriend.imposition.ImposeCommand;
 import com.github.singond.pdfriend.modules.Module;
 import com.github.singond.pdfriend.modules.ModuleException;
 import com.github.singond.pdfriend.pipe.Pipe;
