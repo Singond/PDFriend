@@ -6,12 +6,11 @@ import java.util.List;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.Util;
-import com.github.singond.pdfriend.book.control.SequentialSourceProvider;
-import com.github.singond.pdfriend.book.model.GridPage;
-import com.github.singond.pdfriend.book.model.Page;
+import com.github.singond.pdfriend.book.GridPage;
+import com.github.singond.pdfriend.book.Page;
+import com.github.singond.pdfriend.book.SequentialSourceProvider;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.geometry.Dimensions;
-import com.github.singond.pdfriend.modules.Impose;
 
 /**
  * An n-up layout.
@@ -45,8 +44,8 @@ public class NUp implements Imposable {
 		GridPage.Builder builder = new GridPage.Builder()
 				.setColumns(cols)
 				.setRows(rows)
-				.setCellWidth(cell.width().in(Impose.LENGTH_UNIT))
-				.setCellHeight(cell.height().in(Impose.LENGTH_UNIT))
+				.setCellWidth(cell.width().in(Imposition.LENGTH_UNIT))
+				.setCellHeight(cell.height().in(Imposition.LENGTH_UNIT))
 				.setHorizontalOffset(horizontalOffset)
 				.setVerticalOffset(verticalOffset)
 				.setOrientation(orientation.getValue());
@@ -185,7 +184,7 @@ public class NUp implements Imposable {
 			
 			// Determine grid cell dimensions
 			double[] docFormat = doc.maxPageDimensions();
-			Dimensions cell = new Dimensions(docFormat[0], docFormat[1], Impose.LENGTH_UNIT);
+			Dimensions cell = new Dimensions(docFormat[0], docFormat[1], Imposition.LENGTH_UNIT);
 			
 			NUp result = new NUp(pages, cols, rows, cell,
 			                     horizontalOffset, verticalOffset,

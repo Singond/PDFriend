@@ -18,7 +18,6 @@ import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
-import com.github.singond.pdfriend.modules.Impose;
 
 /**
  * Pre-processes pages of input document prior to imposition.
@@ -45,7 +44,7 @@ import com.github.singond.pdfriend.modules.Impose;
  * @author Singon
  *
  */
-public class Preprocessor {
+public final class Preprocessor {
 	
 	/**
 	 * The settings used when processing pages.
@@ -84,7 +83,7 @@ public class Preprocessor {
 		this.positionsCache = new HashMap<>();
 	}
 	
-	public Preprocessor(VirtualDocument document, Settings settings) {
+	Preprocessor(VirtualDocument document, Settings settings) {
 		this(Arrays.asList(document), settings);
 	}
 	
@@ -147,16 +146,16 @@ public class Preprocessor {
 				// to a page of these dimensions rotated by {@code settings.rotation}
 				logger.verbose("preprocess_cellSize_fromPageDimensions", settings.pageDimensions, rotation);
 				halfHorizontalExtent = Rectangles.getHalfHorizontalExtent(
-						settings.pageDimensions.width().in(Impose.LENGTH_UNIT),
-						settings.pageDimensions.height().in(Impose.LENGTH_UNIT),
+						settings.pageDimensions.width().in(Imposition.LENGTH_UNIT),
+						settings.pageDimensions.height().in(Imposition.LENGTH_UNIT),
 						rotation);
 				halfVerticalExtent = Rectangles.getHalfVerticalExtent(
-						settings.pageDimensions.width().in(Impose.LENGTH_UNIT),
-						settings.pageDimensions.height().in(Impose.LENGTH_UNIT),
+						settings.pageDimensions.width().in(Imposition.LENGTH_UNIT),
+						settings.pageDimensions.height().in(Imposition.LENGTH_UNIT),
 						rotation);
 			}
 			result = new Dimensions(2 * halfHorizontalExtent, 2 * halfVerticalExtent,
-			                        Impose.LENGTH_UNIT);
+			                        Imposition.LENGTH_UNIT);
 		} else {
 			// Cell dimensions are given explicitly; return the value
 			logger.verbose("preprocess_cellSize_explicit", settings.cellDimensions);
@@ -189,7 +188,7 @@ public class Preprocessor {
 	 */
 	public VirtualPage process(VirtualPage page) {
 		Dimensions pageDims = new Dimensions
-				(page.getWidth(), page.getHeight(), Impose.LENGTH_UNIT);
+				(page.getWidth(), page.getHeight(), Imposition.LENGTH_UNIT);
 		AffineTransform position = getResolvedPositionInCell(pageDims);
 		Contents contents = page.getContents();
 		contents.transform(position);
@@ -198,8 +197,8 @@ public class Preprocessor {
 
 		VirtualPage.Builder result = new VirtualPage.Builder();
 		Dimensions d = getResolvedCellDimensions();
-		result.setWidth(d.width().in(Impose.LENGTH_UNIT));
-		result.setHeight(d.height().in(Impose.LENGTH_UNIT));
+		result.setWidth(d.width().in(Imposition.LENGTH_UNIT));
+		result.setHeight(d.height().in(Imposition.LENGTH_UNIT));
 		result.addContent(contents);
 		return result.build();
 	}
@@ -270,7 +269,7 @@ public class Preprocessor {
 		final Dimensions pageDimensions = settings.pageDimensions;
 		final Resizing resize = settings.resizing;
 		final List<Alignment> align = settings.alignment;
-		final LengthUnit unit = Impose.LENGTH_UNIT;
+		final LengthUnit unit = Imposition.LENGTH_UNIT;
 		
 		if (logger.isDebugEnabled())
 			logger.debug("preprocess_pageSize_cell", orig, cell);

@@ -20,14 +20,25 @@ public class Log {
 	}
 	
 	/**
+	 * Returns an ExtendedLogger instance with the given name
+	 * and using the Console resource bundle for its messages.
+	 * @param name the name of the logger
+	 * @return an instace of ExtendedLogger
+	 */
+	public static ExtendedLogger logger(String name) {
+		return ExtendedLogger.create
+				(name, new LocalizedMessageFactory(Bundle.console));
+	}
+	
+	/**
 	 * Returns an ExtendedLogger instance with the name of the given class
 	 * and using the Console resource bundle for its messages.
 	 * @param cls the class the logger is to be named after
 	 * @return an instace of ExtendedLogger
 	 */
 	public static ExtendedLogger logger(Class<?> cls) {
-		return ExtendedLogger.create(cls,
-		                             new LocalizedMessageFactory(Bundle.console));
+		return ExtendedLogger.create
+				(cls, new LocalizedMessageFactory(Bundle.console));
 	}
 	
 	/**
