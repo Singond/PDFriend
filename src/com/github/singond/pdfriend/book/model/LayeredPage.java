@@ -3,6 +3,7 @@ package com.github.singond.pdfriend.book.model;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.github.singond.pdfriend.book.control.PageVisitor;
 import com.github.singond.pdfriend.document.VirtualPage;
@@ -20,7 +21,7 @@ public class LayeredPage extends MultiPage {
 		super(width, height);
 		this.layers = new ArrayList<>(layers);
 		for (int i=0; i<layers; i++) {
-			Pagelet pglt = new Pagelet(width, height, new AffineTransform());
+			Pagelet pglt = new AutoPagelet(width, height, new AffineTransform());
 			this.layers.add(pglt);
 			super.addPagelet(pglt);
 		}
@@ -37,7 +38,7 @@ public class LayeredPage extends MultiPage {
 		List<Pagelet> origPagelets = original.layers;
 		this.layers = new ArrayList<>(origPagelets.size());
 		for (Pagelet origPglt : origPagelets) {
-			Pagelet pagelet = new Pagelet(origPglt);
+			Pagelet pagelet = origPglt.copy();
 			this.layers.add(pagelet);
 			super.addPagelet(pagelet);
 		}
@@ -55,9 +56,12 @@ public class LayeredPage extends MultiPage {
 	/**
 	 * Returns the layers of this page.
 	 * @return a shallow copy of the internal list of pagelets
+	 *         with each pagelet wrapped in a public view
 	 */
-	public List<Pagelet> getLayers() {
-		return new ArrayList<>(layers);
+	public List<PageletView> getLayers() {
+		return layers.stream()
+		             .map(PageletView::new)
+		             .collect(Collectors.toList());
 	}
 	
 	/**

@@ -11,9 +11,7 @@ import com.github.singond.pdfriend.book.model.GridPage;
 import com.github.singond.pdfriend.book.model.Page;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.geometry.Dimensions;
-import com.github.singond.pdfriend.geometry.PageSize;
-import com.github.singond.pdfriend.geometry.PageSize.FitToLargest;
-import com.github.singond.pdfriend.geometry.PageSize.Scale;
+import com.github.singond.pdfriend.modules.Impose;
 
 /**
  * An n-up layout.
@@ -26,42 +24,6 @@ public class NUp implements Imposable {
 	private final List<Page> pages;
 	
 	private static ExtendedLogger logger = Log.logger(NUp.class);
-	
-	/**
-	 * A visitor to invoke pagelet resizing on a grid page based on PageSize.
-	 */
-	private static final PageSize.Visitor<GridPage, GridPageParams> GRID_PROVIDER
-			= new PageSize.Visitor<GridPage, GridPageParams>() {
-		
-		/** A helper GridPage factory */
-		private GridPage gridFromTemplate(GridPageParams template,
-		                                  double cellWidth, double cellHeight) {
-			GridPage grid = new GridPage(template.cols, template.rows,
-			                             cellWidth, cellHeight,
-			                             template.horizontalOffset,
-			                             template.verticalOffset,
-			                             template.orientation.getValue());
-			return grid;
-		}
-		
-		@Override
-		public GridPage visit(Scale size, GridPageParams template) {
-			GridPage grid = gridFromTemplate(template,
-			                                 template.cell.widthInPoints()*size.scalePage(),
-			                                 template.cell.heightInPoints()*size.scalePage());
-			grid.scalePages(size.scalePage());
-			return grid;
-		}
-
-		@Override
-		public GridPage visit(FitToLargest size, GridPageParams template) {
-			GridPage grid = gridFromTemplate(template,
-			                                 template.cell.widthInPoints(),
-			                                 template.cell.heightInPoints());
-			grid.fitPages();
-			return grid;
-		}
-	};
 	
 	/**
 	 * Constructs a new n-up document with the given layout.
@@ -77,16 +39,19 @@ public class NUp implements Imposable {
 	 */
 	public NUp(int pages, int cols, int rows, Dimensions cell,
 	           double horizontalOffset, double verticalOffset,
-	           NUpOrientation orientation, FillDirection direction,
-	           PageSize pageSize) {
-		GridPageParams template = new GridPageParams(cols, rows, cell,
-				horizontalOffset, verticalOffset, orientation);
+	           NUpOrientation orientation, FillDirection direction) {
 		List<Page> pageList = new ArrayList<>();
 		int pageNumber = 0;
+		GridPage.Builder builder = new GridPage.Builder()
+				.setColumns(cols)
+				.setRows(rows)
+				.setCellWidth(cell.width().in(Impose.LENGTH_UNIT))
+				.setCellHeight(cell.height().in(Impose.LENGTH_UNIT))
+				.setHorizontalOffset(horizontalOffset)
+				.setVerticalOffset(verticalOffset)
+				.setOrientation(orientation.getValue());
 		while(pageList.size() < pages) {
-//			GridPage page = new GridPage(template);
-//			pageSize.invite(PAGE_SIZER, page);
-			GridPage page = pageSize.invite(GRID_PROVIDER, template);
+			GridPage page = builder.build();
 			page.setNumber(++pageNumber);
 			pageList.add(page);
 		}
@@ -153,7 +118,6 @@ public class NUp implements Imposable {
 		private double verticalOffset = 0;
 		private NUpOrientation orientation = NUpOrientation.UPRIGHT;
 		private FillDirection direction = FillDirection.ROWS;
-		private PageSize pageSize = new PageSize.Scale(1);
 		
 		public Builder setNumberOfPages(int pages) {
 			this.pages = pages;
@@ -198,16 +162,12 @@ public class NUp implements Imposable {
 			return this;
 		}
 
-		public void setPageSize(PageSize pageSize) {
-			this.pageSize = pageSize;
-		}
-
 		public NUp buildFor(VirtualDocument doc) {
 			int pages = this.pages;
 			int rows = this.rows;
 			int cols = this.cols;
 			
-			// The rows and cols arguments should be OK, but check them anyway 
+			// The rows and cols arguments should be OK, but check them anyway
 			if (rows < 1 || cols < 1) {
 				throw new IllegalArgumentException(String.format
 						("Wrong number of cells in grid: %dx%d", rows, cols));
@@ -225,35 +185,13 @@ public class NUp implements Imposable {
 			
 			// Determine grid cell dimensions
 			double[] docFormat = doc.maxPageDimensions();
-			Dimensions cell = new Dimensions(docFormat[0], docFormat[1]);
+			Dimensions cell = new Dimensions(docFormat[0], docFormat[1], Impose.LENGTH_UNIT);
 			
 			NUp result = new NUp(pages, cols, rows, cell,
 			                     horizontalOffset, verticalOffset,
-			                     orientation, direction, pageSize);
+			                     orientation, direction);
 			new SequentialSourceProvider(doc).setSourceTo(result.pages);
 			return result;
-		}
-	}
-	
-	/**
-	 * A simple data object to aggregate GridPage parameters.
-	 */
-	private static class GridPageParams {
-		private final int cols;
-		private final int rows;
-		private final Dimensions cell;
-		private final double horizontalOffset;
-		private final double verticalOffset;
-		private final NUpOrientation orientation;
-		
-		private GridPageParams(int cols, int rows, Dimensions cell, double horizontalOffset,
-		                       double verticalOffset, NUpOrientation orientation) {
-			this.cols = cols;
-			this.rows = rows;
-			this.cell = cell;
-			this.horizontalOffset = horizontalOffset;
-			this.verticalOffset = verticalOffset;
-			this.orientation = orientation;
 		}
 	}
 }

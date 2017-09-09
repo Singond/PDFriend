@@ -1,6 +1,7 @@
 package com.github.singond.pdfriend.document;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.github.singond.pdfriend.ExtendedLogger;
@@ -15,7 +16,7 @@ import com.github.singond.pdfriend.Log;
  * @author Singon
  *
  */
-public class VirtualDocument {
+public final class VirtualDocument implements Iterable<VirtualPage> {
 
 	/**
 	 * The list of pages comprising this document.
@@ -165,8 +166,13 @@ public class VirtualDocument {
 		return "VirtualDocument@"+hashCode()+" ("+pages.size()+" pages)";
 	}
 	
+	@Override
+	public Iterator<VirtualPage> iterator() {
+		return pages.iterator();
+	}
+
 	/**
-	 * Mutable class for constructing Document objects easily and incrementally. 
+	 * Mutable class for constructing Document objects easily and incrementally.
 	 * @author Singon
 	 *
 	 */

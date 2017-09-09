@@ -7,8 +7,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.github.singond.collections.MatrixIterable;
+import com.github.singond.collections.MatrixIterator;
 import com.github.singond.geometry.plane.RectangleFrame;
 import com.github.singond.pdfriend.book.control.PageVisitor;
+import com.github.singond.pdfriend.book.model.GridPage.Direction;
+import com.github.singond.pdfriend.book.model.MultiPage.Pagelet;
+import com.github.singond.pdfriend.book.model.MultiPage.PageletView;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.document.Contents;
 
@@ -59,6 +64,40 @@ public abstract class MultiPage extends Page {
 	protected final List<Pagelet> getPagelets() {
 		return new ArrayList<>(pagelets);
 	}
+	
+	/**
+	 * Wraps a {@code Pagelet} iterable in a {@code PageletView} iterable.
+	 * @param pagelets the iterable of pagelets
+	 * @return an iterable, whose iterator returns the pagelets wrapped
+	 *         in {@code PageletView} objects
+	 */
+	protected MatrixIterable<PageletView> pageletViewIterator(MatrixIterable<Pagelet> pagelets) {
+		return new MatrixIterable<PageletView>() {
+			private final MatrixIterable<Pagelet> iterable = pagelets;
+			
+			@Override
+			public MatrixIterator<PageletView> iterator() {
+				return new MatrixIterator<PageletView>() {
+					private final MatrixIterator<Pagelet> iterator = iterable.iterator();
+
+					@Override
+					public boolean hasNext() {
+						return iterator.hasNext();
+					}
+
+					@Override
+					public PageletView next() {
+						return new PageletView(iterator.next());
+					}
+
+					@Override
+					public int[] previousIndex() {
+						return iterator.previousIndex();
+					}
+				};
+			}
+		};
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -73,9 +112,9 @@ public abstract class MultiPage extends Page {
 	public Contents getContents() {
 		Set<Contents> contents = new HashSet<>();
 		for (Pagelet p : pagelets) {
-			if (p.source == null) continue;
-			Contents c = p.source.getContents();
-			c.transform(p.getPositionInPage());
+			if (p.getSource() == null) continue;
+			Contents c = p.getSource().getContents();
+			c.transform(p.getPosition());
 			contents.add(c);
 //			for (Content.Movable cm : p.source.getContents().get()) {
 //				cm.getTransform().preConcatenate(p.getPositionInPage());
@@ -91,27 +130,119 @@ public abstract class MultiPage extends Page {
 	}
 
 	/**
-	 * A frame containing a single source page along with position.
-	 * This frame has well-defined dimensions and position on the MultiPage
-	 * and enables further positioning of the source page relative to itself.
+	 * A frame representing a single source page along with its position
+	 * on the parent page (the {@code MultiPage}).
+	 * This frame has well-defined dimensions and position on the parent page.
+	 * @param <T> the concrete subtype of Pagelet
 	 */
-	public static class Pagelet {
+	protected interface Pagelet {
+
+		/**
+		 * A copy method.
+		 * Constructs a new Pagelet which is a copy of this Pagelet.
+		 * The copy must be of the same concrete type as this object.
+		 * @return a new Pagelet of the same type as this pagelet
+		 */
+		public Pagelet copy();
+
+		/**
+		 * Returns the width of this pagelet.
+		 */
+		public double getWidth();
+
+		/**
+		 * Returns the height of this pagelet.
+		 */
+		public double getHeight();
+
+		/**
+		 * Returns the content source of this pagelet.
+		 * @return the {@code VirtualPage} set as the content source of
+		 *         this pagelet
+		 */
+		public VirtualPage getSource();
+		
+		/**
+		 * Returns the position of the source page on the parent Page.
+		 * This is the transformation needed to transform the page from
+		 * its initial position with lower left corner in [0, 0] to the
+		 * desired position specified by this pagelet.
+		 */
+		public AffineTransform getPosition();
+
+		/**
+		 * Sets the given VirtualPage as the content source for this Pagelet.
+		 * @param source the page to be used as the source
+		 */
+		public void setSource(VirtualPage source);
+	}
+	
+	/** A skeletal implementation of a pagelet */
+	protected static abstract class APagelet implements Pagelet {
 		/** Width of this pagelet */
-		private final double width;
+		final double width;
 		/** Height of this pagelet */
-		private final double height;
+		final double height;
 		/**
 		 * The position of the pagelet frame on the page.
 		 * Specifically, this is the transformation needed to bring
 		 * a rectangle with its two vertices at [0, 0] and [width, height]
 		 * to the desired position on the page.
-		 * This is <strong>not</strong> the final position of the source page,
-		 * see {@link #positionInFrame}.
+		 * This may <strong>not</strong> be the final position of the source page,
+		 * if the subclass chooses to transform the page further.
 		 */
-		private final AffineTransform framePosition;
-
+		final AffineTransform position;
 		/** The source page */
-		private VirtualPage source;
+		VirtualPage source;
+		
+		/**
+		 * Constructs a new Pagelet with empty source
+		 * at the given position in the parent MultiPage.
+		 * @param position
+		 */
+		APagelet(double width, double height, AffineTransform position) {
+			this.width = width;
+			this.height = height;
+			this.position = position;
+		}
+		
+		public double getWidth() {
+			return width;
+		}
+
+		public double getHeight() {
+			return height;
+		}
+
+		/**
+		 * This method simply returns a defensive copy of the internal
+		 * matrix of the pagelet position.
+		 */
+		@Override
+		public AffineTransform getPosition() {
+			return new AffineTransform(position);
+		}
+
+		@Override
+		public VirtualPage getSource() {
+			return source;
+		}
+
+		@Override
+		public void setSource(VirtualPage source) {
+			this.source = source;
+		}
+	}
+	
+	/**
+	 * A Pagelet implementation which further transforms the source pages
+	 * relative to the pagelet's frame using the given constraints.
+	 * This pagelet enables further positioning of the source page relative
+	 * to itself, like resizing to fit or centering. These transformations
+	 * are carried out internally by the pagelet according to constraints
+	 * given by calling methods on this pagelet.
+	 */
+	protected static class AutoPagelet extends APagelet implements Pagelet {
 		/** A helper object for positioning the source page in the frame */
 		private final RectangleFrame positioner;
 		/**
@@ -130,63 +261,38 @@ public abstract class MultiPage extends Page {
 		 * at the given position in the parent MultiPage.
 		 * @param position
 		 */
-		public Pagelet(double width, double height, AffineTransform position) {
-			this.width = width;
-			this.height = height;
-			this.framePosition = new AffineTransform(position);
+		public AutoPagelet(double width, double height, AffineTransform position) {
+			super(width, height, position);
 			this.positioner = new RectangleFrame(width, height);
 		}
 		
 		/**
 		 * A copy constructor.
-		 * Constructs a new Pagelet which is a copy of the given Pagelet.
+		 * Constructs a new AutoPagelet which is a copy of the given AutoPagelet.
 		 * The copy is a shallow one, ie. the source page reference is copied
 		 * to the new Pagelet.
 		 * @param original the pagelet to be copied
+		 * @return a new instance of {@code AutoPagelet}
 		 */
-		public Pagelet(Pagelet original) {
-			this(original.width, original.height, original.framePosition);
-			this.source = original.source;
-		}
-
-		public double getWidth() {
-			return width;
-		}
-
-		public double getHeight() {
-			return height;
+		@Override
+		public AutoPagelet copy() {
+			AutoPagelet copy = new AutoPagelet(width, height, position);
+			copy.source = this.source;
+			return copy;
 		}
 
 		/**
-		 * Returns the position of this pagelet frame on the page.
-		 * This is <strong>not</strong> the final position of the source page,
-		 * see {@link #getPositionInPage}.
+		 * Returns the position of the source page on the parent Page.
+		 * The position of the source page is based on the pagelet position
+		 * (see {@link #getFramePosition}), but further transformed with
+		 * respect to the pagelet.
+		 * This method returns the value calculated from the current
+		 * pagelet position and position of the source page inside the pagelet,
+		 * recalculating it only when the prerequisite values have changed.
 		 * @return a copy of the internal transformation matrix
 		 */
-		public AffineTransform getFramePosition() {
-			return new AffineTransform(framePosition);
-		}
-
-		/**
-		 * Sets the source VirtualPage for this Pagelet.
-		 * @param source
-		 */
-		public void setSource(VirtualPage source) {
-			this.source = source;
-		}
-		
-		/**
-		 * Returns the position of the source page on the parent page.
-		 * The position of the source page is based on the pagelet position
-		 * (see {@link #getPosition}), but further transformed with respect
-		 * to the pagelet frame.
-		 * This method returns the value calculated from the current
-		 * {@code framePosition} and {@code positionInFrame}, recalculating
-		 * it only when the prerequisite values have changed.
-		 * @return a copy of the cached or freshly recalculated
-		 *         transformation matrix
-		 */
-		public AffineTransform getPositionInPage() {
+		@Override
+		public AffineTransform getPosition() {
 			if (source == null) {
 				throw new IllegalStateException(
 						"No source page has been set for this pagelet yet");
@@ -196,11 +302,21 @@ public abstract class MultiPage extends Page {
 			} else {
 				AffineTransform result = positioner.positionRectangle(
 						source.getWidth(), source.getHeight());
-				result.preConcatenate(framePosition);
+				result.preConcatenate(position);
 				positionInPage = result;
 				positionValid = true;
 				return new AffineTransform(result);
 			}
+		}
+
+		/**
+		 * Returns the position of this pagelet frame on the page.
+		 * This is <strong>not</strong> the final position of the source page,
+		 * see {@link #getPosition}.
+		 * @return a copy of the internal transformation matrix
+		 */
+		public AffineTransform getFramePosition() {
+			return new AffineTransform(position);
 		}
 		
 		/** Makes the source page fit this frame. */
@@ -227,6 +343,77 @@ public abstract class MultiPage extends Page {
 		public void rotatePage(double angle) {
 			positioner.setRotation(angle);
 			positionValid = false;
+		}
+	}
+	
+	/**
+	 * A simple implementation of Pagelet where the source page becomes
+	 * the pagelet, effectively erasing the distinction.
+	 * In this pagelet the source page position is the same as the pagelet
+	 * position.
+	 */
+	protected static class SimplePagelet extends APagelet implements Pagelet {
+
+		public SimplePagelet(double width, double height, AffineTransform position) {
+			super(width, height, position);
+		}
+		
+		@Override
+		public SimplePagelet copy() {
+			return new SimplePagelet(width, height, position);
+		}
+
+		@Override
+		public AffineTransform getPosition() {
+			return super.getPosition();
+		}
+		
+	}
+	
+	/**
+	 * Represents a slot for a page in this {@code MultiPage},
+	 * along with a position.
+	 * This is a publicly accessible view of the underlying pagelets,
+	 * exposing part of its interface.
+	 */
+	public static final class PageletView {
+		/** The target of this view */
+		private final Pagelet pagelet;
+		
+		protected PageletView(Pagelet pagelet) {
+			this.pagelet = pagelet;
+		}
+		
+		/**
+		 * Returns the width of this pagelet.
+		 */
+		public double getWidth() {
+			return pagelet.getWidth();
+		}
+
+		/**
+		 * Returns the height of this pagelet.
+		 */
+		public double getHeight() {
+			return pagelet.getHeight();
+		}
+		
+		/**
+		 * Returns the position of the source page on the parent Page.
+		 * This is the transformation needed to transform the page from
+		 * its initial position with lower left corner in [0, 0] to the
+		 * desired position specified by this pagelet.
+		 */
+		public AffineTransform getPosition() {
+			return pagelet.getPosition();
+		}
+		
+		/**
+		 * Sets the given virtual page into the
+		 * @param source
+		 */
+		public void setSource(VirtualPage source) {
+			pagelet.setSource(source);
 		}
 	}
 }

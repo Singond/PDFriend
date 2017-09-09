@@ -38,7 +38,7 @@ public class SheetSize implements ParameterDelegate {
 			if (portrait || landscape) {
 				// These switches have no meaning now, inform the user
 				StringBuilder switches = new StringBuilder();
-				if (portrait)switches.append("--portrait").append(" ");
+				if (portrait) switches.append("--portrait").append(" ");
 				if (landscape) switches.append("--landscape");
 				logger.warn("parse_orientation_ignored", switches.toString().trim());
 			}

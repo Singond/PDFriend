@@ -47,6 +47,21 @@ class DimensionsParser {
 	}
 	
 	/**
+	 * Groups the parsed length and unit in which it was given into one object.
+	 * The {@code unit} serves only as a reference to the unit which was used
+	 * when parsing the length – it is not bound to the {@code length} anymore
+	 * in any way.
+	 */
+	private static final class LengthWithUnit {
+		private final Length length;
+		private final LengthUnit unit;
+		private LengthWithUnit(Length length, LengthUnit unit) {
+			this.length = length;
+			this.unit = unit;
+		}
+	}
+	
+	/**
 	 * Converts a string to a length unit object.
 	 * @param the string to be parsed
 	 * @return a {@code Parsed} object wrapping the parsed result, or
@@ -65,7 +80,7 @@ class DimensionsParser {
 	 * Converts a string to a length object.
 	 * 
 	 * This variant allows to specify a default length unit, which will be
-	 * used to interpret the string if no other unit is found therein. 
+	 * used to interpret the string if no other unit is found therein.
 	 * @param arg the string to be parsed
 	 * @param defaultUnit the default length unit to be used if none is given.
 	 *        If this argument is null and there is no unit given in {@code arg},
@@ -74,6 +89,29 @@ class DimensionsParser {
 	 *         an {@code Unparsable} instance if the string cannot be parsed
 	 */
 	ParsingResult<Length> parseLength(String arg, LengthUnit defaultUnit) {
+		ParsingResult<LengthWithUnit> l = parseLengthAndUnit(arg, defaultUnit);
+		if (l.parsedSuccessfully()) {
+			return new Parsed<Length>(l.getResult().length);
+		} else {
+			return new Unparsable<Length>(l.getErrorMessage());
+		}
+	}
+	
+	/**
+	 * Converts a string to a length object and remembers which unit was
+	 * used in parsing the value.
+	 * 
+	 * This method allows to specify a default length unit, which will be
+	 * used to interpret the string if no other unit is found therein.
+	 * @param arg the string to be parsed
+	 * @param defaultUnit the default length unit to be used if none is given.
+	 *        If this argument is null and there is no unit given in {@code arg},
+	 *        this method will return an {@code Unparsable} object.
+	 * @return a {@code Parsed} object wrapping the parsed result, or
+	 *         an {@code Unparsable} instance if the string cannot be parsed
+	 */
+	private ParsingResult<LengthWithUnit> parseLengthAndUnit(
+			String arg, LengthUnit defaultUnit) {
 		logger.debug("parse_length", arg);
 		Matcher matcher = NUMERIC_START.matcher(arg);
 		if (matcher.find()) {
@@ -83,27 +121,32 @@ class DimensionsParser {
 				String rest = arg.substring(matcher.end());
 				if (rest.length() == 0) {
 					if (defaultUnit == null)
-						return new Unparsable<Length>(
+						return new Unparsable<LengthWithUnit>(
 								"There is no unit specified in the string, nor any default unit set: "
 								+ arg);
 					else {
-						return new Parsed<Length>(new Length(value, defaultUnit));
+						Length length = new Length(value, defaultUnit);
+						LengthWithUnit wrapper = new LengthWithUnit(length, defaultUnit);
+						return new Parsed<LengthWithUnit>(wrapper);
 					}
 				} else {
 					ParsingResult<LengthUnit> parsedUnit = parseLengthUnit(rest);
 					if (parsedUnit.parsedSuccessfully()) {
 						Length length = new Length(value, parsedUnit.getResult());
-						return new Parsed<Length>(length);
+						LengthWithUnit wrapper = new LengthWithUnit(
+								length, parsedUnit.getResult());
+						return new Parsed<LengthWithUnit>(wrapper);
 					} else {
 						// Bad unit
-						return new Unparsable<Length>(parsedUnit.getErrorMessage());
+						return new Unparsable<LengthWithUnit>(parsedUnit.getErrorMessage());
 					}
 				}
 			} catch (NumberFormatException e) {
-				return new Unparsable<Length>("Unknown number format: " + numericPart);
+				return new Unparsable<LengthWithUnit>("Unknown number format: " + numericPart);
 			}
 		} else {
-			return new Unparsable<Length>("The string does not start with a number: " + arg);
+			return new Unparsable<LengthWithUnit>(
+					"The string does not start with a number: " + arg);
 		}
 	}
 	
@@ -166,14 +209,14 @@ class DimensionsParser {
 		 * number as well. This enables shorhand notation like 20x30cm
 		 * to actually mean "20 cm by 30 cm". (See method docs.)
 		 */
-		ParsingResult<Length> len2 = parseLength(parts[1], dfltUnit);
+		ParsingResult<LengthWithUnit> len2u = parseLengthAndUnit(parts[1], dfltUnit);
 		ParsingResult<Length> len1;
-		if (len2.parsedSuccessfully()) {
+		if (len2u.parsedSuccessfully()) {
 			// Use the unit from the 2nd part as the default for the 1st
-			len1 = parseLength(parts[0], len2.getResult().unit());
+			len1 = parseLength(parts[0], len2u.getResult().unit);
 			if (len1.parsedSuccessfully()) {
 				Length length1 = len1.getResult();
-				Length length2 = len2.getResult();
+				Length length2 = len2u.getResult().length;
 				Dimensions dims = new Dimensions(length1, length2);
 				logger.debug("parse_rectangle_success", dims);
 				result = new Parsed<>(dims);

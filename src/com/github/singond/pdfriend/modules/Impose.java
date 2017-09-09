@@ -9,14 +9,13 @@ import com.github.singond.pdfriend.book.control.SourceProvider;
 import com.github.singond.pdfriend.book.model.Page;
 import com.github.singond.pdfriend.book.model.Volume;
 import com.github.singond.pdfriend.document.VirtualDocument;
-import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.format.RenderingException;
-import com.github.singond.pdfriend.geometry.PageSize;
-import com.github.singond.pdfriend.geometry.PageSize.FitToLargest;
-import com.github.singond.pdfriend.geometry.PageSize.Scale;
+import com.github.singond.pdfriend.geometry.LengthUnit;
+import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.imposition.Booklet;
 import com.github.singond.pdfriend.imposition.NUp;
 import com.github.singond.pdfriend.imposition.Overlay;
+import com.github.singond.pdfriend.imposition.Preprocessor;
 
 /**
  * The impose command of pdfriend.
@@ -33,9 +32,13 @@ public class Impose implements Module {
 	private boolean flipVerso = false;
 	/** Number of output pages */
 	private int pages = -1;
-	/** Size to be applied to pages of input */
-	private PageSize pageSize;
+	/** Pre-processing settings like scale, rotation or resizing */
+	private Preprocessor.Settings preprocess;
 	
+	/** The unit used in working with book object model */
+	public static final LengthUnit LENGTH_UNIT = LengthUnits.POINT_POSTSCRIPT;
+	
+	/** Logger instance */
 	private static ExtendedLogger logger = Log.logger(Impose.class);
 	
 	public Type getType() {
@@ -70,34 +73,12 @@ public class Impose implements Module {
 		this.pages = pages;
 	}
 
-	public PageSize getSize() {
-		return pageSize;
+	public Preprocessor.Settings getPreprocessing() {
+		return preprocess;
 	}
 
-	public void setSize(PageSize size) {
-		this.pageSize = size;
-	}
-
-	/**
-	 * Returns a default PageSize.Visitor to provide resizing for pages.
-	 * @param docs the list of virtual documents to be used in evaluating the
-	 *        scale. This will usually be the list of documents being imposed.
-	 * @return a PageSize.Visitor instance which returns the scale value
-	 */
-	public PageSize.Visitor<Double, VirtualPage> getDefaultPageSizer(final List<VirtualDocument> docs) {
-		return new PageSize.Visitor<Double, VirtualPage>() {
-			private final List<VirtualDocument> documents = docs;
-			
-			@Override
-			public Double visit(Scale size, VirtualPage page) {
-				return size.scalePage();
-			}
-
-			@Override
-			public Double visit(FitToLargest size, VirtualPage page) {
-				return size.scalePage(page, VirtualDocument.concatenate(documents).getPages());
-			}
-		};
+	public void setPreprocessing(Preprocessor.Settings preprocess) {
+		this.preprocess = preprocess;
 	}
 
 	@Override
@@ -150,8 +131,16 @@ public class Impose implements Module {
 		
 		@Override
 		public VirtualDocument impose(ModuleData data) throws RenderingException {
-			logger.info("Imposing booklet...");
 			VirtualDocument source = data.asSingleDocument();
+			if (preprocess != null) {
+				logger.info("preprocess_start");
+				// TODO Hide constructor to package after moving Impose into impose package
+				Preprocessor preprocessor = new Preprocessor(source, preprocess);
+				source = preprocessor.processAll();
+			} else {
+				logger.verbose("preprocess_skip");
+			}
+			logger.info("Imposing booklet...");
 			Booklet booklet = Booklet.from(source, binding, flipVerso);
 			Volume volume = booklet.volume();
 			SourceProvider<Page> sp = new SequentialSourceProvider(source);
@@ -191,7 +180,6 @@ public class Impose implements Module {
 			NUp.Builder nup = new NUp.Builder();
 			nup.setRows(rows);
 			nup.setCols(columns);
-			nup.setPageSize(pageSize);
 			if (pages > 0) {
 				nup.setNumberOfPages(pages);
 			}

@@ -29,7 +29,7 @@ public class MultipleImposition2 {
 		}
 		
 		public void addPage(VirtualPage page, AffineTransform position) {
-			Pagelet p = new Pagelet(page.getWidth(), page.getHeight(), position);
+			Pagelet p = new AutoPagelet(page.getWidth(), page.getHeight(), position);
 			p.setSource(page);
 			super.addPagelet(p);
 		}

@@ -9,7 +9,7 @@ import com.github.singond.pdfriend.book.model.LayeredPage;
 import com.github.singond.pdfriend.book.model.MultiPage;
 import com.github.singond.pdfriend.book.model.Page;
 import com.github.singond.pdfriend.book.model.SinglePage;
-import com.github.singond.pdfriend.book.model.MultiPage.Pagelet;
+import com.github.singond.pdfriend.book.model.MultiPage.PageletView;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 
@@ -72,7 +72,7 @@ public class SequentialSourceProvider implements SourceProvider<Page> {
 		 */
 		@Override
 		public Void visit(GridPage p, Void param) throws NoException {
-			for (Pagelet pg : p.pagelets()) {
+			for (PageletView pg : p.pagelets()) {
 				pg.setSource(sourcePages.poll());
 			}
 			return null;

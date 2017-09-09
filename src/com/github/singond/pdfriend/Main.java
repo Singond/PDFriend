@@ -27,6 +27,7 @@ public class Main {
 	 * Runs PDFriend.
 	 */
 	public static void main(String[] args) {
+		long start = System.currentTimeMillis();
 		//logger.debug("The working directory is {}", Util.getWorkingDir());
 		//logger.debug("The application directory is {}", Util.getApplicationDir());
 		
@@ -36,6 +37,8 @@ public class Main {
 			System.exit(0);
 		} else {
 			new Console().execute(args);
+			long end = System.currentTimeMillis();
+			logger.info("total_time", end-start);
 		}
 	}
 }
