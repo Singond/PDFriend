@@ -83,7 +83,7 @@ public class Preprocessor {
 		this.positionsCache = new HashMap<>();
 	}
 	
-	public Preprocessor(VirtualDocument document, Settings settings) {
+	Preprocessor(VirtualDocument document, Settings settings) {
 		this(Arrays.asList(document), settings);
 	}
 	

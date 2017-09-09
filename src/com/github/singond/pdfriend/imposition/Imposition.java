@@ -134,7 +134,6 @@ public class Imposition implements Module {
 			VirtualDocument source = data.asSingleDocument();
 			if (preprocess != null) {
 				logger.info("preprocess_start");
-				// TODO Hide constructor to package after moving Impose into impose package
 				Preprocessor preprocessor = new Preprocessor(source, preprocess);
 				source = preprocessor.processAll();
 			} else {
