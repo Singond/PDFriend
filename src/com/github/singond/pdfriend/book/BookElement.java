@@ -1,4 +1,4 @@
-package com.github.singond.pdfriend.book.model;
+package com.github.singond.pdfriend.book;
 
 /**
  * An element of the book object model.

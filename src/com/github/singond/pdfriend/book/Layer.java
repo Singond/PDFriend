@@ -1,4 +1,4 @@
-package com.github.singond.pdfriend.book.control;
+package com.github.singond.pdfriend.book;
 
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
@@ -6,9 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.collections4.list.SetUniqueList;
-
-import com.github.singond.pdfriend.book.model.Leaf;
-import com.github.singond.pdfriend.book.model.Sheet;
 
 /**
  * An area on a Sheet with a specific position and own coordinate system,

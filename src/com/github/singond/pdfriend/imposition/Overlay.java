@@ -5,9 +5,9 @@ import java.util.List;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.book.control.LayerSourceProvider;
-import com.github.singond.pdfriend.book.model.LayeredPage;
-import com.github.singond.pdfriend.book.model.Page;
+import com.github.singond.pdfriend.book.LayerSourceProvider;
+import com.github.singond.pdfriend.book.LayeredPage;
+import com.github.singond.pdfriend.book.Page;
 import com.github.singond.pdfriend.document.VirtualDocument;
 
 /**

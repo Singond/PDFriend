@@ -1,4 +1,4 @@
-package com.github.singond.pdfriend.book.model;
+package com.github.singond.pdfriend.book;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -11,8 +11,6 @@ import org.apache.commons.collections4.list.SetUniqueList;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.book.control.BookUtils;
-import com.github.singond.pdfriend.book.control.Order;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 

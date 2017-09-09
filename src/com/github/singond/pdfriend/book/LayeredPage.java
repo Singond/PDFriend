@@ -1,11 +1,10 @@
-package com.github.singond.pdfriend.book.model;
+package com.github.singond.pdfriend.book;
 
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.github.singond.pdfriend.book.control.PageVisitor;
 import com.github.singond.pdfriend.document.VirtualPage;
 
 /**

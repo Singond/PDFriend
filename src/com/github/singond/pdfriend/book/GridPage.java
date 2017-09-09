@@ -1,4 +1,4 @@
-package com.github.singond.pdfriend.book.model;
+package com.github.singond.pdfriend.book;
 
 import java.awt.geom.AffineTransform;
 
@@ -6,7 +6,6 @@ import com.github.singond.collections.ArrayMatrix;
 import com.github.singond.collections.Matrix;
 import com.github.singond.collections.MatrixIterable;
 import com.github.singond.collections.MatrixIterator;
-import com.github.singond.pdfriend.book.control.PageVisitor;
 
 
 /**

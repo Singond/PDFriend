@@ -1,9 +1,4 @@
-package com.github.singond.pdfriend.book.control;
-
-import com.github.singond.pdfriend.book.model.GridPage;
-import com.github.singond.pdfriend.book.model.LayeredPage;
-import com.github.singond.pdfriend.book.model.MultiPage;
-import com.github.singond.pdfriend.book.model.SinglePage;
+package com.github.singond.pdfriend.book;
 
 /**
  * A Visitor for Page objects.

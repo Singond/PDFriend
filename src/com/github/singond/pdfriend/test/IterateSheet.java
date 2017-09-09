@@ -1,10 +1,10 @@
 package com.github.singond.pdfriend.test;
 
-import com.github.singond.pdfriend.book.model.FlipDirection;
-import com.github.singond.pdfriend.book.model.Leaf;
-import com.github.singond.pdfriend.book.model.Page;
-import com.github.singond.pdfriend.book.model.Sheet;
-import com.github.singond.pdfriend.book.model.Leaf.Orientation;
+import com.github.singond.pdfriend.book.FlipDirection;
+import com.github.singond.pdfriend.book.Leaf;
+import com.github.singond.pdfriend.book.Page;
+import com.github.singond.pdfriend.book.Sheet;
+import com.github.singond.pdfriend.book.Leaf.Orientation;
 
 /**
  * A sample sheet.

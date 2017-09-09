@@ -1,4 +1,4 @@
-package com.github.singond.pdfriend.book.control;
+package com.github.singond.pdfriend.book;
 
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
@@ -10,10 +10,7 @@ import java.util.Map;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.book.control.Layer.Orientation;
-import com.github.singond.pdfriend.book.model.Leaf;
-import com.github.singond.pdfriend.book.model.Sheet;
-import com.github.singond.pdfriend.book.model.Signature;
+import com.github.singond.pdfriend.book.Layer.Orientation;
 import com.github.singond.geometry.plane.Line;
 import com.github.singond.geometry.plane.Point;
 import com.github.singond.geometry.plane.Transformations;
@@ -238,7 +235,7 @@ public class Stack {
 
 		/**
 		 * Performs the stacking
-		 * @see com.github.singond.pdfriend.book.control.Stack.Join
+		 * @see com.github.singond.pdfriend.book.Stack.Join
 		 */
 		@Override
 		public void manipulate(Stack stack) {

@@ -1,6 +1,4 @@
-package com.github.singond.pdfriend.book.control;
-
-import com.github.singond.pdfriend.book.model.Page;
+package com.github.singond.pdfriend.book;
 
 /**
  * Puts VirtualPages into Page objects as their source.

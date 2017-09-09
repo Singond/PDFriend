@@ -1,9 +1,6 @@
-package com.github.singond.pdfriend.book.control;
+package com.github.singond.pdfriend.book;
 
 import java.util.Iterator;
-
-import com.github.singond.pdfriend.book.model.Leaf;
-import com.github.singond.pdfriend.book.model.Page;
 
 /**
  * A utility class for the book object model package

@@ -1,4 +1,4 @@
-package com.github.singond.pdfriend.book.control;
+package com.github.singond.pdfriend.book;
 
 import java.util.HashMap;
 import java.util.Map;

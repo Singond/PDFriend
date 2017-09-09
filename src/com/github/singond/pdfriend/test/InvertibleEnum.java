@@ -1,6 +1,6 @@
 package com.github.singond.pdfriend.test;
 
-import com.github.singond.pdfriend.book.model.Leaf.Orientation;;
+import com.github.singond.pdfriend.book.Leaf.Orientation;;
 
 public class InvertibleEnum {
 

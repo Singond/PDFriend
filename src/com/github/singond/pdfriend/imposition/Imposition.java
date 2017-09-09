@@ -4,10 +4,10 @@ import java.util.List;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.book.control.SequentialSourceProvider;
-import com.github.singond.pdfriend.book.control.SourceProvider;
-import com.github.singond.pdfriend.book.model.Page;
-import com.github.singond.pdfriend.book.model.Volume;
+import com.github.singond.pdfriend.book.Page;
+import com.github.singond.pdfriend.book.SequentialSourceProvider;
+import com.github.singond.pdfriend.book.SourceProvider;
+import com.github.singond.pdfriend.book.Volume;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.geometry.LengthUnit;

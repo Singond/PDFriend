@@ -6,9 +6,9 @@ import java.util.List;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.Util;
-import com.github.singond.pdfriend.book.control.SequentialSourceProvider;
-import com.github.singond.pdfriend.book.model.GridPage;
-import com.github.singond.pdfriend.book.model.Page;
+import com.github.singond.pdfriend.book.GridPage;
+import com.github.singond.pdfriend.book.Page;
+import com.github.singond.pdfriend.book.SequentialSourceProvider;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.geometry.Dimensions;
 

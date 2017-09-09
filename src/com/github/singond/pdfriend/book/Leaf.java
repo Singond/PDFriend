@@ -1,4 +1,4 @@
-package com.github.singond.pdfriend.book.model;
+package com.github.singond.pdfriend.book;
 
 import java.awt.geom.AffineTransform;
 

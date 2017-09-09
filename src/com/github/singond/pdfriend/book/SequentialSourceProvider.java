@@ -1,15 +1,10 @@
-package com.github.singond.pdfriend.book.control;
+package com.github.singond.pdfriend.book;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
 import com.github.singond.pdfriend.NoException;
-import com.github.singond.pdfriend.book.model.GridPage;
-import com.github.singond.pdfriend.book.model.LayeredPage;
-import com.github.singond.pdfriend.book.model.MultiPage;
-import com.github.singond.pdfriend.book.model.Page;
-import com.github.singond.pdfriend.book.model.SinglePage;
-import com.github.singond.pdfriend.book.model.MultiPage.PageletView;
+import com.github.singond.pdfriend.book.MultiPage.PageletView;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 

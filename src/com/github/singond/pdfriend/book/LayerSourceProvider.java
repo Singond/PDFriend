@@ -1,4 +1,4 @@
-package com.github.singond.pdfriend.book.control;
+package com.github.singond.pdfriend.book;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -7,8 +7,7 @@ import java.util.Queue;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.book.model.LayeredPage;
-import com.github.singond.pdfriend.book.model.MultiPage.PageletView;
+import com.github.singond.pdfriend.book.MultiPage.PageletView;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 

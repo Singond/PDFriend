@@ -1,6 +1,5 @@
-package com.github.singond.pdfriend.book.model;
+package com.github.singond.pdfriend.book;
 
-import com.github.singond.pdfriend.book.control.PageVisitor;
 import com.github.singond.pdfriend.document.Contents;
 import com.github.singond.pdfriend.document.VirtualPage;
 

@@ -5,12 +5,12 @@ import java.util.List;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.book.control.Stack;
-import com.github.singond.pdfriend.book.control.Stack.Flip;
-import com.github.singond.pdfriend.book.model.FlipDirection;
-import com.github.singond.pdfriend.book.model.Leaf;
-import com.github.singond.pdfriend.book.model.Signature;
-import com.github.singond.pdfriend.book.model.Volume;
+import com.github.singond.pdfriend.book.FlipDirection;
+import com.github.singond.pdfriend.book.Leaf;
+import com.github.singond.pdfriend.book.Signature;
+import com.github.singond.pdfriend.book.Stack;
+import com.github.singond.pdfriend.book.Volume;
+import com.github.singond.pdfriend.book.Stack.Flip;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.geometry.plane.Line;
 import com.github.singond.geometry.plane.Point;
