@@ -19,8 +19,7 @@ import com.github.singond.pdfriend.cli.Console;
  */
 public class Application {
 
-	private static ExtendedLogger logger = Log.logger(Application.class);
-	
+	private static ExtendedLogger logger = Log.logger("Main");
 
 	/**
 	 * Runs PDFriend.
