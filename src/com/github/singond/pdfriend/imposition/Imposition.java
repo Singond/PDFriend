@@ -1,4 +1,4 @@
-package com.github.singond.pdfriend.modules;
+package com.github.singond.pdfriend.imposition;
 
 import java.util.List;
 
@@ -12,17 +12,17 @@ import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
-import com.github.singond.pdfriend.imposition.Booklet;
-import com.github.singond.pdfriend.imposition.NUp;
-import com.github.singond.pdfriend.imposition.Overlay;
-import com.github.singond.pdfriend.imposition.Preprocessor;
+import com.github.singond.pdfriend.modules.Module;
+import com.github.singond.pdfriend.modules.ModuleData;
+import com.github.singond.pdfriend.modules.ModuleDataFactory;
+import com.github.singond.pdfriend.modules.ModuleException;
 
 /**
- * The impose command of pdfriend.
+ * The imposition module of PDFriend.
  * @author Singon
  *
  */
-public class Impose implements Module {
+public class Imposition implements Module {
 
 	/** A pre-defined type of imposition: booklet, n-up etc. */
 	private Type type;
@@ -39,7 +39,7 @@ public class Impose implements Module {
 	public static final LengthUnit LENGTH_UNIT = LengthUnits.POINT_POSTSCRIPT;
 	
 	/** Logger instance */
-	private static ExtendedLogger logger = Log.logger(Impose.class);
+	private static ExtendedLogger logger = Log.logger(Imposition.class);
 	
 	public Type getType() {
 		return type;
@@ -175,7 +175,7 @@ public class Impose implements Module {
 		public VirtualDocument impose(ModuleData data) throws RenderingException {
 			VirtualDocument source = data.asSingleDocument();
 			logger.info("Imposing n-up...");
-			int pages = Impose.this.pages;
+			int pages = Imposition.this.pages;
 			
 			NUp.Builder nup = new NUp.Builder();
 			nup.setRows(rows);

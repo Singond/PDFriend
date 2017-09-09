@@ -11,7 +11,7 @@ import com.github.singond.pdfriend.cli.parsing.PageOptions;
 import com.github.singond.pdfriend.cli.parsing.ParameterDelegate;
 import com.github.singond.pdfriend.geometry.IntegerDimensions;
 import com.github.singond.pdfriend.imposition.Booklet;
-import com.github.singond.pdfriend.modules.Impose;
+import com.github.singond.pdfriend.imposition.Imposition;
 import com.github.singond.pdfriend.modules.Module;
 
 /**
@@ -56,7 +56,7 @@ public class ImposeCommand extends SubCommand {
 	
 	@Override
 	public Module getModule() {
-		Impose impose = new Impose();
+		Imposition impose = new Imposition();
 		impose.setBinding(binding);
 		impose.setFlipVerso(flipVerso);
 		impose.setPages(pages);
@@ -97,17 +97,17 @@ public class ImposeCommand extends SubCommand {
 		 * is selected and display a warning otherwise.
 		 * </p>
 		 */
-		public void passToModule(Impose module) {
+		public void passToModule(Imposition module) {
 			if (booklet) {
-				Impose.TypeBooklet impl = module.new TypeBooklet();
+				Imposition.TypeBooklet impl = module.new TypeBooklet();
 				module.setType(impl);
 			} else if (nup != null) {
-				Impose.TypeNUp impl = module.new TypeNUp
+				Imposition.TypeNUp impl = module.new TypeNUp
 						(nup.getFirstDimension(), nup.getSecondDimension());
 				module.setType(impl);
 			} else if (overlay) {
 				// TODO Pass some value into layers argument or remove it
-				Impose.TypeOverlay impl = module.new TypeOverlay(-1);
+				Imposition.TypeOverlay impl = module.new TypeOverlay(-1);
 				module.setType(impl);
 			} else {
 				throw new IllegalStateException("No imposition type has been set");
