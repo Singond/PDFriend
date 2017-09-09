@@ -93,7 +93,7 @@ public class ImposeCommand extends SubCommand {
 		 * <p>
 		 * TODO It is a good idea to display some kind warning to the user
 		 * in case that more types are specified in the command line (eg.
-		 * {@code --nup 2x4 --booklet}. Implement the check that exactly one
+		 * {@code --nup 2x4 --booklet}). Implement the check that exactly one
 		 * is selected and display a warning otherwise.
 		 * </p>
 		 */
