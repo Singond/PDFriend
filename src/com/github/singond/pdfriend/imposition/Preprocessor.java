@@ -44,7 +44,7 @@ import com.github.singond.pdfriend.geometry.LengthUnits;
  * @author Singon
  *
  */
-public class Preprocessor {
+public final class Preprocessor {
 	
 	/**
 	 * The settings used when processing pages.
