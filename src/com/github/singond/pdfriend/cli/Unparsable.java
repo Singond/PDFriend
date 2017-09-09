@@ -1,4 +1,4 @@
-package com.github.singond.pdfriend.cli.parsing;
+package com.github.singond.pdfriend.cli;
 
 /**
  * Represents that the input string could not be parsed successfully.

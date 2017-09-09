@@ -1,4 +1,4 @@
-package com.github.singond.pdfriend.cli.parsing;
+package com.github.singond.pdfriend.cli;
 
 /**
  * An optional result of parsing a string input.

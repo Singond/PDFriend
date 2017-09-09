@@ -1,4 +1,4 @@
-package com.github.singond.pdfriend.cli.parsing;
+package com.github.singond.pdfriend.cli;
 
 /**
  * Represents an object resulting from a successful parsing operation.

@@ -5,11 +5,11 @@ import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
+import com.github.singond.pdfriend.cli.BookletBindingConverter;
+import com.github.singond.pdfriend.cli.IntegerDimensionsConverter;
+import com.github.singond.pdfriend.cli.PageOptions;
+import com.github.singond.pdfriend.cli.ParameterDelegate;
 import com.github.singond.pdfriend.cli.SubCommand;
-import com.github.singond.pdfriend.cli.parsing.BookletBindingConverter;
-import com.github.singond.pdfriend.cli.parsing.IntegerDimensionsConverter;
-import com.github.singond.pdfriend.cli.parsing.PageOptions;
-import com.github.singond.pdfriend.cli.parsing.ParameterDelegate;
 import com.github.singond.pdfriend.geometry.IntegerDimensions;
 import com.github.singond.pdfriend.modules.Module;
 

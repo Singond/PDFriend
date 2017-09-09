@@ -11,6 +11,8 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
+import com.github.singond.pdfriend.cli.DimensionsParser;
+import com.github.singond.pdfriend.cli.ParsingResult;
 import com.github.singond.pdfriend.geometry.Angle;
 import com.github.singond.pdfriend.geometry.AngularUnit;
 import com.github.singond.pdfriend.geometry.AngularUnits;

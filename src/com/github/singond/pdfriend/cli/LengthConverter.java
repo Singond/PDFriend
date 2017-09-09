@@ -1,4 +1,4 @@
-package com.github.singond.pdfriend.cli.parsing;
+package com.github.singond.pdfriend.cli;
 
 import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.ParameterException;
