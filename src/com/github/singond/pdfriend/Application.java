@@ -17,10 +17,9 @@ import com.github.singond.pdfriend.cli.Console;
  * @author Singon
  *
  */
-public class Main {
+public class Application {
 
-	@SuppressWarnings("unused")
-	private static ExtendedLogger logger = Log.logger(Main.class);
+	private static ExtendedLogger logger = Log.logger(Application.class);
 	
 
 	/**
