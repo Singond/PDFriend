@@ -21,7 +21,7 @@ import com.github.singond.pdfriend.document.VirtualPage;
  * @author Singon
  *
  */
-public class Signature {
+public class Signature implements BookElement {
 
 	/** The sheets comprising this Signature */
 	private final List<Sheet> sheets;

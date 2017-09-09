@@ -17,7 +17,7 @@ import com.github.singond.pdfriend.document.VirtualDocument;
  * @author Singon
  *
  */
-public class Volume {
+public class Volume implements BookElement {
 
 	/**
 	 * Signatures sorted in their proper order in the finished volume.

@@ -14,7 +14,7 @@ import com.github.singond.pdfriend.Log;
  * @author Singon
  *
  */
-public class Leaf {
+public class Leaf implements BookElement {
 
 	/** The leaf width (x-direction) */
 	private final double width;

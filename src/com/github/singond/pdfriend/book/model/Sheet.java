@@ -19,7 +19,7 @@ import com.github.singond.pdfriend.document.VirtualPage;
  * @author Singon
  *
  */
-public class Sheet {
+public class Sheet implements BookElement {
 
 	/** The sheet width */
 	private final double width;

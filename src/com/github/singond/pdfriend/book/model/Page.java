@@ -11,7 +11,7 @@ import com.github.singond.pdfriend.document.VirtualPage;
  * @author Singon
  *
  */
-public abstract class Page {
+public abstract class Page implements BookElement {
 
 	/** The page number in the bound document, numbering from page 1. */
 	private int number = -1;
