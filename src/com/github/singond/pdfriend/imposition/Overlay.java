@@ -17,10 +17,14 @@ import com.github.singond.pdfriend.document.VirtualDocument;
  */
 public class Overlay implements Imposable {
 
+	/** The internal name of this imposable document type */
+	private static final String NAME = "overlay";
+	/** Logger */
+	private static ExtendedLogger logger = Log.logger(Overlay.class);
+
 	/** The pages in the document */
 	private final List<LayeredPage> pages;
 	
-	private static ExtendedLogger logger = Log.logger(Overlay.class);
 	
 	public Overlay(double width, double height, int pages, int layers) {
 		logger.verbose("overlay_constructing", pages, layers);
@@ -57,4 +61,8 @@ public class Overlay implements Imposable {
 		return doc.build();
 	}
 
+	@Override
+	public String getName() {
+		return NAME;
+	}
 }

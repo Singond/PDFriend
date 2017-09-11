@@ -23,6 +23,11 @@ import com.github.singond.geometry.plane.Point;
  *
  */
 public class Booklet implements Imposable {
+	
+	/** The internal name of this imposable document type */
+	private static final String NAME = "booklet";
+	/** Logger */
+	private static ExtendedLogger logger = Log.logger(Booklet.class);
 
 	/** Width of single Page. */
 	private final double pageWidth;
@@ -30,9 +35,6 @@ public class Booklet implements Imposable {
 	private final double pageHeight;
 	/** The Volume representing this Booklet. */
 	private final Volume volume;
-	
-	/** Logger */
-	private static ExtendedLogger logger = Log.logger(Booklet.class);
 	
 	/**
 	 * Constructs a new Booklet without content.
@@ -261,6 +263,11 @@ public class Booklet implements Imposable {
 	public VirtualDocument getDocument() {
 		// FIXME Fill the document with content before returning it!
 		return volume.renderDocument();
+	}
+
+	@Override
+	public String getName() {
+		return NAME;
 	}
 
 	/**

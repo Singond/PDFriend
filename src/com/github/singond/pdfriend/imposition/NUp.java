@@ -20,6 +20,9 @@ import com.github.singond.pdfriend.geometry.Dimensions;
  */
 public class NUp implements Imposable {
 
+	/** The internal name of this imposable document type */
+	private static final String NAME = "n-up";
+	/** Logger */
 	private static ExtendedLogger logger = Log.logger(NUp.class);
 	
 	// -1 indicates an unset field
@@ -178,6 +181,11 @@ public class NUp implements Imposable {
 		return doc.build();
 	}
 	
+	@Override
+	public String getName() {
+		return NAME;
+	}
+
 	/** Represents orientation in one of the four principal directions. */
 	public static enum NUpOrientation {
 		/** No rotation */
