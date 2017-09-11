@@ -186,6 +186,11 @@ public class NUp implements Imposable {
 		return NAME;
 	}
 
+	@Override
+	public VirtualDocument impose(List<VirtualDocument> sources) {
+		return imposeAsDocument(VirtualDocument.concatenate(sources));
+	}
+
 	/** Represents orientation in one of the four principal directions. */
 	public static enum NUpOrientation {
 		/** No rotation */

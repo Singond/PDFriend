@@ -1,5 +1,9 @@
 package com.github.singond.pdfriend.imposition;
 
+import java.util.List;
+
+import com.github.singond.pdfriend.document.VirtualDocument;
+
 /**
  * A represetation of a document produced by imposition.
  * @author Singon
@@ -13,6 +17,6 @@ public interface Imposable {
 	 */
 	public String getName();
 	
-	/** Renders this imposed document into a new virtual document. */
-//	public VirtualDocument impose(VirtualDocument source);
+	/** Imposes the given source documents into a new virtual document. */
+	public VirtualDocument impose(List<VirtualDocument> sources);
 }

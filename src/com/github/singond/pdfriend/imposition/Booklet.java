@@ -269,7 +269,12 @@ public class Booklet implements Imposable {
 	public String getName() {
 		return NAME;
 	}
-
+	
+	@Override
+	public VirtualDocument impose(List<VirtualDocument> sources) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented yet");
+	}
 	/**
 	 * Specifies where the booklet binding is located.
 	 * Specifically, this value indicated on which edge of the folded
