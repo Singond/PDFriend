@@ -10,9 +10,6 @@ import java.util.Set;
 import com.github.singond.collections.MatrixIterable;
 import com.github.singond.collections.MatrixIterator;
 import com.github.singond.geometry.plane.RectangleFrame;
-import com.github.singond.pdfriend.book.GridPage.Direction;
-import com.github.singond.pdfriend.book.MultiPage.Pagelet;
-import com.github.singond.pdfriend.book.MultiPage.PageletView;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.document.Contents;
 
