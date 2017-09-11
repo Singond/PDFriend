@@ -15,6 +15,7 @@ import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.process.PDFParser;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
 
+@SuppressWarnings("deprecation")
 public class PrintPage {
 
 	public static void main(String[] args) throws ParsingException, RenderingException, IOException {

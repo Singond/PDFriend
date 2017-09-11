@@ -31,6 +31,7 @@ import com.github.singond.pdfriend.format.process.PDFRenderer;
  * @author Singon
  *
  */
+@SuppressWarnings("deprecation")
 public class ImposeGridPage {
 	
 	private static ExtendedLogger logger = Log.logger(ImposeGridPage.class);
