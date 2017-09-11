@@ -63,8 +63,8 @@ public abstract class SubCommand {
 	protected abstract void postParseSpecific();
 	
 	/**
-	 * Returns a PDFriend module which performs the task represented
-	 * by this subcommand.
+	 * Returns a PDFriend module with fully initialized state ready
+	 * to perform the task represented by this subcommand.
 	 */
 	public abstract Module getModule();
 }
