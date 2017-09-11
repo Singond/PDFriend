@@ -20,27 +20,128 @@ import com.github.singond.pdfriend.geometry.Dimensions;
  */
 public class NUp implements Imposable {
 
-	private final List<Page> pages;
-	
 	private static ExtendedLogger logger = Log.logger(NUp.class);
 	
+	// -1 indicates an unset field
+	private int pages = -1;
+	private int rows = 1;
+	private int cols = 1;
+	private double horizontalOffset = 0;
+	private double verticalOffset = 0;
+	private NUpOrientation orientation = NUpOrientation.UPRIGHT;
+	private FillDirection direction = FillDirection.ROWS;
+	
 	/**
-	 * Constructs a new n-up document with the given layout.
-	 * @param pages
-	 * @param cols
-	 * @param rows
-	 * @param cell
-	 * @param horizontalOffset
-	 * @param verticalOffset
-	 * @param orientation
-	 * @param direction
-	 * @param pageSize
+	 * Sets the number of pages to be created.
+	 * @param pages the number of pages
+	 * @return this NUp object
 	 */
-	public NUp(int pages, int cols, int rows, Dimensions cell,
-	           double horizontalOffset, double verticalOffset,
-	           NUpOrientation orientation, FillDirection direction) {
-		List<Page> pageList = new ArrayList<>();
-		int pageNumber = 0;
+	public NUp setNumberOfPages(int pages) {
+		this.pages = pages;
+		return this;
+	}
+
+	/**
+	 * Sets the number of rows in the grid.
+	 * @param rows the number of rows
+	 * @return this NUp object
+	 */
+	public NUp setRows(int rows) {
+		if (rows < 1)
+			throw new IllegalArgumentException("Number of rows must be positive");
+		this.rows = rows;
+		return this;
+	}
+
+	/**
+	 * Sets the number of columns in the grid.
+	 * @param cols the number of columns
+	 * @return this NUp object
+	 */
+	public NUp setCols(int cols) {
+		if (cols < 1)
+			throw new IllegalArgumentException("Number of columns must be positive");
+		this.cols = cols;
+		return this;
+	}
+
+	/**
+	 * Sets how much the grid is offset from the lower left corner.
+	 * @param horizontalOffset the offset distance (positive values move
+	 *        the grid to the right)
+	 * @return this NUp object
+	 */
+	public NUp setHorizontalOffset(double horizontalOffset) {
+		this.horizontalOffset = horizontalOffset;
+		return this;
+	}
+
+
+	/**
+	 * Sets how much the grid is offset from the lower left corner.
+	 * @param verticalOffset the offset distance (positive values move
+	 *        the grid upwards)
+	 * @return this NUp object
+	 */
+	public NUp setVerticalOffset(double verticalOffset) {
+		this.verticalOffset = verticalOffset;
+		return this;
+	}
+
+	/**
+	 * Sets the orientation of the grid.
+	 * @param orientation
+	 * @return this NUp object
+	 */
+	public NUp setOrientation(NUpOrientation orientation) {
+		if (orientation == null)
+			throw new IllegalArgumentException("Orientation must not be null");
+		this.orientation = orientation;
+		return this;
+	}
+
+	/**
+	 * Sets the direction in which the cells will be filled.
+	 * @param direction
+	 * @return this NUp object
+	 */
+	public NUp setDirection(FillDirection direction) {
+		if (orientation == null)
+			throw new IllegalArgumentException("Flip direction must not be null");
+		this.direction = direction;
+		return this;
+	}
+
+	/**
+	 * Imposes the given virtual document into a list of grid pages
+	 * according to the current settings of this {@code NUp} object.
+	 */
+	public List<Page> imposeAsPages(VirtualDocument doc) {
+		int pageCount = this.pages;
+		final int rows = this.rows;
+		final int cols = this.cols;
+		
+		// The rows and cols arguments should be OK, but check them anyway
+		if (rows < 1 || cols < 1) {
+			throw new IllegalArgumentException(String.format
+					("Wrong number of cells in grid: %dx%d", rows, cols));
+		}
+		
+		/*
+		 * If the number of pages is unset, calculate the number of pages
+		 * necessary to fit the whole document; otherwise use the value.
+		 */
+		if (pageCount < 0) {
+			logger.verbose("nup_gridDimensions", rows, cols);
+			pageCount = Util.ceilingDivision(doc.getLength(), rows*cols);
+			logger.verbose("nup_settingPagesNo", pageCount);
+		}
+		
+		// Determine grid cell dimensions
+		double[] docFormat = doc.maxPageDimensions();
+		Dimensions cell = new Dimensions(docFormat[0], docFormat[1], Imposition.LENGTH_UNIT);
+		
+		// A builder to provide the GridPages with desired settings
 		GridPage.Builder builder = new GridPage.Builder()
 				.setColumns(cols)
 				.setRows(rows)
@@ -48,17 +149,28 @@ public class NUp implements Imposable {
 				.setCellHeight(cell.height().in(Imposition.LENGTH_UNIT))
 				.setHorizontalOffset(horizontalOffset)
 				.setVerticalOffset(verticalOffset)
-				.setOrientation(orientation.getValue());
-		while(pageList.size() < pages) {
+				.setOrientation(orientation.getValue())
+				.setFillDirection(direction.getValue());
+		
+		// Output
+		List<Page> pages = new ArrayList<>(pageCount);
+		int pageNumber = 0;
+		while(pages.size() < pageCount) {
 			GridPage page = builder.build();
 			page.setNumber(++pageNumber);
-			pageList.add(page);
+			pages.add(page);
 		}
-		this.pages = pageList;
+		new SequentialSourceProvider(doc).setSourceTo(pages);
+
+		return pages;
 	}
 
-	@Override
-	public VirtualDocument getDocument() {
+	/**
+	 * Imposes the given virtual document into a new virtual document
+	 * according to the current settings of this {@code NUp} object.
+	 */
+	public VirtualDocument imposeAsDocument(VirtualDocument source) {
+		List<Page> pages = imposeAsPages(source);
 		VirtualDocument.Builder doc = new VirtualDocument.Builder();
 		for (Page page : pages) {
 			doc.addPage(page.render());
@@ -88,7 +200,7 @@ public class NUp implements Imposable {
 			return value;
 		}
 	}
-	
+
 	public static enum FillDirection {
 		ROWS (GridPage.Direction.ROWS),
 		COLUMNS (GridPage.Direction.COLUMNS);
@@ -102,95 +214,6 @@ public class NUp implements Imposable {
 		
 		public GridPage.Direction getValue() {
 			return value;
-		}
-	}
-
-	/**
-	 * Builds NUp objects.
-	 */
-	public static class Builder {
-		// -1 indicates an unset field
-		private int pages = -1;
-		private int rows = 1;
-		private int cols = 1;
-		private double horizontalOffset = 0;
-		private double verticalOffset = 0;
-		private NUpOrientation orientation = NUpOrientation.UPRIGHT;
-		private FillDirection direction = FillDirection.ROWS;
-		
-		public Builder setNumberOfPages(int pages) {
-			this.pages = pages;
-			return this;
-		}
-
-		public Builder setRows(int rows) {
-			if (rows < 1)
-				throw new IllegalArgumentException("Number of rows must be positive");
-			this.rows = rows;
-			return this;
-		}
-
-		public Builder setCols(int cols) {
-			if (cols < 1)
-				throw new IllegalArgumentException("Number of columns must be positive");
-			this.cols = cols;
-			return this;
-		}
-
-		public Builder setHorizontalOffset(double horizontalOffset) {
-			this.horizontalOffset = horizontalOffset;
-			return this;
-		}
-
-		public Builder setVerticalOffset(double verticalOffset) {
-			this.verticalOffset = verticalOffset;
-			return this;
-		}
-
-		public Builder setOrientation(NUpOrientation orientation) {
-			if (orientation == null)
-				throw new IllegalArgumentException("Orientation must not be null");
-			this.orientation = orientation;
-			return this;
-		}
-
-		public Builder setDirection(FillDirection direction) {
-			if (orientation == null)
-				throw new IllegalArgumentException("Flip direction must not be null");
-			this.direction = direction;
-			return this;
-		}
-
-		public NUp buildFor(VirtualDocument doc) {
-			int pages = this.pages;
-			int rows = this.rows;
-			int cols = this.cols;
-			
-			// The rows and cols arguments should be OK, but check them anyway
-			if (rows < 1 || cols < 1) {
-				throw new IllegalArgumentException(String.format
-						("Wrong number of cells in grid: %dx%d", rows, cols));
-			}
-			
-			/*
-			 * If the number of pages is unset, calculate the number of pages
-			 * necessary to fit the whole document; otherwise use the value.
-			 */
-			if (pages < 0) {
-				logger.verbose("nup_gridDimensions", rows, cols);
-				pages = Util.ceilingDivision(doc.getLength(), rows*cols);
-				logger.verbose("nup_settingPagesNo", pages);
-			}
-			
-			// Determine grid cell dimensions
-			double[] docFormat = doc.maxPageDimensions();
-			Dimensions cell = new Dimensions(docFormat[0], docFormat[1], Imposition.LENGTH_UNIT);
-			
-			NUp result = new NUp(pages, cols, rows, cell,
-			                     horizontalOffset, verticalOffset,
-			                     orientation, direction);
-			new SequentialSourceProvider(doc).setSourceTo(result.pages);
-			return result;
 		}
 	}
 }

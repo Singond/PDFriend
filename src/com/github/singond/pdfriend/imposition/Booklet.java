@@ -257,7 +257,7 @@ public class Booklet implements Imposable {
 		return volume;
 	}
 	
-	@Override
+//	@Override
 	public VirtualDocument getDocument() {
 		// FIXME Fill the document with content before returning it!
 		return volume.renderDocument();

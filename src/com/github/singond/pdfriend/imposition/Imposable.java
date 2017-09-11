@@ -1,7 +1,5 @@
 package com.github.singond.pdfriend.imposition;
 
-import com.github.singond.pdfriend.document.VirtualDocument;
-
 /**
  * A represetation of a document produced by imposition.
  * @author Singon
@@ -9,5 +7,5 @@ import com.github.singond.pdfriend.document.VirtualDocument;
 public interface Imposable {
 
 	/** Renders this imposed document into a new virtual document. */
-	public VirtualDocument getDocument();
+//	public VirtualDocument impose(VirtualDocument source);
 }

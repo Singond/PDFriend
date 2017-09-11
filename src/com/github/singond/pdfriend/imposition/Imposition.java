@@ -176,13 +176,13 @@ public class Imposition implements Module {
 			logger.info("Imposing n-up...");
 			int pages = Imposition.this.pages;
 			
-			NUp.Builder nup = new NUp.Builder();
+			NUp nup = new NUp();
 			nup.setRows(rows);
 			nup.setCols(columns);
 			if (pages > 0) {
 				nup.setNumberOfPages(pages);
 			}
-			VirtualDocument imposed = nup.buildFor(source).getDocument();
+			VirtualDocument imposed = nup.imposeAsDocument(source);
 			return imposed;
 		}
 	}

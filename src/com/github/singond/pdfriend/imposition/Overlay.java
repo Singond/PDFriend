@@ -11,7 +11,7 @@ import com.github.singond.pdfriend.book.Page;
 import com.github.singond.pdfriend.document.VirtualDocument;
 
 /**
- * A document consisting of layered pages. 
+ * A document consisting of layered pages.
  *
  * @author Singon
  */
@@ -48,7 +48,7 @@ public class Overlay implements Imposable {
 		return result;
 	}
 	
-	@Override
+//	@Override
 	public VirtualDocument getDocument() {
 		VirtualDocument.Builder doc = new VirtualDocument.Builder();
 		for (Page page : pages) {
