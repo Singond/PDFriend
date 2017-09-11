@@ -321,6 +321,7 @@ public class GridPage extends MultiPage {
 		private double horizontalOffset;
 		private double verticalOffset;
 		private GridOrientation orientation;
+		private Direction fillDirection;
 		
 		/**
 		 * Builds a new instance of {@code GridPage} according to current
@@ -328,8 +329,11 @@ public class GridPage extends MultiPage {
 		 * @return
 		 */
 		public GridPage build() {
-			return new GridPage(columns, rows, cellWidth, cellHeight,
+			GridPage page =  new GridPage
+					(columns, rows, cellWidth, cellHeight,
 					horizontalOffset, verticalOffset, orientation);
+			page.setDirection(fillDirection);
+			return page;
 		}
 		
 		public Builder setColumns(int columns) {
@@ -358,6 +362,10 @@ public class GridPage extends MultiPage {
 		}
 		public Builder setOrientation(GridOrientation orientation) {
 			this.orientation = orientation;
+			return this;
+		}
+		public Builder setFillDirection(Direction fillDirection) {
+			this.fillDirection = fillDirection;
 			return this;
 		}
 	}
