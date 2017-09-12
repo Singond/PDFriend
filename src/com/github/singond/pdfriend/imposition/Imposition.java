@@ -24,11 +24,16 @@ import com.github.singond.pdfriend.modules.ModuleException;
  */
 public class Imposition implements Module {
 
-	/** A pre-defined type of imposition: booklet, n-up etc. */
-	private Type type;
+	/**
+	 * The imposition task containing all settings specific to this
+	 * imposition type.
+	 */
+	private Imposable task;
 	/** Specifies where the binding is located */
+	@Deprecated
 	private Booklet.Binding binding = Booklet.Binding.LEFT;
 	/** In a vertical booklet, print the verso upside down. */
+	@Deprecated
 	private boolean flipVerso = false;
 	/** Number of output pages */
 	private int pages = -1;
@@ -41,26 +46,30 @@ public class Imposition implements Module {
 	/** Logger instance */
 	private static ExtendedLogger logger = Log.logger(Imposition.class);
 	
-	public Type getType() {
-		return type;
+	public Imposable getTask() {
+		return task;
 	}
 
-	public void setType(Type type) {
-		this.type = type;
+	public void setTask(Imposable task) {
+		this.task = task;
 	}
 
+	@Deprecated
 	public Booklet.Binding getBinding() {
 		return binding;
 	}
 
+	@Deprecated
 	public void setBinding(Booklet.Binding binding) {
 		this.binding = binding;
 	}
 
+	@Deprecated
 	public boolean isFlipVerso() {
 		return flipVerso;
 	}
 
+	@Deprecated
 	public void setFlipVerso(boolean flipVerso) {
 		this.flipVerso = flipVerso;
 	}
@@ -84,17 +93,18 @@ public class Imposition implements Module {
 	@Override
 	public ModuleData process(ModuleData data) throws ModuleException  {
 		logger.info("*** PDFriend Impose ***");
-		if (type == null) {
+		if (task == null) {
 			throw new NullPointerException("No imposition type has been specified");
 		}
-		logger.verbose("Selected imposition type is: " + type.getName());
+		logger.verbose("Selected imposition type is: " + task.getName());
+		
 		VirtualDocument document;
-		try {
-			document = type.impose(data);
-			return ModuleDataFactory.of(document);
-		} catch (RenderingException e) {
-			throw new ModuleException(e);
+		if (task.prefersMultipleInput()) {
+			document = task.impose(data.asMultipleDocuments());
+		} else {
+			document = task.impose(data.asSingleDocument());
 		}
+		return ModuleDataFactory.of(document);
 	}
 	
 	/**

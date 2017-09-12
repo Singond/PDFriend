@@ -63,7 +63,8 @@ public class ImposeCommand extends SubCommand {
 		if (pageOpts.isSet()) {
 			impose.setPreprocessing(pageOpts.getPreprocessorSettings());
 		}
-		type.passToModule(impose);
+		Imposable task = type.getImpositionTask(impose);
+		impose.setTask(task);
 		return impose;
 	}
 	
@@ -86,29 +87,33 @@ public class ImposeCommand extends SubCommand {
 		
 		/**
 		 * Resolves the type of imposed document from the command line
-		 * arguments and creates an instance of an implementing class
-		 * in the given module instance.
+		 * arguments, creates an instance of an implementing class
+		 * and passes necessary parameters to it.
+		 * <p>
 		 * If more than one type is given in the command line, only one will
 		 * be used.
 		 * <p>
-		 * TODO It is a good idea to display some kind warning to the user
+		 * TODO: It is a good idea to display some kind warning to the user
 		 * in case that more types are specified in the command line (eg.
 		 * {@code --nup 2x4 --booklet}). Implement the check that exactly one
 		 * is selected and display a warning otherwise.
 		 * </p>
 		 */
-		public void passToModule(Imposition module) {
+		public Imposable getImpositionTask(Imposition module) {
 			if (booklet) {
 				Imposition.TypeBooklet impl = module.new TypeBooklet();
-				module.setType(impl);
+//				module.setType(impl);
+				throw new UnsupportedOperationException("Not implemented yet");
 			} else if (nup != null) {
-				Imposition.TypeNUp impl = module.new TypeNUp
-						(nup.getFirstDimension(), nup.getSecondDimension());
-				module.setType(impl);
+				NUp task = new NUp();
+				task.setRows(nup.getFirstDimension());
+				task.setCols(nup.getSecondDimension());
+				return task;
 			} else if (overlay) {
 				// TODO Pass some value into layers argument or remove it
 				Imposition.TypeOverlay impl = module.new TypeOverlay(-1);
-				module.setType(impl);
+//				module.setType(impl);
+				throw new UnsupportedOperationException("Not implemented yet");
 			} else {
 				throw new IllegalStateException("No imposition type has been set");
 			}
