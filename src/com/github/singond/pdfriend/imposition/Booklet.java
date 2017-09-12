@@ -272,10 +272,22 @@ public class Booklet implements Imposable {
 	}
 	
 	@Override
+	public boolean prefersMultipleInput() {
+		return false;
+	}
+
+	@Override
+	public VirtualDocument impose(VirtualDocument source) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented yet");
+	}
+
+	@Override
 	public VirtualDocument impose(List<VirtualDocument> sources) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
+	
 	/**
 	 * Specifies where the booklet binding is located.
 	 * Specifically, this value indicated on which edge of the folded
