@@ -102,6 +102,7 @@ public class Imposition implements Module {
 	 * Each class of this interface represents one type of imposed document
 	 * and provides its complete implementation.
 	 */
+	@Deprecated
 	public interface Type {
 		/** Returns a user-friendly name of the imposition type. */
 		public String getName();
@@ -120,6 +121,7 @@ public class Imposition implements Module {
 	/**
 	 * A booklet document.
 	 */
+	@Deprecated
 	public class TypeBooklet implements Type {
 		/** The name of the document type */
 		private static final String name = "booklet";
@@ -152,6 +154,7 @@ public class Imposition implements Module {
 	/**
 	 * An n-up document.
 	 */
+	@Deprecated
 	public class TypeNUp implements Type {
 		/** The name of the document type */
 		private static final String name = "n-up";
@@ -190,6 +193,7 @@ public class Imposition implements Module {
 	/**
 	 * A layered document (several documents whose corresponding pages are overlaid).
 	 */
+	@Deprecated
 	public class TypeOverlay implements Type {
 		/** The name of the document type */
 		private static final String name = "overlay";
