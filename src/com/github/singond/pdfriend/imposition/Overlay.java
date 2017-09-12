@@ -60,10 +60,33 @@ public class Overlay implements Imposable {
 		}
 		return doc.build();
 	}
-
+	
 	@Override
 	public String getName() {
 		return NAME;
+	}
+
+	/**
+	 * Returns true, because Overlay, by its nature, requires at least two
+	 * documents in order for it to have any effect.
+	 * @return always the value of {@code true}
+	 */
+	@Override
+	public boolean prefersMultipleInput() {
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * This is the trivial case with only one layer.
+	 * This imposition task has has no effect and returns the unchanged
+	 * input document.
+	 * @return the unchanged document given as {@code source}
+	 */
+	@Override
+	public VirtualDocument impose(VirtualDocument source) {
+		return source;
 	}
 
 	@Override
