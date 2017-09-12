@@ -186,6 +186,26 @@ public class NUp implements Imposable {
 		return NAME;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @return always the valye of {@code false}
+	 */
+	@Override
+	public boolean prefersMultipleInput() {
+		return false;
+	}
+
+	@Override
+	public VirtualDocument impose(VirtualDocument source) {
+		return imposeAsDocument(source);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * N-up handles multiple document input by first concatenating them
+	 * into one document in the order they appear in the argument.
+	 */
 	@Override
 	public VirtualDocument impose(List<VirtualDocument> sources) {
 		return imposeAsDocument(VirtualDocument.concatenate(sources));
