@@ -30,7 +30,7 @@ public interface Imposable {
 	
 	/**
 	 * Imposes the given single source document into a new virtual document.
-	 * @param the document to be imposed
+	 * @param source the document to be imposed
 	 * @return the imposed document
 	 * @throws UnsupportedOperationException if this imposition type does
 	 *        not support imposing a single document
@@ -39,7 +39,7 @@ public interface Imposable {
 	
 	/**
 	 * Imposes the given multiple source documents into a new virtual document.
-	 * @param the list of documents to be imposed
+	 * @param sources the list of documents to be imposed
 	 * @return the document resulting from imposing all the input documents
 	 * @throws UnsupportedOperationException if this imposition type does
 	 *        not support imposing multiple documents
