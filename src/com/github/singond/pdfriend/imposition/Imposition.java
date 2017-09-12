@@ -25,7 +25,8 @@ import com.github.singond.pdfriend.modules.ModuleException;
 public class Imposition implements Module {
 
 	/**
-	 * The imposition task containing all settings specific to this
+	 * The imposition task containing all settings needed.
+	 * These include preprocessor settings and settings specific to this
 	 * imposition type.
 	 */
 	private Imposable task;

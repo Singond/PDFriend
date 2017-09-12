@@ -11,6 +11,7 @@ import com.github.singond.pdfriend.book.Page;
 import com.github.singond.pdfriend.book.SequentialSourceProvider;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.geometry.Dimensions;
+import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
 
 /**
  * An n-up layout.
@@ -33,6 +34,7 @@ public class NUp implements Imposable {
 	private double verticalOffset = 0;
 	private NUpOrientation orientation = NUpOrientation.UPRIGHT;
 	private FillDirection direction = FillDirection.ROWS;
+	private Preprocessor.Settings preprocess = null;
 	
 	/**
 	 * Sets the number of pages to be created.
@@ -184,6 +186,11 @@ public class NUp implements Imposable {
 	@Override
 	public String getName() {
 		return NAME;
+	}
+
+	@Override
+	public void setPreprocessing(Settings settings) {
+		this.preprocess = settings.copy();
 	}
 
 	/**

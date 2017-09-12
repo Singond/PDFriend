@@ -12,6 +12,7 @@ import com.github.singond.pdfriend.book.Stack;
 import com.github.singond.pdfriend.book.Volume;
 import com.github.singond.pdfriend.book.Stack.Flip;
 import com.github.singond.pdfriend.document.VirtualDocument;
+import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
 import com.github.singond.geometry.plane.Line;
 import com.github.singond.geometry.plane.Point;
 
@@ -271,6 +272,12 @@ public class Booklet implements Imposable {
 		return NAME;
 	}
 	
+	@Override
+	public void setPreprocessing(Settings settings) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented yet");
+	}
+
 	@Override
 	public boolean prefersMultipleInput() {
 		return false;

@@ -9,6 +9,7 @@ import com.github.singond.pdfriend.book.LayerSourceProvider;
 import com.github.singond.pdfriend.book.LayeredPage;
 import com.github.singond.pdfriend.book.Page;
 import com.github.singond.pdfriend.document.VirtualDocument;
+import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
 
 /**
  * A document consisting of layered pages.
@@ -65,6 +66,12 @@ public class Overlay implements Imposable {
 	@Override
 	public String getName() {
 		return NAME;
+	}
+
+	@Override
+	public void setPreprocessing(Settings settings) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented yet");
 	}
 
 	/**
