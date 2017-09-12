@@ -17,6 +17,32 @@ public interface Imposable {
 	 */
 	public String getName();
 	
-	/** Imposes the given source documents into a new virtual document. */
+	/**
+	 * Returns whether this imposable prefers the input to be multiple
+	 * documents instead of a single document.
+	 * This effectively means that the {@code Imposable} prefers to be
+	 * called using {@code impose(List<VirtualDocument>)} rather than
+	 * {@code impose(VirtualDocument)}.
+	 * @return {@code true} if this imposition type makes (more) sense when
+	 *         applied to multiple document instead of multiple ones
+	 */
+	public boolean prefersMultipleInput();
+	
+	/**
+	 * Imposes the given single source document into a new virtual document.
+	 * @param the document to be imposed
+	 * @return the imposed document
+	 * @throws UnsupportedOperationException if this imposition type does
+	 *        not support imposing a single document
+	 */
+	public VirtualDocument impose(VirtualDocument source);
+	
+	/**
+	 * Imposes the given multiple source documents into a new virtual document.
+	 * @param the list of documents to be imposed
+	 * @return the document resulting from imposing all the input documents
+	 * @throws UnsupportedOperationException if this imposition type does
+	 *        not support imposing multiple documents
+	 */
 	public VirtualDocument impose(List<VirtualDocument> sources);
 }
