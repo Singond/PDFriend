@@ -60,10 +60,11 @@ public class ImposeCommand extends SubCommand {
 		impose.setBinding(binding);
 		impose.setFlipVerso(flipVerso);
 		impose.setPages(pages);
-		if (pageOpts.isSet()) {
-			impose.setPreprocessing(pageOpts.getPreprocessorSettings());
-		}
 		Imposable task = type.getImpositionTask(impose);
+		if (pageOpts.isSet()) {
+//			impose.setPreprocessing(pageOpts.getPreprocessorSettings());
+			task.setPreprocessing(pageOpts.getPreprocessorSettings());
+		}
 		impose.setTask(task);
 		return impose;
 	}

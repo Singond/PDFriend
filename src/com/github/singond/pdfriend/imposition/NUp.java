@@ -125,6 +125,7 @@ public class NUp implements Imposable {
 		int pageCount = this.pages;
 		final int rows = this.rows;
 		final int cols = this.cols;
+		final Preprocessor.Settings preprocess = this.preprocess;
 		
 		// The rows and cols arguments should be OK, but check them anyway
 		if (rows < 1 || cols < 1) {
@@ -156,6 +157,11 @@ public class NUp implements Imposable {
 				.setVerticalOffset(verticalOffset)
 				.setOrientation(orientation.getValue())
 				.setFillDirection(direction.getValue());
+
+		// Pre-processing
+		if (preprocess != null) {
+			doc = new Preprocessor(doc, preprocess).processAll();
+		}
 		
 		// Output
 		List<Page> pages = new ArrayList<>(pageCount);
