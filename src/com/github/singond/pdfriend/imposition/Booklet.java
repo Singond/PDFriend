@@ -260,6 +260,7 @@ public class Booklet implements Imposable {
 	}
 	
 //	@Override
+	@Deprecated
 	public VirtualDocument getDocument() {
 		// FIXME Fill the document with content before returning it!
 		return volume.renderDocument();

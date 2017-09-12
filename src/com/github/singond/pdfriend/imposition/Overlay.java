@@ -53,6 +53,7 @@ public class Overlay implements Imposable {
 	}
 	
 //	@Override
+	@Deprecated
 	public VirtualDocument getDocument() {
 		VirtualDocument.Builder doc = new VirtualDocument.Builder();
 		for (Page page : pages) {
