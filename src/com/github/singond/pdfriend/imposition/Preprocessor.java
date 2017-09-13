@@ -100,6 +100,14 @@ public final class Preprocessor {
 	}
 	
 	/**
+	 * Returns the cell dimensions resolved for the list of documents
+	 * and settings specified during initialization.
+	 */
+	public Dimensions getResolvedCellDimensions() {
+		return cell;
+	}
+
+	/**
 	 * Resolves the dimensions of the cell for the given collection of pages
 	 * and settings.
 	 * @param documents
@@ -163,14 +171,6 @@ public final class Preprocessor {
 		}
 		logger.verbose("preprocess_cellSize_result", result);
 		return result;
-	}
-	
-	/**
-	 * Returns the cell dimensions resolved for the list of documents
-	 * and settings specified during initialization.
-	 */
-	public Dimensions getResolvedCellDimensions() {
-		return cell;
 	}
 	
 	/**
@@ -267,7 +267,7 @@ public final class Preprocessor {
 		final boolean scaleExplicit = settings.isScaleGiven();
 		final double rotation = settings.rotation;
 		final Dimensions pageDimensions = settings.pageDimensions;
-		final Resizing resize = settings.resizing;
+		final Resizing declaredResize = settings.resizing;
 		final List<Alignment> align = settings.alignment;
 		final LengthUnit unit = Imposition.LENGTH_UNIT;
 		
@@ -329,7 +329,26 @@ public final class Preprocessor {
 		 * settings completely: The values of both {@code scale} and
 		 * {@code pageDimensions} are reflected in the size of the cell.
 		 * <p>
-		 * First, rule out those resizing options which operate solely with
+		 * First, if resizing is AUTO, resolve it to any of the available
+		 * values:
+		 * If page dimensions are given explicitly, fit all pages to that
+		 * rectangle, otherwise do not apply any resizing.
+		 * For resizing values other than AUTO, just use that value.
+		 */
+		Resizing resize;
+		if (declaredResize == Resizing.AUTO) {
+			if (pageDimensions != AUTO) {
+				// Page dimensions are given eplicitly
+				resize = Resizing.FIT;
+			} else {
+				resize = Resizing.NONE;
+			}
+		} else {
+			resize = declaredResize;
+		}
+		
+		/*
+		 * Next, rule out those resizing options which operate solely with
 		 * the size of the cell. For the rest, determine the scale at which
 		 * the contents of the page will be drawn:
 		 */
@@ -503,7 +522,7 @@ public final class Preprocessor {
 		 * Behaviour for page size.
 		 * This is applied after scaling each page by {@code scale}.
 		 */
-		private Resizing resizing = Resizing.NONE;
+		private Resizing resizing = Resizing.AUTO;
 		/** Page alignment within the rectangle given by resolved dimensions */
 		private List<Alignment> alignment = Arrays.asList
 				(new CenterAlignment(0), new MiddleAlignment(0));
@@ -632,7 +651,9 @@ public final class Preprocessor {
 	 * Specifies behaviour for page size.
 	 */
 	public static enum Resizing {
-		/** Respects pageDimensions and scale. */
+		/**
+		 * Respects pageDimensions and scale.
+		 */
 		NONE,
 		/**
 		 * Ensures that the whole area of the page fits into the cell,
@@ -647,7 +668,11 @@ public final class Preprocessor {
 		 * If the rotation is not a multiple of right angle, this resizing
 		 * will result in the page overflowing the cell.
 		 */
-		FILL;
+		FILL,
+		/**
+		 * Indicates that no explicit resizing behaviour has been specified.
+		 */
+		AUTO;
 	}
 
 	/* Alignment */
