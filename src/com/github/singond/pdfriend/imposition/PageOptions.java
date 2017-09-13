@@ -1,11 +1,16 @@
-package com.github.singond.pdfriend.cli;
+package com.github.singond.pdfriend.imposition;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.github.singond.pdfriend.cli.ArgumentParsingException;
+import com.github.singond.pdfriend.cli.DimensionsConverter;
+import com.github.singond.pdfriend.cli.ParameterDelegate;
+import com.github.singond.pdfriend.cli.RotationConverter;
+import com.github.singond.pdfriend.cli.TwoNumbers;
+import com.github.singond.pdfriend.cli.TwoNumbers.Converter;
 import com.github.singond.pdfriend.geometry.Angle;
 import com.github.singond.pdfriend.geometry.AngularUnits;
 import com.github.singond.pdfriend.geometry.Dimensions;
-import com.github.singond.pdfriend.imposition.Preprocessor;
 
 @Parameters(resourceBundle = "Help", separators="=")
 public class PageOptions implements ParameterDelegate {

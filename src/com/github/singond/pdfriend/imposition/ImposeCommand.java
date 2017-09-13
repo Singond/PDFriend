@@ -7,7 +7,6 @@ import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.cli.BookletBindingConverter;
 import com.github.singond.pdfriend.cli.IntegerDimensionsConverter;
-import com.github.singond.pdfriend.cli.PageOptions;
 import com.github.singond.pdfriend.cli.ParameterDelegate;
 import com.github.singond.pdfriend.cli.SubCommand;
 import com.github.singond.pdfriend.geometry.IntegerDimensions;

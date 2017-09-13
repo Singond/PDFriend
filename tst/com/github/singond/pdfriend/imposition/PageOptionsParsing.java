@@ -1,4 +1,4 @@
-package com.github.singond.pdfriend.cli;
+package com.github.singond.pdfriend.imposition;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -7,7 +7,7 @@ import com.beust.jcommander.ParametersDelegate;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.cli.ArgumentParsingException;
-import com.github.singond.pdfriend.cli.PageOptions;
+import com.github.singond.pdfriend.imposition.PageOptions;
 import com.github.singond.pdfriend.imposition.Preprocessor;
 
 import static org.junit.Assert.*;
