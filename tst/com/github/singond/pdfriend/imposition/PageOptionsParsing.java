@@ -7,7 +7,7 @@ import com.beust.jcommander.ParametersDelegate;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.cli.ArgumentParsingException;
-import com.github.singond.pdfriend.imposition.PageOptions;
+import com.github.singond.pdfriend.imposition.PreprocessorSettingsCli;
 import com.github.singond.pdfriend.imposition.Preprocessor;
 
 import static org.junit.Assert.*;
@@ -17,7 +17,7 @@ public class PageOptionsParsing {
 	private static ExtendedLogger logger = Log.logger(PageOptionsParsing.class);
 
 	@ParametersDelegate
-	private PageOptions size = new PageOptions();
+	private PreprocessorSettingsCli size = new PreprocessorSettingsCli();
 	@com.beust.jcommander.Parameter
 	private String main;
 	private JCommander cmdr;

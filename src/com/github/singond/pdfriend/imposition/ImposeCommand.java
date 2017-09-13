@@ -38,7 +38,7 @@ public class ImposeCommand extends SubCommand {
 	
 	/** Page pre-processing settings */
 	@ParametersDelegate
-	private PageOptions pageOpts = new PageOptions();
+	private PreprocessorSettingsCli pageOpts = new PreprocessorSettingsCli();
 	
 	@Parameter(names="--pages", description="")
 	private int pages = -1;
