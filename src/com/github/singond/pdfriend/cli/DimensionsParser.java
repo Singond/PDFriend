@@ -1,6 +1,8 @@
 package com.github.singond.pdfriend.cli;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,6 +16,7 @@ import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
+import com.github.singond.pdfriend.geometry.Margins;
 import com.github.singond.pdfriend.geometry.PaperFormat;
 import com.github.singond.pdfriend.geometry.PaperFormats;
 
@@ -182,7 +185,7 @@ class DimensionsParser {
 	 * Converts a string to a rectangle size.
 	 * 
 	 * This method interprets the string as WIDTHxHEIGHT.
-	 * It is assumes that if only one unit is given, it is after the
+	 * It is assumed that if only one unit is given, it is after the
 	 * second dimension. If it is given, it is used to parse the first
 	 * number as well. This enables shorhand notation like 20x30cm
 	 * to actually mean "20 cm (width) by 30 cm (height)".
@@ -339,5 +342,87 @@ class DimensionsParser {
 	 */
 	ParsingResult<Length> parseAngle(String arg) {
 		return parseLength(arg, null);
+	}
+	
+	/**
+	 * Converts a string to the four widths of page margins.
+	 * 
+	 * This method interprets the string as either A; A,B; or A,B,C,D.
+	 * It is assumed that if only one unit is given, it is after the
+	 * last dimension. If it is given, it is used to parse the preceding
+	 * numbers as well. This enables shorhand notation like 20,30mm
+	 * to actually mean "left and right margin 20 mm wide and top and
+	 * bottom margins 30 mm wide".
+	 * <p>
+	 * The argument can take one of the following forms:
+	 * <li>A single length like {@code A}: All four margins have the specified
+	 *     width, ie. left = right = top = bottom = A.
+	 * <li>Two lengths like {@code A,B}: These are taken to mean the horizontal
+	 *     and vertical margins, respectively. This means left = right = A,
+	 *     bottom = top = B.
+	 * <li>Four lengths like {@code A,B,C,D}. Each margin can have its own
+	 *     width. The numbers are interpreted as left, right, bottom and top
+	 *     margin, respectively: left = A, right = B, bottom = C, top = D.
+	 * 
+	 * @param arg the string to be parsed
+	 * @param dfltUnit the default length unit to be used if none is given
+	 * @return a {@code Parsed} object wrapping the parsed result, or
+	 *         an {@code Unparsable} instance if the string cannot be parsed
+	 */
+	ParsingResult<Margins> parseMargins(String arg, LengthUnit dfltUnit) {
+		String[] parts = arg.split(",", 4);
+		
+		if (parts.length != 1 && parts.length != 2 && parts.length != 4) {
+			return new Unparsable<>
+					("Please provide one, two or four values separated by commas");
+		}
+		
+		/*
+		 * Lets assume that if only one unit is given, it is after the
+		 * last dimension. If it is given, use it to parse the preceding
+		 * numbers as well. This enables shorhand notation like 20,30mm
+		 * to actually mean "left and right margin 20 mm wide and top and
+		 * bottom margins 30 mm wide". (See method docs.)
+		 */
+		ParsingResult<LengthWithUnit> lenLast =
+				parseLengthAndUnit(parts[parts.length-1], dfltUnit);
+		if (lenLast.parsedSuccessfully()) {
+			List<Length> lengths = new ArrayList<>(parts.length);
+			for (int i = 0; i < parts.length-1; i++) {
+				ParsingResult<Length> len;
+				// Use the unit from the last part as the default for the previous
+				len = parseLength(parts[i], lenLast.getResult().unit);
+				if (len.parsedSuccessfully()) {
+					Length length = len.getResult();
+					lengths.add(length);
+				} else {
+					return new Unparsable<>
+							("Unknown length format: " + parts[i] + " in " + arg);
+				}
+			}
+			lengths.add(lenLast.getResult().length);
+			
+			Margins margins;
+			switch (parts.length) {
+				case 1:
+					margins = new Margins(lengths.get(0), lengths.get(0),
+					                      lengths.get(0), lengths.get(0));
+					break;
+				case 2:
+					margins = new Margins(lengths.get(0), lengths.get(0),
+					                      lengths.get(1), lengths.get(1));
+					break;
+				case 4:
+					margins = new Margins(lengths.get(0), lengths.get(1),
+    				                      lengths.get(2), lengths.get(3));
+					break;
+				default:
+					return new Unparsable<>
+							("Wrong number of elements in margins definition: " + arg);
+			}
+			logger.debug("parse_margins_success", margins);
+			return new Parsed<>(margins);
+		}
+		return new Unparsable<>("Unknown format of margins: " + arg);
 	}
 }
