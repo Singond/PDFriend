@@ -12,9 +12,9 @@ import com.github.singond.pdfriend.imposition.Preprocessor;
 
 import static org.junit.Assert.*;
 
-public class PageOptionsParsing {
+public class PreprocessorSettingsParsing {
 	
-	private static ExtendedLogger logger = Log.logger(PageOptionsParsing.class);
+	private static ExtendedLogger logger = Log.logger(PreprocessorSettingsParsing.class);
 
 	@ParametersDelegate
 	private PreprocessorSettingsCli size = new PreprocessorSettingsCli();
