@@ -34,7 +34,7 @@ public class MarginsParsing {
 	
 	@Test
 	public void test1() {
-		testParseability("--margins=2");
+		testParseability("--margins=1.1cm,5mm");
 	}
 	
 	/**

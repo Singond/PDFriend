@@ -47,4 +47,18 @@ public class Margins {
 	public Length left() {
 		return left;
 	}
+	
+	@Override
+	public String toString() {
+		return toString(LengthUnits.MILLIMETRE);
+	}
+	
+	public String toString(LengthUnit unit) {
+		return new StringBuilder()
+				.append("left: ").append(left.toString(unit)).append(", ")
+				.append("right: ").append(right.toString(unit)).append(", ")
+				.append("bottom: ").append(bottom.toString(unit)).append(", ")
+				.append("top: ").append(top.toString(unit))
+				.toString();
+	}
 }
