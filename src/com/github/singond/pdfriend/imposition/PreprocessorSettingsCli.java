@@ -43,7 +43,7 @@ public class PreprocessorSettingsCli implements ParameterDelegate {
 	
 	@Parameter(names={"--size"},
 	           description="Size of the imposed pages before resizing",
-	           descriptionKey="param-pageSize",
+	           descriptionKey="param-inputPageSize",
 	           converter=DimensionsConverter.class)
 	private Dimensions pageSize = AUTO;
 	
