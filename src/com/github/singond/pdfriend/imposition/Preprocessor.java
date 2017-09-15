@@ -489,8 +489,6 @@ public final class Preprocessor {
 				.toString();
 	}
 	
-	/* Resizing */
-	
 	/**
 	 * A reusable container of all the settings available for preprocessing
 	 * the input pages.
@@ -651,6 +649,8 @@ public final class Preprocessor {
 					.toString();
 		}
 	}
+	
+	/* Resizing */
 
 	/**
 	 * Specifies behaviour for page size.
