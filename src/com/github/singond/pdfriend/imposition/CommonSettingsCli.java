@@ -7,14 +7,15 @@ import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.Margins;
 
 /**
- * Settings common to the Imposition module.
- * These are various settings for the output document, the exact meaning
- * of which can vary slightly depending on the type of imposition.
+ * A command-line interface for {@link CommonSettings}.
  *
+ * Provides configuration settings for the imposition module which affect
+ * the output document. The settings include page size, sheet size, number
+ * of pages etc.
+ * 
  * @author Singon
- *
  */
-public class CommonSettings {
+public class CommonSettingsCli {
 
 	/** Number of pages in the output document */
 	@Parameter(names="--pages",
