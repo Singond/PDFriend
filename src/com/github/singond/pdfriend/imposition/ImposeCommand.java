@@ -62,7 +62,7 @@ public class ImposeCommand extends SubCommand {
 		Imposable task = type.getImpositionTask(impose);
 		if (pageOpts.isSet()) {
 //			impose.setPreprocessing(pageOpts.getPreprocessorSettings());
-			task.setPreprocessing(pageOpts.getPreprocessorSettings());
+			task.acceptPreprocessSettings(pageOpts.getPreprocessorSettings());
 		}
 		impose.setTask(task);
 		return impose;

@@ -35,6 +35,7 @@ public class NUp implements Imposable {
 	private NUpOrientation orientation = NUpOrientation.UPRIGHT;
 	private FillDirection direction = FillDirection.ROWS;
 	private Preprocessor.Settings preprocess = null;
+	private CommonSettings common = null;
 	
 	/**
 	 * Sets the number of pages to be created.
@@ -195,13 +196,18 @@ public class NUp implements Imposable {
 	}
 
 	@Override
-	public void setPreprocessing(Settings settings) {
+	public void acceptPreprocessSettings(Settings settings) {
 		this.preprocess = settings.copy();
+	}
+	
+	@Override
+	public void acceptCommonSettings(CommonSettings settings) {
+		this.common = settings;
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @return always the valye of {@code false}
+	 * @return always the value of {@code false}
 	 */
 	@Override
 	public boolean prefersMultipleInput() {

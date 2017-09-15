@@ -273,7 +273,13 @@ public class Booklet implements Imposable {
 	}
 	
 	@Override
-	public void setPreprocessing(Settings settings) {
+	public void acceptPreprocessSettings(Settings settings) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented yet");
+	}
+	
+	@Override
+	public void acceptCommonSettings(CommonSettings settings) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not implemented yet");
 	}

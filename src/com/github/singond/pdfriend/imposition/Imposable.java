@@ -21,7 +21,13 @@ public interface Imposable {
 	 * Sets the parameters to be used when pre-processing the pages.
 	 * @param settings
 	 */
-	public void setPreprocessing(Preprocessor.Settings settings);
+	public void acceptPreprocessSettings(Preprocessor.Settings settings);
+	
+	/**
+	 * Sets the common imposition settings to be used.
+	 * @param settings
+	 */
+	public void acceptCommonSettings(CommonSettings settings);
 	
 	/**
 	 * Returns whether this imposable prefers the input to be multiple
