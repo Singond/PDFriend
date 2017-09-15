@@ -72,6 +72,7 @@ public class ImposeCommand extends SubCommand {
 	 * Groups the individual imposition types into one group, from which
 	 * only one imposition type should be selected.
 	 */
+	@Deprecated
 	@Parameters(separators=" ")
 	public class TypeArgument implements ParameterDelegate {
 		@Parameter(names="--booklet", description="A simple stack of sheets folded in half")
