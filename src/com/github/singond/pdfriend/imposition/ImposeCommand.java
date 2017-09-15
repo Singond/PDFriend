@@ -30,10 +30,12 @@ public class ImposeCommand extends SubCommand {
 	
 	/** Specifies where the binding is located */
 	@Parameter(names="--binding", converter=BookletBindingConverter.class)
+	@Deprecated
 	private Booklet.Binding binding = Booklet.Binding.LEFT;
 	
 	/** In a vertical booklet, print the verso upside down. */
 	@Parameter(names="--verso-opposite")
+	@Deprecated
 	private boolean flipVerso = false;
 	
 	/** Page pre-processing settings */
