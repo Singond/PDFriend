@@ -13,7 +13,7 @@ import com.github.singond.pdfriend.geometry.AngularUnits;
 import com.github.singond.pdfriend.geometry.Dimensions;
 
 @Parameters(resourceBundle = "Help", separators="=")
-public class PreprocessorSettingsCli implements ParameterDelegate {
+class PreprocessorSettingsCli implements ParameterDelegate {
 	
 	private static final Angle DEFAULT_ROTATION = new Angle(0);
 	private static final TwoNumbers DEFAULT_ALIGNMENT = new TwoNumbers(0,0);

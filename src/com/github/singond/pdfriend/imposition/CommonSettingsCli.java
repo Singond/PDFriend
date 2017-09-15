@@ -19,7 +19,7 @@ import com.github.singond.pdfriend.geometry.Margins;
  * @author Singon
  */
 @Parameters(separators="=")
-public class CommonSettingsCli implements ParameterDelegate {
+class CommonSettingsCli implements ParameterDelegate {
 
 	/** Number of pages in the output document */
 	@Parameter(names="--pages",

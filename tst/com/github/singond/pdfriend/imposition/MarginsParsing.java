@@ -1,18 +1,14 @@
-package com.github.singond.pdfriend.cli;
+package com.github.singond.pdfriend.imposition;
 
 import org.junit.Before;
 import org.junit.Test;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameters;
-import com.beust.jcommander.ParametersDelegate;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.cli.ArgumentParsingException;
+import com.github.singond.pdfriend.cli.MarginsConverter;
 import com.github.singond.pdfriend.geometry.Margins;
-import com.github.singond.pdfriend.imposition.PreprocessorSettingsCli;
-import com.github.singond.pdfriend.imposition.Preprocessor;
-
-import static org.junit.Assert.*;
 
 @Parameters(separators="=")
 public class MarginsParsing {
