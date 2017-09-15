@@ -40,8 +40,8 @@ public class ImposeCommand extends SubCommand {
 	@ParametersDelegate
 	private PreprocessorSettingsCli pageOpts = new PreprocessorSettingsCli();
 	
-	@Parameter(names="--pages", description="")
-	private int pages = -1;
+	@ParametersDelegate
+	private CommonSettingsCli commonOpts = new CommonSettingsCli();
 
 	@Override
 	public ImposeCommand newInstance() {
@@ -58,12 +58,11 @@ public class ImposeCommand extends SubCommand {
 		Imposition impose = new Imposition();
 		impose.setBinding(binding);
 		impose.setFlipVerso(flipVerso);
-		impose.setPages(pages);
 		Imposable task = type.getImpositionTask(impose);
-		if (pageOpts.isSet()) {
-//			impose.setPreprocessing(pageOpts.getPreprocessorSettings());
+		if (pageOpts.isSet())
 			task.acceptPreprocessSettings(pageOpts.getPreprocessorSettings());
-		}
+		if (commonOpts.isSet())
+			task.acceptCommonSettings(commonOpts.getCommonSettings());
 		impose.setTask(task);
 		return impose;
 	}

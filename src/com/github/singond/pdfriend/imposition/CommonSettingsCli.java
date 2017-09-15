@@ -1,8 +1,10 @@
 package com.github.singond.pdfriend.imposition;
 
 import com.beust.jcommander.Parameter;
+import com.github.singond.pdfriend.cli.ArgumentParsingException;
 import com.github.singond.pdfriend.cli.DimensionsConverter;
 import com.github.singond.pdfriend.cli.MarginsConverter;
+import com.github.singond.pdfriend.cli.ParameterDelegate;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.Margins;
 
@@ -15,7 +17,7 @@ import com.github.singond.pdfriend.geometry.Margins;
  * 
  * @author Singon
  */
-public class CommonSettingsCli {
+public class CommonSettingsCli implements ParameterDelegate {
 
 	/** Number of pages in the output document */
 	@Parameter(names="--pages",
@@ -33,7 +35,7 @@ public class CommonSettingsCli {
 	           description="Size of a single page of the assembled output document",
 	           descriptionKey="param-pageSize",
 	           converter=DimensionsConverter.class)
-	private Dimensions pageSize;
+	private Dimensions pageSize = CommonSettings.AUTO_DIMENSIONS;
 	
 	/**
 	 * Size of the output sheet before assembling the document.
@@ -47,7 +49,7 @@ public class CommonSettingsCli {
 	           description="Size of a single page of the assembled output document",
 	           descriptionKey="param-pageSize",
 	           converter=DimensionsConverter.class)
-	private Dimensions sheetSize;
+	private Dimensions sheetSize = CommonSettings.AUTO_DIMENSIONS;
 	
 	/**
 	 * Margins of the output page.
@@ -65,5 +67,26 @@ public class CommonSettingsCli {
 	           description="Margins of the output page",
 	           descriptionKey="param-margins",
 	           converter=MarginsConverter.class)
-	private Margins margins;
+	private Margins margins = CommonSettings.AUTO_MARGINS;
+
+	@Override
+	public void postParse() throws ArgumentParsingException {
+		// Do nothing
+	}
+	
+	public boolean isSet() {
+		return pages > 0
+				|| pageSize != CommonSettings.AUTO_DIMENSIONS
+				|| sheetSize != CommonSettings.AUTO_DIMENSIONS
+				|| margins != CommonSettings.AUTO_MARGINS;
+	}
+	
+	public CommonSettings getCommonSettings() {
+		CommonSettings.Builder sb = new CommonSettings.Builder();
+		sb.setPages(pages);
+		sb.setPageSize(pageSize);
+		sb.setSheetSize(sheetSize);
+		sb.setMargins(margins);
+		return sb.build();
+	}
 }
