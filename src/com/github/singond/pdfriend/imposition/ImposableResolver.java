@@ -30,7 +30,7 @@ class ImposableResolver implements ParameterDelegate {
 	 * All options for the imposable type should be here.
 	 * If any is omitted from this set, it will be ignored in the command line.
 	 */
-	private final Set<? extends ImposableCli> imposables =
+	private final Set<? extends ImposableCli<?>> imposables =
 			new HashSet<>(Arrays.asList(booklet, nup, overlay));
 	
 	/**
@@ -47,8 +47,8 @@ class ImposableResolver implements ParameterDelegate {
 	 *         types is given
 	 */
 	public Imposable getImpositionTask(Imposition module) {
-		ImposableCli selected = null;
-		for (ImposableCli i : imposables) {
+		ImposableCli<?> selected = null;
+		for (ImposableCli<?> i : imposables) {
 			if (i.isSet()) {
 				if (selected == null) {
 					selected = i;

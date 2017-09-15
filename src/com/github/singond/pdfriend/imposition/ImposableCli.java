@@ -9,9 +9,9 @@ import com.github.singond.pdfriend.cli.ParameterDelegate;
  * as well as any type-specific arguments the imposable type may have.
  *
  * @author Singon
- *
+ * @param <T> the type of {@code Imposable} handled by this CLI
  */
-interface ImposableCli extends ParameterDelegate {
+interface ImposableCli<T extends Imposable> extends ParameterDelegate {
 
 	/**
 	 * Checks whether this imposable type has been set in the command line.
@@ -20,8 +20,8 @@ interface ImposableCli extends ParameterDelegate {
 	public boolean isSet();
 	
 	/**
-	 * Returns an {@code Imposable} object initialized with the arguments
-	 * specific to this type.
+	 * Returns the object implementing {@code Imposable}, initialized with the
+	 * arguments specific to this type.
 	 */
-	public Imposable getImposable();
+	public T getImposable();
 }

@@ -10,7 +10,7 @@ import com.github.singond.pdfriend.cli.BookletBindingConverter;
  * @author Singon
  *
  */
-class BookletCli implements ImposableCli {
+class BookletCli implements ImposableCli<Booklet> {
 
 	@Parameter(names="--booklet", description="A simple stack of sheets folded in half")
 	private boolean booklet = false;
@@ -34,7 +34,7 @@ class BookletCli implements ImposableCli {
 	}
 
 	@Override
-	public Imposable getImposable() {
+	public Booklet getImposable() {
 //		Imposition.TypeBooklet impl = module.new TypeBooklet();
 //		module.setType(impl);
 		throw new UnsupportedOperationException("Not implemented yet");

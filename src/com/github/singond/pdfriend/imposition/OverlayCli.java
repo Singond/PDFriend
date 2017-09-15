@@ -9,7 +9,7 @@ import com.github.singond.pdfriend.cli.ArgumentParsingException;
  * @author Singon
  *
  */
-class OverlayCli implements ImposableCli {
+class OverlayCli implements ImposableCli<Overlay> {
 
 	@Parameter(names="--overlay", description="Print pages on top of each other")
 	private boolean overlay = false;
@@ -25,7 +25,7 @@ class OverlayCli implements ImposableCli {
 	}
 
 	@Override
-	public Imposable getImposable() {
+	public Overlay getImposable() {
 		// TODO Pass some value into layers argument or remove it
 //		Imposition.TypeOverlay impl = module.new TypeOverlay(-1);
 //		module.setType(impl);

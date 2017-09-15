@@ -11,7 +11,7 @@ import com.github.singond.pdfriend.geometry.IntegerDimensions;
  * @author Singon
  *
  */
-class NUpCli implements ImposableCli {
+class NUpCli implements ImposableCli<NUp> {
 
 	@Parameter(names={"--n-up", "--nup"},
 			description="Several pages arranged into a grid on a larget sheet",
@@ -29,7 +29,7 @@ class NUpCli implements ImposableCli {
 	}
 
 	@Override
-	public Imposable getImposable() {
+	public NUp getImposable() {
 		NUp task = new NUp();
 		task.setRows(nup.getFirstDimension());
 		task.setCols(nup.getSecondDimension());
