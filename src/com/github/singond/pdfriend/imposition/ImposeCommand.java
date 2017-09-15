@@ -40,6 +40,7 @@ public class ImposeCommand extends SubCommand {
 	@ParametersDelegate
 	private PreprocessorSettingsCli pageOpts = new PreprocessorSettingsCli();
 	
+	/** Common imposition settings */
 	@ParametersDelegate
 	private CommonSettingsCli commonOpts = new CommonSettingsCli();
 

@@ -1,6 +1,7 @@
 package com.github.singond.pdfriend.imposition;
 
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 import com.github.singond.pdfriend.cli.ArgumentParsingException;
 import com.github.singond.pdfriend.cli.DimensionsConverter;
 import com.github.singond.pdfriend.cli.MarginsConverter;
@@ -17,6 +18,7 @@ import com.github.singond.pdfriend.geometry.Margins;
  * 
  * @author Singon
  */
+@Parameters(separators="=")
 public class CommonSettingsCli implements ParameterDelegate {
 
 	/** Number of pages in the output document */
