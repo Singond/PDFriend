@@ -37,8 +37,10 @@ public class Imposition implements Module {
 	@Deprecated
 	private boolean flipVerso = false;
 	/** Number of output pages */
+	@Deprecated
 	private int pages = -1;
 	/** Pre-processing settings like scale, rotation or resizing */
+	@Deprecated
 	private Preprocessor.Settings preprocess;
 	
 	/** The unit used in working with book object model */
@@ -75,18 +77,22 @@ public class Imposition implements Module {
 		this.flipVerso = flipVerso;
 	}
 
+	@Deprecated
 	public int getPages() {
 		return pages;
 	}
 
+	@Deprecated
 	public void setPages(int pages) {
 		this.pages = pages;
 	}
 
+	@Deprecated
 	public Preprocessor.Settings getPreprocessing() {
 		return preprocess;
 	}
 
+	@Deprecated
 	public void setPreprocessing(Preprocessor.Settings preprocess) {
 		this.preprocess = preprocess;
 	}
