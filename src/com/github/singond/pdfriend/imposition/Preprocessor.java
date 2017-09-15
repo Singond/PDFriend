@@ -494,6 +494,11 @@ public final class Preprocessor {
 	/**
 	 * A reusable container of all the settings available for preprocessing
 	 * the input pages.
+	 * 
+	 * TODO: Make the settings class final and provide a separate builder?
+	 * The Preprocessor itself is immutable, but it might be better not to
+	 * share its instances directly. Instantiating a new one from settings
+	 * any time it is necessary seems safer.
 	 *
 	 * @author Singon
 	 *
