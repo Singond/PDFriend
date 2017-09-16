@@ -26,16 +26,16 @@ public class ImposeCommand extends SubCommand {
 	private static ExtendedLogger logger = Log.logger(ImposeCommand.class);
 
 	/** A pre-defined type of imposition: booklet, n-up etc. */
-	@ParametersDelegate
+//	@ParametersDelegate
 	private TypeArgument type = new TypeArgument();
 	
 	/** Specifies where the binding is located */
-	@Parameter(names="--binding", converter=BookletBindingConverter.class)
+//	@Parameter(names="--binding", converter=BookletBindingConverter.class)
 	@Deprecated
 	private Booklet.Binding binding = Booklet.Binding.LEFT;
 	
 	/** In a vertical booklet, print the verso upside down. */
-	@Parameter(names="--verso-opposite")
+//	@Parameter(names="--verso-opposite")
 	@Deprecated
 	private boolean flipVerso = false;
 	
@@ -60,7 +60,7 @@ public class ImposeCommand extends SubCommand {
 	protected void postParseSpecific() throws ParameterConsistencyException {
 		pageOpts.postParse();
 		commonOpts.postParse();
-		
+		imposable.postParse();
 		type.postParse();
 	}
 	
@@ -69,7 +69,8 @@ public class ImposeCommand extends SubCommand {
 		Imposition impose = new Imposition();
 		impose.setBinding(binding);
 		impose.setFlipVerso(flipVerso);
-		Imposable task = type.getImpositionTask(impose);
+//		Imposable task = type.getImpositionTask(impose);
+		Imposable task = imposable.getImpositionTask();
 		if (pageOpts.isSet())
 			task.acceptPreprocessSettings(pageOpts.getPreprocessorSettings());
 		if (commonOpts.isSet())
