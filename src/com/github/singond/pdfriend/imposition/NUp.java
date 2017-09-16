@@ -123,14 +123,22 @@ public class NUp implements Imposable {
 	 * according to the current settings of this {@code NUp} object.
 	 */
 	public List<Page> imposeAsPages(VirtualDocument doc) {
+		// Copy all nonfinal values defensively
 		int pageCount = this.pages;
 		final int rows = this.rows;
 		final int cols = this.cols;
 		final Preprocessor.Settings preprocess = this.preprocess;
+		final CommonSettings common = this.common;
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("imposition_preprocessSettings", preprocess);
+			logger.debug("imposition_commonSettings", common);
+//			logger.debug("imposition_imposableSettings", NAME, );
+		}
 		
 		// The rows and cols arguments should be OK, but check them anyway
 		if (rows < 1 || cols < 1) {
-			throw new IllegalArgumentException(String.format
+			throw new IllegalStateException(String.format
 					("Wrong number of cells in grid: %dx%d", rows, cols));
 		}
 		
