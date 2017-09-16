@@ -1,7 +1,7 @@
 package com.github.singond.pdfriend.imposition;
 
 import com.beust.jcommander.Parameter;
-import com.github.singond.pdfriend.cli.ArgumentParsingException;
+import com.github.singond.pdfriend.cli.ParameterConsistencyException;
 import com.github.singond.pdfriend.cli.BookletBindingConverter;
 
 /**
@@ -24,7 +24,7 @@ class BookletCli implements ImposableCli<Booklet> {
 	private boolean flipVerso = false;
 
 	@Override
-	public void postParse() throws ArgumentParsingException {
+	public void postParse() throws ParameterConsistencyException {
 		// Do nothing
 	}
 

@@ -6,7 +6,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameters;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.cli.ArgumentParsingException;
+import com.github.singond.pdfriend.cli.ParameterConsistencyException;
 import com.github.singond.pdfriend.cli.MarginsConverter;
 import com.github.singond.pdfriend.geometry.Margins;
 
@@ -38,7 +38,7 @@ public class MarginsParsing {
 	 * @param arg
 	 * @param expWidth the expected width in points
 	 * @param expHeight the expected height in points
-	 * @throws ArgumentParsingException
+	 * @throws ParameterConsistencyException
 	 */
 	private void testParseability(String arg) {
 		logger.info("Parsing: "+arg);

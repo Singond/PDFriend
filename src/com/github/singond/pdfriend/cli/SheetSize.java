@@ -37,7 +37,7 @@ public class SheetSize implements ParameterDelegate {
 	 * Resolves the separate parameters into a consistent state of this object.
 	 */
 	@Override
-	public void postParse() throws ArgumentParsingException {
+	public void postParse() throws ParameterConsistencyException {
 		if (dimensions == null) {
 			if (portrait || landscape) {
 				// These switches have no meaning now, inform the user
@@ -57,28 +57,28 @@ public class SheetSize implements ParameterDelegate {
 	 * Resolves the width and height based on orientation.
 	 * This method assumes that {@code dimensions} is not null.
 	 * @return the dimensions as an array: {width, height}
-	 * @throws ArgumentParsingException if both --portrait and --landscape
+	 * @throws ParameterConsistencyException if both --portrait and --landscape
 	 *         options are set to true
 	 */
-	private double[] resolveDimensions() throws ArgumentParsingException {
+	private double[] resolveDimensions() throws ParameterConsistencyException {
 		assert (dimensions != null) : dimensions;
 		if (portrait && landscape) {
-			throw new ArgumentParsingException(
-					"Cannot provide both portrait and landscape options",
-					"parse_orientation_both");
+			logger.error("parse_orientation_both");
+			throw new ParameterConsistencyException(
+					"Cannot provide both portrait and landscape options");
 		} else {
-    		Dimensions dims = dimensions;
-    		double w = dims.width().in(LengthUnits.POINT_POSTSCRIPT);
-    		double h = dims.height().in(LengthUnits.POINT_POSTSCRIPT);
-    		boolean widthShorter = w < h;
-    		if (!portrait && !landscape            // No info, must leave it as it is
-    			|| portrait && widthShorter        // Desirable, leave it as it is
-    			|| landscape && !widthShorter) {   // Desirable, leave it as it is
-    			return new double[]{w, h};
-    		} else {
-    			// Need to swap h and w in output
-    			return new double[]{h, w};
-    		}
+			Dimensions dims = dimensions;
+			double w = dims.width().in(LengthUnits.POINT_POSTSCRIPT);
+			double h = dims.height().in(LengthUnits.POINT_POSTSCRIPT);
+			boolean widthShorter = w < h;
+			if (!portrait && !landscape            // No info, must leave it as it is
+					|| portrait && widthShorter        // Desirable, leave it as it is
+					|| landscape && !widthShorter) {   // Desirable, leave it as it is
+				return new double[]{w, h};
+			} else {
+				// Need to swap h and w in output
+				return new double[]{h, w};
+			}
 		}
 	}
 	
@@ -92,10 +92,10 @@ public class SheetSize implements ParameterDelegate {
 	
 	/**
 	 * Returns the parsed width in PostScript points.
-	 * @throws ArgumentParsingException if both --portrait and --landscape
+	 * @throws ParameterConsistencyException if both --portrait and --landscape
 	 *         options are set to true
 	 */
-	public double getWidth() throws ArgumentParsingException {
+	public double getWidth() throws ParameterConsistencyException {
 		if (!isSet) {
 			throw new IllegalStateException("The sheet size has not been set");
 		} else if (widthHeight == null) {
@@ -109,10 +109,10 @@ public class SheetSize implements ParameterDelegate {
 	
 	/**
 	 * Returns the parsed width in PostScript points.
-	 * @throws ArgumentParsingException if both --portrait and --landscape
+	 * @throws ParameterConsistencyException if both --portrait and --landscape
 	 *         options are set to true
 	 */
-	public double getHeight() throws ArgumentParsingException {
+	public double getHeight() throws ParameterConsistencyException {
 		if (!isSet) {
 			throw new IllegalStateException("The sheet size has not been set");
 		} else if (widthHeight == null) {

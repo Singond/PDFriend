@@ -1,7 +1,7 @@
 package com.github.singond.pdfriend.imposition;
 
 import com.beust.jcommander.Parameter;
-import com.github.singond.pdfriend.cli.ArgumentParsingException;
+import com.github.singond.pdfriend.cli.ParameterConsistencyException;
 import com.github.singond.pdfriend.cli.IntegerDimensionsConverter;
 import com.github.singond.pdfriend.geometry.IntegerDimensions;
 
@@ -19,7 +19,7 @@ class NUpCli implements ImposableCli<NUp> {
 	private IntegerDimensions nup = null;
 
 	@Override
-	public void postParse() throws ArgumentParsingException {
+	public void postParse() throws ParameterConsistencyException {
 		// Do nothing
 	}
 

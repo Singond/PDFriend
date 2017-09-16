@@ -12,19 +12,16 @@ package com.github.singond.pdfriend.cli;
  * @author Singon
  *
  */
-public class ArgumentParsingException extends Exception {
+public class ParameterConsistencyException extends Exception {
 	
-	private final String key;
 	private static final long serialVersionUID = -2318967003570281216L;
 	
-	public ArgumentParsingException(String message, String key) {
+	public ParameterConsistencyException(String message) {
 		super(message);
-		this.key = key;
 	}
 	
-	public ArgumentParsingException(String message, String key, Throwable cause) {
+	public ParameterConsistencyException(String message, Throwable cause) {
 		super(message, cause);
-		this.key = key;
 	}
 
 }

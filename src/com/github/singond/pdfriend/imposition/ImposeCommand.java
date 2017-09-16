@@ -5,6 +5,7 @@ import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
+import com.github.singond.pdfriend.cli.ParameterConsistencyException;
 import com.github.singond.pdfriend.cli.BookletBindingConverter;
 import com.github.singond.pdfriend.cli.IntegerDimensionsConverter;
 import com.github.singond.pdfriend.cli.ParameterDelegate;
@@ -45,6 +46,10 @@ public class ImposeCommand extends SubCommand {
 	/** Common imposition settings */
 	@ParametersDelegate
 	private CommonSettingsCli commonOpts = new CommonSettingsCli();
+	
+	/** The imposition task */
+	@ParametersDelegate
+	private ImposableResolver imposable = new ImposableResolver();
 
 	@Override
 	public ImposeCommand newInstance() {
@@ -52,7 +57,10 @@ public class ImposeCommand extends SubCommand {
 	}
 	
 	@Override
-	protected void postParseSpecific() {
+	protected void postParseSpecific() throws ParameterConsistencyException {
+		pageOpts.postParse();
+		commonOpts.postParse();
+		
 		type.postParse();
 	}
 	

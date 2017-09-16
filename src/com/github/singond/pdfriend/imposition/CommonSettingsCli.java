@@ -2,7 +2,7 @@ package com.github.singond.pdfriend.imposition;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.github.singond.pdfriend.cli.ArgumentParsingException;
+import com.github.singond.pdfriend.cli.ParameterConsistencyException;
 import com.github.singond.pdfriend.cli.DimensionsConverter;
 import com.github.singond.pdfriend.cli.MarginsConverter;
 import com.github.singond.pdfriend.cli.ParameterDelegate;
@@ -72,7 +72,7 @@ class CommonSettingsCli implements ParameterDelegate {
 	private Margins margins = CommonSettings.AUTO_MARGINS;
 
 	@Override
-	public void postParse() throws ArgumentParsingException {
+	public void postParse() throws ParameterConsistencyException {
 		// Do nothing
 	}
 	

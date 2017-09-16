@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.beust.jcommander.ParametersDelegate;
-import com.github.singond.pdfriend.cli.ArgumentParsingException;
+import com.github.singond.pdfriend.cli.ParameterConsistencyException;
 import com.github.singond.pdfriend.cli.ParameterDelegate;
 
 /**
@@ -68,16 +68,16 @@ class ImposableResolver implements ParameterDelegate {
 	/**
 	 * Verifies that no more than one imposable type is given in the
 	 * command line and throws an exception otherwise.
-	 * @throws ArgumentParsingException if more than one imposable type
+	 * @throws ParameterConsistencyException if more than one imposable type
 	 *         appears among the command-line arguments
 	 */
 	@Override
-	public void postParse() throws ArgumentParsingException {
+	public void postParse() throws ParameterConsistencyException {
 		int imposablesCount = countImposables();
 		if (imposablesCount > 1) {
-			throw new ArgumentParsingException("Only one type of imposition can be given", null);
+			throw new ParameterConsistencyException("Only one type of imposition can be given", null);
 		} else if (imposablesCount < 1) {
-			throw new ArgumentParsingException("The type of imposition must be given", null);
+			throw new ParameterConsistencyException("The type of imposition must be given", null);
 		}
 	}
 	

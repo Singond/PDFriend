@@ -96,7 +96,7 @@ public class Console {
 				subcmd.postParse();
 				pipe.addOperation(subcmd.getModule());
 			}
-		} catch (ArgumentParsingException e) {
+		} catch (ParameterConsistencyException e) {
 			// TODO Handle the exception somehow
 			logger.error("Conflicting arguments", e);
 		}

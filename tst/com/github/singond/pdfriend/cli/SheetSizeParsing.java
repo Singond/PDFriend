@@ -13,7 +13,7 @@ import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.ParametersDelegate;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.cli.ArgumentParsingException;
+import com.github.singond.pdfriend.cli.ParameterConsistencyException;
 import com.github.singond.pdfriend.cli.SheetSize;
 
 import static org.junit.Assert.*;
@@ -78,7 +78,7 @@ public class SheetSizeParsing {
 		 * @param arg
 		 * @param expWidth the expected width in points
 		 * @param expHeight the expected height in points
-		 * @throws ArgumentParsingException 
+		 * @throws ParameterConsistencyException 
 		 */
 		private void test(String arg, double expWidth, double expHeight) {
 			double w, h;
@@ -102,7 +102,7 @@ public class SheetSizeParsing {
 					assertFalse("Failed to parse string "+arg, size || portrait || landscape);
 					logger.info("Correctly ignored string: "+arg);
 				}
-			} catch (ArgumentParsingException e) {
+			} catch (ParameterConsistencyException e) {
 				e.printStackTrace();
 				fail("Could not parse the string: " + arg);
 			}
@@ -147,7 +147,7 @@ public class SheetSizeParsing {
 		 * @param arg
 		 * @param expWidth the expected width in points
 		 * @param expHeight the expected height in points
-		 * @throws ArgumentParsingException 
+		 * @throws ParameterConsistencyException 
 		 */
 		private void test(String arg) {
 			String[] args = arg.split(" ");

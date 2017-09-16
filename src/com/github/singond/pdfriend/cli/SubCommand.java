@@ -47,10 +47,10 @@ public abstract class SubCommand {
 	/**
 	 * Method to be invoked after this SubCommand object is built
 	 * and initialized with values from the command line.
-	 * @throws ArgumentParsingException if the parsed values put the object
+	 * @throws ParameterConsistencyException if the parsed values put the object
 	 *         into an invalid state
 	 */
-	public void postParse() throws ArgumentParsingException {
+	public void postParse() throws ParameterConsistencyException {
 		inputFiles.postParse();
 		outputFile.postParse();
 		postParseSpecific();
@@ -61,10 +61,10 @@ public abstract class SubCommand {
 	 * and initialized with values from the command line.
 	 * This is a subclass-specific implementation which is invoked by
 	 * {@code postParseDefault} in {@link SubCommand}.
-	 * @throws ArgumentParsingException if the parsed values put the object
+	 * @throws ParameterConsistencyException if the parsed values put the object
 	 *         into an invalid state
 	 */
-	protected abstract void postParseSpecific() throws ArgumentParsingException;
+	protected abstract void postParseSpecific() throws ParameterConsistencyException;
 	
 	/**
 	 * Returns a PDFriend module with fully initialized state ready

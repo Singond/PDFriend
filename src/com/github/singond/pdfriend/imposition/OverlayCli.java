@@ -1,7 +1,7 @@
 package com.github.singond.pdfriend.imposition;
 
 import com.beust.jcommander.Parameter;
-import com.github.singond.pdfriend.cli.ArgumentParsingException;
+import com.github.singond.pdfriend.cli.ParameterConsistencyException;
 
 /**
  * A command-line interface for the overlay imposable type {@link Overlay}.
@@ -15,7 +15,7 @@ class OverlayCli implements ImposableCli<Overlay> {
 	private boolean overlay = false;
 
 	@Override
-	public void postParse() throws ArgumentParsingException {
+	public void postParse() throws ParameterConsistencyException {
 		// Do nothing
 	}
 

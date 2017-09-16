@@ -6,7 +6,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParametersDelegate;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.cli.ArgumentParsingException;
+import com.github.singond.pdfriend.cli.ParameterConsistencyException;
 import com.github.singond.pdfriend.imposition.PreprocessorSettingsCli;
 import com.github.singond.pdfriend.imposition.Preprocessor;
 
@@ -75,7 +75,7 @@ public class PreprocessorSettingsParsing {
 	 * @param arg
 	 * @param expWidth the expected width in points
 	 * @param expHeight the expected height in points
-	 * @throws ArgumentParsingException
+	 * @throws ParameterConsistencyException
 	 */
 	private void testParseability(String arg) {
 		logger.info("Parsing: "+arg);
@@ -83,7 +83,7 @@ public class PreprocessorSettingsParsing {
 		try {
 			cmdr.parse(args);
 			size.postParse();
-		} catch (ArgumentParsingException e) {
+		} catch (ParameterConsistencyException e) {
 			e.printStackTrace();
 			fail("Could not parse the string: " + arg);
 		}

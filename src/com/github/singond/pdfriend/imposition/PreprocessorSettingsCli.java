@@ -2,7 +2,7 @@ package com.github.singond.pdfriend.imposition;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.github.singond.pdfriend.cli.ArgumentParsingException;
+import com.github.singond.pdfriend.cli.ParameterConsistencyException;
 import com.github.singond.pdfriend.cli.DimensionsConverter;
 import com.github.singond.pdfriend.cli.ParameterDelegate;
 import com.github.singond.pdfriend.cli.RotationConverter;
@@ -48,7 +48,7 @@ class PreprocessorSettingsCli implements ParameterDelegate {
 	private Dimensions pageSize = AUTO;
 	
 	@Override
-	public void postParse() throws ArgumentParsingException {
+	public void postParse() throws ParameterConsistencyException {
 		// Do nothing
 	}
 	

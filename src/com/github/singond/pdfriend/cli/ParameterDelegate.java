@@ -4,7 +4,7 @@ public interface ParameterDelegate {
 
 	/**
 	 * Code to be run after JCommander is finished parsing the arguments.
-	 * @throws ArgumentParsingException
+	 * @throws ParameterConsistencyException
 	 */
-	public void postParse() throws ArgumentParsingException;
+	public void postParse() throws ParameterConsistencyException;
 }
