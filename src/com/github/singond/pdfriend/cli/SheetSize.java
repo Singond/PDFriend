@@ -7,6 +7,10 @@ import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.LengthUnits;
 
+/**
+ * @deprecated superseded by {@link com.github.singond.pdfriend.imposition.CommonSettings}
+ */
+@Deprecated
 @Parameters(separators="=")
 public class SheetSize implements ParameterDelegate {
 	
