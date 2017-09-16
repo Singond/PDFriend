@@ -73,6 +73,16 @@ public class CommonSettings {
 		return margins;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("pages=").append(pages)
+				.append(", pageSize=").append(pageSize)
+				.append(", sheetSize=").append(sheetSize)
+				.append(", margins=").append(margins);
+		return builder.toString();
+	}
+
 	/**
 	 * A builder for {@link CommonSettings} objects.
 	 */
