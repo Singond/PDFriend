@@ -47,6 +47,8 @@ public abstract class SubCommand {
 	/**
 	 * Method to be invoked after this SubCommand object is built
 	 * and initialized with values from the command line.
+	 * @throws ArgumentParsingException if the parsed values put the object
+	 *         into an invalid state
 	 */
 	public void postParse() {
 		inputFiles.postParse();
@@ -58,7 +60,9 @@ public abstract class SubCommand {
 	 * Method to be invoked after the SubCommand subclass object is built
 	 * and initialized with values from the command line.
 	 * This is a subclass-specific implementation which is invoked by
-	 * {@code postParseDefault} in {@SubCommand}.
+	 * {@code postParseDefault} in {@link SubCommand}.
+	 * @throws ArgumentParsingException if the parsed values put the object
+	 *         into an invalid state
 	 */
 	protected abstract void postParseSpecific();
 	
