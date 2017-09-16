@@ -30,6 +30,7 @@ public class NUp implements Imposable {
 	private int pages = -1;
 	private int rows = 1;
 	private int cols = 1;
+	private GridType gridType = GridType.VALUE;
 	private double horizontalOffset = 0;
 	private double verticalOffset = 0;
 	private NUpOrientation orientation = NUpOrientation.UPRIGHT;
@@ -49,25 +50,44 @@ public class NUp implements Imposable {
 
 	/**
 	 * Sets the number of rows in the grid.
+	 * Setting this value will cause the imposition to ignore any previous
+	 * calls to {@link setAutoGrid}.
 	 * @param rows the number of rows
 	 * @return this NUp object
 	 */
 	public NUp setRows(int rows) {
 		if (rows < 1)
 			throw new IllegalArgumentException("Number of rows must be positive");
+		this.gridType = GridType.VALUE;
 		this.rows = rows;
 		return this;
 	}
 
 	/**
 	 * Sets the number of columns in the grid.
+	 * Setting this value will cause the imposition to ignore any previous
+	 * calls to {@link setAutoGrid}.
 	 * @param cols the number of columns
 	 * @return this NUp object
 	 */
 	public NUp setCols(int cols) {
 		if (cols < 1)
 			throw new IllegalArgumentException("Number of columns must be positive");
+		this.gridType = GridType.VALUE;
 		this.cols = cols;
+		return this;
+	}
+	
+	/**
+	 * Sets the number of rows and columns to automatic value.
+	 * The value will then be determined just before imposing,
+	 * once the input document is known.
+	 * Settings this value will cause the imposition to ignore any previous
+	 * calls to {@link setRows} and {@link setCols}.
+	 * @return
+	 */
+	public NUp setAutoGrid() {
+		this.gridType = GridType.AUTO;
 		return this;
 	}
 
@@ -136,11 +156,42 @@ public class NUp implements Imposable {
 //			logger.debug("imposition_imposableSettings", NAME, );
 		}
 		
-		// The rows and cols arguments should be OK, but check them anyway
+		/*
+		 * Determine all properties of the page and grid.
+		 * 
+		 * In the output document of an n-up imposition, the page and the
+		 * sheet are the same thing. This implies that page size and sheet
+		 * size should both resolve to the same value.
+		 * If both are explicitly set to a different value, an exception
+		 * will be thrown to indicate this.
+		 * If only sheet size is given, use it as page size.
+		 * In any case, use only the page size in the grid construction.
+		 */
+		Dimensions pageSize = common.getPageSize();
+		Dimensions sheetSize = common.getSheetSize();
+		if (sheetSize != CommonSettings.AUTO_DIMENSIONS) {
+			if (pageSize == CommonSettings.AUTO_DIMENSIONS) {
+				pageSize = sheetSize;
+			} else {
+				if (!pageSize.equals(sheetSize)) {
+					// The page size and sheet size are in conflict.
+					throw new IllegalStateException
+						("Sheet size and page size are set to a different value");
+				}
+			}
+		} // Otherwise just leave pageSize as it is
+		
+		
 		if (rows < 1 || cols < 1) {
-			throw new IllegalStateException(String.format
-					("Wrong number of cells in grid: %dx%d", rows, cols));
+			// Grid rows and columns unset
+			// TODO Build GridPage from known
 		}
+		
+		// The rows and cols arguments should be OK, but check them anyway
+//		if (rows < 1 || cols < 1) {
+//			throw new IllegalStateException(String.format
+//					("Wrong number of cells in grid: %dx%d", rows, cols));
+//		}
 		
 		/*
 		 * If the number of pages is unset, calculate the number of pages
@@ -275,5 +326,12 @@ public class NUp implements Imposable {
 		public GridPage.Direction getValue() {
 			return value;
 		}
+	}
+	
+	private static enum GridType {
+		/** Grid is given explicitly by number of columns and rows */
+		VALUE,
+		/** Grid should be determined from other settings */
+		AUTO;
 	}
 }
