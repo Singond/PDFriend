@@ -91,9 +91,14 @@ public class Console {
 		setVerbosity(global.quiet(), global.verbose(), global.debug());
 		
 		Pipe pipe = new Pipe();
-		for (SubCommand subcmd : subcommands) {
-			subcmd.postParse();
-			pipe.addOperation(subcmd.getModule());
+		try {
+			for (SubCommand subcmd : subcommands) {
+				subcmd.postParse();
+				pipe.addOperation(subcmd.getModule());
+			}
+		} catch (ArgumentParsingException e) {
+			// TODO Handle the exception somehow
+			logger.error("Conflicting arguments", e);
 		}
 		
 		/* Run the whole thing */

@@ -50,7 +50,7 @@ public abstract class SubCommand {
 	 * @throws ArgumentParsingException if the parsed values put the object
 	 *         into an invalid state
 	 */
-	public void postParse() {
+	public void postParse() throws ArgumentParsingException {
 		inputFiles.postParse();
 		outputFile.postParse();
 		postParseSpecific();
@@ -64,7 +64,7 @@ public abstract class SubCommand {
 	 * @throws ArgumentParsingException if the parsed values put the object
 	 *         into an invalid state
 	 */
-	protected abstract void postParseSpecific();
+	protected abstract void postParseSpecific() throws ArgumentParsingException;
 	
 	/**
 	 * Returns a PDFriend module with fully initialized state ready
