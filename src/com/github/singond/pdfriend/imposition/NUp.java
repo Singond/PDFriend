@@ -180,11 +180,25 @@ public class NUp implements Imposable {
 				}
 			}
 		} // Otherwise just leave pageSize as it is
+		sheetSize = null;           // Won't need this anymore
 		
-		
-		if (rows < 1 || cols < 1) {
-			// Grid rows and columns unset
-			// TODO Build GridPage from known
+		/*
+		 * Choose which parameters need to be determined and construct
+		 * a grid page builder.
+		 */
+//		GridPage.Builder builder;
+		if (pageSize == CommonSettings.AUTO_DIMENSIONS) {
+//			Case A in notes
+//			builder = fromUnknownPageSize();
+		} else if (gridType == GridType.AUTO) {
+//			Case D in notes
+//			builder = fromUnknownGrid();
+		} else if (common.getMargins() == CommonSettings.AUTO_MARGINS) {
+//			Case B in notes
+//			builder = fromUnknownMargins();
+		} else {
+//			Case C in notes
+//			builder = fromUnknownCellSize();
 		}
 		
 		// The rows and cols arguments should be OK, but check them anyway
