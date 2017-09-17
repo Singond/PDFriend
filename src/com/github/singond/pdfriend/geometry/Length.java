@@ -23,6 +23,14 @@ public final class Length implements Comparable<Length> {
 	}
 	
 	/**
+	 * Constructs a new object of the given value in the reference units.
+	 * @param value the value in reference units
+	 */
+	private Length(double value) {
+		this(value, REFERENCE_UNIT);
+	}
+	
+	/**
 	 * Converts this length into the given units.
 	 * @param unit the unit to convert into
 	 * @return this length expressed in terms of {@code otherUnit}
@@ -54,7 +62,20 @@ public final class Length implements Comparable<Length> {
 	 *         times larger than the value of this instance
 	 */
 	public Length multiply(double factor) {
-		return new Length(value*factor, REFERENCE_UNIT);
+		return new Length(value*factor);
+	}
+	
+	/**
+	 * Returns a sum of the given lengths.
+	 * @param lengths
+	 * @return a {@code Length} instance whose value is the sum of {@code lengths}
+	 */
+	public static Length sum(Length... lengths) {
+		double sum = 0;
+		for (Length l : lengths) {
+			sum += l.value;
+		}
+		return new Length(sum);
 	}
 	
 	@Override
