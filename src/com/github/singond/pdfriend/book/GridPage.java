@@ -54,12 +54,12 @@ public class GridPage extends MultiPage {
 	 * @param cellHeight height of a single cell
 	 * @param orientation orientation of the grid
 	 */
-	public GridPage(int columns, int rows,
+	public GridPage(double pageWidth, double pageHeight,
+	                int columns, int rows,
 	                double cellWidth, double cellHeight,
 	                double horizontalOffset, double verticalOffset,
 	                GridOrientation orientation) {
-		super(pageWidth(columns, rows, cellWidth, cellHeight, orientation),
-		      pageHeight(columns, rows, cellWidth, cellHeight, orientation));
+		super(pageWidth, pageHeight);
 		this.orientation = orientation;
 		
 		/** Grid position */
@@ -97,6 +97,25 @@ public class GridPage extends MultiPage {
 		}
 		// Set the matrix as the backing matrix
 		matrix = cells;
+	}
+	
+	/**
+	 * Constructs a new GridPage with cells of the given dimensions.
+	 * The page dimensions are calculated so as to fit the upper right
+	 * vertex of the grid.
+	 * @param columns number of columns in the grid
+	 * @param rows number of rows in the grid
+	 * @param cellWidth width of a single cell
+	 * @param cellHeight height of a single cell
+	 * @param orientation orientation of the grid
+	 */
+	public GridPage(int columns, int rows,
+	                double cellWidth, double cellHeight,
+	                double horizontalOffset, double verticalOffset,
+	                GridOrientation orientation) {
+		this(pageWidth(columns, rows, cellWidth, cellHeight, orientation) + horizontalOffset,
+		     pageHeight(columns, rows, cellWidth, cellHeight, orientation) + verticalOffset,
+		     columns, rows, cellWidth, cellHeight, horizontalOffset, verticalOffset, orientation);
 	}
 
 	/**
@@ -314,6 +333,8 @@ public class GridPage extends MultiPage {
 	 * to enable chaining invocations.
 	 */
 	public static final class Builder {
+		private double pageWidth = -1;
+		private double pageHeight = -1;
 		private int columns;
 		private int rows;
 		private double cellWidth;
@@ -329,13 +350,28 @@ public class GridPage extends MultiPage {
 		 * @return
 		 */
 		public GridPage build() {
+			if (pageWidth < 0)
+				pageWidth = pageWidth(columns, rows, cellWidth, cellHeight, orientation)
+						+ horizontalOffset;
+			if (pageHeight < 0)
+				pageHeight = pageHeight(columns, rows, cellWidth, cellHeight, orientation)
+						+ verticalOffset;
+			
 			GridPage page =  new GridPage
-					(columns, rows, cellWidth, cellHeight,
-					horizontalOffset, verticalOffset, orientation);
+					(pageWidth, pageHeight, columns, rows, cellWidth, cellHeight,
+					 horizontalOffset, verticalOffset, orientation);
 			page.setDirection(fillDirection);
 			return page;
 		}
 		
+		public Builder setPageWidth(double pageWidth) {
+			this.pageWidth = pageWidth;
+			return this;
+		}
+		public Builder setPageHeight(double pageHeight) {
+			this.pageHeight = pageHeight;
+			return this;
+		}
 		public Builder setColumns(int columns) {
 			this.columns = columns;
 			return this;
