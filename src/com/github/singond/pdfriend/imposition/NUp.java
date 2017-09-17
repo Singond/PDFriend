@@ -7,7 +7,6 @@ import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.Util;
 import com.github.singond.pdfriend.book.GridPage;
-import com.github.singond.pdfriend.book.GridPage.Builder;
 import com.github.singond.pdfriend.book.Page;
 import com.github.singond.pdfriend.book.SequentialSourceProvider;
 import com.github.singond.pdfriend.document.VirtualDocument;
@@ -36,8 +35,6 @@ public class NUp implements Imposable {
 	private int rows = 1;
 	private int cols = 1;
 	private GridType gridType = GridType.VALUE;
-	private double horizontalOffset = 0;
-	private double verticalOffset = 0;
 	private NUpOrientation orientation = NUpOrientation.UPRIGHT;
 	private FillDirection direction = FillDirection.ROWS;
 	private Preprocessor.Settings preprocess = null;
@@ -97,29 +94,6 @@ public class NUp implements Imposable {
 	}
 
 	/**
-	 * Sets how much the grid is offset from the lower left corner.
-	 * @param horizontalOffset the offset distance (positive values move
-	 *        the grid to the right)
-	 * @return this NUp object
-	 */
-	public NUp setHorizontalOffset(double horizontalOffset) {
-		this.horizontalOffset = horizontalOffset;
-		return this;
-	}
-
-
-	/**
-	 * Sets how much the grid is offset from the lower left corner.
-	 * @param verticalOffset the offset distance (positive values move
-	 *        the grid upwards)
-	 * @return this NUp object
-	 */
-	public NUp setVerticalOffset(double verticalOffset) {
-		this.verticalOffset = verticalOffset;
-		return this;
-	}
-
-	/**
 	 * Sets the orientation of the grid.
 	 * @param orientation
 	 * @return this NUp object
@@ -152,6 +126,8 @@ public class NUp implements Imposable {
 		int pageCount = this.pages;
 		final int rows = this.rows;
 		final int cols = this.cols;
+		final NUpOrientation orientation = this.orientation;
+		final FillDirection direction = this.direction;
 		final Preprocessor.Settings preprocess = this.preprocess;
 		final CommonSettings common = this.common;
 		
@@ -200,7 +176,6 @@ public class NUp implements Imposable {
 //			Case A in notes
 			if (logger.isDebugEnabled())
 				logger.debug("nup_caseSize");
-//			builder = fromUnknownPageSize();
 			
 			Margins margins = common.getMargins();
 			
@@ -212,13 +187,19 @@ public class NUp implements Imposable {
 			// Determine grid cell dimensions
 			preprocessor = new Preprocessor(doc, preprocess);
 			Dimensions cell = preprocessor.getResolvedCellDimensions();
-			double cellWidth = Length.sum
-					(cell.width(), margins.left(), margins.right()).in(unit);
-			double cellHeight = Length.sum
-					(cell.height(), margins.bottom(), margins.top()).in(unit);
+			double cellWidth = cell.width().in(unit);
+			double cellHeight = cell.height().in(unit);
+			
+			// Determine page dimensions
+			double pageWidth = Length.sum(cell.width().multiply(cols),
+					margins.left(), margins.right()).in(unit);
+			double pageHeight = Length.sum(cell.height().multiply(rows),
+					margins.bottom(), margins.top()).in(unit);
 			
 			// A builder to provide the GridPages with desired settings
 			builder = new GridPage.Builder()
+					.setPageWidth(pageWidth)
+					.setPageHeight(pageHeight)
 					.setColumns(cols)
 					.setRows(rows)
 					.setCellWidth(cellWidth)
@@ -278,46 +259,6 @@ public class NUp implements Imposable {
 			doc.addPage(page.render());
 		}
 		return doc.build();
-	}
-	
-	private PageControllers fromUnknownPageSize
-			(int rows, int cols, Margins margins, Dimensions page, Preprocessor.Settings preprocess) {
-		// The rows and cols arguments should be OK, but check them anyway
-		if (rows < 1 || cols < 1) {
-			throw new IllegalArgumentException(String.format
-					("Wrong number of cells in grid: %dx%d", rows, cols));
-		}
-		if (margins == null) {
-			throw new IllegalArgumentException("Margins must not be null");
-		}
-		
-		// Determine grid cell dimensions
-//		double[] docFormat = doc.maxPageDimensions();
-//		Dimensions cell = new Dimensions(docFormat[0], docFormat[1], Imposition.LENGTH_UNIT);
-//		Dimensions cell = preprocessor.getResolvedCellDimensions();
-		
-		// A builder to provide the GridPages with desired settings
-		GridPage.Builder builder = new GridPage.Builder()
-				.setColumns(cols)
-				.setRows(rows)
-//				.setCellWidth(cell.width().in(Imposition.LENGTH_UNIT))
-//				.setCellHeight(cell.height().in(Imposition.LENGTH_UNIT))
-				.setHorizontalOffset(horizontalOffset)
-				.setVerticalOffset(verticalOffset)
-				.setOrientation(orientation.getValue())
-				.setFillDirection(direction.getValue());
-		return null;
-	}
-	
-	/** Groups output of methods like {@link #fromUnknownPageSize} */
-	private static final class PageControllers {
-		private final GridPage.Builder builder;
-		private final Preprocessor preprocessor;
-
-		private PageControllers(Builder builder, Preprocessor preprocessor) {
-			this.builder = builder;
-			this.preprocessor = preprocessor;
-		}
 	}
 	
 	@Override
