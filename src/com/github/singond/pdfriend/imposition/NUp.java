@@ -7,10 +7,15 @@ import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.Util;
 import com.github.singond.pdfriend.book.GridPage;
+import com.github.singond.pdfriend.book.GridPage.Builder;
 import com.github.singond.pdfriend.book.Page;
 import com.github.singond.pdfriend.book.SequentialSourceProvider;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.geometry.Dimensions;
+import com.github.singond.pdfriend.geometry.Length;
+import com.github.singond.pdfriend.geometry.LengthUnit;
+import com.github.singond.pdfriend.geometry.LengthUnits;
+import com.github.singond.pdfriend.geometry.Margins;
 import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
 
 /**
@@ -149,6 +154,8 @@ public class NUp implements Imposable {
 		final int cols = this.cols;
 		final Preprocessor.Settings preprocess = this.preprocess;
 		final CommonSettings common = this.common;
+		
+		final LengthUnit unit = Imposition.LENGTH_UNIT;
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("imposition_preprocessSettings", preprocess);
@@ -182,14 +189,44 @@ public class NUp implements Imposable {
 		} // Otherwise just leave pageSize as it is
 		sheetSize = null;           // Won't need this anymore
 		
+		
 		/*
 		 * Choose which parameters need to be determined and construct
 		 * a grid page builder.
 		 */
-//		GridPage.Builder builder;
+		Preprocessor preprocessor = null;
+		GridPage.Builder builder = null;
 		if (pageSize == CommonSettings.AUTO_DIMENSIONS) {
 //			Case A in notes
+			if (logger.isDebugEnabled())
+				logger.debug("nup_caseSize");
 //			builder = fromUnknownPageSize();
+			
+			Margins margins = common.getMargins();
+			
+			// Resolve margins
+			if (margins == CommonSettings.AUTO_MARGINS) {
+				margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
+			}
+			
+			// Determine grid cell dimensions
+			preprocessor = new Preprocessor(doc, preprocess);
+			Dimensions cell = preprocessor.getResolvedCellDimensions();
+			double cellWidth = Length.sum
+					(cell.width(), margins.left(), margins.right()).in(unit);
+			double cellHeight = Length.sum
+					(cell.height(), margins.bottom(), margins.top()).in(unit);
+			
+			// A builder to provide the GridPages with desired settings
+			builder = new GridPage.Builder()
+					.setColumns(cols)
+					.setRows(rows)
+					.setCellWidth(cellWidth)
+					.setCellHeight(cellHeight)
+					.setHorizontalOffset(margins.left().in(unit))
+					.setVerticalOffset(margins.bottom().in(unit))
+					.setOrientation(orientation.getValue())
+					.setFillDirection(direction.getValue());
 		} else if (gridType == GridType.AUTO) {
 //			Case D in notes
 //			builder = fromUnknownGrid();
@@ -201,12 +238,6 @@ public class NUp implements Imposable {
 //			builder = fromUnknownCellSize();
 		}
 		
-		// The rows and cols arguments should be OK, but check them anyway
-//		if (rows < 1 || cols < 1) {
-//			throw new IllegalStateException(String.format
-//					("Wrong number of cells in grid: %dx%d", rows, cols));
-//		}
-		
 		/*
 		 * If the number of pages is unset, calculate the number of pages
 		 * necessary to fit the whole document; otherwise use the value.
@@ -217,24 +248,10 @@ public class NUp implements Imposable {
 			logger.verbose("nup_settingPagesNo", pageCount);
 		}
 		
-		// Determine grid cell dimensions
-		double[] docFormat = doc.maxPageDimensions();
-		Dimensions cell = new Dimensions(docFormat[0], docFormat[1], Imposition.LENGTH_UNIT);
-		
-		// A builder to provide the GridPages with desired settings
-		GridPage.Builder builder = new GridPage.Builder()
-				.setColumns(cols)
-				.setRows(rows)
-				.setCellWidth(cell.width().in(Imposition.LENGTH_UNIT))
-				.setCellHeight(cell.height().in(Imposition.LENGTH_UNIT))
-				.setHorizontalOffset(horizontalOffset)
-				.setVerticalOffset(verticalOffset)
-				.setOrientation(orientation.getValue())
-				.setFillDirection(direction.getValue());
-
 		// Pre-processing
+		// TODO Pre-process only pages needed for pageCount
 		if (preprocess != null) {
-			doc = new Preprocessor(doc, preprocess).processAll();
+			doc = preprocessor.processAll();
 		}
 		
 		// Output
@@ -263,6 +280,46 @@ public class NUp implements Imposable {
 		return doc.build();
 	}
 	
+	private PageControllers fromUnknownPageSize
+			(int rows, int cols, Margins margins, Dimensions page, Preprocessor.Settings preprocess) {
+		// The rows and cols arguments should be OK, but check them anyway
+		if (rows < 1 || cols < 1) {
+			throw new IllegalArgumentException(String.format
+					("Wrong number of cells in grid: %dx%d", rows, cols));
+		}
+		if (margins == null) {
+			throw new IllegalArgumentException("Margins must not be null");
+		}
+		
+		// Determine grid cell dimensions
+//		double[] docFormat = doc.maxPageDimensions();
+//		Dimensions cell = new Dimensions(docFormat[0], docFormat[1], Imposition.LENGTH_UNIT);
+//		Dimensions cell = preprocessor.getResolvedCellDimensions();
+		
+		// A builder to provide the GridPages with desired settings
+		GridPage.Builder builder = new GridPage.Builder()
+				.setColumns(cols)
+				.setRows(rows)
+//				.setCellWidth(cell.width().in(Imposition.LENGTH_UNIT))
+//				.setCellHeight(cell.height().in(Imposition.LENGTH_UNIT))
+				.setHorizontalOffset(horizontalOffset)
+				.setVerticalOffset(verticalOffset)
+				.setOrientation(orientation.getValue())
+				.setFillDirection(direction.getValue());
+		return null;
+	}
+	
+	/** Groups output of methods like {@link #fromUnknownPageSize} */
+	private static final class PageControllers {
+		private final GridPage.Builder builder;
+		private final Preprocessor preprocessor;
+
+		private PageControllers(Builder builder, Preprocessor preprocessor) {
+			this.builder = builder;
+			this.preprocessor = preprocessor;
+		}
+	}
+	
 	@Override
 	public String getName() {
 		return NAME;
@@ -270,11 +327,15 @@ public class NUp implements Imposable {
 
 	@Override
 	public void acceptPreprocessSettings(Settings settings) {
+		if (settings == null)
+			throw new IllegalArgumentException("Preprocess settings cannot be null");
 		this.preprocess = settings.copy();
 	}
 	
 	@Override
 	public void acceptCommonSettings(CommonSettings settings) {
+		if (settings == null)
+			throw new IllegalArgumentException("Settings cannot be null");
 		this.common = settings;
 	}
 
