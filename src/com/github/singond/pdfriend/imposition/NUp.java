@@ -210,12 +210,18 @@ public class NUp implements Imposable {
 					.setFillDirection(direction.getValue());
 		} else if (gridType == GridType.AUTO) {
 //			Case D in notes
+			if (logger.isDebugEnabled())
+				logger.debug("nup_caseGrid");
 //			builder = fromUnknownGrid();
 		} else if (common.getMargins() == CommonSettings.AUTO_MARGINS) {
 //			Case B in notes
+			if (logger.isDebugEnabled())
+				logger.debug("nup_caseMargins");
 //			builder = fromUnknownMargins();
 		} else {
 //			Case C in notes
+			if (logger.isDebugEnabled())
+				logger.debug("nup_caseCell");
 //			builder = fromUnknownCellSize();
 		}
 		
