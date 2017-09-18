@@ -173,13 +173,11 @@ public class NUp implements Imposable {
 		Preprocessor preprocessor = null;
 		GridPage.Builder builder = null;
 		if (pageSize == CommonSettings.AUTO_DIMENSIONS) {
-//			Case A in notes
 			if (logger.isDebugEnabled())
 				logger.debug("nup_caseSize");
 			
-			Margins margins = common.getMargins();
-			
 			// Resolve margins
+			Margins margins = common.getMargins();
 			if (margins == CommonSettings.AUTO_MARGINS) {
 				margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
 			}
@@ -209,10 +207,57 @@ public class NUp implements Imposable {
 					.setOrientation(orientation.getValue())
 					.setFillDirection(direction.getValue());
 		} else if (gridType == GridType.AUTO) {
-//			Case D in notes
 			if (logger.isDebugEnabled())
 				logger.debug("nup_caseGrid");
-//			builder = fromUnknownGrid();
+			
+			// Page dimensions
+			double pageWidth = pageSize.width().in(unit);
+			double pageHeight = pageSize.height().in(unit);
+			
+			// Cell dimensions
+			preprocessor = new Preprocessor(doc, preprocess);
+			Dimensions cell = preprocessor.getResolvedCellDimensions();
+			double cellWidth = cell.width().in(unit);
+			double cellHeight = cell.height().in(unit);
+			
+			// Margins
+			Margins margins = common.getMargins();
+			if (margins == CommonSettings.AUTO_MARGINS) {
+				margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
+			}
+			
+			double contentWidth = pageWidth - margins.left().in(unit)
+			                      - margins.right().in(unit);
+			double contentHeight = pageHeight - margins.top().in(unit)
+			                       - margins.bottom().in(unit);
+			// The maximum number of rows and columns fitting the page size
+			// minus the margins:
+			if (contentWidth <= 0 || contentHeight <= 0
+					|| cellWidth <= 0 || cellHeight <= 0) {
+				throw new IllegalStateException
+						("The page content size is negative. Perhaps the margins are too wide?");
+			}
+			// Everything is positive numbers, so casting to int should do
+			// the rounding-down
+			int colsFit = (int) (contentWidth / cellWidth);
+			int rowsFit = (int) (contentHeight / cellHeight);
+			
+			// Gap between margins and content
+			double horizontalGap = (contentWidth - colsFit * cellWidth) / 2;
+			double verticalGap = (contentHeight - rowsFit * cellHeight) / 2;
+			
+			// Setup the builder
+			builder = new GridPage.Builder()
+					.setPageWidth(pageWidth)
+					.setPageHeight(pageHeight)
+					.setColumns(colsFit)
+					.setRows(rowsFit)
+					.setCellWidth(cellWidth)
+					.setCellHeight(cellHeight)
+					.setHorizontalOffset(margins.left().in(unit) + horizontalGap)
+					.setVerticalOffset(margins.bottom().in(unit) + verticalGap)
+					.setOrientation(orientation.getValue())
+					.setFillDirection(direction.getValue());
 		} else if (common.getMargins() == CommonSettings.AUTO_MARGINS) {
 //			Case B in notes
 			if (logger.isDebugEnabled())
