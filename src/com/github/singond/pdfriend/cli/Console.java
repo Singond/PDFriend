@@ -99,6 +99,7 @@ public class Console {
 		} catch (ParameterConsistencyException e) {
 			// TODO Handle the exception somehow
 			logger.error("Conflicting arguments", e);
+			return;
 		}
 		
 		/* Run the whole thing */
@@ -126,10 +127,12 @@ public class Console {
 			pipe.execute();
 		} catch (ModuleException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Exception in module", e);
+			return;
 		} catch (PipeException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Exception in pipe", e);
+			return;
 		}
 	}
 	
