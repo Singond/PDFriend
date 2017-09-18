@@ -15,6 +15,11 @@ import com.github.singond.pdfriend.geometry.IntegerDimensions;
 class NUpCli implements ImposableCli<NUp> {
 
 	/**
+	 * FIXME Relies on the fact that IntegerDimensions is non-final.
+	 */
+	private static final IntegerDimensions AUTO = new IntegerDimensions(0, 0) {};
+	
+	/**
 	 * Use null to represent AUTO. Use this internally and do not expose
 	 * this smelly piece.
 	 * TODO It stinks anyway. Any nice way to avoid the null?
@@ -39,11 +44,11 @@ class NUpCli implements ImposableCli<NUp> {
 	@Override
 	public NUp getImposable() {
 		NUp task = new NUp();
-		if (nup != null) {
+		if (nup == AUTO) {
+			task.setAutoGrid();
+		} else if (nup != null) {
 			task.setRows(nup.getFirstDimension());
 			task.setCols(nup.getSecondDimension());
-		} else {
-			// TODO Pass to task!
 		}
 		return task;
 	}
@@ -52,7 +57,7 @@ class NUpCli implements ImposableCli<NUp> {
 		@Override
 		public IntegerDimensions convert(String arg) {
 			if ("auto".equalsIgnoreCase(arg)) {
-				return null;
+				return AUTO;
 			} else {
 				return new IntegerDimensionsConverter().convert(arg);
 			}
