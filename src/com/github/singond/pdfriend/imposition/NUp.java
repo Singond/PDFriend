@@ -170,94 +170,13 @@ public class NUp implements Imposable {
 		 * Choose which parameters need to be determined and construct
 		 * a grid page builder.
 		 */
-		Preprocessor preprocessor = null;
-		GridPage.Builder builder = null;
+		PageControllers pc = null; // TODO remove initial value after finishing
 		if (pageSize == CommonSettings.AUTO_DIMENSIONS) {
-			if (logger.isDebugEnabled())
-				logger.debug("nup_caseSize");
-			
-			// Resolve margins
-			Margins margins = common.getMargins();
-			if (margins == CommonSettings.AUTO_MARGINS) {
-				margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
-			}
-			
-			// Determine grid cell dimensions
-			preprocessor = new Preprocessor(doc, preprocess);
-			Dimensions cell = preprocessor.getResolvedCellDimensions();
-			double cellWidth = cell.width().in(unit);
-			double cellHeight = cell.height().in(unit);
-			
-			// Determine page dimensions
-			double pageWidth = Length.sum(cell.width().multiply(cols),
-					margins.left(), margins.right()).in(unit);
-			double pageHeight = Length.sum(cell.height().multiply(rows),
-					margins.bottom(), margins.top()).in(unit);
-			
-			// A builder to provide the GridPages with desired settings
-			builder = new GridPage.Builder()
-					.setPageWidth(pageWidth)
-					.setPageHeight(pageHeight)
-					.setColumns(cols)
-					.setRows(rows)
-					.setCellWidth(cellWidth)
-					.setCellHeight(cellHeight)
-					.setHorizontalOffset(margins.left().in(unit))
-					.setVerticalOffset(margins.bottom().in(unit))
-					.setOrientation(orientation.getValue())
-					.setFillDirection(direction.getValue());
+			pc = fromUnknownPageSize(doc, pageCount, rows, cols, orientation,
+			                         direction, preprocess, common);
 		} else if (gridType == GridType.AUTO) {
-			if (logger.isDebugEnabled())
-				logger.debug("nup_caseGrid");
-			
-			// Page dimensions
-			double pageWidth = pageSize.width().in(unit);
-			double pageHeight = pageSize.height().in(unit);
-			
-			// Cell dimensions
-			preprocessor = new Preprocessor(doc, preprocess);
-			Dimensions cell = preprocessor.getResolvedCellDimensions();
-			double cellWidth = cell.width().in(unit);
-			double cellHeight = cell.height().in(unit);
-			
-			// Margins
-			Margins margins = common.getMargins();
-			if (margins == CommonSettings.AUTO_MARGINS) {
-				margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
-			}
-			
-			double contentWidth = pageWidth - margins.left().in(unit)
-			                      - margins.right().in(unit);
-			double contentHeight = pageHeight - margins.top().in(unit)
-			                       - margins.bottom().in(unit);
-			// The maximum number of rows and columns fitting the page size
-			// minus the margins:
-			if (contentWidth <= 0 || contentHeight <= 0
-					|| cellWidth <= 0 || cellHeight <= 0) {
-				throw new IllegalStateException
-						("The page content size is negative. Perhaps the margins are too wide?");
-			}
-			// Everything is positive numbers, so casting to int should do
-			// the rounding-down
-			int colsFit = (int) (contentWidth / cellWidth);
-			int rowsFit = (int) (contentHeight / cellHeight);
-			
-			// Gap between margins and content
-			double horizontalGap = (contentWidth - colsFit * cellWidth) / 2;
-			double verticalGap = (contentHeight - rowsFit * cellHeight) / 2;
-			
-			// Setup the builder
-			builder = new GridPage.Builder()
-					.setPageWidth(pageWidth)
-					.setPageHeight(pageHeight)
-					.setColumns(colsFit)
-					.setRows(rowsFit)
-					.setCellWidth(cellWidth)
-					.setCellHeight(cellHeight)
-					.setHorizontalOffset(margins.left().in(unit) + horizontalGap)
-					.setVerticalOffset(margins.bottom().in(unit) + verticalGap)
-					.setOrientation(orientation.getValue())
-					.setFillDirection(direction.getValue());
+			pc = fromUnknownGrid(doc, pageCount, pageSize, orientation,
+			                     direction, preprocess, common);
 		} else if (common.getMargins() == CommonSettings.AUTO_MARGINS) {
 //			Case B in notes
 			if (logger.isDebugEnabled())
@@ -269,6 +188,9 @@ public class NUp implements Imposable {
 				logger.debug("nup_caseCell");
 //			builder = fromUnknownCellSize();
 		}
+		Preprocessor preprocessor = pc.preprocessor;
+		GridPage.Builder builder = pc.builder;
+		int cellsPerPage = pc.cellsPerPage;
 		
 		/*
 		 * If the number of pages is unset, calculate the number of pages
@@ -289,7 +211,7 @@ public class NUp implements Imposable {
 		// Output
 		List<Page> pages = new ArrayList<>(pageCount);
 		int pageNumber = 0;
-		while(pages.size() < pageCount) {
+		while (pages.size() < pageCount) {
 			GridPage page = builder.build();
 			page.setNumber(++pageNumber);
 			pages.add(page);
@@ -297,6 +219,124 @@ public class NUp implements Imposable {
 		new SequentialSourceProvider(doc).setSourceTo(pages);
 
 		return pages;
+	}
+	
+	private PageControllers fromUnknownPageSize(VirtualDocument doc,
+			int pageCount, final int rows, final int cols,
+			final NUpOrientation orientation, final FillDirection direction,
+			final Preprocessor.Settings preprocess, final CommonSettings common) {
+		
+		if (logger.isDebugEnabled())
+			logger.debug("nup_caseSize");
+		
+		final LengthUnit unit = Imposition.LENGTH_UNIT;
+		
+		// Resolve margins
+		Margins margins = common.getMargins();
+		if (margins == CommonSettings.AUTO_MARGINS) {
+			margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
+		}
+		
+		// Determine grid cell dimensions
+		Preprocessor preprocessor = new Preprocessor(doc, preprocess);
+		Dimensions cell = preprocessor.getResolvedCellDimensions();
+		double cellWidth = cell.width().in(unit);
+		double cellHeight = cell.height().in(unit);
+		
+		// Determine page dimensions
+		double pageWidth = Length.sum(cell.width().multiply(cols),
+				margins.left(), margins.right()).in(unit);
+		double pageHeight = Length.sum(cell.height().multiply(rows),
+				margins.bottom(), margins.top()).in(unit);
+		
+		// A builder to provide the GridPages with desired settings
+		GridPage.Builder builder = new GridPage.Builder()
+				.setPageWidth(pageWidth)
+				.setPageHeight(pageHeight)
+				.setColumns(cols)
+				.setRows(rows)
+				.setCellWidth(cellWidth)
+				.setCellHeight(cellHeight)
+				.setHorizontalOffset(margins.left().in(unit))
+				.setVerticalOffset(margins.bottom().in(unit))
+				.setOrientation(orientation.getValue())
+				.setFillDirection(direction.getValue());
+		
+		return new PageControllers(preprocessor, builder, rows*cols);
+	}
+	
+	private PageControllers fromUnknownGrid(VirtualDocument doc,
+			int pageCount, final Dimensions pageSize,
+			final NUpOrientation orientation, final FillDirection direction,
+			final Preprocessor.Settings preprocess, final CommonSettings common) {
+		
+		if (logger.isDebugEnabled())
+			logger.debug("nup_caseGrid");
+		
+		final LengthUnit unit = Imposition.LENGTH_UNIT;
+		
+		// Page dimensions
+		double pageWidth = pageSize.width().in(unit);
+		double pageHeight = pageSize.height().in(unit);
+		
+		// Cell dimensions
+		Preprocessor preprocessor = new Preprocessor(doc, preprocess);
+		Dimensions cell = preprocessor.getResolvedCellDimensions();
+		double cellWidth = cell.width().in(unit);
+		double cellHeight = cell.height().in(unit);
+		
+		// Margins
+		Margins margins = common.getMargins();
+		if (margins == CommonSettings.AUTO_MARGINS) {
+			margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
+		}
+		
+		double contentWidth = pageWidth - margins.left().in(unit)
+		                      - margins.right().in(unit);
+		double contentHeight = pageHeight - margins.top().in(unit)
+		                       - margins.bottom().in(unit);
+		// The maximum number of rows and columns fitting the page size
+		// minus the margins:
+		if (contentWidth <= 0 || contentHeight <= 0
+				|| cellWidth <= 0 || cellHeight <= 0) {
+			throw new IllegalStateException
+					("The page content size is negative. Perhaps the margins are too wide?");
+		}
+		// Everything is positive numbers, so casting to int should do
+		// the rounding-down
+		int cols = (int) (contentWidth / cellWidth);
+		int rows = (int) (contentHeight / cellHeight);
+		
+		// Gap between margins and content
+		double horizontalGap = (contentWidth - cols * cellWidth) / 2;
+		double verticalGap = (contentHeight - rows * cellHeight) / 2;
+		
+		// Setup the builder
+		GridPage.Builder builder = new GridPage.Builder()
+				.setPageWidth(pageWidth)
+				.setPageHeight(pageHeight)
+				.setColumns(cols)
+				.setRows(rows)
+				.setCellWidth(cellWidth)
+				.setCellHeight(cellHeight)
+				.setHorizontalOffset(margins.left().in(unit) + horizontalGap)
+				.setVerticalOffset(margins.bottom().in(unit) + verticalGap)
+				.setOrientation(orientation.getValue())
+				.setFillDirection(direction.getValue());
+		
+		return new PageControllers(preprocessor, builder, rows*cols);
+	}
+	
+	private static class PageControllers {
+		private final Preprocessor preprocessor;
+		private final GridPage.Builder builder;
+		private final int cellsPerPage;
+		
+		private PageControllers(Preprocessor preprocessor, GridPage.Builder builder, int cellsPerPage) {
+			this.preprocessor = preprocessor;
+			this.builder = builder;
+			this.cellsPerPage = cellsPerPage;
+		}
 	}
 
 	/**
