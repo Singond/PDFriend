@@ -131,8 +131,6 @@ public class NUp implements Imposable {
 		final Preprocessor.Settings preprocess = this.preprocess;
 		final CommonSettings common = this.common;
 		
-		final LengthUnit unit = Imposition.LENGTH_UNIT;
-
 		if (logger.isDebugEnabled()) {
 			logger.debug("imposition_preprocessSettings", preprocess);
 			logger.debug("imposition_commonSettings", common);
@@ -178,15 +176,11 @@ public class NUp implements Imposable {
 			pc = fromUnknownGrid(doc, pageCount, pageSize, orientation,
 			                     direction, preprocess, common);
 		} else if (common.getMargins() == CommonSettings.AUTO_MARGINS) {
-//			Case B in notes
-			if (logger.isDebugEnabled())
-				logger.debug("nup_caseMargins");
-//			builder = fromUnknownMargins();
+			pc = fromUnknownMargins(doc, pageCount, rows, cols, pageSize,
+			                        orientation, direction, preprocess, common);
 		} else {
-//			Case C in notes
-			if (logger.isDebugEnabled())
-				logger.debug("nup_caseCell");
-//			builder = fromUnknownCellSize();
+			pc = fromUnknownCellSize(doc, pageCount, rows, cols, pageSize,
+			                         orientation, direction, preprocess, common);
 		}
 		Preprocessor preprocessor = pc.preprocessor;
 		GridPage.Builder builder = pc.builder;
@@ -197,8 +191,8 @@ public class NUp implements Imposable {
 		 * necessary to fit the whole document; otherwise use the value.
 		 */
 		if (pageCount < 0) {
-			logger.verbose("nup_gridDimensions", rows, cols);
-			pageCount = Util.ceilingDivision(doc.getLength(), rows*cols);
+			logger.verbose("nup_gridCount", cellsPerPage);
+			pageCount = Util.ceilingDivision(doc.getLength(), cellsPerPage);
 			logger.verbose("nup_settingPagesNo", pageCount);
 		}
 		
@@ -244,9 +238,9 @@ public class NUp implements Imposable {
 		double cellHeight = cell.height().in(unit);
 		
 		// Determine page dimensions
-		double pageWidth = Length.sum(cell.width().multiply(cols),
+		double pageWidth = Length.sum(cell.width().times(cols),
 				margins.left(), margins.right()).in(unit);
-		double pageHeight = Length.sum(cell.height().multiply(rows),
+		double pageHeight = Length.sum(cell.height().times(rows),
 				margins.bottom(), margins.top()).in(unit);
 		
 		// A builder to provide the GridPages with desired settings
@@ -321,6 +315,104 @@ public class NUp implements Imposable {
 				.setCellHeight(cellHeight)
 				.setHorizontalOffset(margins.left().in(unit) + horizontalGap)
 				.setVerticalOffset(margins.bottom().in(unit) + verticalGap)
+				.setOrientation(orientation.getValue())
+				.setFillDirection(direction.getValue());
+		
+		return new PageControllers(preprocessor, builder, rows*cols);
+	}
+	
+	private PageControllers fromUnknownMargins(VirtualDocument doc,
+			int pageCount, final int rows, final int cols,
+			final Dimensions pageSize,
+			final NUpOrientation orientation, final FillDirection direction,
+			final Preprocessor.Settings preprocess, final CommonSettings common) {
+		
+		if (logger.isDebugEnabled())
+			logger.debug("nup_caseMargins");
+		
+		final LengthUnit unit = Imposition.LENGTH_UNIT;
+		
+		// Determine grid cell dimensions
+		Preprocessor preprocessor = new Preprocessor(doc, preprocess);
+		Dimensions cell = preprocessor.getResolvedCellDimensions();
+		double cellWidth = cell.width().in(unit);
+		double cellHeight = cell.height().in(unit);
+		
+		// Page dimensions
+		double pageWidth = pageSize.width().in(unit);
+		double pageHeight = pageSize.height().in(unit);
+		
+		// Distribute the remaining space equally to margins on both sides
+		double marginLeft = (pageWidth - cols * cellWidth) / 2;
+		double marginBottom = (pageHeight - rows * cellHeight) / 2;
+		
+		// A builder to provide the GridPages with desired settings
+		GridPage.Builder builder = new GridPage.Builder()
+				.setPageWidth(pageWidth)
+				.setPageHeight(pageHeight)
+				.setColumns(cols)
+				.setRows(rows)
+				.setCellWidth(cellWidth)
+				.setCellHeight(cellHeight)
+				.setHorizontalOffset(marginLeft)
+				.setVerticalOffset(marginBottom)
+				.setOrientation(orientation.getValue())
+				.setFillDirection(direction.getValue());
+		
+		return new PageControllers(preprocessor, builder, rows*cols);
+	}
+	
+	private PageControllers fromUnknownCellSize(VirtualDocument doc,
+			int pageCount, final int rows, final int cols,
+			final Dimensions pageSize,
+			final NUpOrientation orientation, final FillDirection direction,
+			final Preprocessor.Settings preprocess, final CommonSettings common) {
+		if (logger.isDebugEnabled())
+			logger.debug("nup_caseCell");
+		
+		final LengthUnit unit = Imposition.LENGTH_UNIT;
+		
+		// Page dimensions
+		double pageWidth = pageSize.width().in(unit);
+		double pageHeight = pageSize.height().in(unit);
+		
+		// Resolve margins
+		Margins margins = common.getMargins();
+		if (margins == CommonSettings.AUTO_MARGINS) {
+			margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
+		}
+		
+		// Grid cell dimensions
+		double contentWidth = pageWidth
+				- Length.sum(margins.left(), margins.right()).in(unit);
+		double contentHeight = pageHeight
+				- Length.sum(margins.bottom(), margins.top()).in(unit);
+		
+		if (contentWidth <= 0)
+			throw new ArithmeticException
+			("The margins are too wide for the page");
+		if (contentHeight <= 0)
+			throw new ArithmeticException
+					("The margins are too tall for the page");
+		
+		double cellWidth = contentWidth / cols;
+		double cellHeight = contentHeight / rows;
+		
+		// Pass those to the preprocessor
+		Dimensions cell = new Dimensions(cellWidth, cellHeight, unit);
+		preprocess.setCellDimensions(cell);
+		Preprocessor preprocessor = new Preprocessor(doc, preprocess);
+		
+		// A builder to provide the GridPages with desired settings
+		GridPage.Builder builder = new GridPage.Builder()
+				.setPageWidth(pageWidth)
+				.setPageHeight(pageHeight)
+				.setColumns(cols)
+				.setRows(rows)
+				.setCellWidth(cellWidth)
+				.setCellHeight(cellHeight)
+				.setHorizontalOffset(margins.left().in(unit))
+				.setVerticalOffset(margins.bottom().in(unit))
 				.setOrientation(orientation.getValue())
 				.setFillDirection(direction.getValue());
 		
