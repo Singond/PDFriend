@@ -140,8 +140,8 @@ public final class Dimensions {
 	 *         {@code magnification}
 	 */
 	public Dimensions scaleUp(double magnification) {
-		return new Dimensions(width.multiply(magnification),
-		                      height.multiply(magnification));
+		return new Dimensions(width.times(magnification),
+		                      height.times(magnification));
 	}
 	
 	@Override

@@ -61,7 +61,7 @@ public final class Length implements Comparable<Length> {
 	 * @return a {@code Length} instance whose value is {@code factor}
 	 *         times larger than the value of this instance
 	 */
-	public Length multiply(double factor) {
+	public Length times(double factor) {
 		return new Length(value*factor);
 	}
 	
@@ -76,6 +76,45 @@ public final class Length implements Comparable<Length> {
 			sum += l.value;
 		}
 		return new Length(sum);
+	}
+	
+	/**
+	 * Returns the difference of the given two lengths.
+	 * @param lengthOne the length to be subtracted from (minuend)
+	 * @param lengthTwo the length to be subtracted (subtrahend)
+	 * @return a {@code Length} instance whose value is equal to
+	 *         {@code lengthOne - lengthTwo}
+	 */
+	public static Length subtract(Length lengthOne, Length lengthTwo) {
+		return new Length(lengthOne.value - lengthTwo.value);
+	}
+	
+	/**
+	 * Returns the product of the given length and a positive number.
+	 * @param length the length to be multiplied
+	 * @param scalar the factor to multiply length by
+	 * @return a {@code Length} instance whose value is equal to
+	 * {@code length * scalar}
+	 */
+	public static Length multiply(Length length, double scalar) {
+		if (scalar <= 0)
+			throw new ArithmeticException
+					("Cannot multiply length by a negative number");
+		return new Length(length.value * scalar);
+	}
+	
+	/**
+	 * Returns the quotient of the given length and a positive number.
+	 * @param length the length to be multiplied
+	 * @param scalar the factor to multiply length by
+	 * @return a {@code Length} instance whose value is equal to
+	 * {@code length / scalar}
+	 */
+	public static Length divide(Length length, double scalar) {
+		if (scalar <= 0)
+			throw new ArithmeticException
+					("Cannot divide length by a negative number");
+		return new Length(length.value / scalar);
 	}
 	
 	@Override
