@@ -85,7 +85,7 @@ class CommonSettingsCli implements ParameterDelegate {
 	
 	public CommonSettings getCommonSettings() {
 		CommonSettings.Builder sb = new CommonSettings.Builder();
-		sb.setPages(pages);
+		sb.setPageCount(pages);
 		sb.setPageSize(pageSize);
 		sb.setSheetSize(sheetSize);
 		sb.setMargins(margins);

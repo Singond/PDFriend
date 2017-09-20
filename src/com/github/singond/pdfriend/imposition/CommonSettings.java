@@ -57,7 +57,7 @@ public class CommonSettings {
 		this.margins = margins;
 	}
 
-	public int getPages() {
+	public int getPageCount() {
 		return pages;
 	}
 
@@ -92,10 +92,10 @@ public class CommonSettings {
 		private Dimensions sheetSize = AUTO_DIMENSIONS;
 		private Margins margins = AUTO_MARGINS;
 		
-		public int getPages() {
+		public int getPageCount() {
 			return pages;
 		}
-		public void setPages(int pages) {
+		public void setPageCount(int pages) {
 			this.pages = pages;
 		}
 		public Dimensions getPageSize() {
