@@ -347,6 +347,15 @@ public class NUp implements Imposable {
 		double marginLeft = (pageWidth - cols * cellWidth) / 2;
 		double marginBottom = (pageHeight - rows * cellHeight) / 2;
 		
+		if (marginLeft <= 0)
+			throw new ArithmeticException(String.format(
+					"Cannot fit %d columns of width %s into the page of size %s",
+					 cols, cell.width(), pageSize));
+		if (marginBottom <= 0)
+			throw new ArithmeticException(String.format(
+					"Cannot fit %d rows of height %s into the page of size %s",
+					 cols, cell.height(), pageSize));
+		
 		// A builder to provide the GridPages with desired settings
 		GridPage.Builder builder = new GridPage.Builder()
 				.setPageWidth(pageWidth)
