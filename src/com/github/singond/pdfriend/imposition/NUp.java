@@ -31,8 +31,6 @@ public class NUp implements Imposable {
 	/** Logger */
 	private static ExtendedLogger logger = Log.logger(NUp.class);
 	
-	// -1 indicates an unset field
-	private int pages = -1;
 	private int rows = 1;
 	private int cols = 1;
 	private GridType gridType = GridType.VALUE;
@@ -41,16 +39,6 @@ public class NUp implements Imposable {
 	private Preprocessor.Settings preprocess = null;
 	private CommonSettings common = null;
 	
-	/**
-	 * Sets the number of pages to be created.
-	 * @param pages the number of pages
-	 * @return this NUp object
-	 */
-	public NUp setNumberOfPages(int pages) {
-		this.pages = pages;
-		return this;
-	}
-
 	/**
 	 * Sets the number of rows in the grid.
 	 * Setting this value will cause the imposition to ignore any previous
@@ -124,13 +112,13 @@ public class NUp implements Imposable {
 	 */
 	public List<Page> imposeAsPages(VirtualDocument doc) {
 		// Copy all nonfinal values defensively
-		int pageCount = this.pages;
 		final int rows = this.rows;
 		final int cols = this.cols;
 		final NUpOrientation orientation = this.orientation;
 		final FillDirection direction = this.direction;
 		final Preprocessor.Settings preprocess = this.preprocess;
 		final CommonSettings common = this.common;
+		int pageCount = common.getPageCount();
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("imposition_preprocessSettings", preprocess);
