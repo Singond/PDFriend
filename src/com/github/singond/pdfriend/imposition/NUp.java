@@ -15,6 +15,7 @@ import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.geometry.Margins;
+import com.github.singond.pdfriend.imposition.Preprocessor.Resizing;
 import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
 
 /**
@@ -371,6 +372,15 @@ public class NUp implements Imposable {
 			logger.debug("nup_caseCell");
 		
 		final LengthUnit unit = Imposition.LENGTH_UNIT;
+		
+		/*
+		 * If the preprocessor resizing is not set (auto), make it fit
+		 * the cell, otherwise the default resizing will leave the pages
+		 * overlapping or with gaps in between.
+		 */
+		if (preprocess.getResizing() == Resizing.AUTO) {
+			preprocess.setResizing(Resizing.FIT);
+		}
 		
 		// Page dimensions
 		double pageWidth = pageSize.width().in(unit);
