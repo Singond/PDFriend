@@ -33,7 +33,7 @@ class PreprocessorSettingsCli implements ParameterDelegate {
 	@Parameter(names={"--resize"},
 	           description="Page size behaviour after scaling and rotating",
 	           descriptionKey="param-resizing")
-	private ResizingBehaviour resize = ResizingBehaviour.NONE;
+	private ResizingBehaviour resize = ResizingBehaviour.AUTO;
 	
 	@Parameter(names={"--align", "--alignment"},
 	           description="Alignment of the scaled, rotated and resized page",
@@ -87,7 +87,8 @@ class PreprocessorSettingsCli implements ParameterDelegate {
 	public static enum ResizingBehaviour {
 		NONE(Preprocessor.Resizing.NONE),
 		FIT(Preprocessor.Resizing.FIT),
-		FILL(Preprocessor.Resizing.FILL);
+		FILL(Preprocessor.Resizing.FILL),
+		AUTO(Preprocessor.Resizing.AUTO);
 		
 		private final Preprocessor.Resizing value;
 		
