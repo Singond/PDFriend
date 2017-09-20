@@ -171,17 +171,17 @@ public class NUp implements Imposable {
 		 */
 		PageControllers pc = null; // TODO remove initial value after finishing
 		if (pageSize == CommonSettings.AUTO_DIMENSIONS) {
-			pc = fromUnknownPageSize(doc, pageCount, rows, cols, orientation,
-			                         direction, preprocess, common);
+			pc = casePageSize(doc, pageCount, rows, cols, orientation,
+			                  direction, preprocess, common);
 		} else if (gridType == GridType.AUTO) {
-			pc = fromUnknownGrid(doc, pageCount, pageSize, orientation,
-			                     direction, preprocess, common);
+			pc = caseGrid(doc, pageCount, pageSize, orientation,
+			              direction, preprocess, common);
 		} else if (common.getMargins() == CommonSettings.AUTO_MARGINS) {
-			pc = fromUnknownMargins(doc, pageCount, rows, cols, pageSize,
-			                        orientation, direction, preprocess, common);
+			pc = caseMargins(doc, pageCount, rows, cols, pageSize,
+			                 orientation, direction, preprocess, common);
 		} else {
-			pc = fromUnknownCellSize(doc, pageCount, rows, cols, pageSize,
-			                         orientation, direction, preprocess, common);
+			pc = caseCellSize(doc, pageCount, rows, cols, pageSize,
+			                  orientation, direction, preprocess, common);
 		}
 		Preprocessor preprocessor = pc.preprocessor;
 		GridPage.Builder builder = pc.builder;
@@ -216,7 +216,7 @@ public class NUp implements Imposable {
 		return pages;
 	}
 	
-	private PageControllers fromUnknownPageSize(VirtualDocument doc,
+	private PageControllers casePageSize(VirtualDocument doc,
 			int pageCount, final int rows, final int cols,
 			final NUpOrientation orientation, final FillDirection direction,
 			final Preprocessor.Settings preprocess, final CommonSettings common) {
@@ -260,7 +260,7 @@ public class NUp implements Imposable {
 		return new PageControllers(preprocessor, builder, rows*cols);
 	}
 	
-	private PageControllers fromUnknownGrid(VirtualDocument doc,
+	private PageControllers caseGrid(VirtualDocument doc,
 			int pageCount, final Dimensions pageSize,
 			final NUpOrientation orientation, final FillDirection direction,
 			final Preprocessor.Settings preprocess, final CommonSettings common) {
@@ -322,7 +322,7 @@ public class NUp implements Imposable {
 		return new PageControllers(preprocessor, builder, rows*cols);
 	}
 	
-	private PageControllers fromUnknownMargins(VirtualDocument doc,
+	private PageControllers caseMargins(VirtualDocument doc,
 			int pageCount, final int rows, final int cols,
 			final Dimensions pageSize,
 			final NUpOrientation orientation, final FillDirection direction,
@@ -363,7 +363,7 @@ public class NUp implements Imposable {
 		return new PageControllers(preprocessor, builder, rows*cols);
 	}
 	
-	private PageControllers fromUnknownCellSize(VirtualDocument doc,
+	private PageControllers caseCellSize(VirtualDocument doc,
 			int pageCount, final int rows, final int cols,
 			final Dimensions pageSize,
 			final NUpOrientation orientation, final FillDirection direction,
