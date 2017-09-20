@@ -556,6 +556,10 @@ public final class Preprocessor {
 			return copy;
 		}
 		
+		public double getScale() {
+			return scale;
+		}
+
 		/**
 		 * Sets the uniform scale to be applied to the pages.
 		 * Note that this may not the final scale at which a page is
@@ -568,6 +572,10 @@ public final class Preprocessor {
 			this.scale = scale;
 		}
 	
+		public Dimensions getPageDimensions() {
+			return pageDimensions;
+		}
+
 		/**
 		 * Sets the dimensions of every page.
 		 * This overrides the preferred dimensions which would otherwise be
@@ -580,11 +588,19 @@ public final class Preprocessor {
 			this.pageDimensions = dimensions;
 		}
 	
+		public double getRotation() {
+			return rotation;
+		}
+
 		/** Sets the rotation of the page */
 		public void setRotation(double rotation) {
 			this.rotation = rotation;
 		}
 	
+		public Resizing getResizing() {
+			return resizing;
+		}
+
 		/**
 		 * Sets the behaviour to be applied to page size.
 		 * This behaviour takes effect after the pages have been rotated
@@ -617,6 +633,10 @@ public final class Preprocessor {
 			this.alignment = Arrays.asList(horizontal, vertical);
 		}
 		
+		public Dimensions getCellDimensions() {
+			return cellDimensions;
+		}
+
 		/**
 		 * Sets the dimensions of the circumscribed rectangle (the cell).
 		 * This overrides the preferred dimensions which would otherwise be
