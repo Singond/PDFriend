@@ -13,7 +13,10 @@ import com.github.singond.pdfriend.geometry.Margins;
  */
 public class CommonSettings {
 	public static final Dimensions AUTO_DIMENSIONS = Dimensions.dummy();
-	public static final Margins AUTO_MARGINS = new Margins(null, null, null, null) {};
+	public static final Margins AUTO_MARGINS = new Margins(null, null, null, null) {
+		@Override
+		public String toString() {return "AUTO";}
+	};
 
 	/** Number of pages in the output document */
 	private final int pages;
@@ -79,7 +82,7 @@ public class CommonSettings {
 		builder.append("pages: ").append(pages)
 				.append(", pageSize: ").append(pageSize)
 				.append(", sheetSize: ").append(sheetSize)
-				.append(", margins: ").append(margins);
+				.append(", margins: ").append(margins==AUTO_MARGINS ? "AUTO" : margins);
 		return builder.toString();
 	}
 

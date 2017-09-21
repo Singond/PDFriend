@@ -141,6 +141,7 @@ public class NUp implements Imposable {
 		Dimensions sheetSize = common.getSheetSize();
 		if (sheetSize != CommonSettings.AUTO_DIMENSIONS) {
 			if (pageSize == CommonSettings.AUTO_DIMENSIONS) {
+				logger.verbose("nup_pageSizeToSheetSize");
 				pageSize = sheetSize;
 			} else {
 				if (!pageSize.equals(sheetSize)) {
@@ -224,6 +225,7 @@ public class NUp implements Imposable {
 		Margins margins = common.getMargins();
 		if (margins == CommonSettings.AUTO_MARGINS) {
 			margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
+			logger.verbose("nup_marginsResolveAuto", margins);
 		}
 		
 		// Determine grid cell dimensions
@@ -277,6 +279,7 @@ public class NUp implements Imposable {
 		Margins margins = common.getMargins();
 		if (margins == CommonSettings.AUTO_MARGINS) {
 			margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
+			logger.verbose("nup_marginsResolveAuto", margins);
 		}
 		
 		double contentWidth = pageWidth - margins.left().in(unit)
@@ -391,6 +394,7 @@ public class NUp implements Imposable {
 		Margins margins = common.getMargins();
 		if (margins == CommonSettings.AUTO_MARGINS) {
 			margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
+			logger.verbose("nup_marginsResolveAuto", margins);
 		}
 		
 		// Grid cell dimensions
