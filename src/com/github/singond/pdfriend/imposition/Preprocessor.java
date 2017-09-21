@@ -654,6 +654,21 @@ public final class Preprocessor {
 		public boolean isScaleGiven() {
 			return scale > 0;
 		}
+		
+		/**
+		 * Checks whether the resulting cell size is constrained by
+		 * some concrete value given in settings.
+		 * Specifically, this method returns true if all the settings
+		 * of scale, page dimensions and cell dimensions are set to
+		 * automatic.
+		 * @return {@code true} if none of scale, page size and cell size
+		 *         have been given an explicit value
+		 */
+		public boolean isAutoSize() {
+			return scale <= 0
+					&& pageDimensions == AUTO
+					&& cellDimensions == AUTO;
+		}
 	
 		@Override
 		public String toString() {
