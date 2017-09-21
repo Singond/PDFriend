@@ -200,7 +200,7 @@ public class Imposition implements Module {
 			nup.setRows(rows);
 			nup.setCols(columns);
 			if (pages > 0) {
-				nup.setNumberOfPages(pages);
+//				nup.setNumberOfPages(pages);
 			}
 			VirtualDocument imposed = nup.imposeAsDocument(source);
 			return imposed;
