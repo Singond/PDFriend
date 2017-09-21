@@ -159,17 +159,24 @@ public class NUp implements Imposable {
 		 */
 		PageControllers pc = null; // TODO remove initial value after finishing
 		if (pageSize == CommonSettings.AUTO_DIMENSIONS) {
+			// Case A
 			pc = casePageSize(doc, pageCount, rows, cols, orientation,
 			                  direction, preprocess, common);
 		} else if (gridType == GridType.AUTO) {
+			// Case D
 			pc = caseGrid(doc, pageCount, pageSize, orientation,
 			              direction, preprocess, common);
+		} else if (preprocess.isAutoSize()) {
+			// Case C
+			pc = caseCellSize(doc, pageCount, rows, cols, pageSize,
+			                  orientation, direction, preprocess, common);
 		} else if (common.getMargins() == CommonSettings.AUTO_MARGINS) {
+			// Case B
 			pc = caseMargins(doc, pageCount, rows, cols, pageSize,
 			                 orientation, direction, preprocess, common);
 		} else {
-			pc = caseCellSize(doc, pageCount, rows, cols, pageSize,
-			                  orientation, direction, preprocess, common);
+			// All are set, a conflict
+//			throw new IllegalStateException("Cell count, page size , ")
 		}
 		Preprocessor preprocessor = pc.preprocessor;
 		GridPage.Builder builder = pc.builder;
