@@ -384,6 +384,7 @@ public class NUp implements Imposable {
 		 */
 		if (preprocess.getResizing() == Resizing.AUTO) {
 			preprocess.setResizing(Resizing.FIT);
+			logger.verbose("nup_setResizingToFit");
 		}
 		
 		// Page dimensions
