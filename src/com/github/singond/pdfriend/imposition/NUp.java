@@ -216,8 +216,7 @@ public class NUp implements Imposable {
 			final NUpOrientation orientation, final FillDirection direction,
 			final Preprocessor.Settings preprocess, final CommonSettings common) {
 		
-		if (logger.isDebugEnabled())
-			logger.debug("nup_caseSize");
+		logger.verbose("nup_caseSize");
 		
 		final LengthUnit unit = Imposition.LENGTH_UNIT;
 		
@@ -260,8 +259,7 @@ public class NUp implements Imposable {
 			final NUpOrientation orientation, final FillDirection direction,
 			final Preprocessor.Settings preprocess, final CommonSettings common) {
 		
-		if (logger.isDebugEnabled())
-			logger.debug("nup_caseGrid");
+		logger.verbose("nup_caseGrid");
 		
 		final LengthUnit unit = Imposition.LENGTH_UNIT;
 		
@@ -323,8 +321,7 @@ public class NUp implements Imposable {
 			final NUpOrientation orientation, final FillDirection direction,
 			final Preprocessor.Settings preprocess, final CommonSettings common) {
 		
-		if (logger.isDebugEnabled())
-			logger.debug("nup_caseMargins");
+		logger.verbose("nup_caseMargins");
 		
 		final LengthUnit unit = Imposition.LENGTH_UNIT;
 		
@@ -372,8 +369,8 @@ public class NUp implements Imposable {
 			final Dimensions pageSize,
 			final NUpOrientation orientation, final FillDirection direction,
 			final Preprocessor.Settings preprocess, final CommonSettings common) {
-		if (logger.isDebugEnabled())
-			logger.debug("nup_caseCell");
+		
+		logger.verbose("nup_caseCell");
 		
 		final LengthUnit unit = Imposition.LENGTH_UNIT;
 		
