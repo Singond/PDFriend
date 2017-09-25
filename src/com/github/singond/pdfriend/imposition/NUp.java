@@ -177,11 +177,31 @@ public class NUp implements Imposable {
 			                 orientation, direction, preprocess, common);
 		} else {
 			// All are set, a conflict
-//			throw new IllegalStateException("Cell count, page size , ")
+			logger.verbose("nup_caseConflict");
+			throw new IllegalStateException
+					("Conflicting settings: cell count, page size, margins and cell size are all set");
 		}
 		Preprocessor preprocessor = pc.preprocessor;
 		GridPage.Builder builder = pc.builder;
 		int cellsPerPage = pc.cellsPerPage;
+		
+		/*logger.info("nup_finalSettings",
+				builder.getRows(),
+				builder.getColumns(),
+				new Dimensions(builder.getCellWidth(),
+				               builder.getCellHeight(),
+				               Imposition.LENGTH_UNIT),
+				"",
+				"",
+				"",
+				"",
+				new Dimensions(builder.getFuturePageWidth(),
+				               builder.getFuturePageHeight(),
+				               Imposition.LENGTH_UNIT),
+				builder.getHorizontalOffset(),
+				builder.getVerticalOffset(),
+				builder.getOrientation(),
+				builder.getFillDirection());*/
 		
 		/*
 		 * If the number of pages is unset, calculate the number of pages
@@ -190,7 +210,9 @@ public class NUp implements Imposable {
 		if (pageCount < 0) {
 			logger.verbose("nup_gridCount", cellsPerPage);
 			pageCount = Util.ceilingDivision(doc.getLength(), cellsPerPage);
-			logger.verbose("nup_settingPagesNo", pageCount);
+			logger.verbose("nup_pageCountAll", pageCount);
+		} else {
+			logger.verbose("nup_pageCountPartial", pageCount);
 		}
 		
 		// Pre-processing

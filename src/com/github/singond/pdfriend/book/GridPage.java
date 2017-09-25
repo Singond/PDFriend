@@ -357,11 +357,44 @@ public class GridPage extends MultiPage {
 				pageHeight = pageHeight(columns, rows, cellWidth, cellHeight, orientation)
 						+ verticalOffset;
 			
-			GridPage page =  new GridPage
+			GridPage page = new GridPage
 					(pageWidth, pageHeight, columns, rows, cellWidth, cellHeight,
 					 horizontalOffset, verticalOffset, orientation);
 			page.setDirection(fillDirection);
 			return page;
+		}
+		
+		/** Performs preliminary resolution of the page width */
+		public double getFuturePageWidth() {
+			return pageWidth;
+		}
+		/** Performs preliminary resolution of the page height */
+		public double getFuturePageHeight() {
+			return pageHeight;
+		}
+		public int getColumns() {
+			return columns;
+		}
+		public int getRows() {
+			return rows;
+		}
+		public double getCellWidth() {
+			return cellWidth;
+		}
+		public double getCellHeight() {
+			return cellHeight;
+		}
+		public double getHorizontalOffset() {
+			return horizontalOffset;
+		}
+		public double getVerticalOffset() {
+			return verticalOffset;
+		}
+		public GridOrientation getOrientation() {
+			return orientation;
+		}
+		public Direction getFillDirection() {
+			return fillDirection;
 		}
 		
 		public Builder setPageWidth(double pageWidth) {
