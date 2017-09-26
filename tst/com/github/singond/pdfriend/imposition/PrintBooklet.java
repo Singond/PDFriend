@@ -12,8 +12,6 @@ import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.process.PDFParser;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
 import com.github.singond.pdfriend.imposition.Booklet;
-import com.github.singond.pdfriend.imposition.Booklet.Binding;
-import com.github.singond.pdfriend.imposition.CommonSettings;
 
 public class PrintBooklet {
 	
@@ -27,9 +25,8 @@ public class PrintBooklet {
 		try {
 			source = new PDFParser().parseDocument(Files.readAllBytes(sourceFile.toPath()));
 			Booklet booklet = new Booklet();
-			booklet.setBinding(Binding.TOP);
-			booklet.setVersoOpposite(true);
-			booklet.acceptCommonSettings(CommonSettings.auto());
+//			booklet.setBinding(Binding.LEFT);
+//			booklet.setVersoOpposite(true);
 			VirtualDocument doc = booklet.imposeAsDocument(source);
 			new PDFRenderer().renderAndSave(doc, targetFile);
 			logger.info("Finished writing document");

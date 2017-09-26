@@ -36,7 +36,7 @@ public class Booklet implements Imposable {
 	private Binding binding = Binding.LEFT;
 	private boolean versoOpposite = false;
 	private Preprocessor.Settings preprocess = null;
-	private CommonSettings common = null;
+	private CommonSettings common = CommonSettings.auto();
 	
 
 	/**
