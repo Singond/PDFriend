@@ -38,21 +38,7 @@ public class Booklet implements Imposable {
 	private Preprocessor.Settings preprocess = null;
 	private CommonSettings common = null;
 	
-	/**
-	 * Constructs a new Booklet without content.
-	 * @param width the width of single Page of the finished booklet
-	 * @param height the height of single Page of the finished booklet
-	 * @param pages the number of pages in the finished booklet
-	 *        This number does not necessarily have to be a multiple of
-	 *        four: It is increased to the first integer multiple
-	 *        automatically.
-	 * @param binding he edge of a Page where the binding is to be placed
-	 * @param versoOpposite whether verso should be upside down with respect
-	 *        to the recto.
-	 *        This only has effect when {@code binding} is TOP or BOTTOM.
-	 */
-	// NOTE Comment left for reference during refactoring
-	
+
 	/**
 	 * Returns the edge at which the binding is located.
 	 * @return the edge of a Page where the binding will be placed
@@ -300,19 +286,6 @@ public class Booklet implements Imposable {
 	 */
 	public VirtualDocument imposeAsDocument(VirtualDocument source) {
 		return imposeAsVolume(source).renderDocument();
-	}
-	
-	public Volume volume() {
-//		return volume;
-		return null;
-	}
-	
-//	@Override
-	@Deprecated
-	public VirtualDocument getDocument() {
-		// FIXME Fill the document with content before returning it!
-//		return volume.renderDocument();
-		return null;
 	}
 	
 	@Override
