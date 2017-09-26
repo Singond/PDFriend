@@ -329,8 +329,7 @@ public class Booklet implements Imposable {
 	 */
 	@Override
 	public VirtualDocument impose(List<VirtualDocument> sources) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not implemented yet");
+		return impose(VirtualDocument.concatenate(sources));
 	}
 	
 	/**
