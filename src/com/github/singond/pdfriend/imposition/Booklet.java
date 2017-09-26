@@ -7,7 +7,10 @@ import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.FlipDirection;
 import com.github.singond.pdfriend.book.Leaf;
+import com.github.singond.pdfriend.book.Page;
+import com.github.singond.pdfriend.book.SequentialSourceProvider;
 import com.github.singond.pdfriend.book.Signature;
+import com.github.singond.pdfriend.book.SourceProvider;
 import com.github.singond.pdfriend.book.Stack;
 import com.github.singond.pdfriend.book.Volume;
 import com.github.singond.pdfriend.book.Stack.Flip;
@@ -30,12 +33,10 @@ public class Booklet implements Imposable {
 	/** Logger */
 	private static ExtendedLogger logger = Log.logger(Booklet.class);
 
-	/** Width of single Page. */
-	private final double pageWidth;
-	/** Height of single Page. */
-	private final double pageHeight;
-	/** The Volume representing this Booklet. */
-	private final Volume volume;
+	private Binding binding = Binding.LEFT;
+	private boolean versoOpposite = false;
+	private Preprocessor.Settings preprocess = null;
+	private CommonSettings common = null;
 	
 	/**
 	 * Constructs a new Booklet without content.
@@ -50,8 +51,69 @@ public class Booklet implements Imposable {
 	 *        to the recto.
 	 *        This only has effect when {@code binding} is TOP or BOTTOM.
 	 */
-	public Booklet(double width, double height, int pages, Binding binding,
-	               boolean versoOpposite) {
+	// NOTE Comment left for reference during refactoring
+	
+	/**
+	 * Returns the edge at which the binding is located.
+	 * @return the edge of a Page where the binding will be placed
+	 */
+	public Binding getBinding() {
+		return binding;
+	}
+
+	/**
+	 * Sets the edge at which the binding is located.
+	 * @param binding the edge of a Page where the binding is to be placed
+	 */
+	public void setBinding(Binding binding) {
+		if (binding == null) {
+			throw new IllegalArgumentException
+					("Booklet binding must be set to a non-null value");
+		}
+		this.binding = binding;
+	}
+
+	/**
+	 * Checks whether the verso of the booklet should be upside down.
+	 * This only has effect when {@code binding} is TOP or BOTTOM.
+	 * @return {@code true} if verso should be upside down with respect
+	 *         to the recto.
+	 */
+	public boolean isVersoOpposite() {
+		return versoOpposite;
+	}
+
+	/**
+	 * Sets whether the verso of the booklet should be upside down.
+	 * This only has effect when {@code binding} is TOP or BOTTOM.
+	 * TODO Consider renaming the method
+	 * @param versoOpposite whether verso should be upside down with respect
+	 *        to the recto.
+	 */
+	public void setVersoOpposite(boolean versoOpposite) {
+		this.versoOpposite = versoOpposite;
+	}
+
+	/**
+	 * Returns a new {@code Volume} object resulting from imposing the given
+	 * virtual document into a booklet according to the current settings.
+	 * @param source the virtual document to be imposed
+	 */
+	private Volume imposeAsVolume(VirtualDocument source) {
+		// Copy all nonfinal values defensively
+		/**
+		 * The number of pages in the finished booklet.
+		 * The initial value does not have to be a multiple of four;
+		 * it will be increased to the first integer multiple automatically.
+		 */
+		int pageCount = common.getPageCount();
+		Binding binding = this.binding;
+		boolean versoOpposite = this.versoOpposite;
+
+		double[] dimensions = source.maxPageDimensions();
+		double width = dimensions[0];
+		double height = dimensions[1];
+		
 		if (width <= 0) {
 			throw new IllegalArgumentException
 					("Booklet width must be a positive number");
@@ -60,58 +122,62 @@ public class Booklet implements Imposable {
 			throw new IllegalArgumentException
 					("Booklet height must be a positive number");
 		}
-		if (binding == null) {
-			throw new IllegalArgumentException
-					("Booklet binding must be set to a non-null value");
+		
+		logger.info("booklet_constructing", pageCount);
+		
+		/*
+		 * Determine the number of pages in output.
+		 * If the number is given explicitly, honor its value, otherwise
+		 * take the number of pages in the input document.
+		 * In any case, increase the value to the nearest integer multiple
+		 * of four to reflect the fact that each output sheet contains four
+		 * pages.
+		 */
+		if (pageCount < 1) {
+			// Page count is automatic: resolve from input document length
+			pageCount = source.getLength();
 		}
-		
-		logger.info("booklet_constructing", pages);
-		pageWidth = width;
-		pageHeight = height;
-		
-		if (pages < 1) {
-			throw new IllegalArgumentException
-				("A booklet must have at least one page");
-		} else if (pages % 4 != 0) {
-			int oldPages = pages;
-			pages = ((pages / 4) + 1) * 4;
-			logger.warn("booklet_padding", pages-oldPages);
+		// Pad to multiple of four
+		if (pageCount % 4 != 0) {
+			int oldPages = pageCount;
+			pageCount = ((pageCount / 4) + 1) * 4;
+			logger.warn("booklet_padding", pageCount-oldPages);
 		}
-		assert (pages >= 1) && (pages % 4 == 0) : pages;
+		assert (pageCount >= 1) && (pageCount % 4 == 0) : pageCount;
 		
-		Volume vol = new Volume();
+		/*
+		 * Build the volume.
+		 */
+		Volume volume = new Volume();
 		Signature signature = null;
 		switch (binding) {
 			case TOP:
-				signature = withTopBinding(width, height, pages, versoOpposite);
+				signature = withTopBinding(width, height, pageCount, versoOpposite);
 				break;
 			case RIGHT:
-				signature = withRightBinding(width, height, pages);
+				signature = withRightBinding(width, height, pageCount);
 				break;
 			case BOTTOM:
-				signature = withBottomBinding(width, height, pages, versoOpposite);
+				signature = withBottomBinding(width, height, pageCount, versoOpposite);
 				break;
 			case LEFT:
-				signature = withLeftBinding(width, height, pages);
+				signature = withLeftBinding(width, height, pageCount);
 				break;
 			default:
 				assert false : binding;
 		}
 		signature.numberPagesFrom(1);
-		vol.add(signature);
-		volume = vol;
+		volume.add(signature);
+		
+		/*
+		 * Fill the volume with content.
+		 */
+		SourceProvider<Page> sp = new SequentialSourceProvider(source);
+		sp.setSourceTo(volume.pages());
+		
+		return volume;
 	}
-	
-	/**
-	 * Constructs a new Booklet without content, with left binding.
-	 * @param width the width of single Page of the finished booklet
-	 * @param height the height of single Page of the finished booklet
-	 * @param pages the number of pages in the finished booklet
-	 */
-	public Booklet(double width, double height, int pages) {
-		this(width, height, pages, Binding.LEFT, false);
-	}
-	
+
 	/**
 	 * Returns a new Signature object representing a stack of sheets
 	 * folded in half at the left edge.
@@ -229,44 +295,26 @@ public class Booklet implements Imposable {
 	}
 	
 	/**
-	 * Returns a new Booklet without content, adapted for imposing the
-	 * given document by getting its number of pages and page dimensions.
-	 * @param source the document to adapt to
-	 * @param binding the edge with binding
-	 * @param versoOpposite whether verso should be upside down with respect
-	 *        to the recto.
-	 *        This only has effect when {@code binding} is TOP or BOTTOM.
-	 * @return a new Booklet object
+	 * Imposes the given virtual document into a new virtual document
+	 * according to the current settings of this {@code Booklet} object.
 	 */
-	public static Booklet from(VirtualDocument source, Binding binding,
-	                           boolean versoOpposite) {
-		double[] dimensions = source.maxPageDimensions();
-		int pageCount = source.getLength();
-		return new Booklet(dimensions[0], dimensions[1], pageCount, binding, versoOpposite);
-	}
-	
-	/**
-	 * Returns a new Booklet without content, adapted for imposing the
-	 * given document by getting its number of pages and page dimensions.
-	 * This variant is bound on the left edge.
-	 * @param source the document to adapt to
-	 * @return a new Booklet object
-	 */
-	public static Booklet from(VirtualDocument source) {
-		return Booklet.from(source, Binding.LEFT, false);
+	public VirtualDocument imposeAsDocument(VirtualDocument source) {
+		return imposeAsVolume(source).renderDocument();
 	}
 	
 	public Volume volume() {
-		return volume;
+//		return volume;
+		return null;
 	}
 	
 //	@Override
 	@Deprecated
 	public VirtualDocument getDocument() {
 		// FIXME Fill the document with content before returning it!
-		return volume.renderDocument();
+//		return volume.renderDocument();
+		return null;
 	}
-
+	
 	@Override
 	public String getName() {
 		return NAME;
@@ -274,16 +322,22 @@ public class Booklet implements Imposable {
 	
 	@Override
 	public void acceptPreprocessSettings(Settings settings) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not implemented yet");
+		if (settings == null)
+			throw new IllegalArgumentException("Preprocess settings cannot be null");
+		this.preprocess = settings.copy();
 	}
 	
 	@Override
 	public void acceptCommonSettings(CommonSettings settings) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not implemented yet");
+		if (settings == null)
+			throw new IllegalArgumentException("Settings cannot be null");
+		this.common = settings;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @return always the value of {@code false}
+	 */
 	@Override
 	public boolean prefersMultipleInput() {
 		return false;
@@ -291,10 +345,15 @@ public class Booklet implements Imposable {
 
 	@Override
 	public VirtualDocument impose(VirtualDocument source) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not implemented yet");
+		return imposeAsVolume(source).renderDocument();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * Booklet handles multiple document input by first concatenating them
+	 * into one document in the order they appear in the argument.
+	 */
 	@Override
 	public VirtualDocument impose(List<VirtualDocument> sources) {
 		// TODO Auto-generated method stub

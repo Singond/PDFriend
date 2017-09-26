@@ -159,12 +159,13 @@ public class Imposition implements Module {
 				logger.verbose("preprocess_skip");
 			}
 			logger.info("Imposing booklet...");
-			Booklet booklet = Booklet.from(source, binding, flipVerso);
-			Volume volume = booklet.volume();
-			SourceProvider<Page> sp = new SequentialSourceProvider(source);
-			sp.setSourceTo(volume.pages());
-			VirtualDocument imposed = volume.renderDocument();
-			return imposed;
+//			Booklet booklet = Booklet.from(source, binding, flipVerso);
+//			Volume volume = booklet.volume();
+//			SourceProvider<Page> sp = new SequentialSourceProvider(source);
+//			sp.setSourceTo(volume.pages());
+//			VirtualDocument imposed = volume.renderDocument();
+//			return imposed;
+			throw new UnsupportedOperationException("Not implemented anymore");
 		}
 	}
 	
@@ -228,11 +229,12 @@ public class Imposition implements Module {
 		
 		@Override
 		public VirtualDocument impose(ModuleData data) throws RenderingException {
-			logger.info("Imposing overlay...");
-			List<VirtualDocument> docs = data.asMultipleDocuments();
-			Overlay model = Overlay.from(docs);
-			VirtualDocument imposed = model.getDocument();
-			return imposed;
+//			logger.info("Imposing overlay...");
+//			List<VirtualDocument> docs = data.asMultipleDocuments();
+//			Overlay model = Overlay.from(docs);
+//			VirtualDocument imposed = model.getDocument();
+//			return imposed;
+			throw new UnsupportedOperationException("Not implemented anymore");
 		}
 	}
 }

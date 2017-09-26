@@ -35,8 +35,8 @@ class BookletCli implements ImposableCli<Booklet> {
 
 	@Override
 	public Booklet getImposable() {
-//		Imposition.TypeBooklet impl = module.new TypeBooklet();
-//		module.setType(impl);
-		throw new UnsupportedOperationException("Not implemented yet");
+		Booklet task = new Booklet();
+		// TODO Set booklet-specific settings
+		return task;
 	}
 }
