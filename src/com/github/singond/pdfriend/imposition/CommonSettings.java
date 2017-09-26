@@ -18,7 +18,11 @@ public class CommonSettings {
 		public String toString() {return "AUTO";}
 	};
 
-	/** Number of pages in the output document */
+	/**
+	 * Number of pages in the output document.
+	 * Negative values are interpreted as a direction to calculate the
+	 * page count automatically.
+	 */
 	private final int pages;
 	
 	/**
@@ -58,6 +62,15 @@ public class CommonSettings {
 		this.pageSize = pageSize;
 		this.sheetSize = sheetSize;
 		this.margins = margins;
+	}
+	
+	/**
+	 * Constructs a new settings object with all values set to auto.
+	 * @return a new {@code CommonSettings} object
+	 */
+	public static CommonSettings auto() {
+		return new CommonSettings(-1, AUTO_DIMENSIONS, AUTO_DIMENSIONS,
+		                          AUTO_MARGINS);
 	}
 
 	public int getPageCount() {
