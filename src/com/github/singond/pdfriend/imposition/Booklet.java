@@ -33,7 +33,7 @@ public class Booklet implements Imposable {
 	/** Logger */
 	private static ExtendedLogger logger = Log.logger(Booklet.class);
 
-	private Binding binding = Binding.LEFT;
+	private Edge binding = Edge.LEFT;
 	private boolean versoOpposite = false;
 	private Preprocessor.Settings preprocess = null;
 	private CommonSettings common = CommonSettings.auto();
@@ -43,7 +43,7 @@ public class Booklet implements Imposable {
 	 * Returns the edge at which the binding is located.
 	 * @return the edge of a Page where the binding will be placed
 	 */
-	public Binding getBinding() {
+	public Edge getBinding() {
 		return binding;
 	}
 
@@ -51,7 +51,36 @@ public class Booklet implements Imposable {
 	 * Sets the edge at which the binding is located.
 	 * @param binding the edge of a Page where the binding is to be placed
 	 */
+	@Deprecated
 	public void setBinding(Binding binding) {
+		if (binding == null) {
+			throw new IllegalArgumentException
+			("Booklet binding must be set to a non-null value");
+		}
+		switch (binding) {
+			case BOTTOM:
+				this.binding = Edge.BOTTOM;
+				break;
+			case LEFT:
+				this.binding = Edge.LEFT;
+				break;
+			case RIGHT:
+				this.binding = Edge.RIGHT;
+				break;
+			case TOP:
+				this.binding = Edge.TOP;
+				break;
+			default:
+				throw new AssertionError("Unknown binding value");
+			
+		}
+	}
+
+	/**
+	 * Sets the edge at which the binding is located.
+	 * @param binding the edge of a Page where the binding is to be placed
+	 */
+	public void setBinding(Edge binding) {
 		if (binding == null) {
 			throw new IllegalArgumentException
 					("Booklet binding must be set to a non-null value");
@@ -334,10 +363,11 @@ public class Booklet implements Imposable {
 	
 	/**
 	 * Specifies where the booklet binding is located.
-	 * Specifically, this value indicated on which edge of the folded
+	 * Specifically, this value indicates on which edge of the folded
 	 * booklet the binding is placed, when looking at the front page
 	 * in correct (ie. top is on top) orientation.
 	 */
+	@Deprecated
 	public static enum Binding {
 		/** The fold (and binding) is on the top edge. */
 		TOP,
