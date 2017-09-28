@@ -1,5 +1,6 @@
 package com.github.singond.pdfriend.imposition;
 
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
