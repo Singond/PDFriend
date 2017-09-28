@@ -1,8 +1,8 @@
 package com.github.singond.pdfriend.imposition;
 
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 import com.github.singond.pdfriend.cli.ParameterConsistencyException;
-import com.github.singond.pdfriend.cli.BookletBindingConverter;
 
 /**
  * A command-line interface for the booklet imposable type {@link Booklet}.
@@ -10,14 +10,15 @@ import com.github.singond.pdfriend.cli.BookletBindingConverter;
  * @author Singon
  *
  */
+@Parameters(separators="=")
 class BookletCli implements ImposableCli<Booklet> {
 
 	@Parameter(names="--booklet", description="A simple stack of sheets folded in half")
 	private boolean booklet = false;
 	
 	/** Specifies where the binding is located */
-	@Parameter(names="--binding", converter=BookletBindingConverter.class)
-	private Booklet.Binding binding = Booklet.Binding.LEFT;
+	@Parameter(names="--binding", converter=EdgeConverter.class)
+	private Edge binding = Edge.LEFT;
 	
 	/** In a vertical booklet, print the verso upside down. */
 	@Parameter(names="--verso-opposite")
@@ -35,8 +36,9 @@ class BookletCli implements ImposableCli<Booklet> {
 
 	@Override
 	public Booklet getImposable() {
-		Booklet task = new Booklet();
-		// TODO Set booklet-specific settings
-		return task;
+		Booklet booklet = new Booklet();
+		booklet.setBinding(binding);
+		booklet.setVersoOpposite(flipVerso);
+		return booklet;
 	}
 }
