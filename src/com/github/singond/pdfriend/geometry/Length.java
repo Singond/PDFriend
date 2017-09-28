@@ -88,11 +88,16 @@ public final class Length implements Comparable<Length> {
 	/**
 	 * Returns the difference of the given two lengths.
 	 * @param lengthOne the length to be subtracted from (minuend)
-	 * @param lengthTwo the length to be subtracted (subtrahend)
+	 * @param lengthTwo the length to be subtracted (subtrahend). This must be
+	 *        less than or equal to {@code lengthOne}.
 	 * @return a {@code Length} instance whose value is equal to
 	 *         {@code lengthOne - lengthTwo}
 	 */
 	public static Length subtract(Length lengthOne, Length lengthTwo) {
+		if (lengthOne.compareTo(lengthTwo) < 0) {
+			throw new ArithmeticException
+					("The subtrahend is larger than the minuend");
+		}
 		return new Length(lengthOne.value - lengthTwo.value);
 	}
 	
