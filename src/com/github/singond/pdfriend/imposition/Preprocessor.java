@@ -553,6 +553,7 @@ public final class Preprocessor {
 	public String toString() {
 		return new StringBuilder()
 				.append("cell dimensions: ").append(cell).append(", ")
+				.append("cell content dimensions: ").append(cellContent).append(", ")
 				.append("settings: ").append(settings)
 				.toString();
 	}
@@ -778,7 +779,8 @@ public final class Preprocessor {
 					.append("page dimensions: ").append((pageDimensions==AUTO)
 					                                    ? "AUTO" : pageDimensions).append(", ")
 					.append("cell dimensions: ").append((cellDimensions==AUTO)
-					                                    ? "AUTO" : pageDimensions)
+					                                    ? "AUTO" : pageDimensions).append(", ")
+					.append("margins: ").append(cellMargins)
 					.toString();
 		}
 	}
