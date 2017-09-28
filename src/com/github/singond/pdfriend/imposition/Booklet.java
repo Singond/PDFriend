@@ -47,6 +47,13 @@ public class Booklet implements Imposable {
 	
 	private Booklet(Edge binding, boolean versoOpposite,
 	                Preprocessor.Settings preprocess, CommonSettings common) {
+		if (binding == null)
+			throw new IllegalArgumentException("Binding must not be null");
+		if (preprocess == null)
+			throw new IllegalArgumentException("Preprocessor settings must not be null");
+		if (common == null)
+			throw new IllegalArgumentException("Common settings must not be null");
+		
 		this.binding = binding;
 		this.versoOpposite = versoOpposite;
 		this.preprocess = preprocess.copy();
