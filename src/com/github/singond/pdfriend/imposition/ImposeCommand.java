@@ -70,12 +70,12 @@ public class ImposeCommand extends SubCommand {
 		impose.setBinding(binding);
 		impose.setFlipVerso(flipVerso);
 //		Imposable task = type.getImpositionTask(impose);
-		Imposable task = imposable.getImpositionTask();
+		ImposableBuilder<?> taskBuilder = imposable.getImpositionTask();
 //		if (pageOpts.isSet())
-		task.acceptPreprocessSettings(pageOpts.getPreprocessorSettings());
+		taskBuilder.acceptPreprocessSettings(pageOpts.getPreprocessorSettings());
 //		if (commonOpts.isSet())
-		task.acceptCommonSettings(commonOpts.getCommonSettings());
-		impose.setTask(task);
+		taskBuilder.acceptCommonSettings(commonOpts.getCommonSettings());
+		impose.setTask(taskBuilder.build());
 		return impose;
 	}
 	

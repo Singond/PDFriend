@@ -46,7 +46,7 @@ class ImposableResolver implements ParameterDelegate {
 	 * @throws IllegalStateException when none or more than one imposable
 	 *         types is given
 	 */
-	public Imposable getImpositionTask() {
+	public ImposableBuilder<?> getImpositionTask() {
 		ImposableCli<?> selected = null;
 		for (ImposableCli<?> i : imposables) {
 			if (i.isSet()) {

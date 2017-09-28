@@ -30,7 +30,7 @@ import com.github.singond.geometry.plane.Point;
  * @author Singon
  *
  */
-public class Booklet implements Imposable {
+public class Booklet implements Imposable, ImposableBuilder<Booklet> {
 	
 	/** The internal name of this imposable document type */
 	private static final String NAME = "booklet";
@@ -433,11 +433,6 @@ public class Booklet implements Imposable {
 	}
 	
 	@Override
-	public String getName() {
-		return NAME;
-	}
-	
-	@Override
 	public void acceptPreprocessSettings(Settings settings) {
 		if (settings == null)
 			throw new IllegalArgumentException("Preprocess settings cannot be null");
@@ -449,6 +444,16 @@ public class Booklet implements Imposable {
 		if (settings == null)
 			throw new IllegalArgumentException("Settings cannot be null");
 		this.common = settings;
+	}
+
+	@Override
+	public Booklet build() {
+		return this;
+	}
+
+	@Override
+	public String getName() {
+		return NAME;
 	}
 
 	/**
