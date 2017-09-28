@@ -153,13 +153,13 @@ public class Booklet implements Imposable {
 //		boolean sheetSizeLater = false;
 		if (!autoPage && autoSheet) {
 			// Only page size is given: determine sheet size
-			logger.verbose("nup_pageSizeToSheetSize");
+//			logger.verbose("booklet_pageSizeToSheetSize");
 //			sheetSize = sheetFromPage(pageSize, binding, mirroredMargins);
 //			preprocess.setCellDimensions(pageSize);
 		} else if (autoPage && !autoSheet) {
 			// Sheet size is given: determine page size
-			logger.verbose("nup_sheetSizeToPageSize");
 			pageSize = pageFromSheet(sheetSize, binding, mirroredMargins);
+			logger.verbose("booklet_sheetSizeToPageSize", pageSize, sheetSize, margins);
 //			preprocess.setCellDimensions(pageSize);
 		} else if (!autoPage && !autoSheet){
 			// Both are given: a conflict
@@ -256,10 +256,10 @@ public class Booklet implements Imposable {
 		
 		switch (binding) {
 			case TOP: case BOTTOM:
-				height = height.times(1/2);
+				height = height.times(1d/2);
 				break;
 			case LEFT: case RIGHT:
-				width = width.times(1/2);
+				width = width.times(1d/2);
 				break;
 			default:
 				throw new AssertionError("Invalid 'binding' value");
