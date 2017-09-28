@@ -16,8 +16,10 @@ import com.github.singond.pdfriend.document.Contents;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.geometry.Dimensions;
+import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
+import com.github.singond.pdfriend.geometry.Margins;
 
 /**
  * Pre-processes pages of input document prior to imposition.
@@ -60,9 +62,13 @@ public final class Preprocessor {
 	 */
 	private final List<VirtualDocument> documents;
 	/**
-	 * The resolved dimensions of the cell.
+	 * The resolved dimensions of the cell (including margins).
 	 */
 	private final Dimensions cell;
+	/**
+	 * The resolved dimensions of the contents of the cell without margins.
+	 */
+	private final Dimensions cellContent;
 	/**
 	 * The cache of resolved page positions.
 	 */
@@ -79,7 +85,9 @@ public final class Preprocessor {
 		// dimension is determined now.
 		this.documents = new ArrayList<>(documents);
 		this.settings = settings.copy();
-		this.cell = resolveCellDimensions(this.documents, this.settings);
+		CellProperties cp = resolveCellDimensions(this.documents, this.settings);
+		this.cell = cp.cell;
+		this.cellContent = cp.cellContent;
 		this.positionsCache = new HashMap<>();
 	}
 	
@@ -112,12 +120,15 @@ public final class Preprocessor {
 	 * and settings.
 	 * @param documents
 	 * @param settings
-	 * @return
+	 * @return an object containing the resolved cell dimensions including margins
+	 *         and the cell content dimensions (ie. without margins)
 	 * @throws NoSuchElementException if the document list contains no pages
 	 */
-	private static final Dimensions resolveCellDimensions(
+	private static final CellProperties resolveCellDimensions(
 			List<VirtualDocument> documents, Settings settings) {
-		Dimensions result;
+		Dimensions cell;
+		Dimensions content;
+		
 		logger.verbose("preprocess_cellSize_resolve", documents, settings);
 		if (settings.cellDimensions == AUTO) {
 			logger.verbose("preprocess_cellSize_resolvePref");
@@ -162,15 +173,45 @@ public final class Preprocessor {
 						settings.pageDimensions.height().in(Imposition.LENGTH_UNIT),
 						rotation);
 			}
-			result = new Dimensions(2 * halfHorizontalExtent, 2 * halfVerticalExtent,
-			                        Imposition.LENGTH_UNIT);
+			
+			Length contentWidth = new Length(2 * halfHorizontalExtent,
+			                                 Imposition.LENGTH_UNIT);
+			Length contentHeight = new Length(2 * halfVerticalExtent,
+			                                  Imposition.LENGTH_UNIT);
+			Margins m = settings.cellMargins;
+			content = new Dimensions(contentWidth, contentHeight);
+			cell = new Dimensions(Length.sum(contentWidth, m.left(), m.right()),
+			                      Length.sum(contentHeight, m.top(), m.bottom()));
 		} else {
 			// Cell dimensions are given explicitly; return the value
 			logger.verbose("preprocess_cellSize_explicit", settings.cellDimensions);
-			result = settings.cellDimensions;
+			cell = settings.cellDimensions;
+			// Shrink content area according to margins
+			Margins m = settings.cellMargins;
+			Length horizontalMargins = Length.sum(m.left(), m.right());
+			Length verticalMargins = Length.sum(m.top(), m.bottom());
+			content = new Dimensions(
+					Length.subtract(cell.width(), horizontalMargins),
+					Length.subtract(cell.height(), verticalMargins));
 		}
-		logger.verbose("preprocess_cellSize_result", result);
-		return result;
+		
+		logger.verbose("preprocess_cellSize_result", cell, content);
+		return new CellProperties(cell, content);
+	}
+	
+	/**
+	 * Groups the cell size with and without margins.
+	 */
+	private static class CellProperties {
+		/** Cell size including margins */
+		private final Dimensions cell;
+		/** Cell size without margins */
+		private final Dimensions cellContent;
+		
+		private CellProperties(Dimensions cell, Dimensions cellContent) {
+			this.cell = cell;
+			this.cellContent = cellContent;
+		}
 	}
 	
 	/**
@@ -538,6 +579,11 @@ public final class Preprocessor {
 		 */
 		private Dimensions cellDimensions = AUTO;
 		
+		/**
+		 * The margins of the cell.
+		 */
+		private Margins cellMargins = new Margins(new Length());
+		
 		public Settings() {}
 		
 		/**
@@ -563,6 +609,7 @@ public final class Preprocessor {
 			copy.alignment = new ArrayList<>(alignment);
 			copy.pageDimensions = pageDimensions;
 			copy.cellDimensions = cellDimensions;
+			copy.cellMargins = cellMargins;
 			return copy;
 		}
 		
@@ -660,6 +707,22 @@ public final class Preprocessor {
 			this.cellDimensions = dimensions;
 		}
 		
+		/**
+		 * Gets the margins of the cell.
+		 * @return the cell margins
+		 */
+		public Margins getCellMargins() {
+			return cellMargins;
+		}
+
+		/**
+		 * Sets the margins of the cell.
+		 * @param the margins to be applied to cell
+		 */
+		public void setCellMargins(Margins cellMargins) {
+			this.cellMargins = cellMargins;
+		}
+
 		/** Checks whether scale has been explicitly set to a valid value */
 		public boolean isScaleGiven() {
 			return scale > 0;
