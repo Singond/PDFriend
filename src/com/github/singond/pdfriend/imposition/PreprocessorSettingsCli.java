@@ -7,12 +7,19 @@ import com.github.singond.pdfriend.cli.DimensionsConverter;
 import com.github.singond.pdfriend.cli.ParameterDelegate;
 import com.github.singond.pdfriend.cli.RotationConverter;
 import com.github.singond.pdfriend.cli.TwoNumbers;
-import com.github.singond.pdfriend.cli.TwoNumbers.Converter;
 import com.github.singond.pdfriend.geometry.Angle;
 import com.github.singond.pdfriend.geometry.AngularUnits;
 import com.github.singond.pdfriend.geometry.Dimensions;
 
-@Parameters(resourceBundle = "Help", separators="=")
+/**
+ * A command-line interface for some of the preprocessor settings.
+ * This includes only those preprocessor settings which are handled in the
+ * same manner regardless of the imposition type.
+ *
+ * @author Singon
+ *
+ */
+@Parameters(resourceBundle="Help", separators="=")
 class PreprocessorSettingsCli implements ParameterDelegate {
 	
 	private static final Angle DEFAULT_ROTATION = new Angle(0);

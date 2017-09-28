@@ -216,6 +216,8 @@ public final class Preprocessor {
 	
 	/**
 	 * Processes all pages of all documents given during initialization.
+	 * If more than one document was given in initialization, they are
+	 * concatenated in their order.
 	 */
 	public VirtualDocument processAll() {
 		VirtualDocument.Builder processed = new VirtualDocument.Builder();
