@@ -146,6 +146,16 @@ public final class Dimensions {
 		                      height.times(magnification));
 	}
 	
+	/**
+	 * If this instance has landscape orientation, returns a Dimensions
+	 * instance with portrait orientation and vice versa.
+	 * @return a {@code Dimensions} object with the width and height swapped
+	 *         as opposed to this object
+	 */
+	public Dimensions changeOrientation() {
+		return new Dimensions(height, width);
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
