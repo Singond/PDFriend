@@ -58,7 +58,7 @@ public class Booklet implements Imposable {
 	public void setBinding(Binding binding) {
 		if (binding == null) {
 			throw new IllegalArgumentException
-			("Booklet binding must be set to a non-null value");
+					("Booklet binding must be set to a non-null value");
 		}
 		switch (binding) {
 			case BOTTOM:
@@ -115,9 +115,9 @@ public class Booklet implements Imposable {
 	/**
 	 * Returns a new {@code Volume} object resulting from imposing the given
 	 * virtual document into a booklet according to the current settings.
-	 * @param source the virtual document to be imposed
+	 * @param doc the virtual document to be imposed
 	 */
-	private Volume imposeAsVolume(VirtualDocument source) {
+	private Volume imposeAsVolume(VirtualDocument doc) {
 		// Copy all nonfinal values defensively
 		/**
 		 * The number of pages in the finished booklet.
@@ -129,6 +129,7 @@ public class Booklet implements Imposable {
 		final boolean versoOpposite = this.versoOpposite;
 		final Preprocessor.Settings preprocess = this.preprocess;
 		final CommonSettings common = this.common;
+		final LengthUnit unit = Imposition.LENGTH_UNIT;
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("imposition_preprocessSettings", preprocess);
@@ -157,6 +158,10 @@ public class Booklet implements Imposable {
 			throw new IllegalStateException("Sheet size is null");
 		}
 		
+		/*
+		 * Next, resolve page size (if any) into sheet size.
+		 * After doing so, page size is no longer needed.
+		 */
 		if (pageSize != CommonSettings.AUTO_DIMENSIONS) {
 			if (sheetSize == CommonSettings.AUTO_DIMENSIONS) {
 				// Only page size is given: determine sheet size
@@ -170,18 +175,33 @@ public class Booklet implements Imposable {
 		} // Otherwise just leave sheetSize as it is
 		pageSize = null;           // Won't need this anymore
 
-		double[] dimensions = source.maxPageDimensions();
-		double width = dimensions[0];
-		double height = dimensions[1];
+		/*
+		 * Finally, make the preprocessor aware of the sheet size.
+		 * In booklet imposition, the "cell" of the preprocessor corresponds
+		 * to one page in the output booklet.
+		 * If the sheet size is auto, no configuration is needed, because
+		 * that is its default behaviour.
+		 * If, however, a certain sheet size is desired, that size must
+		 * be passed to the preprocessor as the cell size.
+		 */
+		if (sheetSize != CommonSettings.AUTO_DIMENSIONS) {
+			preprocess.setCellDimensions(sheetSize);
+		}
 		
-		if (width <= 0) {
-			throw new IllegalArgumentException
-					("Booklet width must be a positive number");
-		}
-		if (height <= 0) {
-			throw new IllegalArgumentException
-					("Booklet height must be a positive number");
-		}
+		/*
+		 * The margins can be set using the preprocessor.
+		 * TODO: Enable mirrored margins
+		 */
+		preprocess.setCellMargins(common.getMargins());
+		
+		/*
+		 * Now preprocess the pages and store the page dimensions.
+		 */
+		Preprocessor preprocessor = new Preprocessor(doc, preprocess);
+		Dimensions cell = preprocessor.getResolvedCellDimensions();
+		double width = cell.width().in(unit);
+		double height = cell.height().in(unit);
+		doc = preprocessor.processAll();
 		
 		logger.info("booklet_constructing", pageCount);
 		
@@ -195,7 +215,7 @@ public class Booklet implements Imposable {
 		 */
 		if (pageCount < 1) {
 			// Page count is automatic: resolve from input document length
-			pageCount = source.getLength();
+			pageCount = doc.getLength();
 		}
 		// Pad to multiple of four
 		if (pageCount % 4 != 0) {
@@ -232,7 +252,7 @@ public class Booklet implements Imposable {
 		/*
 		 * Fill the volume with content.
 		 */
-		SourceProvider<Page> sp = new SequentialSourceProvider(source);
+		SourceProvider<Page> sp = new SequentialSourceProvider(doc);
 		sp.setSourceTo(volume.pages());
 		
 		return volume;
