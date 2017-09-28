@@ -18,18 +18,6 @@ public interface Imposable {
 	public String getName();
 	
 	/**
-	 * Sets the parameters to be used when pre-processing the pages.
-	 * @param settings
-	 */
-	public void acceptPreprocessSettings(Preprocessor.Settings settings);
-	
-	/**
-	 * Sets the common imposition settings to be used.
-	 * @param settings
-	 */
-	public void acceptCommonSettings(CommonSettings settings);
-	
-	/**
 	 * Returns whether this imposable prefers the input to be multiple
 	 * documents instead of a single document.
 	 * This effectively means that the {@code Imposable} prefers to be
