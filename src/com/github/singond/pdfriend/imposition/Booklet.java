@@ -45,6 +45,7 @@ public class Booklet implements Imposable {
 	private final boolean versoOpposite;
 	private final Preprocessor.Settings preprocess;
 	private final CommonSettings common;
+	private final LengthUnit unit = Imposition.LENGTH_UNIT;
 	
 	private Booklet(Edge binding, boolean versoOpposite,
 	                Preprocessor.Settings preprocess, CommonSettings common) {
@@ -74,11 +75,6 @@ public class Booklet implements Imposable {
 		 * it will be increased to the first integer multiple automatically.
 		 */
 		int pageCount = common.getPageCount();
-		final Edge binding = this.binding;
-		final boolean versoOpposite = this.versoOpposite;
-		final Preprocessor.Settings preprocess = this.preprocess;
-		final CommonSettings common = this.common;
-		final LengthUnit unit = Imposition.LENGTH_UNIT;
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("imposition_preprocessSettings", preprocess);
