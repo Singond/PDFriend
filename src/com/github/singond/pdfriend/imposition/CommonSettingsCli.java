@@ -54,6 +54,22 @@ class CommonSettingsCli implements ParameterDelegate {
 	private Dimensions sheetSize = CommonSettings.AUTO_DIMENSIONS;
 	
 	/**
+	 * Interprets paper formats as landscape.
+	 */
+	@Parameter(names="--landscape",
+	           description="Interpret named paper formats (such as A4) as landscape",
+	           descriptionKey="param-landscape")
+	private boolean landscape = false;
+	
+	/**
+	 * Interprets paper formats as portrait.
+	 */
+	@Parameter(names="--portrait",
+	           description="Interpret named paper formats (such as A4) as portrait",
+	           descriptionKey="param-portrait")
+	private boolean portrait = false;
+	
+	/**
 	 * Margins of the output page.
 	 * This argument takes one of the following forms:
 	 * <li>A single length like {@code A}: All four margins have the specified
@@ -79,7 +95,10 @@ class CommonSettingsCli implements ParameterDelegate {
 
 	@Override
 	public void postParse() throws ParameterConsistencyException {
-		// Do nothing
+		if (landscape && portrait) {
+			throw new ParameterConsistencyException(
+					"Cannot set both landscape and portrait orientation");
+		}
 	}
 	
 	public boolean isSet() {
@@ -90,12 +109,24 @@ class CommonSettingsCli implements ParameterDelegate {
 	}
 	
 	public CommonSettings getCommonSettings() {
+		boolean isLandscape = landscape;
+		
 		CommonSettings.Builder sb = new CommonSettings.Builder();
 		sb.setPageCount(pages);
-		sb.setPageSize(pageSize);
-		sb.setSheetSize(sheetSize);
+		sb.setPageSize(flipFormat(pageSize, isLandscape));
+		sb.setSheetSize(flipFormat(sheetSize, isLandscape));
 		sb.setMargins(margins);
 		sb.setMirrorMargins(marginsMirrored);
 		return sb.build();
+	}
+	
+	private Dimensions flipFormat(Dimensions dims, boolean flip) {
+		if (dims == CommonSettings.AUTO_DIMENSIONS) {
+			return dims;
+		} else if (flip) {
+			return dims.changeOrientation();
+		} else {
+			return dims;
+		}
 	}
 }
