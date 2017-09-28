@@ -24,7 +24,7 @@ import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
  * a larger page.
  * @author Singon
  */
-public class NUp implements Imposable {
+public class NUp implements Imposable, ImposableBuilder<NUp> {
 
 	/** The internal name of this imposable document type */
 	private static final String NAME = "n-up";
@@ -483,11 +483,6 @@ public class NUp implements Imposable {
 	}
 	
 	@Override
-	public String getName() {
-		return NAME;
-	}
-
-	@Override
 	public void acceptPreprocessSettings(Settings settings) {
 		if (settings == null)
 			throw new IllegalArgumentException("Preprocess settings cannot be null");
@@ -499,6 +494,16 @@ public class NUp implements Imposable {
 		if (settings == null)
 			throw new IllegalArgumentException("Settings cannot be null");
 		this.common = settings;
+	}
+	
+	@Override
+	public NUp build() {
+		return this;
+	}
+
+	@Override
+	public String getName() {
+		return NAME;
 	}
 
 	/**

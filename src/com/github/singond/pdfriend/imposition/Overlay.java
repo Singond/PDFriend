@@ -16,7 +16,7 @@ import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
  *
  * @author Singon
  */
-public class Overlay implements Imposable {
+public class Overlay implements Imposable, ImposableBuilder<Overlay> {
 
 	/** The internal name of this imposable document type */
 	private static final String NAME = "overlay";
@@ -64,11 +64,6 @@ public class Overlay implements Imposable {
 	}
 	
 	@Override
-	public String getName() {
-		return NAME;
-	}
-
-	@Override
 	public void acceptPreprocessSettings(Settings settings) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not implemented yet");
@@ -78,6 +73,16 @@ public class Overlay implements Imposable {
 	public void acceptCommonSettings(CommonSettings settings) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not implemented yet");
+	}
+
+	@Override
+	public Overlay build() {
+		return this;
+	}
+
+	@Override
+	public String getName() {
+		return NAME;
 	}
 
 	/**
