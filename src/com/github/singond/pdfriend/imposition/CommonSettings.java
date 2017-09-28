@@ -7,11 +7,15 @@ import com.github.singond.pdfriend.geometry.Margins;
  * Settings common to the Imposition module.
  * These are various settings for the output document, the exact meaning
  * of which can vary slightly depending on the type of imposition.
+ * <p>
+ * Instances of this class are immutable.
+ * NOTE: The immutability is not guaranteed if {@code Margins} is subclassed.
+ * TODO: Make {@code Margins} final?
  *
  * @author Singon
  *
  */
-public class CommonSettings {
+public final class CommonSettings {
 	public static final Dimensions AUTO_DIMENSIONS = Dimensions.dummy();
 	public static final Margins AUTO_MARGINS = new Margins(null, null, null, null) {
 		@Override

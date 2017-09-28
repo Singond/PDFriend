@@ -2,6 +2,8 @@ package com.github.singond.pdfriend.geometry;
 
 /**
  * A width and height of a rectangle aligned with x-and y-axis.
+ * <p>
+ * Instances of this class are immutable.
  *
  * @author Singon
  */
