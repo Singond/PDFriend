@@ -23,6 +23,13 @@ public final class Length implements Comparable<Length> {
 	}
 	
 	/**
+	 * Constructs a new object representing a zero length.
+	 */
+	public Length() {
+		this.value = 0;
+	}
+	
+	/**
 	 * Constructs a new object of the given value in the reference units.
 	 * @param value the value in reference units
 	 */
