@@ -84,6 +84,16 @@ public class Margins {
 		return left;
 	}
 	
+	/** Returns the sum of the left and right margins */
+	public Length horizontal() {
+		return Length.sum(left, right);
+	}
+	
+	/** Returns the sum of the top and bottom margins */
+	public Length vertical() {
+		return Length.sum(top, bottom);
+	}
+	
 	@Override
 	public String toString() {
 		return toString(LengthUnits.MILLIMETRE);
