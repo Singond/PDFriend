@@ -15,6 +15,9 @@ import com.github.singond.pdfriend.book.Stack;
 import com.github.singond.pdfriend.book.Volume;
 import com.github.singond.pdfriend.book.Stack.Flip;
 import com.github.singond.pdfriend.document.VirtualDocument;
+import com.github.singond.pdfriend.geometry.Dimensions;
+import com.github.singond.pdfriend.geometry.Length;
+import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
 import com.github.singond.geometry.plane.Line;
 import com.github.singond.geometry.plane.Point;
@@ -122,8 +125,50 @@ public class Booklet implements Imposable {
 		 * it will be increased to the first integer multiple automatically.
 		 */
 		int pageCount = common.getPageCount();
-		Binding binding = this.binding;
-		boolean versoOpposite = this.versoOpposite;
+		final Edge binding = this.binding;
+		final boolean versoOpposite = this.versoOpposite;
+		final Preprocessor.Settings preprocess = this.preprocess;
+		final CommonSettings common = this.common;
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("imposition_preprocessSettings", preprocess);
+			logger.debug("imposition_commonSettings", common);
+//			logger.debug("imposition_imposableSettings", NAME, );
+		}
+		
+		/*
+		 * Determine the size of the sheet before folding.
+		 * 
+		 * If only the sheet size is given, use it as such, if only the
+		 * page size is given, double it (either horizontally or vertically,
+		 * depending on the binding edge) and use the resulting rectangle
+		 * as the sheet size.
+		 * Specifying both sheet size and page size to non-automatic value
+		 * is a conflict. In this case, throw an exception.
+		 * 
+		 * Start by validating the page and sheet size.
+		 */
+		Dimensions pageSize = common.getPageSize();
+		Dimensions sheetSize = common.getSheetSize();
+		if (pageSize == null) {
+			throw new IllegalStateException("Page size is null");
+		}
+		if (sheetSize == null) {
+			throw new IllegalStateException("Sheet size is null");
+		}
+		
+		if (pageSize != CommonSettings.AUTO_DIMENSIONS) {
+			if (sheetSize == CommonSettings.AUTO_DIMENSIONS) {
+				// Only page size is given: determine sheet size
+				logger.verbose("nup_pageSizeToSheetSize");
+				sheetSize = sheetFromPage(pageSize, binding);
+			} else {
+				// Both are given: a conflict
+				throw new IllegalStateException
+					("Both sheet size and page size are set to a non-auto value");
+			}
+		} // Otherwise just leave sheetSize as it is
+		pageSize = null;           // Won't need this anymore
 
 		double[] dimensions = source.maxPageDimensions();
 		double width = dimensions[0];
@@ -191,6 +236,51 @@ public class Booklet implements Imposable {
 		sp.setSourceTo(volume.pages());
 		
 		return volume;
+	}
+	
+	/**
+	 * Calculates the size of page resulting from folding the given sheet
+	 * along the edge given by {@code binding}.
+	 * @param sheet the dimensions of the sheet to be folded
+	 * @param binding the edge at which to fold the sheet in half
+	 * @return the sheet dimensions halved horizontally or vertically,
+	 *         based on the value of {@code binding}
+	 */
+	@SuppressWarnings("unused")
+	private Dimensions pageFromSheet(Dimensions sheet, Edge binding) {
+		Length width = sheet.width();
+		Length height = sheet.height();
+		
+		switch (binding) {
+			case TOP: case BOTTOM:
+				return new Dimensions(width, height.times(1/2));
+			case LEFT: case RIGHT:
+				return new Dimensions(width.times(1/2), height);
+			default:
+				throw new AssertionError("Invalid binding value");
+		}
+	}
+	
+	/**
+	 * Calculates the size of sheet necessary to produce the given page
+	 * size by folding the sheet along the edge given by {@code binding}.
+	 * @param page the desired page dimensions after folding the sheet
+	 * @param binding the edge at which to fold the sheet in half
+	 * @return the sheet dimensions doubled horizontally or vertically,
+	 *         based on the value of {@code binding}
+	 */
+	private Dimensions sheetFromPage(Dimensions page, Edge binding) {
+		Length width = page.width();
+		Length height = page.height();
+		
+		switch (binding) {
+			case TOP: case BOTTOM:
+				return new Dimensions(width, height.times(2));
+			case LEFT: case RIGHT:
+				return new Dimensions(width.times(2), height);
+			default:
+				throw new AssertionError("Invalid binding value");
+		}
 	}
 
 	/**
