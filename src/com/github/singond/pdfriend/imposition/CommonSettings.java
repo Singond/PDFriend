@@ -109,9 +109,10 @@ public final class CommonSettings {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("pages: ").append(pages)
-				.append(", pageSize: ").append(pageSize)
-				.append(", sheetSize: ").append(sheetSize)
-				.append(", margins: ").append(margins==AUTO_MARGINS ? "AUTO" : margins);
+				.append(", page size: ").append(pageSize)
+				.append(", sheet size: ").append(sheetSize)
+				.append(", margins: ").append(margins==AUTO_MARGINS ? "AUTO" : margins)
+				.append(", margins mirrored: ").append(mirrorMargins);
 		return builder.toString();
 	}
 

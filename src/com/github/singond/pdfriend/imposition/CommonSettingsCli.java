@@ -70,6 +70,12 @@ class CommonSettingsCli implements ParameterDelegate {
 	           descriptionKey="param-margins",
 	           converter=MarginsConverter.class)
 	private Margins margins = CommonSettings.AUTO_MARGINS;
+	
+	@Parameter(names="--mirror-margins",
+	           arity=1,
+	           description="Whether verso margins should be mirrored",
+	           descriptionKey="param-marginsMirrored")
+	private boolean marginsMirrored = true;
 
 	@Override
 	public void postParse() throws ParameterConsistencyException {
@@ -89,6 +95,7 @@ class CommonSettingsCli implements ParameterDelegate {
 		sb.setPageSize(pageSize);
 		sb.setSheetSize(sheetSize);
 		sb.setMargins(margins);
+		sb.setMirrorMargins(marginsMirrored);
 		return sb.build();
 	}
 }
