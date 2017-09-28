@@ -20,9 +20,12 @@ import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.process.PDFParser;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
 import com.github.singond.pdfriend.geometry.Dimensions;
+import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
+import com.github.singond.pdfriend.geometry.Margins;
 import com.github.singond.pdfriend.imposition.Preprocessor;
+import com.github.singond.pdfriend.imposition.Preprocessor.Resizing;
 
 @SuppressWarnings("unused")
 public class PreprocessDocument {
@@ -41,21 +44,27 @@ public class PreprocessDocument {
 			VirtualDocument inDoc1 = new PDFParser().parseDocument(Files.readAllBytes(input1.toPath()));
 			
 			Preprocessor.Settings settings = new Preprocessor.Settings();
-			settings.setScale(1);
+//			settings.setScale(1);
 //			settings.setRotation(Math.PI/2);
 			settings.setRotation(0.1);
+			settings.setResizing(Resizing.FIT);
 //			settings.setPageDimensions(new Dimensions(306, 396, PT));
 //			settings.setPageDimensions(new Dimensions(612, 792, PT));
 //			settings.setPageDimensions(new Dimensions(1224, 1584, PT));
 			//
 //			settings.setCellDimensions(new Dimensions(306, 396, PT));
-//			settings.setCellDimensions(new Dimensions(612, 792, PT));
-			settings.setCellDimensions(new Dimensions(1224, 1584, PT));
+			settings.setCellDimensions(new Dimensions(612, 792, PT));
+//			settings.setCellDimensions(new Dimensions(1224, 1584, PT));
+			Margins margins = new Margins(new Length(100, PT),
+			                              new Length(100, PT),
+			                              new Length(0, PT),
+			                              new Length(0, PT));
+			settings.setCellMargins(margins);
 //			AlignmentSetter align = new AlignmentSetter();
 //			align.addAlignment("CenterAlignment", 0);
 //			align.addAlignment("MiddleAlignment", 0);
 //			align.setAlignment(settings);
-			settings.setHorizontalAndVerticalAlignment(0, -1);
+			settings.setHorizontalAndVerticalAlignment(0, 0);
 			
 //			settings.setCellDimensions(new Dimensions(200, 100, MM));
 			Preprocessor pp = new Preprocessor(Arrays.asList(inDoc1), settings);

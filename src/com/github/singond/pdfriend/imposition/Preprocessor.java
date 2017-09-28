@@ -73,6 +73,11 @@ public final class Preprocessor {
 	 * The cache of resolved page positions.
 	 */
 	private final Map<Dimensions, AffineTransform> positionsCache;
+	/**
+	 * The working length unit.
+	 * TODO: Substitute all occurences of Imposition.LENGTH_UNIT by this field
+	 */
+	private final LengthUnit unit = Imposition.LENGTH_UNIT;
 	
 	/** Specifies that the dimensions are not given and should be calculated */
 	private static final Dimensions AUTO = Dimensions.dummy();
@@ -306,6 +311,26 @@ public final class Preprocessor {
 	 *         with x-axis pointing right and y-axis pointing up
 	 */
 	private AffineTransform resolvePositionInCell(final Dimensions orig) {
+		/** Position with respect to the cell content (cell minus margins) */
+		AffineTransform position = resolvePositionInCellContent(orig);
+		Margins margins = settings.cellMargins;
+		/** Translation needed to induce the margins */
+		AffineTransform shift = AffineTransform.getTranslateInstance(
+				margins.left().in(unit), margins.bottom().in(unit));
+		position.preConcatenate(shift);
+		return position;
+	}
+	
+	/**
+	 * Resolves the position of a rectangle of the given dimensions
+	 * inside the cell content rectangle.
+	 * This method always performs the full calculation.
+	 * @param orig the rectangle whose position in the cell is to be obtained
+	 * @return the position as a transformation matrix for the coordinate
+	 *         system originating in the lower bottom corner of the cell,
+	 *         with x-axis pointing right and y-axis pointing up
+	 */
+	private AffineTransform resolvePositionInCellContent(final Dimensions orig) {
 		final double declaredScale = settings.scale;
 		final boolean scaleExplicit = settings.isScaleGiven();
 		final double rotation = settings.rotation;
@@ -315,7 +340,7 @@ public final class Preprocessor {
 		final LengthUnit unit = Imposition.LENGTH_UNIT;
 		
 		if (logger.isDebugEnabled())
-			logger.debug("preprocess_pageSize_cell", orig, cell);
+			logger.debug("preprocess_pageSize_cell", orig, cellContent);
 		
 		/*
 		 * To position the page box we are using a RectangleFrame object.
@@ -324,7 +349,7 @@ public final class Preprocessor {
 		 * constraints which will be specified now.
 		 */
 		final RectangleFrame frame = new RectangleFrame
-				(cell.width().in(unit), cell.height().in(unit));
+				(cellContent.width().in(unit), cellContent.height().in(unit));
 		
 		/*
 		 * The easiest constraint to resolve is the rotation, because it
