@@ -2,6 +2,8 @@ package com.github.singond.pdfriend.geometry;
 
 /**
  * The width of margins around a page.
+ * <p>
+ * Instances of this class are immutable.
  *
  * @author Singon
  *
