@@ -539,6 +539,14 @@ public final class Preprocessor {
 		public Settings() {}
 		
 		/**
+		 * Constructs a new settings object with all values set to auto.
+		 * @return a new {@code Preprocessor.Settings} object
+		 */
+		public static Settings auto() {
+			return new Settings();
+		}
+		
+		/**
 		 * Returns a new {@code Preprocessor.Settings} object initialized
 		 * to the current state of this instance.
 		 * @return a new copy of this instance

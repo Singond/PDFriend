@@ -38,7 +38,7 @@ public class Booklet implements Imposable {
 
 	private Edge binding = Edge.LEFT;
 	private boolean versoOpposite = false;
-	private Preprocessor.Settings preprocess = null;
+	private Preprocessor.Settings preprocess = Preprocessor.Settings.auto();
 	private CommonSettings common = CommonSettings.auto();
 	
 
