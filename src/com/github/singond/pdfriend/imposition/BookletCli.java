@@ -11,7 +11,7 @@ import com.github.singond.pdfriend.cli.ParameterConsistencyException;
  *
  */
 @Parameters(separators="=")
-class BookletCli implements ImposableCli<Booklet> {
+class BookletCli implements ImposableCli<Booklet.Builder> {
 
 	@Parameter(names="--booklet", description="A simple stack of sheets folded in half")
 	private boolean booklet = false;
@@ -35,8 +35,8 @@ class BookletCli implements ImposableCli<Booklet> {
 	}
 
 	@Override
-	public Booklet getImposable() {
-		Booklet booklet = new Booklet();
+	public Booklet.Builder getImposable() {
+		Booklet.Builder booklet = new Booklet.Builder();
 		booklet.setBinding(binding);
 		booklet.setVersoOpposite(flipVerso);
 		return booklet;

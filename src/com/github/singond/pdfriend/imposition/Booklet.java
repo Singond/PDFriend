@@ -27,90 +27,30 @@ import com.github.singond.geometry.plane.Point;
  * A booklet with one page of input per one page of output.
  * A document consisting of a single Signature. The signature is formed
  * by a simple Stack of sheets folded in half.
+ * <p>
+ * Instances of this class are immutable.
+ * 
  * @author Singon
  *
  */
-public class Booklet implements Imposable, ImposableBuilder<Booklet> {
+public class Booklet implements Imposable {
 	
 	/** The internal name of this imposable document type */
 	private static final String NAME = "booklet";
 	/** Logger */
 	private static ExtendedLogger logger = Log.logger(Booklet.class);
 
-	private Edge binding = Edge.LEFT;
-	private boolean versoOpposite = false;
-	private Preprocessor.Settings preprocess = Preprocessor.Settings.auto();
-	private CommonSettings common = CommonSettings.auto();
+	private final Edge binding;
+	private final boolean versoOpposite;
+	private final Preprocessor.Settings preprocess;
+	private final CommonSettings common;
 	
-
-	/**
-	 * Returns the edge at which the binding is located.
-	 * @return the edge of a Page where the binding will be placed
-	 */
-	public Edge getBinding() {
-		return binding;
-	}
-
-	/**
-	 * Sets the edge at which the binding is located.
-	 * @param binding the edge of a Page where the binding is to be placed
-	 */
-	@Deprecated
-	public void setBinding(Binding binding) {
-		if (binding == null) {
-			throw new IllegalArgumentException
-					("Booklet binding must be set to a non-null value");
-		}
-		switch (binding) {
-			case BOTTOM:
-				this.binding = Edge.BOTTOM;
-				break;
-			case LEFT:
-				this.binding = Edge.LEFT;
-				break;
-			case RIGHT:
-				this.binding = Edge.RIGHT;
-				break;
-			case TOP:
-				this.binding = Edge.TOP;
-				break;
-			default:
-				throw new AssertionError("Unknown binding value");
-			
-		}
-	}
-
-	/**
-	 * Sets the edge at which the binding is located.
-	 * @param binding the edge of a Page where the binding is to be placed
-	 */
-	public void setBinding(Edge binding) {
-		if (binding == null) {
-			throw new IllegalArgumentException
-					("Booklet binding must be set to a non-null value");
-		}
+	private Booklet(Edge binding, boolean versoOpposite,
+	                Preprocessor.Settings preprocess, CommonSettings common) {
 		this.binding = binding;
-	}
-
-	/**
-	 * Checks whether the verso of the booklet should be upside down.
-	 * This only has effect when {@code binding} is TOP or BOTTOM.
-	 * @return {@code true} if verso should be upside down with respect
-	 *         to the recto.
-	 */
-	public boolean isVersoOpposite() {
-		return versoOpposite;
-	}
-
-	/**
-	 * Sets whether the verso of the booklet should be upside down.
-	 * This only has effect when {@code binding} is TOP or BOTTOM.
-	 * TODO Consider renaming the method
-	 * @param versoOpposite whether verso should be upside down with respect
-	 *        to the recto.
-	 */
-	public void setVersoOpposite(boolean versoOpposite) {
 		this.versoOpposite = versoOpposite;
+		this.preprocess = preprocess.copy();
+		this.common = common;
 	}
 
 	/**
@@ -431,25 +371,6 @@ public class Booklet implements Imposable, ImposableBuilder<Booklet> {
 	public VirtualDocument imposeAsDocument(VirtualDocument source) {
 		return imposeAsVolume(source).renderDocument();
 	}
-	
-	@Override
-	public void acceptPreprocessSettings(Settings settings) {
-		if (settings == null)
-			throw new IllegalArgumentException("Preprocess settings cannot be null");
-		this.preprocess = settings.copy();
-	}
-	
-	@Override
-	public void acceptCommonSettings(CommonSettings settings) {
-		if (settings == null)
-			throw new IllegalArgumentException("Settings cannot be null");
-		this.common = settings;
-	}
-
-	@Override
-	public Booklet build() {
-		return this;
-	}
 
 	@Override
 	public String getName() {
@@ -497,5 +418,75 @@ public class Booklet implements Imposable, ImposableBuilder<Booklet> {
 		BOTTOM,
 		/** The fold (and binding) is on the left edge. */
 		LEFT;
+	}
+	
+	/**
+	 * A builder for Booklet objects.
+	 */
+	public static class Builder implements ImposableBuilder<Booklet> {
+		private Edge binding = Edge.LEFT;
+		private boolean versoOpposite = false;
+		private Preprocessor.Settings preprocess = Preprocessor.Settings.auto();
+		private CommonSettings common = CommonSettings.auto();
+		
+		/**
+		 * Returns the edge at which the binding is located.
+		 * @return the edge of a Page where the binding will be placed
+		 */
+		public Edge getBinding() {
+			return binding;
+		}
+
+		/**
+		 * Sets the edge at which the binding is located.
+		 * @param binding the edge of a Page where the binding is to be placed
+		 */
+		public void setBinding(Edge binding) {
+			if (binding == null) {
+				throw new IllegalArgumentException
+						("Booklet binding must be set to a non-null value");
+			}
+			this.binding = binding;
+		}
+
+		/**
+		 * Checks whether the verso of the booklet should be upside down.
+		 * This only has effect when {@code binding} is TOP or BOTTOM.
+		 * @return {@code true} if verso should be upside down with respect
+		 *         to the recto.
+		 */
+		public boolean isVersoOpposite() {
+			return versoOpposite;
+		}
+
+		/**
+		 * Sets whether the verso of the booklet should be upside down.
+		 * This only has effect when {@code binding} is TOP or BOTTOM.
+		 * TODO Consider renaming the method
+		 * @param versoOpposite whether verso should be upside down with respect
+		 *        to the recto.
+		 */
+		public void setVersoOpposite(boolean versoOpposite) {
+			this.versoOpposite = versoOpposite;
+		}
+
+		@Override
+		public void acceptPreprocessSettings(Settings settings) {
+			if (settings == null)
+				throw new IllegalArgumentException("Preprocess settings cannot be null");
+			this.preprocess = settings;
+		}
+		
+		@Override
+		public void acceptCommonSettings(CommonSettings settings) {
+			if (settings == null)
+				throw new IllegalArgumentException("Settings cannot be null");
+			this.common = settings;
+		}
+
+		@Override
+		public Booklet build() {
+			return new Booklet(binding, versoOpposite, preprocess, common);
+		}
 	}
 }
