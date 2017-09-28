@@ -15,6 +15,8 @@ public class Margins {
 	private final Length bottom;
 	private final Length left;
 	
+	public static final Margins NONE = new Margins(Length.ZERO);
+	
 	/**
 	 * Constructs a new Margins object from the given values.
 	 * <p><b>Note:</b> The order of the arguments is not the same as in the
