@@ -54,18 +54,26 @@ public final class CommonSettings {
 	
 	
 	/**
+	 * Margins are mirrored on verso pages.
+	 */
+	private final boolean mirrorMargins;
+	
+	/**
 	 * Constructs a new settings object.
 	 * @param pageCount
 	 * @param pageSize
 	 * @param sheetSize
 	 * @param margins
+	 * @param mirrorMargins
 	 */
 	public CommonSettings(int pageCount, Dimensions pageSize,
-	                      Dimensions sheetSize, Margins margins) {
+	                      Dimensions sheetSize,
+	                      Margins margins, boolean mirrorMargins) {
 		this.pages = pageCount;
 		this.pageSize = pageSize;
 		this.sheetSize = sheetSize;
 		this.margins = margins;
+		this.mirrorMargins = mirrorMargins;
 	}
 	
 	/**
@@ -74,7 +82,7 @@ public final class CommonSettings {
 	 */
 	public static CommonSettings auto() {
 		return new CommonSettings(-1, AUTO_DIMENSIONS, AUTO_DIMENSIONS,
-		                          AUTO_MARGINS);
+		                          AUTO_MARGINS, true);
 	}
 
 	public int getPageCount() {
@@ -91,6 +99,10 @@ public final class CommonSettings {
 
 	public Margins getMargins() {
 		return margins;
+	}
+
+	public boolean isMirrorMargins() {
+		return mirrorMargins;
 	}
 
 	@Override
@@ -111,6 +123,7 @@ public final class CommonSettings {
 		private Dimensions pageSize = AUTO_DIMENSIONS;
 		private Dimensions sheetSize = AUTO_DIMENSIONS;
 		private Margins margins = AUTO_MARGINS;
+		private boolean mirrorMargins = true;
 		
 		public int getPageCount() {
 			return pages;
@@ -136,9 +149,14 @@ public final class CommonSettings {
 		public void setMargins(Margins margins) {
 			this.margins = margins;
 		}
-		
+		public boolean isMirrorMargins() {
+			return mirrorMargins;
+		}
+		public void setMirrorMargins(boolean mirrorMargins) {
+			this.mirrorMargins = mirrorMargins;
+		}
 		public CommonSettings build() {
-			return new CommonSettings(pages, pageSize, sheetSize, margins);
+			return new CommonSettings(pages, pageSize, sheetSize, margins, mirrorMargins);
 		}
 	}
 }
