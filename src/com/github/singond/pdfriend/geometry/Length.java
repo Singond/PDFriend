@@ -13,6 +13,8 @@ public final class Length implements Comparable<Length> {
 	/** The reference length unit used for the internal representation */
 	private static final LengthUnit REFERENCE_UNIT = LengthUnits.METRE;
 	
+	public static final Length ZERO = new Length();
+	
 	/**
 	 * Constructs a new object representing the given length.
 	 * @param value the number

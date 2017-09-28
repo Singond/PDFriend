@@ -15,6 +15,8 @@ public class Margins {
 	private final Length bottom;
 	private final Length left;
 	
+	public static final Margins NONE = new Margins(Length.ZERO);
+	
 	/**
 	 * Constructs a new Margins object from the given values.
 	 * <p><b>Note:</b> The order of the arguments is not the same as in the
@@ -82,6 +84,16 @@ public class Margins {
 	/** Returns the width of the left margin */
 	public Length left() {
 		return left;
+	}
+	
+	/** Returns the sum of the left and right margins */
+	public Length horizontal() {
+		return Length.sum(left, right);
+	}
+	
+	/** Returns the sum of the top and bottom margins */
+	public Length vertical() {
+		return Length.sum(top, bottom);
 	}
 	
 	@Override
