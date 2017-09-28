@@ -80,6 +80,9 @@ public final class Length implements Comparable<Length> {
 	public static Length sum(Length... lengths) {
 		double sum = 0;
 		for (Length l : lengths) {
+			if (l == null)
+				throw new IllegalArgumentException(
+						"One of the summed lengths is null");
 			sum += l.value;
 		}
 		return new Length(sum);

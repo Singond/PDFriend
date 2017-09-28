@@ -18,6 +18,7 @@ import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
+import com.github.singond.pdfriend.geometry.Margins;
 import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
 import com.github.singond.geometry.plane.Line;
 import com.github.singond.geometry.plane.Point;
@@ -192,7 +193,11 @@ public class Booklet implements Imposable {
 		 * The margins can be set using the preprocessor.
 		 * TODO: Enable mirrored margins
 		 */
-		preprocess.setCellMargins(common.getMargins());
+		Margins margins = common.getMargins();
+		if (margins == CommonSettings.AUTO_MARGINS) {
+			margins = new Margins(new Length());
+		}
+		preprocess.setCellMargins(margins);
 		
 		/*
 		 * Now preprocess the pages and store the page dimensions.
