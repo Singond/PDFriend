@@ -110,7 +110,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 				float w = box.getWidth();
 				float h = box.getHeight();
 				trMatrix.scale(h/w, w/h);
-			} // End HACK
+			} // End hack
 			// Move to the box position
 			trMatrix.translate(box.getLowerLeftX(), box.getLowerLeftY());
 			
