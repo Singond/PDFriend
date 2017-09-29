@@ -21,10 +21,10 @@
 		</RollingFile>
 	</Appenders>
 	<Loggers>
-		<Root level="info">
-			<AppenderRef ref="CommandLineInterface"/>
-<!-- 			<AppenderRef ref="Log"/> -->
-			<AppenderRef ref="Roll"/>
+		<Root level="trace">
+<!-- 			<AppenderRef ref="CommandLineInterface"/> -->
+			<AppenderRef ref="Log"/>
+<!-- 			<AppenderRef ref="Roll"/> -->
 		</Root>
 	</Loggers>
 </Configuration>
