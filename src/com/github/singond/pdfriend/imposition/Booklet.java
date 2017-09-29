@@ -20,6 +20,7 @@ import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.Margins;
+import com.github.singond.pdfriend.imposition.Preprocessor.Resizing;
 import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
 import com.github.singond.geometry.plane.Line;
 import com.github.singond.geometry.plane.Point;
@@ -95,9 +96,22 @@ public class Booklet implements Imposable {
 		 * to the preprocessor. This will apply the margins to each page
 		 * individually without considering whether they are verso or recto.
 		 * 
-		 * However, if they are to be mirrored, they must not be applied
-		 * to the individual pages, but rather to the Leaf prior to putting
-		 * it onto the folded stack.
+		 * However, if they are to be mirrored, we resort to a hack:
+		 * The {@code Page} object will have the dimensions of the content
+		 * area only, ie. the whole page minus the mirrored margins.
+		 * This means that the {@code Page} **will not cover the whole
+		 * physical page**. The space remaining between the {@code Page}
+		 * edges and the edges of the physical page is equal to the margins.
+		 * Because the {@code Page} does not cover the whole physical page,
+		 * it must be shifted from the original position in order for the
+		 * margins to be of correct widths at all edges.
+		 * This translation is applied to the Leaf prior to putting it onto
+		 * the folded stack.
+		 * 
+		 * HACK: This is not the intended way to use {@object Page} objects.
+		 * Providing a Leaf which covers the whole physical page, yet keeps
+		 * the mirroring relationship between the margins on its opposite
+		 * {@code Page}s, seems a far better and cleaner solution.
 		 */
 		// The mirrored margins (if any) to be applied later
 		Margins mirroredMargins;
@@ -172,23 +186,48 @@ public class Booklet implements Imposable {
 		/*
 		 * Finally, make the preprocessor aware of the page size.
 		 * In booklet imposition, the "cell" of the preprocessor corresponds
-		 * to one page in the output booklet.
+		 * to one page in the output booklet shrunk by margins.
+		 * 
 		 * If the page size is auto, no configuration is needed, because
-		 * that is its default behaviour.
+		 * automatic page sizing is the default behaviour of Preprocessor.
+		 * 
 		 * If, however, a certain page size is desired, that size must
 		 * be passed to the preprocessor as the cell size.
+		 * Note that mirrored margins must be applied during the construction
+		 * of the Signature object, and the preprocessor must work with
+		 * Note that the preprocessor cell must be the size of the page minus
+		 * the margins
+		 * Note that the {@code Page} does not cover the whole physical page,
+		 * so the active area known to preprocessor must be equal to only this
+		 * reduces size.
+		 */
+		/*
+		 * If the preprocessor resizing is not set (auto), make it fit
+		 * the cell, otherwise the default resizing will leave the pages
+		 * overlapping or with gaps in between.
 		 */
 		if (pageSize != CommonSettings.AUTO_DIMENSIONS) {
-			preprocess.setCellDimensions(pageSize);
+			Dimensions cellSize = new Dimensions(
+					Length.subtract(pageSize.width(), mirroredMargins.horizontal()),
+					Length.subtract(pageSize.height(), mirroredMargins.vertical()));
+			preprocess.setCellDimensions(cellSize);
+			logger.verbose("booklet_setResizingToFit");
+			preprocess.setResizing(Resizing.FIT);
 		}
 		
-		
-		
 		/*
-		 * Now preprocess the pages and store the page dimensions.
+		 * Now preprocess the pages and store the page dimensions,
+		 * if they are still unknown.
 		 */
 		Preprocessor preprocessor = new Preprocessor(doc, preprocess);
-		pageSize = preprocessor.getResolvedCellDimensions();
+		if (pageSize == CommonSettings.AUTO_DIMENSIONS) {
+			Dimensions cell = preprocessor.getResolvedCellDimensions();
+			pageSize = new Dimensions(
+					Length.sum(cell.width(), mirroredMargins.horizontal()),
+					Length.sum(cell.height(), mirroredMargins.vertical()));
+			if (logger.isTraceEnabled())
+				logger.trace("Page size = preprocessor cell size + margins");
+		}
 //		if (autoSheet) {
 //			sheetSize = sheetFromPage(cell, binding, mirroredMargins);
 //		}
@@ -434,7 +473,8 @@ public class Booklet implements Imposable {
 	 * <h2>Note</h2>
 	 * The margins applied by this class are mirrored with respect to the
 	 * binding edge. If non-mirrored margins are desired, they must be
-	 * applied to the individual pages.
+	 * applied to the individual pages and the margins passed to
+	 * {@code SignatureMaker} must be zero.
 	 *
 	 * @author Singon
 	 *
@@ -454,7 +494,7 @@ public class Booklet implements Imposable {
 		
 		/**
 		 * Constructs a new {@code SignatureMaker} object.
-		 * @param page dimensions of the page without mirrored margins applied
+		 * @param page total dimensions of the page (including margins)
 		 * @param margins margins to be applied to recto pages. The margins
 		 *        at verso pages will be mirrored with respect to the binding.
 		 * @param unit the length unit used in the resulting objects
@@ -465,17 +505,21 @@ public class Booklet implements Imposable {
 		                       LengthUnit unit, int pages) {
 			if (pages % 4 != 0) {
 				throw new IllegalArgumentException
-						("The number of pages must be dividible by four");
+						("The number of pages must be divisible by four");
 			}
 			
-			this.contentWidth = page.width().in(unit);
-			this.contentHeight = page.height().in(unit);
+//			this.contentWidth = page.width().in(unit);
+//			this.contentHeight = page.height().in(unit);
 			this.leftMargin = margins.left().in(unit);
 			this.rightMargin = margins.right().in(unit);
 			this.bottomMargin = margins.bottom().in(unit);
 			this.topMargin = margins.top().in(unit);
-			this.totalWidth = contentWidth + leftMargin + rightMargin;
-			this.totalHeight = contentHeight + bottomMargin + topMargin;
+//			this.totalWidth = contentWidth + leftMargin + rightMargin;
+//			this.totalHeight = contentHeight + bottomMargin + topMargin;
+			this.totalWidth = page.width().in(unit);
+			this.totalHeight = page.height().in(unit);
+			this.contentWidth = totalWidth - leftMargin - rightMargin;
+			this.contentHeight = totalHeight - bottomMargin - topMargin;
 			this.pages = pages;
 		}
 

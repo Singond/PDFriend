@@ -21,7 +21,7 @@
 		</RollingFile>
 	</Appenders>
 	<Loggers>
-		<Root level="debug">
+		<Root level="trace">
 <!-- 			<AppenderRef ref="CommandLineInterface"/> -->
 			<AppenderRef ref="Log"/>
 			<AppenderRef ref="Roll"/>
