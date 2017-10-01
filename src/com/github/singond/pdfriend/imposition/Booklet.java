@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.book.Book;
 import com.github.singond.pdfriend.book.BoundBook;
 import com.github.singond.pdfriend.book.FlipDirection;
 import com.github.singond.pdfriend.book.Leaf;
