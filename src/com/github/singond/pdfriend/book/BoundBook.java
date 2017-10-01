@@ -1,12 +1,14 @@
 package com.github.singond.pdfriend.book;
 
+import com.github.singond.pdfriend.document.VirtualDocument;
+
 /**
  * A bouond book (a codex) consisting of a single volume.
  *
  * @author Singon
  *
  */
-public class BoundBook {
+public class BoundBook implements Book {
 
 	/** The sole volume of this book */
 	private final Volume volume;
@@ -23,5 +25,10 @@ public class BoundBook {
 
 	public Volume getVolume() {
 		return volume;
+	}
+
+	@Override
+	public VirtualDocument renderDocument() {
+		return volume.renderDocument();
 	}
 }
