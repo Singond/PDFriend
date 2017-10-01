@@ -48,9 +48,9 @@ public class Imposition implements Module {
 		
 		VirtualDocument document;
 		if (task.prefersMultipleInput()) {
-			document = task.impose(data.asMultipleDocuments());
+			document = task.imposeAndRender(data.asMultipleDocuments());
 		} else {
-			document = task.impose(data.asSingleDocument());
+			document = task.imposeAndRender(data.asSingleDocument());
 		}
 		return ModuleDataFactory.of(document);
 	}

@@ -2,6 +2,7 @@ package com.github.singond.pdfriend.imposition;
 
 import java.util.List;
 
+import com.github.singond.pdfriend.book.Book;
 import com.github.singond.pdfriend.document.VirtualDocument;
 
 /**
@@ -29,13 +30,31 @@ public interface Imposable {
 	public boolean prefersMultipleInput();
 	
 	/**
+	 * Imposes the given single source document into a new document model.
+	 * @param source the document to be imposed
+	 * @return the imposed document
+	 * @throws UnsupportedOperationException if this imposition type does
+	 *        not support imposing a single document
+	 */
+	public Book impose(VirtualDocument source);
+	
+	/**
+	 * Imposes the given multiple source documents into a new document model.
+	 * @param sources the list of documents to be imposed
+	 * @return the document resulting from imposing all the input documents
+	 * @throws UnsupportedOperationException if this imposition type does
+	 *        not support imposing multiple documents
+	 */
+	public Book impose(List<VirtualDocument> sources);
+	
+	/**
 	 * Imposes the given single source document into a new virtual document.
 	 * @param source the document to be imposed
 	 * @return the imposed document
 	 * @throws UnsupportedOperationException if this imposition type does
 	 *        not support imposing a single document
 	 */
-	public VirtualDocument impose(VirtualDocument source);
+	public VirtualDocument imposeAndRender(VirtualDocument source);
 	
 	/**
 	 * Imposes the given multiple source documents into a new virtual document.
@@ -44,5 +63,5 @@ public interface Imposable {
 	 * @throws UnsupportedOperationException if this imposition type does
 	 *        not support imposing multiple documents
 	 */
-	public VirtualDocument impose(List<VirtualDocument> sources);
+	public VirtualDocument imposeAndRender(List<VirtualDocument> sources);
 }

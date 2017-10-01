@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
+import com.github.singond.pdfriend.book.Book;
 import com.github.singond.pdfriend.book.LayerSourceProvider;
 import com.github.singond.pdfriend.book.LayeredPage;
 import com.github.singond.pdfriend.book.Page;
@@ -16,7 +17,7 @@ import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
  *
  * @author Singon
  */
-public class Overlay implements Imposable, ImposableBuilder<Overlay> {
+public class Overlay extends AbstractImposable implements Imposable, ImposableBuilder<Overlay> {
 
 	/** The internal name of this imposable document type */
 	private static final String NAME = "overlay";
@@ -95,6 +96,18 @@ public class Overlay implements Imposable, ImposableBuilder<Overlay> {
 		return true;
 	}
 
+	@Override
+	public Book impose(VirtualDocument source) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented yet");
+	}
+
+	@Override
+	public Book impose(List<VirtualDocument> sources) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented yet");
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * <p>
@@ -104,13 +117,7 @@ public class Overlay implements Imposable, ImposableBuilder<Overlay> {
 	 * @return the unchanged document given as {@code source}
 	 */
 	@Override
-	public VirtualDocument impose(VirtualDocument source) {
+	public VirtualDocument imposeAndRender(VirtualDocument source) {
 		return source;
-	}
-
-	@Override
-	public VirtualDocument impose(List<VirtualDocument> sources) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not implemented yet");
 	}
 }
