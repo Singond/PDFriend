@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
+import com.github.singond.pdfriend.book.Book;
+import com.github.singond.pdfriend.book.BoundBook;
 import com.github.singond.pdfriend.book.FlipDirection;
 import com.github.singond.pdfriend.book.Leaf;
 import com.github.singond.pdfriend.book.Page;
@@ -35,7 +37,7 @@ import com.github.singond.geometry.plane.Point;
  * @author Singon
  *
  */
-public class Booklet implements Imposable {
+public class Booklet extends AbstractImposable implements Imposable {
 	
 	/** The internal name of this imposable document type */
 	private static final String NAME = "booklet";
@@ -333,8 +335,8 @@ public class Booklet implements Imposable {
 	}
 
 	@Override
-	public VirtualDocument impose(VirtualDocument source) {
-		return imposeAsVolume(source).renderDocument();
+	public BoundBook impose(VirtualDocument source) {
+		return new BoundBook(imposeAsVolume(source));
 	}
 
 	/**
@@ -344,7 +346,7 @@ public class Booklet implements Imposable {
 	 * into one document in the order they appear in the argument.
 	 */
 	@Override
-	public VirtualDocument impose(List<VirtualDocument> sources) {
+	public BoundBook impose(List<VirtualDocument> sources) {
 		return impose(VirtualDocument.concatenate(sources));
 	}
 	

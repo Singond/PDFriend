@@ -6,7 +6,9 @@ import java.util.List;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.Util;
+import com.github.singond.pdfriend.book.Book;
 import com.github.singond.pdfriend.book.GridPage;
+import com.github.singond.pdfriend.book.LoosePages;
 import com.github.singond.pdfriend.book.Page;
 import com.github.singond.pdfriend.book.SequentialSourceProvider;
 import com.github.singond.pdfriend.document.VirtualDocument;
@@ -24,7 +26,7 @@ import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
  * a larger page.
  * @author Singon
  */
-public class NUp implements Imposable, ImposableBuilder<NUp> {
+public class NUp extends AbstractImposable implements Imposable, ImposableBuilder<NUp> {
 
 	/** The internal name of this imposable document type */
 	private static final String NAME = "n-up";
@@ -110,7 +112,7 @@ public class NUp implements Imposable, ImposableBuilder<NUp> {
 	 * Imposes the given virtual document into a list of grid pages
 	 * according to the current settings of this {@code NUp} object.
 	 */
-	public List<Page> imposeAsPages(VirtualDocument doc) {
+	private List<Page> imposeAsPages(VirtualDocument doc) {
 		// Copy all nonfinal values defensively
 		final int rows = this.rows;
 		final int cols = this.cols;
@@ -468,19 +470,6 @@ public class NUp implements Imposable, ImposableBuilder<NUp> {
 			this.cellsPerPage = cellsPerPage;
 		}
 	}
-
-	/**
-	 * Imposes the given virtual document into a new virtual document
-	 * according to the current settings of this {@code NUp} object.
-	 */
-	public VirtualDocument imposeAsDocument(VirtualDocument source) {
-		List<Page> pages = imposeAsPages(source);
-		VirtualDocument.Builder doc = new VirtualDocument.Builder();
-		for (Page page : pages) {
-			doc.addPage(page.render());
-		}
-		return doc.build();
-	}
 	
 	@Override
 	public void acceptPreprocessSettings(Settings settings) {
@@ -516,8 +505,8 @@ public class NUp implements Imposable, ImposableBuilder<NUp> {
 	}
 
 	@Override
-	public VirtualDocument impose(VirtualDocument source) {
-		return imposeAsDocument(source);
+	public LoosePages impose(VirtualDocument source) {
+		return new LoosePages(imposeAsPages(source));
 	}
 
 	/**
@@ -527,8 +516,8 @@ public class NUp implements Imposable, ImposableBuilder<NUp> {
 	 * into one document in the order they appear in the argument.
 	 */
 	@Override
-	public VirtualDocument impose(List<VirtualDocument> sources) {
-		return imposeAsDocument(VirtualDocument.concatenate(sources));
+	public LoosePages impose(List<VirtualDocument> sources) {
+		return impose(VirtualDocument.concatenate(sources));
 	}
 
 	/** Represents orientation in one of the four principal directions. */
