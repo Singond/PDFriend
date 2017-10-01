@@ -1,6 +1,7 @@
 package com.github.singond.pdfriend.imposition;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.github.singond.pdfriend.ExtendedLogger;
@@ -10,6 +11,7 @@ import com.github.singond.pdfriend.book.LayerSourceProvider;
 import com.github.singond.pdfriend.book.LayeredPage;
 import com.github.singond.pdfriend.book.Page;
 import com.github.singond.pdfriend.document.VirtualDocument;
+import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
 
 /**
@@ -17,17 +19,32 @@ import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
  *
  * @author Singon
  */
-public class Overlay extends AbstractImposable implements Imposable, ImposableBuilder<Overlay> {
+public class Overlay extends AbstractImposable implements Imposable {
 
 	/** The internal name of this imposable document type */
 	private static final String NAME = "overlay";
 	/** Logger */
 	private static ExtendedLogger logger = Log.logger(Overlay.class);
 
+	private final Preprocessor.Settings preprocess;
+	private final CommonSettings common;
+	private final LengthUnit unit = Imposition.LENGTH_UNIT;
+	
 	/** The pages in the document */
-	private final List<LayeredPage> pages;
+	@Deprecated
+	private final List<LayeredPage> pages = Collections.emptyList();
 	
+	private Overlay(Preprocessor.Settings preprocess, CommonSettings common) {
+		if (preprocess == null)
+			throw new IllegalArgumentException("Preprocessor settings must not be null");
+		if (common == null)
+			throw new IllegalArgumentException("Common settings must not be null");
+		
+		this.preprocess = preprocess.copy();
+		this.common = common;
+	}
 	
+	@Deprecated // Build document when invoking imposition
 	public Overlay(double width, double height, int pages, int layers) {
 		logger.verbose("overlay_constructing", pages, layers);
 		LayeredPage template = new LayeredPage(width, height, layers);
@@ -38,9 +55,13 @@ public class Overlay extends AbstractImposable implements Imposable, ImposableBu
 			page.setNumber(++pageNumber);
 			pageList.add(page);
 		}
-		this.pages = pageList;
+//		this.pages = pageList;
+		// FIXME: Dummy values to silence compiler errors
+		this.preprocess = null;
+		this.common = null;
 	}
 	
+	@Deprecated
 	public static Overlay from(List<VirtualDocument> docs) {
 		double[] dims = VirtualDocument.maxPageDimensions(docs);
 		int pages = VirtualDocument.maxLength(docs);
@@ -64,23 +85,6 @@ public class Overlay extends AbstractImposable implements Imposable, ImposableBu
 		return doc.build();
 	}
 	
-	@Override
-	public void acceptPreprocessSettings(Settings settings) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not implemented yet");
-	}
-	
-	@Override
-	public void acceptCommonSettings(CommonSettings settings) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not implemented yet");
-	}
-
-	@Override
-	public Overlay build() {
-		return this;
-	}
-
 	@Override
 	public String getName() {
 		return NAME;
@@ -119,5 +123,30 @@ public class Overlay extends AbstractImposable implements Imposable, ImposableBu
 	@Override
 	public VirtualDocument imposeAndRender(VirtualDocument source) {
 		return source;
+	}
+	
+	public static final class Builder implements ImposableBuilder<Overlay> {
+		private Preprocessor.Settings preprocess = Preprocessor.Settings.auto();
+		private CommonSettings common = CommonSettings.auto();
+		
+		@Override
+		public void acceptPreprocessSettings(Settings settings) {
+			if (settings == null)
+				throw new IllegalArgumentException("Preprocess settings cannot be null");
+			this.preprocess = settings;
+		}
+
+		@Override
+		public void acceptCommonSettings(CommonSettings settings) {
+			if (settings == null)
+				throw new IllegalArgumentException("Settings cannot be null");
+			this.common = settings;
+		}
+
+		@Override
+		public Overlay build() {
+			return new Overlay(preprocess, common);
+		}
+		
 	}
 }
