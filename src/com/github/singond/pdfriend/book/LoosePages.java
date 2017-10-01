@@ -16,13 +16,13 @@ import com.github.singond.pdfriend.document.VirtualDocument;
 public class LoosePages implements Book {
 
 	/** The pages of this document */
-	private final List<Page> pages;
+	private final List<? extends Page> pages;
 
 	/**
 	 * Constructs a new document consisting of the given pages.
 	 * @param pages
 	 */
-	public LoosePages(List<Page> pages) {
+	public LoosePages(List<? extends Page> pages) {
 		this.pages = new ArrayList<>(pages);
 	}
 
@@ -32,7 +32,7 @@ public class LoosePages implements Book {
 	 *         Attempts to modify the returned list will fail with
 	 *         {@code UnsupportedOperationException}.
 	 */
-	public List<Page> getPages() {
+	public List<? extends Page> getPages() {
 		return Collections.unmodifiableList(pages);
 	}
 

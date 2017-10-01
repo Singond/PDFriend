@@ -9,6 +9,7 @@ import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.Book;
 import com.github.singond.pdfriend.book.LayerSourceProvider;
 import com.github.singond.pdfriend.book.LayeredPage;
+import com.github.singond.pdfriend.book.LoosePages;
 import com.github.singond.pdfriend.book.Page;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.geometry.LengthUnit;
@@ -75,6 +76,28 @@ public class Overlay extends AbstractImposable implements Imposable {
 		return result;
 	}
 	
+	private List<LayeredPage> imposeAsPages(List<VirtualDocument> docs) {
+		double[] dims = VirtualDocument.maxPageDimensions(docs);
+		int pages = VirtualDocument.maxLength(docs);
+		int layers = docs.size();
+
+		logger.verbose("overlay_constructing", pages, layers);
+		LayeredPage template = new LayeredPage(dims[0], dims[1], layers);
+		List<LayeredPage> pageList = new ArrayList<>(pages);
+		int pageNumber = 0;
+		while(pageList.size() < pages) {
+			LayeredPage page = new LayeredPage(template);
+			page.setNumber(++pageNumber);
+			pageList.add(page);
+		}
+		
+		logger.verbose("overlay_filling");
+		LayerSourceProvider lsp = new LayerSourceProvider(docs);
+		lsp.setSourceTo(pageList);
+//		logger.verbose("overlay_setupFinished");
+		return pageList;
+	}
+	
 //	@Override
 	@Deprecated
 	public VirtualDocument getDocument() {
@@ -103,13 +126,13 @@ public class Overlay extends AbstractImposable implements Imposable {
 	@Override
 	public Book impose(VirtualDocument source) {
 		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not implemented yet");
+		throw new UnsupportedOperationException
+				("Not implemented yet: Cannot create a Book of one layer only");
 	}
 
 	@Override
 	public Book impose(List<VirtualDocument> sources) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not implemented yet");
+		return new LoosePages(imposeAsPages(sources));
 	}
 
 	/**
