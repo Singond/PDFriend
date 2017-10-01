@@ -144,43 +144,19 @@ public class Booklet implements Imposable {
 			throw new IllegalStateException("Sheet size is null");
 		}
 		
-		/*
-		 * Next, reconcile page size and sheet size, if any of the two
-		 * is given. If both are given, throw an exception.
-		 */
-//		if (pageSize != CommonSettings.AUTO_DIMENSIONS) {
-//			if (sheetSize == CommonSettings.AUTO_DIMENSIONS) {
-//				// Only page size is given: determine sheet size
-//				logger.verbose("nup_pageSizeToSheetSize");
-//				sheetSize = sheetFromPage(pageSize, binding, mirroredMargins);
-//			} else {
-//				// Both are given: a conflict
-//				throw new IllegalStateException
-//					("Both sheet size and page size are set to a non-auto value");
-//			}
-//		} // Otherwise just leave sheetSize as it is
-//		pageSize = null;           // Won't need this anymore
-		
 		boolean autoPage = pageSize == CommonSettings.AUTO_DIMENSIONS;
 		boolean autoSheet = sheetSize == CommonSettings.AUTO_DIMENSIONS;
 		
-//		boolean sheetSizeLater = false;
 		if (!autoPage && autoSheet) {
-			// Only page size is given: determine sheet size
-//			logger.verbose("booklet_pageSizeToSheetSize");
-//			sheetSize = sheetFromPage(pageSize, binding, mirroredMargins);
-//			preprocess.setCellDimensions(pageSize);
+			// Do nothing
 		} else if (autoPage && !autoSheet) {
 			// Sheet size is given: determine page size
 			pageSize = pageFromSheet(sheetSize, binding, mirroredMargins);
 			logger.verbose("booklet_sheetSizeToPageSize", pageSize, sheetSize, margins);
-//			preprocess.setCellDimensions(pageSize);
 		} else if (!autoPage && !autoSheet){
 			// Both are given: a conflict
 			throw new IllegalStateException
 				("Both sheet size and page size are set to a non-auto value");
-		} else {
-//			sheetSizeLater = true;
 		}
 
 		/*
@@ -228,11 +204,6 @@ public class Booklet implements Imposable {
 			if (logger.isTraceEnabled())
 				logger.trace("Page size = preprocessor cell size + margins");
 		}
-//		if (autoSheet) {
-//			sheetSize = sheetFromPage(cell, binding, mirroredMargins);
-//		}
-//		double width = cell.width().in(unit);
-//		double height = cell.height().in(unit);
 		doc = preprocessor.processAll();
 		
 		logger.info("booklet_constructing", pageCount);
@@ -305,8 +276,6 @@ public class Booklet implements Imposable {
 		}
 		
 		return new Dimensions(width, height);
-//		return new Dimensions(Length.subtract(width, margins.horizontal()),
-//		                      Length.subtract(height, margins.vertical()));
 	}
 	
 	/**
@@ -339,8 +308,6 @@ public class Booklet implements Imposable {
 		}
 		
 		return new Dimensions(width, height);
-//		return new Dimensions(Length.sum(width, margins.horizontal()),
-//		                      Length.sum(height, margins.vertical()));
 	}
 
 	/**
@@ -379,24 +346,6 @@ public class Booklet implements Imposable {
 	@Override
 	public VirtualDocument impose(List<VirtualDocument> sources) {
 		return impose(VirtualDocument.concatenate(sources));
-	}
-	
-	/**
-	 * Specifies where the booklet binding is located.
-	 * Specifically, this value indicates on which edge of the folded
-	 * booklet the binding is placed, when looking at the front page
-	 * in correct (ie. top is on top) orientation.
-	 */
-	@Deprecated
-	public static enum Binding {
-		/** The fold (and binding) is on the top edge. */
-		TOP,
-		/** The fold (and binding) is on the right edge. */
-		RIGHT,
-		/** The fold (and binding) is on the bottom edge. */
-		BOTTOM,
-		/** The fold (and binding) is on the left edge. */
-		LEFT;
 	}
 	
 	/**
@@ -508,14 +457,10 @@ public class Booklet implements Imposable {
 						("The number of pages must be divisible by four");
 			}
 			
-//			this.contentWidth = page.width().in(unit);
-//			this.contentHeight = page.height().in(unit);
 			this.leftMargin = margins.left().in(unit);
 			this.rightMargin = margins.right().in(unit);
 			this.bottomMargin = margins.bottom().in(unit);
 			this.topMargin = margins.top().in(unit);
-//			this.totalWidth = contentWidth + leftMargin + rightMargin;
-//			this.totalHeight = contentHeight + bottomMargin + topMargin;
 			this.totalWidth = page.width().in(unit);
 			this.totalHeight = page.height().in(unit);
 			this.contentWidth = totalWidth - leftMargin - rightMargin;
@@ -650,122 +595,5 @@ public class Booklet implements Imposable {
 			}
 			return leaf;
 		}
-		
-//		/**
-//		 * Returns a new Signature object representing a stack of sheets
-//		 * folded in half at the left edge.
-//		 * @param width width of one page of the folded sheet
-//		 * @param height width of one page of the folded sheet
-//		 * @param pages the number of pages in the finished booklet, including blanks.
-//		 *        It follows that the number must be an integer multiple of four.
-//		 * @return a new {@code Signature} object with leaves in proper positions
-//		 */
-//		private Signature withLeftBinding(double width, double height, int pages) {
-//			final Stack stack = new Stack(2*width, height);
-//			List<Stack.Manipulation> manipulations = new ArrayList<>(3);
-//			manipulations.add(new Stack.Gather(pages/4));
-//			Line foldAxis = new Line(new Point(width, 0), new Point(width, 1));
-//			manipulations.add(new Stack.Fold(foldAxis, Stack.Fold.Direction.UNDER));
-//			manipulations.add(Flip.horizontal(width));
-//			stack.performManipulations(manipulations);
-//
-//			Leaf leaf = new Leaf(width, height);
-//			leaf.setAsFrontPosition(new Leaf.Position(width/2, height/2, 0));
-//
-//			return stack.buildSignature(leaf);
-//		}
-//
-//		/**
-//		 * Returns a new Signature object representing a stack of sheets
-//		 * folded in half at the right edge.
-//		 * @param width width of one page of the folded sheet
-//		 * @param height width of one page of the folded sheet
-//		 * @param pages the number of pages in the finished booklet, including blanks.
-//		 *        It follows that the number must be an integer multiple of four.
-//		 * @return a new {@code Signature} object with leaves in proper positions
-//		 */
-//		private Signature withRightBinding(double width, double height, int pages) {
-//			final Stack stack = new Stack(2*width, height);
-//			List<Stack.Manipulation> manipulations = new ArrayList<>(2);
-//			manipulations.add(new Stack.Gather(pages/4));
-//			Line foldAxis = new Line(new Point(width, 0), new Point(width, 1));
-//			manipulations.add(new Stack.Fold(foldAxis, Stack.Fold.Direction.UNDER));
-//			stack.performManipulations(manipulations);
-//
-//			Leaf leaf = new Leaf(width, height);
-//			leaf.setAsFrontPosition(new Leaf.Position(width/2, height/2, 0));
-//
-//			return stack.buildSignature(leaf);
-//		}
-//
-//		/**
-//		 * Returns a new Signature object representing a stack of sheets
-//		 * folded in half at the top edge.
-//		 * @param width width of one page of the folded sheet
-//		 * @param height width of one page of the folded sheet
-//		 * @param pages the number of pages in the finished booklet, including blanks.
-//		 *        It follows that the number must be an integer multiple of four.
-//		 * @param versoOpposite whether verso should be upside down with respect
-//		 *        to the recto
-//		 * @return a new {@code Signature} object with leaves in proper positions
-//		 */
-//		private Signature withTopBinding(double width, double height, int pages,
-//		                                 boolean versoOpposite) {
-//			final Stack stack = new Stack(width, 2*height);
-//			List<Stack.Manipulation> manipulations = new ArrayList<>(2);
-//			manipulations.add(new Stack.Gather(pages/4));
-//			Line foldAxis = new Line(new Point(0, height), new Point(1, height));
-//			manipulations.add(new Stack.Fold(foldAxis, Stack.Fold.Direction.UNDER));
-//			stack.performManipulations(manipulations);
-//
-//			Leaf leaf = new Leaf(width, height);
-//			leaf.setAsFrontPosition(new Leaf.Position(width/2, height/2, 0));
-//			/*
-//			 * With the default flip direction about y, the verso is opposite
-//			 * already. When verso is to be in the same direction as recto,
-//			 * make it flip around the x-axis:
-//			 */
-//			if (!versoOpposite) {
-//				leaf.setFlipDirection(FlipDirection.AROUND_X);
-//			}
-//
-//			return stack.buildSignature(leaf);
-//		}
-//
-//		/**
-//		 * Returns a new Signature object representing a stack of sheets
-//		 * folded in half at the bottom edge.
-//		 * @param width width of one page of the folded sheet
-//		 * @param height width of one page of the folded sheet
-//		 * @param pages the number of pages in the finished booklet, including blanks.
-//		 *        It follows that the number must be an integer multiple of four.
-//		 * @param versoOpposite whether verso should be upside down with respect
-//		 *        to the recto
-//		 * @return a new {@code Signature} object with leaves in proper positions
-//		 */
-//		private Signature withBottomBinding(double width, double height, int pages,
-//		                                    boolean versoOpposite) {
-//			final Stack stack = new Stack(width, 2*height);
-//			List<Stack.Manipulation> manipulations = new ArrayList<>(3);
-//			manipulations.add(new Stack.Gather(pages/4));
-//			Line foldAxis = new Line(new Point(0, height), new Point(1, height));
-//			manipulations.add(new Stack.Fold(foldAxis, Stack.Fold.Direction.UNDER));
-//			manipulations.add(Flip.vertical(height));
-//			stack.performManipulations(manipulations);
-//
-//			Leaf leaf = new Leaf(width, height);
-//			leaf.setAsFrontPosition(new Leaf.Position(width/2, height/2, 0));
-//			/*
-//			 * With the default flip direction about y, the verso is opposite
-//			 * already. When verso it to be in the same direction as recto,
-//			 * make it flip around the x-axis:
-//			 */
-//			if (!versoOpposite) {
-//				leaf.setFlipDirection(FlipDirection.AROUND_X);
-//			}
-//
-//			return stack.buildSignature(leaf);
-//		}
-		
 	}
 }
