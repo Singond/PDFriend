@@ -125,9 +125,8 @@ public class Overlay extends AbstractImposable implements Imposable {
 
 	@Override
 	public Book impose(VirtualDocument source) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException
-				("Not implemented yet: Cannot create a Book of one layer only");
+		logger.warn("overlay_singleFile");
+		return impose(Collections.singletonList(source));
 	}
 
 	@Override
