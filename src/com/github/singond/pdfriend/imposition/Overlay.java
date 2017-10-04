@@ -59,7 +59,8 @@ public class Overlay extends AbstractImposable implements Imposable {
 		}
 		
 		// Select a use case and run it
-		if (common.getPageSize() == CommonSettings.AUTO_DIMENSIONS) {
+		if (common.getPageSize() == CommonSettings.AUTO_DIMENSIONS
+				&& common.getSheetSize() == CommonSettings.AUTO_DIMENSIONS) {
 			// Case A
 			return casePageSize(docs);
 		} else if (preprocess.isAutoSize()) {
