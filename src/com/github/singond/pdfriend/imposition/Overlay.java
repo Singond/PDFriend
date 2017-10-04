@@ -10,9 +10,12 @@ import com.github.singond.pdfriend.book.Book;
 import com.github.singond.pdfriend.book.LayerSourceProvider;
 import com.github.singond.pdfriend.book.LayeredPage;
 import com.github.singond.pdfriend.book.LoosePages;
-import com.github.singond.pdfriend.book.Page;
 import com.github.singond.pdfriend.document.VirtualDocument;
+import com.github.singond.pdfriend.geometry.Dimensions;
+import com.github.singond.pdfriend.geometry.GeometryUtils;
 import com.github.singond.pdfriend.geometry.LengthUnit;
+import com.github.singond.pdfriend.geometry.LengthUnits;
+import com.github.singond.pdfriend.geometry.Margins;
 import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
 
 /**
@@ -30,11 +33,8 @@ public class Overlay extends AbstractImposable implements Imposable {
 	private final Preprocessor.Settings preprocess;
 	private final CommonSettings common;
 	private final LengthUnit unit = Imposition.LENGTH_UNIT;
-	
-	/** The pages in the document */
-	@Deprecated
-	private final List<LayeredPage> pages = Collections.emptyList();
-	
+
+
 	private Overlay(Preprocessor.Settings preprocess, CommonSettings common) {
 		if (preprocess == null)
 			throw new IllegalArgumentException("Preprocessor settings must not be null");
@@ -45,69 +45,178 @@ public class Overlay extends AbstractImposable implements Imposable {
 		this.common = common;
 	}
 	
-	@Deprecated // Build document when invoking imposition
-	public Overlay(double width, double height, int pages, int layers) {
-		logger.verbose("overlay_constructing", pages, layers);
-		LayeredPage template = new LayeredPage(width, height, layers);
-		List<LayeredPage> pageList = new ArrayList<>(pages);
-		int pageNumber = 0;
-		while(pageList.size() < pages) {
-			LayeredPage page = new LayeredPage(template);
-			page.setNumber(++pageNumber);
-			pageList.add(page);
-		}
-//		this.pages = pageList;
-		// FIXME: Dummy values to silence compiler errors
-		this.preprocess = null;
-		this.common = null;
-	}
 	
-	@Deprecated
-	public static Overlay from(List<VirtualDocument> docs) {
-		double[] dims = VirtualDocument.maxPageDimensions(docs);
-		int pages = VirtualDocument.maxLength(docs);
-		int layers = docs.size();
-		Overlay result = new Overlay(dims[0], dims[1], pages, layers);
-		
-		logger.verbose("overlay_filling");
-		LayerSourceProvider lsp = new LayerSourceProvider(docs);
-		lsp.setSourceTo(result.pages);
-		logger.verbose("overlay_setupFinished");
-		return result;
-	}
-	
+	/**
+	 * Imposes the given virtual document into a list of grid pages
+	 * according to the current settings of this {@code NUp} object.
+	 */
 	private List<LayeredPage> imposeAsPages(List<VirtualDocument> docs) {
-		double[] dims = VirtualDocument.maxPageDimensions(docs);
-		int pages = VirtualDocument.maxLength(docs);
-		int layers = docs.size();
+		if (logger.isDebugEnabled()) {
+			logger.debug("imposition_preprocessSettings", preprocess);
+			logger.debug("imposition_commonSettings", common);
+//			logger.debug("imposition_imposableSettings", NAME, );
+		}
+		
+		// Select a use case and run it
+		if (common.getPageSize() == CommonSettings.AUTO_DIMENSIONS) {
+			// Case A
+			return casePageSize(docs);
+		} else if (preprocess.isAutoSize()) {
+			// Case C
+//			pc = caseCellSize(doc, pageCount, rows, cols, pageSize,
+//			                  orientation, direction, preprocess, common);
+			throw new UnsupportedOperationException("Not implemented yet");
+		} else if (common.getMargins() == CommonSettings.AUTO_MARGINS) {
+			// Case B
+//			pc = caseMargins(doc, pageCount, rows, cols, pageSize,
+//			                 orientation, direction, preprocess, common);
+			throw new UnsupportedOperationException("Not implemented yet");
+		} else {
+			// All are set, a conflict
+//			logger.verbose("overlay_caseConflict");
+			throw new IllegalStateException
+					("Conflicting settings: page size, margins and content size are all set");
+		}
+	}
+	
 
-		logger.verbose("overlay_constructing", pages, layers);
-		LayeredPage template = new LayeredPage(dims[0], dims[1], layers);
-		List<LayeredPage> pageList = new ArrayList<>(pages);
+	/**
+	 * Builds the list of pages, determining page size from remaining parameters.
+	 * 
+	 * @param docs the documents to be imposed
+	 * @return the imposed document as a list of pages
+	 */
+	private List<LayeredPage> casePageSize(List<VirtualDocument> docs) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("overlay_casePageSize");
+		}
+		
+		Dimensions pageSize = resolvePageAndSheetSize
+				(common.getPageSize(), common.getSheetSize());
+		Margins margins = resolveAutoMargins(common.getMargins());
+		preprocess.setCellMargins(margins);
+		Preprocessor preprocessor = new Preprocessor(docs, preprocess);
+		Dimensions contentSize = preprocessor.getResolvedCellDimensions();
+		pageSize = GeometryUtils.rectanglePlusMargins(contentSize, margins);
+		int layerCount = docs.size();
+		LayeredPage template = new LayeredPage(pageSize.width().in(unit),
+		                                       pageSize.height().in(unit),
+		                                       layerCount);
+		
+		
+		int pageCount = resolvePageCount(common.getPageCount(), docs);
+		
+		// Pre-processing
+		// TODO Pre-process only pages needed for pageCount
+//		doc = preprocessor.processAll();
+		
+		List<LayeredPage> pages = buildPages(template, pageCount);
+		fillPages(docs, pages);
+		return pages;
+	}
+	
+	/**
+	 * Resolves margins object into a valid value.
+	 * 
+	 * @param margins margins object to be resolved
+	 * @return the argument, if it is a valid value, and the default value
+	 *         of (0, 0, 0, 0) otherwise
+	 */
+	private Margins resolveAutoMargins(Margins margins) {
+		// Resolve automatic margins
+		if (margins == CommonSettings.AUTO_MARGINS) {
+			margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
+			logger.verbose("nup_marginsResolveAuto", margins);
+		}
+		return margins;
+	}
+
+	/**
+	 * Resolves the page size and sheet size to a single value, which
+	 * becomes the size of the page.
+	 * 
+	 * In the output document of an "overlay" imposition, the page and the
+	 * sheet are the same thing. This implies that page size and sheet
+	 * size should both resolve to the same value.
+	 * If both are explicitly set to a different value, an exception
+	 * will be thrown to indicate this.
+	 * If only sheet size is given, use it as page size.
+	 * In any case, only the page size will be used afterwards and the
+	 * sheet size can be discarded.
+	 * 
+	 * @param pageSize the size of the page
+	 * @param sheetSize the size of the sheet
+	 * @return the page size
+	 */
+	private Dimensions resolvePageAndSheetSize(Dimensions pageSize, Dimensions sheetSize) {
+		if (sheetSize != CommonSettings.AUTO_DIMENSIONS) {
+			if (pageSize == CommonSettings.AUTO_DIMENSIONS) {
+				logger.verbose("nup_pageSizeToSheetSize");
+				pageSize = sheetSize;
+			} else {
+				if (!pageSize.equals(sheetSize)) {
+					// The page size and sheet size are in conflict.
+					throw new IllegalStateException
+						("Sheet size and page size are set to a different value");
+				}
+			}
+		}
+		// Otherwise just leave pageSize as it is
+		return pageSize;
+	}
+	
+	/**
+	 * Resolves page count into a valid value.
+	 * If the number of pages is unset, calculates the number of pages
+	 * necessary to fit all given documents; otherwise uses the given value.
+	 * 
+	 * @param pageCount the declared page count
+	 * @param docs documents used in automatic determining the page count
+	 * @return the given page count, or the length of the longest document
+	 *         in {@code docs} if page count was not set (was negative)
+	 */
+	private int resolvePageCount(int pageCount, List<VirtualDocument> docs) {
+		if (pageCount < 0) {
+			pageCount = VirtualDocument.maxLength(docs);
+			logger.verbose("overlay_pageCountAll", pageCount);
+		} else {
+			logger.verbose("overlay_pageCountPartial", pageCount);
+		}
+		return pageCount;
+	}
+	
+	/**
+	 * Builds a new list of layered pages.
+	 * 
+	 * @param template the page to be used as template, with correct size,
+	 *        margins and number of layers
+	 * @param pageCount the resolved number of pages to be built
+	 * @return a list containing the new layered pages
+	 */
+	private List<LayeredPage> buildPages(LayeredPage template, int pageCount) {
+		logger.verbose("overlay_constructing", pageCount, template.numberOfLayers());
+//		LayeredPage template = new LayeredPage(dims[0], dims[1], layerCount);
+		List<LayeredPage> pageList = new ArrayList<>(pageCount);
 		int pageNumber = 0;
-		while(pageList.size() < pages) {
+		while(pageList.size() < pageCount) {
 			LayeredPage page = new LayeredPage(template);
 			page.setNumber(++pageNumber);
 			pageList.add(page);
 		}
-		
-		logger.verbose("overlay_filling");
-		LayerSourceProvider lsp = new LayerSourceProvider(docs);
-		lsp.setSourceTo(pageList);
-//		logger.verbose("overlay_setupFinished");
 		return pageList;
 	}
 	
-//	@Override
-	@Deprecated
-	public VirtualDocument getDocument() {
-		VirtualDocument.Builder doc = new VirtualDocument.Builder();
-		for (Page page : pages) {
-			doc.addPage(page.render());
-		}
-		return doc.build();
+	/**
+	 * Fills the given target pages with pages of the given source documents.
+	 * @param source the documents to be used as the source of the pages
+	 * @param target the pages to be filled with the source pages
+	 */
+	private void fillPages(List<VirtualDocument> source, List<LayeredPage> target) {
+		logger.verbose("overlay_filling");
+		LayerSourceProvider lsp = new LayerSourceProvider(source);
+		lsp.setSourceTo(target);
 	}
-	
+
 	@Override
 	public String getName() {
 		return NAME;

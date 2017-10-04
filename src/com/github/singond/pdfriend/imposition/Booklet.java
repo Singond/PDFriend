@@ -506,6 +506,7 @@ public class Booklet extends AbstractImposable implements Imposable {
 			return stack.buildSignature(bookletLeaf());
 		}
 
+		// TODO Remove parameter tags from javadoc
 		/**
 		 * Returns a new Signature object representing a stack of sheets
 		 * folded in half at the right edge.
