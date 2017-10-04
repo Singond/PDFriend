@@ -13,6 +13,7 @@ import com.github.singond.pdfriend.book.LoosePages;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.GeometryUtils;
+import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.geometry.Margins;
@@ -63,17 +64,13 @@ public class Overlay extends AbstractImposable implements Imposable {
 			return casePageSize(docs);
 		} else if (preprocess.isAutoSize()) {
 			// Case C
-//			pc = caseCellSize(doc, pageCount, rows, cols, pageSize,
-//			                  orientation, direction, preprocess, common);
-			throw new UnsupportedOperationException("Not implemented yet");
+			return caseContentSize(docs);
 		} else if (common.getMargins() == CommonSettings.AUTO_MARGINS) {
 			// Case B
-//			pc = caseMargins(doc, pageCount, rows, cols, pageSize,
-//			                 orientation, direction, preprocess, common);
-			throw new UnsupportedOperationException("Not implemented yet");
+			return caseMargins(docs);
 		} else {
 			// All are set, a conflict
-//			logger.verbose("overlay_caseConflict");
+			logger.verbose("overlay_caseConflict");
 			throw new IllegalStateException
 					("Conflicting settings: page size, margins and content size are all set");
 		}
@@ -104,6 +101,76 @@ public class Overlay extends AbstractImposable implements Imposable {
 		                                       pageSize.height().in(unit),
 		                                       layerCount);
 		
+		int pageCount = resolvePageCount(common.getPageCount(), docs);
+		docs = preprocessDocuments(docs, preprocessor, pageCount);
+		List<LayeredPage> pages = buildPages(template, pageCount);
+		fillPages(docs, pages);
+		return pages;
+	}
+	
+	/**
+	 * Builds the list of pages, determining the width of margins from
+	 * remaining parameters.
+	 * 
+	 * @param docs the documents to be imposed
+	 * @return the imposed document as a list of pages
+	 */
+	private List<LayeredPage> caseMargins(List<VirtualDocument> docs) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("overlay_caseMargins");
+		}
+		
+		Dimensions pageSize = resolvePageAndSheetSize
+				(common.getPageSize(), common.getSheetSize());
+		
+		// Helper preprocessor to resolve cell size
+		Preprocessor helper = new Preprocessor(docs, preprocess);
+		Dimensions contentSize = helper.getResolvedCellDimensions();
+		Length oneHorizontalMargin = Length.subtract(
+				pageSize.width(), contentSize.width()).times(1d/2);
+		Length oneVerticalMargin = Length.subtract(
+				pageSize.height(), contentSize.height()).times(1d/2);
+		Margins margins = new Margins(oneHorizontalMargin, oneVerticalMargin);
+		preprocess.setCellDimensions(pageSize);
+		preprocess.setCellMargins(margins);
+		Preprocessor preprocessor = new Preprocessor(docs, preprocess);
+		pageSize = preprocessor.getResolvedCellDimensions();
+		int layerCount = docs.size();
+		LayeredPage template = new LayeredPage(pageSize.width().in(unit),
+		                                       pageSize.height().in(unit),
+		                                       layerCount);
+		
+		int pageCount = resolvePageCount(common.getPageCount(), docs);
+		docs = preprocessDocuments(docs, preprocessor, pageCount);
+		List<LayeredPage> pages = buildPages(template, pageCount);
+		fillPages(docs, pages);
+		return pages;
+	}
+	
+	/**
+	 * Builds the list of pages, determining content size from remaining parameters.
+	 * 
+	 * @param docs the documents to be imposed
+	 * @return the imposed document as a list of pages
+	 */
+	private List<LayeredPage> caseContentSize(List<VirtualDocument> docs) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("overlay_caseContentSize");
+		}
+		
+		Dimensions pageSize = resolvePageAndSheetSize
+				(common.getPageSize(), common.getSheetSize());
+		
+		Margins margins = resolveAutoMargins(common.getMargins());
+		Dimensions contentSize = GeometryUtils.rectangleMinusMargins(pageSize, margins);
+		preprocess.setCellDimensions(contentSize);
+		preprocess.setCellMargins(margins);
+		Preprocessor preprocessor = new Preprocessor(docs, preprocess);
+		pageSize = preprocessor.getResolvedCellDimensions();
+		int layerCount = docs.size();
+		LayeredPage template = new LayeredPage(pageSize.width().in(unit),
+		                                       pageSize.height().in(unit),
+		                                       layerCount);
 		
 		int pageCount = resolvePageCount(common.getPageCount(), docs);
 		docs = preprocessDocuments(docs, preprocessor, pageCount);
