@@ -49,7 +49,7 @@ public class Overlay extends AbstractImposable implements Imposable {
 	
 	/**
 	 * Imposes the given virtual document into a list of grid pages
-	 * according to the current settings of this {@code NUp} object.
+	 * according to the current settings of this {@code Overlay} object.
 	 */
 	private List<LayeredPage> imposeAsPages(List<VirtualDocument> docs) {
 		if (logger.isDebugEnabled()) {
@@ -190,7 +190,7 @@ public class Overlay extends AbstractImposable implements Imposable {
 		// Resolve automatic margins
 		if (margins == CommonSettings.AUTO_MARGINS) {
 			margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
-			logger.verbose("nup_marginsResolveAuto", margins);
+			logger.verbose("overlay_marginsResolveAuto", margins);
 		}
 		return margins;
 	}
@@ -215,7 +215,7 @@ public class Overlay extends AbstractImposable implements Imposable {
 	private Dimensions resolvePageAndSheetSize(Dimensions pageSize, Dimensions sheetSize) {
 		if (sheetSize != CommonSettings.AUTO_DIMENSIONS) {
 			if (pageSize == CommonSettings.AUTO_DIMENSIONS) {
-				logger.verbose("nup_pageSizeToSheetSize");
+				logger.verbose("overlay_pageSizeToSheetSize");
 				pageSize = sheetSize;
 			} else {
 				if (!pageSize.equals(sheetSize)) {
