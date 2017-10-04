@@ -93,6 +93,7 @@ public class Overlay extends AbstractImposable implements Imposable {
 		
 		Dimensions pageSize = resolvePageAndSheetSize
 				(common.getPageSize(), common.getSheetSize());
+		
 		Margins margins = resolveAutoMargins(common.getMargins());
 		preprocess.setCellMargins(margins);
 		Preprocessor preprocessor = new Preprocessor(docs, preprocess);
@@ -105,11 +106,7 @@ public class Overlay extends AbstractImposable implements Imposable {
 		
 		
 		int pageCount = resolvePageCount(common.getPageCount(), docs);
-		
-		// Pre-processing
-		// TODO Pre-process only pages needed for pageCount
-//		doc = preprocessor.processAll();
-		
+		docs = preprocessDocuments(docs, preprocessor, pageCount);
 		List<LayeredPage> pages = buildPages(template, pageCount);
 		fillPages(docs, pages);
 		return pages;
@@ -183,6 +180,18 @@ public class Overlay extends AbstractImposable implements Imposable {
 			logger.verbose("overlay_pageCountPartial", pageCount);
 		}
 		return pageCount;
+	}
+	
+	
+	private List<VirtualDocument> preprocessDocuments(
+			List<VirtualDocument> docs, Preprocessor preprocessor, int pageCount) {
+		List<VirtualDocument> processedDocs = new ArrayList<>(pageCount);
+		int page = 0;
+		for (VirtualDocument doc : docs) {
+			processedDocs.add(preprocessor.processDocument(doc));
+			if (page++ >= pageCount) break;
+		}
+		return processedDocs;
 	}
 	
 	/**
