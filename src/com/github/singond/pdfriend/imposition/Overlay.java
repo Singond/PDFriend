@@ -338,17 +338,19 @@ public class Overlay extends AbstractImposable implements Imposable {
 		private CommonSettings common = CommonSettings.auto();
 		
 		@Override
-		public void acceptPreprocessSettings(Settings settings) {
+		public ImposableBuilder<Overlay> acceptPreprocessSettings(Settings settings) {
 			if (settings == null)
 				throw new IllegalArgumentException("Preprocess settings cannot be null");
 			this.preprocess = settings;
+			return this;
 		}
 
 		@Override
-		public void acceptCommonSettings(CommonSettings settings) {
+		public ImposableBuilder<Overlay> acceptCommonSettings(CommonSettings settings) {
 			if (settings == null)
 				throw new IllegalArgumentException("Settings cannot be null");
 			this.common = settings;
+			return this;
 		}
 
 		@Override

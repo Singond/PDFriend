@@ -471,17 +471,19 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 	}
 	
 	@Override
-	public void acceptPreprocessSettings(Settings settings) {
+	public ImposableBuilder<NUp> acceptPreprocessSettings(Settings settings) {
 		if (settings == null)
 			throw new IllegalArgumentException("Preprocess settings cannot be null");
 		this.preprocess = settings.copy();
+		return this;
 	}
 	
 	@Override
-	public void acceptCommonSettings(CommonSettings settings) {
+	public ImposableBuilder<NUp> acceptCommonSettings(CommonSettings settings) {
 		if (settings == null)
 			throw new IllegalArgumentException("Settings cannot be null");
 		this.common = settings;
+		return this;
 	}
 	
 	@Override

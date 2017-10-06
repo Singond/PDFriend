@@ -117,20 +117,24 @@ public class Codex extends AbstractImposable implements Imposable {
 			manipulations = new ArrayList<>();
 		}
 		
-		public void foldHorizontallyDown() {
+		public Builder foldHorizontallyDown() {
 			manipulations.add(new HorizontalFoldInHalf(FoldDirection.UNDER));
+			return this;
 		}
 		
-		public void foldHorizontallyUp() {
+		public Builder foldHorizontallyUp() {
 			manipulations.add(new HorizontalFoldInHalf(FoldDirection.OVER));
+			return this;
 		}
 		
-		public void foldVerticallyDown() {
+		public Builder foldVerticallyDown() {
 			manipulations.add(new VerticalFoldInHalf(FoldDirection.UNDER));
+			return this;
 		}
 		
-		public void foldVerticallyUp() {
+		public Builder foldVerticallyUp() {
 			manipulations.add(new VerticalFoldInHalf(FoldDirection.OVER));
+			return this;
 		}
 		
 		public Codex build() {

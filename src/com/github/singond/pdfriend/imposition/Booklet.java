@@ -400,17 +400,19 @@ public class Booklet extends AbstractImposable implements Imposable {
 		}
 
 		@Override
-		public void acceptPreprocessSettings(Settings settings) {
+		public ImposableBuilder<Booklet> acceptPreprocessSettings(Settings settings) {
 			if (settings == null)
 				throw new IllegalArgumentException("Preprocess settings cannot be null");
 			this.preprocess = settings;
+			return this;
 		}
 		
 		@Override
-		public void acceptCommonSettings(CommonSettings settings) {
+		public ImposableBuilder<Booklet> acceptCommonSettings(CommonSettings settings) {
 			if (settings == null)
 				throw new IllegalArgumentException("Settings cannot be null");
 			this.common = settings;
+			return this;
 		}
 
 		@Override

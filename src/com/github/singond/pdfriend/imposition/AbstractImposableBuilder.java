@@ -12,16 +12,18 @@ abstract class AbstractImposableBuilder<T extends Imposable>
 	protected CommonSettings common = CommonSettings.auto();
 	
 	@Override
-	public void acceptPreprocessSettings(Settings settings) {
+	public ImposableBuilder<T> acceptPreprocessSettings(Settings settings) {
 		if (settings == null)
 			throw new IllegalArgumentException("Preprocess settings cannot be null");
 		this.preprocess = settings;
+		return this;
 	}
 	
 	@Override
-	public void acceptCommonSettings(CommonSettings settings) {
+	public ImposableBuilder<T> acceptCommonSettings(CommonSettings settings) {
 		if (settings == null)
 			throw new IllegalArgumentException("Settings cannot be null");
 		this.common = settings;
+		return this;
 	}
 }
