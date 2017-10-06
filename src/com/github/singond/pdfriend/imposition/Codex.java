@@ -2,13 +2,20 @@ package com.github.singond.pdfriend.imposition;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import com.github.singond.geometry.plane.Line;
 import com.github.singond.geometry.plane.Point;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.BoundBook;
+import com.github.singond.pdfriend.book.Page;
+import com.github.singond.pdfriend.book.Leaf;
+import com.github.singond.pdfriend.book.SequentialSourceProvider;
+import com.github.singond.pdfriend.book.Signature;
+import com.github.singond.pdfriend.book.SourceProvider;
 import com.github.singond.pdfriend.book.Stack;
+import com.github.singond.pdfriend.book.Volume;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.LengthUnit;
@@ -39,6 +46,40 @@ public class Codex extends AbstractImposable implements Imposable {
 		this.common = common;
 	}
 	
+	/** Creates testing Volume as a proof of concept. */
+	private Volume imposeAsVolumeTest(VirtualDocument doc) {
+		double[] docDims = doc.maxPageDimensions();
+		Dimensions sheetSize;
+		Dimensions pageSize = new Dimensions(docDims[0], docDims[1], unit);
+		
+		final SheetDimensions shDims = new SheetDimensions(
+				pageSize.width().in(unit), pageSize.height().in(unit));
+		// Calculate sheet size required to produce given page size
+		ListIterator<SheetStackManipulation> it;
+		it = manipulations.listIterator(manipulations.size());
+		while (it.hasPrevious()) {
+			it.previous().accommodateSheetDimensions(shDims);
+		}
+		sheetSize = new Dimensions(shDims.width, shDims.height, unit);
+		
+		SheetStack shStack = new SheetStack(sheetSize);
+		for (SheetStackManipulation m : manipulations) {
+			m.putToStack(shStack);
+		}
+		
+		SourceProvider<Page> sp = new SequentialSourceProvider(doc);
+		Leaf template = new Leaf(pageSize.width().in(unit), pageSize.height().in(unit));
+		Volume volume = new Volume();
+		int pageNumber = 1;
+		while (sp.hasNextPage()) {
+			Signature s = shStack.stack.buildSignature(template);
+			sp.setSourceTo(s.pages());
+			pageNumber = s.numberPagesFrom(pageNumber);
+			volume.add(s);
+		}
+		return volume;
+	}
+	
 	@Override
 	public String getName() {
 		return NAME;
@@ -55,9 +96,7 @@ public class Codex extends AbstractImposable implements Imposable {
 
 	@Override
 	public BoundBook impose(VirtualDocument source) {
-//		return new BoundBook(imposeAsVolume(source));
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("This method has not been implemented yet");
+		return new BoundBook(imposeAsVolumeTest(source));
 	}
 
 	/**
@@ -104,6 +143,10 @@ public class Codex extends AbstractImposable implements Imposable {
 		private double currentWidth;
 		private double currentHeight;
 		
+		/**
+		 * Constructs a new SheetStack
+		 * @param originalDimensions the dimensions of the unfolded sheet
+		 */
 		private SheetStack(Dimensions originalDimensions) {
 			currentWidth = originalDimensions.width().in(unit);
 			currentHeight = originalDimensions.height().in(unit);
@@ -118,6 +161,11 @@ public class Codex extends AbstractImposable implements Imposable {
 	private final class SheetDimensions {
 		private double width;
 		private double height;
+		
+		private SheetDimensions(double width, double height) {
+			this.width = width;
+			this.height = height;
+		}
 	}
 	
 	private interface SheetStackManipulation {
@@ -131,7 +179,7 @@ public class Codex extends AbstractImposable implements Imposable {
 		void accommodateSheetDimensions(SheetDimensions dimensions);
 		
 		/**
-		 * Registers this operation with the Stack to be performed later.
+		 * Applies this manipulation to the given stack.
 		 */
 		void putToStack(SheetStack stack);
 	}
