@@ -13,10 +13,17 @@ import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 
+/**
+ * The common bound book, also called "codex", produced by folding a large
+ * sheet of paper several times and binding the resulting sections together
+ * to form the book block.
+ *
+ * @author Singon
+ */
 public class Codex extends AbstractImposable implements Imposable {
 
 	/** The internal name of this imposable document type */
-	private static final String NAME = "booklet";
+	private static final String NAME = "codex";
 	/** Logger */
 	private static ExtendedLogger logger = Log.logger(Codex.class);
 
@@ -34,8 +41,7 @@ public class Codex extends AbstractImposable implements Imposable {
 	
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("This method has not been implemented yet");
+		return NAME;
 	}
 
 	/**
@@ -106,10 +112,6 @@ public class Codex extends AbstractImposable implements Imposable {
 		
 		private void manipulate(Stack.Manipulation manipulation) {
 			stack.performManipulation(manipulation);
-		}
-		
-		private Stack getStack() {
-			return stack;
 		}
 	}
 	
