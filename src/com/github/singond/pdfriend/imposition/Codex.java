@@ -99,7 +99,7 @@ public class Codex extends AbstractImposable implements Imposable {
 		}
 	}
 	
-	private class SheetStack {
+	private final class SheetStack {
 		private final Stack stack;
 		private double currentWidth;
 		private double currentHeight;
@@ -115,7 +115,21 @@ public class Codex extends AbstractImposable implements Imposable {
 		}
 	}
 	
+	private final class SheetDimensions {
+		private double width;
+		private double height;
+	}
+	
 	private interface SheetStackManipulation {
+		
+		/**
+		 * Modifies the given sheet dimensions in such a way, that performing
+		 * this manipulation on the modified dimensions will produce a sheet
+		 * of the original dimensions (before modifying).
+		 * @param dimensions the dimensions to be modified
+		 */
+		void accommodateSheetDimensions(SheetDimensions dimensions);
+		
 		/**
 		 * Registers this operation with the Stack to be performed later.
 		 */
@@ -140,6 +154,11 @@ public class Codex extends AbstractImposable implements Imposable {
 		}
 		
 		@Override
+		public void accommodateSheetDimensions(SheetDimensions dimensions) {
+			dimensions.height *= 2;
+		}
+
+		@Override
 		public void putToStack(SheetStack stack) {
 			double halfHeight = stack.currentHeight / 2;
 			Line foldAxis = new Line(new Point(0, halfHeight), new Point(1, halfHeight));
@@ -157,6 +176,11 @@ public class Codex extends AbstractImposable implements Imposable {
 			super(direction);
 		}
 		
+		@Override
+		public void accommodateSheetDimensions(SheetDimensions dimensions) {
+			dimensions.width *= 2;
+		}
+
 		@Override
 		public void putToStack(SheetStack stack) {
 			double halfWidth = stack.currentWidth / 2;
