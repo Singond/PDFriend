@@ -13,6 +13,13 @@ package com.github.singond.pdfriend.book;
 public interface SourceProvider<P extends Page> {
 
 	/**
+	 * Checks if this {@code SourceProvider} has more pages to provide.
+	 * @return true if the next call to {@code setSourceTo(Page)} will not
+	 *         fail due to the source provider not having any pages to provide
+	 */
+	public boolean hasNextPage();
+	
+	/**
 	 * For each Page from the given iterable container, set one or more
 	 * VirtualPages as its source.
 	 * @param pages
@@ -20,7 +27,7 @@ public interface SourceProvider<P extends Page> {
 	public void setSourceTo(Iterable<P> pages);
 	
 	/**
-	 * Set one or more VirtualPages as the source of the given Page. 
+	 * Set one or more VirtualPages as the source of the given Page.
 	 * @param page
 	 */
 	public void setSourceTo(P page);

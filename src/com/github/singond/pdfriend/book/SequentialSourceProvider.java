@@ -31,9 +31,16 @@ public class SequentialSourceProvider implements SourceProvider<Page> {
 	}
 
 	@Override
+	public boolean hasNextPage() {
+		return !sourcePages.isEmpty();
+	}
+
+	@Override
 	public void setSourceTo(Iterable<Page> pages) {
 		for (Page p : pages) {
-			p.invite(sourceSetter, null);
+			if (hasNextPage())
+				p.invite(sourceSetter, null);
+			else break;
 		}
 	}
 	

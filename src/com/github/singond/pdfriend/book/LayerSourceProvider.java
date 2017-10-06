@@ -38,6 +38,11 @@ public class LayerSourceProvider implements SourceProvider<LayeredPage>{
 	}
 
 	@Override
+	public boolean hasNextPage() {
+		return sourcePages.stream().noneMatch(q -> q.isEmpty());
+	}
+
+	@Override
 	public void setSourceTo(Iterable<LayeredPage> pages) {
 		for (LayeredPage pg : pages) {
 			setSourceTo(pg);
