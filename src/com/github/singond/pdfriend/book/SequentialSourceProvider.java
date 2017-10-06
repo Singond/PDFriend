@@ -1,8 +1,7 @@
 package com.github.singond.pdfriend.book;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
+import java.util.ArrayDeque;
+import java.util.Deque;
 import com.github.singond.pdfriend.NoException;
 import com.github.singond.pdfriend.book.MultiPage.PageletView;
 import com.github.singond.pdfriend.document.VirtualDocument;
@@ -17,17 +16,17 @@ import com.github.singond.pdfriend.document.VirtualPage;
  */
 public class SequentialSourceProvider implements SourceProvider<Page> {
 
-	private final Queue<VirtualPage> sourcePages;
+	private final Deque<VirtualPage> sourcePages;
 	
 	public SequentialSourceProvider(VirtualDocument doc) {
-		sourcePages = new LinkedList<>(doc.getPages());
+		sourcePages = new ArrayDeque<>(doc.getPages());
 	}
 	
 	/**
 	 * Uses the given queue of pages directly without creating new object.
 	 * @param pages
 	 */
-	SequentialSourceProvider(Queue<VirtualPage> pages) {
+	SequentialSourceProvider(Deque<VirtualPage> pages) {
 		sourcePages = pages;
 	}
 
@@ -49,7 +48,7 @@ public class SequentialSourceProvider implements SourceProvider<Page> {
 	
 		@Override
 		public Void visit(SinglePage p, Void param) throws NoException {
-			p.setSource(sourcePages.poll());
+			p.setSource(sourcePages.pop());
 			return null;
 		}
 
@@ -68,7 +67,7 @@ public class SequentialSourceProvider implements SourceProvider<Page> {
 		@Override
 		public Void visit(GridPage p, Void param) throws NoException {
 			for (PageletView pg : p.pagelets()) {
-				pg.setSource(sourcePages.poll());
+				pg.setSource(sourcePages.pop());
 			}
 			return null;
 		}
