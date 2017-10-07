@@ -17,7 +17,9 @@ public class CodexImposition {
 	@Test
 	public void imposeCodexTest() {
 		Codex codex = new Codex.Builder()
+				.foldHorizontallyDown()
 				.foldVerticallyDown()
+				.setSheetsInSignature(2)
 				.build();
 		
 		File input = new File("test/lorem-letter-bg.pdf");

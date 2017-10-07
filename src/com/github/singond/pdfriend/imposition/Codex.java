@@ -34,13 +34,27 @@ public class Codex extends AbstractImposable implements Imposable {
 	/** Logger */
 	private static ExtendedLogger logger = Log.logger(Codex.class);
 
+	private final int sheetsInSignature;
 	private final List<SheetStackManipulation> manipulations;
+	
 	private final Preprocessor.Settings preprocess;
 	private final CommonSettings common;
 	private final LengthUnit unit = Imposition.LENGTH_UNIT;
 	
-	public Codex(List<SheetStackManipulation> manipulations,
+	public Codex(int sheetsInSignature,
+	             List<SheetStackManipulation> manipulations,
 	             Preprocessor.Settings preprocess, CommonSettings common) {
+		if (sheetsInSignature < 1)
+			throw new IllegalArgumentException
+					("The number of sheets in signature must be a positive number");
+		if (manipulations == null)
+			throw new IllegalArgumentException("The list of manipulations is null");
+		if (preprocess == null)
+			throw new IllegalArgumentException("Preprocessor settings must not be null");
+		if (common == null)
+			throw new IllegalArgumentException("Common settings must not be null");
+		
+		this.sheetsInSignature = sheetsInSignature;
 		this.manipulations = new ArrayList<>(manipulations);
 		this.preprocess = preprocess;
 		this.common = common;
@@ -62,7 +76,7 @@ public class Codex extends AbstractImposable implements Imposable {
 		}
 		sheetSize = new Dimensions(shDims.width, shDims.height, unit);
 		
-		SheetStack shStack = new SheetStack(sheetSize);
+		SheetStack shStack = new SheetStack(sheetSize, sheetsInSignature);
 		for (SheetStackManipulation m : manipulations) {
 			m.putToStack(shStack);
 		}
@@ -70,6 +84,12 @@ public class Codex extends AbstractImposable implements Imposable {
 		SourceProvider<Page> sp = new SequentialSourceProvider(doc);
 		Leaf template = new Leaf(pageSize.width().in(unit), pageSize.height().in(unit));
 		Volume volume = new Volume();
+		
+		/*
+		 * Flip the stack horizontally so as to bring the free edge of paper
+		 * to the right side.
+		 */
+		shStack.flipHorizontally();
 		int pageNumber = 1;
 		while (sp.hasNextPage()) {
 			Signature s = shStack.stack.copy().buildSignature(template);
@@ -110,13 +130,32 @@ public class Codex extends AbstractImposable implements Imposable {
 		return impose(VirtualDocument.concatenate(sources));
 	}
 
+	/**
+	 * The list of manipulations in this builder is one-shot, ie. it is
+	 * not possible to remove manipulations from it.
+	 *
+	 * @author Singon
+	 */
 	public static final class Builder extends AbstractImposableBuilder<Codex> {
+		private int sheetsInSignature = 1;
 		private final List<SheetStackManipulation> manipulations;
 		
 		public Builder() {
 			manipulations = new ArrayList<>();
 		}
 		
+		public int getSheetsInSignature() {
+			return sheetsInSignature;
+		}
+
+		public Builder setSheetsInSignature(int sheetsInSignature) {
+			if (sheetsInSignature < 1)
+				throw new IllegalArgumentException
+						("The number of sheets in signature must be a positive number");
+			this.sheetsInSignature = sheetsInSignature;
+			return this;
+		}
+
 		public Builder foldHorizontallyDown() {
 			manipulations.add(new HorizontalFoldInHalf(FoldDirection.UNDER));
 			return this;
@@ -138,7 +177,7 @@ public class Codex extends AbstractImposable implements Imposable {
 		}
 		
 		public Codex build() {
-			return new Codex(manipulations, preprocess, common);
+			return new Codex(sheetsInSignature, manipulations, preprocess, common);
 		}
 	}
 	
@@ -150,15 +189,22 @@ public class Codex extends AbstractImposable implements Imposable {
 		/**
 		 * Constructs a new SheetStack
 		 * @param originalDimensions the dimensions of the unfolded sheet
+		 * @param sheetCount the number of sheets to stack before applying
+		 *        the manipulations given
 		 */
-		private SheetStack(Dimensions originalDimensions) {
+		private SheetStack(Dimensions originalDimensions, int sheetCount) {
 			currentWidth = originalDimensions.width().in(unit);
 			currentHeight = originalDimensions.height().in(unit);
 			stack = new Stack(currentWidth, currentHeight);
+			stack.performManipulation(new Stack.Gather(sheetCount));
 		}
 		
 		private void manipulate(Stack.Manipulation manipulation) {
 			stack.performManipulation(manipulation);
+		}
+		
+		private void flipHorizontally() {
+			stack.performManipulation(Stack.Flip.horizontal(currentWidth));
 		}
 	}
 	
