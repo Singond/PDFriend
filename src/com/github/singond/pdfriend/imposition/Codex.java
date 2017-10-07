@@ -72,7 +72,7 @@ public class Codex extends AbstractImposable implements Imposable {
 		Volume volume = new Volume();
 		int pageNumber = 1;
 		while (sp.hasNextPage()) {
-			Signature s = shStack.stack.buildSignature(template);
+			Signature s = shStack.stack.copy().buildSignature(template);
 			sp.setSourceTo(s.pages());
 			pageNumber = s.numberPagesFrom(pageNumber);
 			volume.add(s);
