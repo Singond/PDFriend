@@ -67,19 +67,7 @@ public class Codex extends AbstractImposable implements Imposable {
 		Dimensions pageSize = new Dimensions(docDims[0], docDims[1], unit);
 		
 		sheetSize = sheetSizeFromPageSize(pageSize, manipulations);
-		
-		SourceProvider<Page> sp = new SequentialSourceProvider(doc);
-		Volume volume = new Volume();
-		
-		SignatureFactory sf = new SignatureFactory(sheetSize, pageSize, manipulations);
-		int pageNumber = 1;
-		while (sp.hasNextPage()) {
-			Signature s = sf.newSignature();
-			sp.setSourceTo(s.pages());
-			pageNumber = s.numberPagesFrom(pageNumber);
-			volume.add(s);
-		}
-		return volume;
+		return buildVolume(sheetSize, pageSize, manipulations, doc);
 	}
 	
 	/**
@@ -104,6 +92,44 @@ public class Codex extends AbstractImposable implements Imposable {
 		return new Dimensions(shDims.width, shDims.height, unit);
 	}
 	
+	/**
+	 * Builds a Volume by creating signatures from given stack properties,
+	 * filling them with pages of the given source document and appending
+	 * them to a volume, until all pages of the source are processed.
+	 * @param sheetSize
+	 * @param pageSize
+	 * @param manipulations
+	 * @param doc the source document to be imposed
+	 * @return a new instance of {@code Volume}
+	 */
+	private Volume buildVolume(Dimensions sheetSize, Dimensions pageSize,
+	                           List<SheetStackManipulation> manipulations,
+	                           VirtualDocument doc) {
+		// A factory to provide instances of Signature
+		SignatureFactory sf = new SignatureFactory(sheetSize, pageSize, manipulations);
+		// Source provider to fill pages with content
+		SourceProvider<Page> sp = new SequentialSourceProvider(doc);
+		// The final volume to be returned
+		Volume volume = new Volume();
+		
+		/*
+		 * As long as there are more pages in the provider, create new
+		 * signatures and add them to the volume.
+		 */
+		int pageNumber = 1;
+		while (sp.hasNextPage()) {
+			Signature s = sf.newSignature();
+			sp.setSourceTo(s.pages());
+			pageNumber = s.numberPagesFrom(pageNumber);
+			volume.add(s);
+		}
+		return volume;
+	}
+	
+	/**
+	 * A factory to provide instances of {@code Signature} based on the given
+	 * stack properties.
+	 */
 	private class SignatureFactory {
 		private final Leaf leaf;
 		private final SheetStack stack;
@@ -148,8 +174,9 @@ public class Codex extends AbstractImposable implements Imposable {
 		};
 	}
 	
+	/** Preprocess the given document */
 	// TODO Use pageCount parameter
-	private VirtualDocument preprocessDocuments(
+	private VirtualDocument preprocessDocument(
 			VirtualDocument doc, Preprocessor preprocessor, int pageCount) {
 		return preprocessor.processDocument(doc);
 	}
