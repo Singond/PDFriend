@@ -48,7 +48,7 @@ public class Codex extends AbstractImposable implements Imposable {
 			throw new IllegalArgumentException
 					("The number of sheets in signature must be a positive number");
 		if (manipulations == null)
-			throw new IllegalArgumentException("The list of manipulations is null");
+			throw new IllegalArgumentException("The list of manipulations must not be null");
 		if (preprocess == null)
 			throw new IllegalArgumentException("Preprocessor settings must not be null");
 		if (common == null)
@@ -66,38 +66,92 @@ public class Codex extends AbstractImposable implements Imposable {
 		Dimensions sheetSize;
 		Dimensions pageSize = new Dimensions(docDims[0], docDims[1], unit);
 		
-		final SheetDimensions shDims = new SheetDimensions(
-				pageSize.width().in(unit), pageSize.height().in(unit));
-		// Calculate sheet size required to produce given page size
-		ListIterator<SheetStackManipulation> it;
-		it = manipulations.listIterator(manipulations.size());
-		while (it.hasPrevious()) {
-			it.previous().accommodateSheetDimensions(shDims);
-		}
-		sheetSize = new Dimensions(shDims.width, shDims.height, unit);
-		
-		SheetStack shStack = new SheetStack(sheetSize, sheetsInSignature);
-		for (SheetStackManipulation m : manipulations) {
-			m.putToStack(shStack);
-		}
+		sheetSize = sheetSizeFromPageSize(pageSize, manipulations);
 		
 		SourceProvider<Page> sp = new SequentialSourceProvider(doc);
-		Leaf template = new Leaf(pageSize.width().in(unit), pageSize.height().in(unit));
 		Volume volume = new Volume();
 		
-		/*
-		 * Flip the stack horizontally so as to bring the free edge of paper
-		 * to the right side.
-		 */
-		shStack.flipHorizontally();
+		SignatureFactory sf = new SignatureFactory(sheetSize, pageSize, manipulations);
 		int pageNumber = 1;
 		while (sp.hasNextPage()) {
-			Signature s = shStack.stack.copy().buildSignature(template);
+			Signature s = sf.newSignature();
 			sp.setSourceTo(s.pages());
 			pageNumber = s.numberPagesFrom(pageNumber);
 			volume.add(s);
 		}
 		return volume;
+	}
+	
+	/**
+	 * Determines the sheet size necessary to produce the target page size
+	 * by modifying the sheet by the given manipulations.
+	 * @param pageSize the target sheet size
+	 * @param manipulations the list of modifications to the sheet, like folding
+	 * @return the sheet size necessary to produce the target page size
+	 */
+	private Dimensions sheetSizeFromPageSize(Dimensions pageSize,
+			List<SheetStackManipulation> manipulations) {
+		// Initialize sheet size to page size
+		final SheetDimensions shDims = new SheetDimensions(
+				pageSize.width().in(unit), pageSize.height().in(unit));
+		
+		// Modify the sheet size by applying the manipulations in reverse order
+		ListIterator<SheetStackManipulation> it;
+		it = manipulations.listIterator(manipulations.size());
+		while (it.hasPrevious()) {
+			it.previous().accommodateSheetDimensions(shDims);
+		}
+		return new Dimensions(shDims.width, shDims.height, unit);
+	}
+	
+	private class SignatureFactory {
+		private final Leaf leaf;
+		private final SheetStack stack;
+		
+		SignatureFactory(Dimensions sheetSize, Dimensions pageSize,
+		                 List<SheetStackManipulation> manipulations) {
+			if (sheetSize == null)
+				throw new IllegalArgumentException
+						("The sheet size must not be null");
+			if (pageSize == null)
+				throw new IllegalArgumentException
+						("The page size must not be null");
+			if (manipulations == null)
+				throw new IllegalArgumentException
+						("The list of manipulations must not be null");
+			
+			stack = buildSheetStack(sheetSize, manipulations);
+			leaf = new Leaf(pageSize.width().in(unit), pageSize.height().in(unit));
+		}
+		
+		private final SheetStack buildSheetStack(Dimensions sheetSize,
+		                                   List<SheetStackManipulation> manipulations) {
+			// Build the sheet stack
+			SheetStack shStack = new SheetStack(sheetSize, sheetsInSignature);
+			for (SheetStackManipulation m : manipulations) {
+				m.putToStack(shStack);
+			}
+			/*
+			 * Flip the stack horizontally so as to bring the free edge of paper
+			 * to the right side.
+			 */
+			shStack.flipHorizontally();
+			return shStack;
+		}
+		
+		/**
+		 * Builds a new {@code Signature} from the stack
+		 * @return a new instance on each invocation
+		 */
+		Signature newSignature() {
+			return stack.stack.copy().buildSignature(leaf);
+		};
+	}
+	
+	// TODO Use pageCount parameter
+	private VirtualDocument preprocessDocuments(
+			VirtualDocument doc, Preprocessor preprocessor, int pageCount) {
+		return preprocessor.processDocument(doc);
 	}
 	
 	@Override
