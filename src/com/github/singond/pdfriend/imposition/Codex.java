@@ -528,6 +528,8 @@ public class Codex extends AbstractImposable implements Imposable {
 			currentWidth = originalDimensions.width().in(unit);
 			currentHeight = originalDimensions.height().in(unit);
 			stack = new Stack(currentWidth, currentHeight);
+			if (logger.isDebugEnabled())
+				logger.debug("codex_stack_gather", sheetCount);
 			stack.performManipulation(new Stack.Gather(sheetCount));
 		}
 		
@@ -587,6 +589,8 @@ public class Codex extends AbstractImposable implements Imposable {
 		@Override
 		public void putToStack(SheetStack stack) {
 			double halfHeight = stack.currentHeight / 2;
+			if (logger.isDebugEnabled())
+				logger.debug("codex_stack_foldHorizontal", direction, halfHeight);
 			Line foldAxis = new Line(new Point(0, halfHeight), new Point(1, halfHeight));
 			stack.manipulate(new Stack.Fold(foldAxis, direction.value()));
 			stack.currentHeight = halfHeight;
@@ -610,6 +614,8 @@ public class Codex extends AbstractImposable implements Imposable {
 		@Override
 		public void putToStack(SheetStack stack) {
 			double halfWidth = stack.currentWidth / 2;
+			if (logger.isDebugEnabled())
+				logger.debug("codex_stack_foldVertical", direction, halfWidth);
 			Line foldAxis = new Line(new Point(halfWidth, 0), new Point(halfWidth, 1));
 			stack.manipulate(new Stack.Fold(foldAxis, direction.value()));
 			stack.currentWidth = halfWidth;
@@ -628,22 +634,31 @@ public class Codex extends AbstractImposable implements Imposable {
 
 		@Override
 		public void putToStack(SheetStack stack) {
+			if (logger.isDebugEnabled())
+				logger.debug("codex_stack_flipHorizontal");
 			stack.manipulate(Stack.Flip.horizontal(stack.currentWidth));
 		}
 	}
 	
 	private enum FoldDirection {
-		UNDER(Stack.Fold.Direction.UNDER),
-		OVER(Stack.Fold.Direction.OVER);
+		UNDER(Stack.Fold.Direction.UNDER, "down"),
+		OVER(Stack.Fold.Direction.OVER, "up");
 		
 		private final Stack.Fold.Direction value;
+		private final String name;
 		
-		private FoldDirection(Stack.Fold.Direction val) {
+		private FoldDirection(Stack.Fold.Direction val, String name) {
 			value = val;
+			this.name = name;
 		}
 		
 		Stack.Fold.Direction value() {
 			return value;
+		}
+		
+		@Override
+		public String toString() {
+			return name;
 		}
 	}
 }
