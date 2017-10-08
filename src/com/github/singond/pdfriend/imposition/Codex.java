@@ -41,7 +41,15 @@ public class Codex extends AbstractImposable implements Imposable {
 	private final CommonSettings common;
 	private final LengthUnit unit = Imposition.LENGTH_UNIT;
 	
-	public Codex(int sheetsInSignature,
+	/**
+	 * The sole constructor; this is to be used by {@Codex.Builder}.
+	 * @param sheetsInSignature the number of sheets comprising each signature
+	 * @param manipulations list of manipulations to be applied to the stack
+	 *        of sheets in the order they are performed
+	 * @param preprocess preprocessing settings
+	 * @param common common imposition settings
+	 */
+	private Codex(int sheetsInSignature,
 	             List<SheetStackManipulation> manipulations,
 	             Preprocessor.Settings preprocess, CommonSettings common) {
 		if (sheetsInSignature < 1)
@@ -212,8 +220,11 @@ public class Codex extends AbstractImposable implements Imposable {
 	}
 
 	/**
-	 * The list of manipulations in this builder is one-shot, ie. it is
-	 * not possible to remove manipulations from it.
+	 * A builder for {@code Codex} objects. This is the only public way to
+	 * instantiate {@code Codex}.
+	 * <p>
+	 * Note that the list of manipulations in this builder is one-shot,
+	 * ie. it is not possible to remove manipulations from it.
 	 *
 	 * @author Singon
 	 */
@@ -221,14 +232,27 @@ public class Codex extends AbstractImposable implements Imposable {
 		private int sheetsInSignature = 1;
 		private final List<SheetStackManipulation> manipulations;
 		
+		/**
+		 * Creates a new {@code Builder} object with default settings.
+		 */
 		public Builder() {
 			manipulations = new ArrayList<>();
 		}
 		
+		/**
+		 * Returns the number of sheets comprising each signature.
+		 * @return the number of sheets
+		 */
 		public int getSheetsInSignature() {
 			return sheetsInSignature;
 		}
 
+		/**
+		 * Sets the number of sheets comprising each signature.
+		 * If this value is not set, the default value of 1 is used.
+		 * @param sheetsInSignature the number of sheets in each signature
+		 * @return this {@code Builder} instance
+		 */
 		public Builder setSheetsInSignature(int sheetsInSignature) {
 			if (sheetsInSignature < 1)
 				throw new IllegalArgumentException
@@ -237,26 +261,50 @@ public class Codex extends AbstractImposable implements Imposable {
 			return this;
 		}
 
+		/**
+		 * Folds the stack of sheets along a horizontal line in the middle
+		 * of the sheet height, folding down.
+		 * @return this {@code Builder} instance
+		 */
 		public Builder foldHorizontallyDown() {
 			manipulations.add(new HorizontalFoldInHalf(FoldDirection.UNDER));
 			return this;
 		}
 		
+		/**
+		 * Folds the stack of sheets along a horizontal line in the middle
+		 * of the sheet height, folding up.
+		 * @return this {@code Builder} instance
+		 */
 		public Builder foldHorizontallyUp() {
 			manipulations.add(new HorizontalFoldInHalf(FoldDirection.OVER));
 			return this;
 		}
 		
+		/**
+		 * Folds the stack of sheets along a vertical line in the middle
+		 * of the sheet width, folding down.
+		 * @return this {@code Builder} instance
+		 */
 		public Builder foldVerticallyDown() {
 			manipulations.add(new VerticalFoldInHalf(FoldDirection.UNDER));
 			return this;
 		}
 		
+		/**
+		 * Folds the stack of sheets along a vertical line in the middle
+		 * of the sheet width, folding up.
+		 * @return this {@code Builder} instance
+		 */
 		public Builder foldVerticallyUp() {
 			manipulations.add(new VerticalFoldInHalf(FoldDirection.OVER));
 			return this;
 		}
 		
+		/**
+		 * Returns a new instance of {@code Codex} from the current properties
+		 * of this {@code Builder}.
+		 */
 		public Codex build() {
 			return new Codex(sheetsInSignature, manipulations, preprocess, common);
 		}
@@ -324,7 +372,7 @@ public class Codex extends AbstractImposable implements Imposable {
 	}
 	
 	/**
-	 * A folds along a horizontal line in the middle of the sheet's height.
+	 * A fold along a horizontal line in the middle of the sheet's height.
 	 */
 	private static class HorizontalFoldInHalf extends Fold implements SheetStackManipulation {
 		
@@ -347,7 +395,7 @@ public class Codex extends AbstractImposable implements Imposable {
 	}
 	
 	/**
-	 * A folds along a vertical line in the middle of the sheet's width.
+	 * A fold along a vertical line in the middle of the sheet's width.
 	 */
 	private static class VerticalFoldInHalf extends Fold implements SheetStackManipulation {
 
