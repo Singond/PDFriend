@@ -110,6 +110,74 @@ public class Codex extends AbstractImposable implements Imposable {
 	}
 	
 	/**
+	 * Imposes the given virtual document into a new book volume
+	 * according to the current settings of this {@code Codex} object.
+	 */
+	private Volume imposeAsPages(VirtualDocument doc) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("imposition_preprocessSettings", preprocess);
+			logger.debug("imposition_commonSettings", common);
+//			logger.debug("imposition_imposableSettings", NAME, );
+		}
+		
+		boolean autoPage = common.getPageSize() == CommonSettings.AUTO_DIMENSIONS;
+		boolean autoSheet = common.getSheetSize() == CommonSettings.AUTO_DIMENSIONS;
+		
+		// Select use case and execute it
+		if (autoPage) {
+			if (autoSheet) {
+				// Both are auto: use preferred page size and determine sheet size
+				return caseAutoSize(doc);
+			} else {
+				// Only sheet size is given: determine page size
+				return casePageSize(doc);
+			}
+		} else {
+			if (autoSheet) {
+				// Only page size is given: determine sheet size
+				return caseSheetSize(doc);
+			} else {
+				// Both are given: a conflict
+				throw new IllegalStateException
+					("Both sheet size and page size are set to a non-auto value");
+			}
+		}
+	}
+	
+	/**
+	 * Assembles the final volume, using the preferred page size as the
+	 * basis for the final sheet size.
+	 * 
+	 * @param doc the document to be imposed
+	 * @return the document imposed into a new volume
+	 */
+	private Volume caseAutoSize(VirtualDocument doc) {
+		throw new UnsupportedOperationException("Use case not implemented yet");
+	}
+	
+	/**
+	 * Assembles the final volume, determining the page size from the
+	 * other parameters.
+	 * 
+	 * @param doc the document to be imposed
+	 * @return the document imposed into a new volume
+	 */
+	private Volume casePageSize(VirtualDocument doc) {
+		throw new UnsupportedOperationException("Use case not implemented yet");
+	}
+	
+	/**
+	 * Assembles the final volume, determining the sheet size from the
+	 * other parameters.
+	 * 
+	 * @param doc the document to be imposed
+	 * @return the document imposed into a new volume
+	 */
+	private Volume caseSheetSize(VirtualDocument doc) {
+		throw new UnsupportedOperationException("Use case not implemented yet");
+	}
+	
+	/**
 	 * Determines the sheet size necessary to produce the target page size
 	 * by modifying the sheet by the given manipulations.
 	 * @param pageSize the target sheet size
