@@ -16,9 +16,9 @@ public class CodexImposition {
 
 	@Test
 	public void imposeCodexTest() {
-		Codex codex = new Codex.Builder()
-				.foldHorizontallyDown()
-				.foldVerticallyDown()
+		Codex codex = Codex.rightBuilder()
+				.foldHorizontallyUp()
+				.foldVerticallyUp()
 				.setSheetsInSignature(2)
 				.build();
 		

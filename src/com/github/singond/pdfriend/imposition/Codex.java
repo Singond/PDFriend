@@ -68,6 +68,37 @@ public class Codex extends AbstractImposable implements Imposable {
 		this.common = common;
 	}
 	
+	/**
+	 * Returns a new {@code Codex.Builder}.
+	 * The returned builder manipulates the sheets to that the
+	 * <em>lower right</em> corner of the sheets stay fixed.
+	 * <p>
+	 * This kind of builder is suitable for building left-to-right books
+	 * (ie. books with binding at the left side, viewed from the front),
+	 * which are the most common type in the Western world.
+	 * 
+	 * @return a new builder instance
+	 */
+	public static final Builder rightBuilder() {
+		return new RightBuilder();
+	}
+
+	/**
+	 * Returns a new {@code Codex.Builder}.
+	 * The returned builder manipulates the sheets to that the
+	 * <em>lower left</em> corner of the sheets stay fixed.
+	 * <p>
+	 * This kind of builder is suitable for building right-to-left books
+	 * (ie. books with binding at the right side, viewed from the front),
+	 * which would be suitable for right-to-left languages such as Arabic
+	 * or Hebrew.
+	 * 
+	 * @return a new builder instance
+	 */
+	public static final Builder leftBuilder() {
+		return new LeftBuilder();
+	}
+	
 	/** Creates testing Volume as a proof of concept. */
 	private Volume imposeAsVolumeTest(VirtualDocument doc) {
 		double[] docDims = doc.maxPageDimensions();
@@ -165,11 +196,6 @@ public class Codex extends AbstractImposable implements Imposable {
 			for (SheetStackManipulation m : manipulations) {
 				m.putToStack(shStack);
 			}
-			/*
-			 * Flip the stack horizontally so as to bring the free edge of paper
-			 * to the right side.
-			 */
-			shStack.flipHorizontally();
 			return shStack;
 		}
 		
@@ -225,24 +251,78 @@ public class Codex extends AbstractImposable implements Imposable {
 	 * <p>
 	 * Note that the list of manipulations in this builder is one-shot,
 	 * ie. it is not possible to remove manipulations from it.
-	 *
-	 * @author Singon
 	 */
-	public static final class Builder extends AbstractImposableBuilder<Codex> {
-		private int sheetsInSignature = 1;
-		private final List<SheetStackManipulation> manipulations;
+	public interface Builder extends ImposableBuilder<Codex> {
+		/**
+		 * Returns the number of sheets comprising each signature.
+		 * @return the number of sheets
+		 */
+		public int getSheetsInSignature();
+
+		/**
+		 * Sets the number of sheets comprising each signature.
+		 * If this value is not set, the default value of 1 is used.
+		 * @param sheetsInSignature the number of sheets in each signature
+		 * @return this {@code Builder} instance
+		 */
+		public Builder setSheetsInSignature(int sheetsInSignature);
+
+		/**
+		 * Folds the stack of sheets along a horizontal line in the middle
+		 * of the sheet height, folding down.
+		 * @return this {@code Builder} instance
+		 */
+		public Builder foldHorizontallyDown();
+		
+		/**
+		 * Folds the stack of sheets along a horizontal line in the middle
+		 * of the sheet height, folding up.
+		 * @return this {@code Builder} instance
+		 */
+		public Builder foldHorizontallyUp();
+		
+		/**
+		 * Folds the stack of sheets along a vertical line in the middle
+		 * of the sheet width, folding down.
+		 * @return this {@code Builder} instance
+		 */
+		public Builder foldVerticallyDown();
+		
+		/**
+		 * Folds the stack of sheets along a vertical line in the middle
+		 * of the sheet width, folding up.
+		 * @return this {@code Builder} instance
+		 */
+		public Builder foldVerticallyUp();
+	}
+	
+	/**
+	 * A skeletal implementation of the {@code Builder} interface.
+	 * <p>
+	 * Note that the list of manipulations in this builder is one-shot,
+	 * ie. it is not possible to remove manipulations from it.
+	 */
+	private static abstract class AbstractBuilder
+			extends AbstractImposableBuilder<Codex> implements Builder {
+		int sheetsInSignature = 1;
+		final List<SheetStackManipulation> manipulations;
 		
 		/**
 		 * Creates a new {@code Builder} object with default settings.
 		 */
-		public Builder() {
+		private AbstractBuilder() {
 			manipulations = new ArrayList<>();
 		}
+		
+		void manipulate(SheetStackManipulation manipulation) {
+			manipulations.add(manipulation);
+		};
 		
 		/**
 		 * Returns the number of sheets comprising each signature.
 		 * @return the number of sheets
 		 */
+		@Override
 		public int getSheetsInSignature() {
 			return sheetsInSignature;
 		}
@@ -253,6 +333,7 @@ public class Codex extends AbstractImposable implements Imposable {
 		 * @param sheetsInSignature the number of sheets in each signature
 		 * @return this {@code Builder} instance
 		 */
+		@Override
 		public Builder setSheetsInSignature(int sheetsInSignature) {
 			if (sheetsInSignature < 1)
 				throw new IllegalArgumentException
@@ -262,51 +343,100 @@ public class Codex extends AbstractImposable implements Imposable {
 		}
 
 		/**
-		 * Folds the stack of sheets along a horizontal line in the middle
-		 * of the sheet height, folding down.
-		 * @return this {@code Builder} instance
-		 */
-		public Builder foldHorizontallyDown() {
-			manipulations.add(new HorizontalFoldInHalf(FoldDirection.UNDER));
-			return this;
-		}
-		
-		/**
-		 * Folds the stack of sheets along a horizontal line in the middle
-		 * of the sheet height, folding up.
-		 * @return this {@code Builder} instance
-		 */
-		public Builder foldHorizontallyUp() {
-			manipulations.add(new HorizontalFoldInHalf(FoldDirection.OVER));
-			return this;
-		}
-		
-		/**
-		 * Folds the stack of sheets along a vertical line in the middle
-		 * of the sheet width, folding down.
-		 * @return this {@code Builder} instance
-		 */
-		public Builder foldVerticallyDown() {
-			manipulations.add(new VerticalFoldInHalf(FoldDirection.UNDER));
-			return this;
-		}
-		
-		/**
-		 * Folds the stack of sheets along a vertical line in the middle
-		 * of the sheet width, folding up.
-		 * @return this {@code Builder} instance
-		 */
-		public Builder foldVerticallyUp() {
-			manipulations.add(new VerticalFoldInHalf(FoldDirection.OVER));
-			return this;
-		}
-		
-		/**
 		 * Returns a new instance of {@code Codex} from the current properties
 		 * of this {@code Builder}.
 		 */
+		@Override
 		public Codex build() {
 			return new Codex(sheetsInSignature, manipulations, preprocess, common);
+		}
+	}
+	
+	/**
+	 * This builder manipulates the sheets to that the lower left corner
+	 * of the sheets stay fixed.
+	 */
+	private static final class LeftBuilder extends AbstractBuilder {
+
+		@Override
+		public Builder foldHorizontallyDown() {
+			manipulate(new HorizontalFoldInHalf(FoldDirection.UNDER));
+			return this;
+		}
+		
+		@Override
+		public Builder foldHorizontallyUp() {
+			manipulate(new HorizontalFoldInHalf(FoldDirection.OVER));
+			return this;
+		}
+		
+		@Override
+		public Builder foldVerticallyDown() {
+			manipulate(new VerticalFoldInHalf(FoldDirection.UNDER));
+			return this;
+		}
+		
+		@Override
+		public Builder foldVerticallyUp() {
+			manipulate(new VerticalFoldInHalf(FoldDirection.OVER));
+			return this;
+		}
+	}
+	
+	/**
+	 * This builder manipulates the sheets to that the lower right corner
+	 * of the sheets stay fixed.
+	 */
+	private static final class RightBuilder extends AbstractBuilder {
+
+		/*
+		 * Implementation note:
+		 * 
+		 * The requirement that the static point is the lower right corner,
+		 * instead of the lower left corner (which is the way that Stack
+		 * handles the sheets), is implemented by performing modifications
+		 * on the sheet in the default position (with the fixed point in
+		 * the lower left corner) and flipping the stack of sheets
+		 * vertically in the end.
+		 * One implication of this is that the manipulations must undergo
+		 * some correction: For example, folding "up" is implemented as
+		 * folding "down" (because the sheet is flipped; see above).
+		 */
+		
+		@Override
+		public Builder foldHorizontallyDown() {
+			manipulate(new HorizontalFoldInHalf(FoldDirection.OVER));
+			return this;
+		}
+		
+		@Override
+		public Builder foldHorizontallyUp() {
+			manipulate(new HorizontalFoldInHalf(FoldDirection.UNDER));
+			return this;
+		}
+		
+		@Override
+		public Builder foldVerticallyDown() {
+			manipulate(new VerticalFoldInHalf(FoldDirection.OVER));
+			return this;
+		}
+		
+		@Override
+		public Builder foldVerticallyUp() {
+			manipulate(new VerticalFoldInHalf(FoldDirection.UNDER));
+			return this;
+		}
+		
+		@Override
+		public Codex build() {
+			/*
+			 * Flip the stack horizontally so as to bring the free edge of paper
+			 * to the right side.
+			 */
+			List<SheetStackManipulation> manips = new ArrayList<>(manipulations);
+			manips.add(new HorizontalFlip());
+
+			return new Codex(sheetsInSignature, manips, preprocess, common);
 		}
 	}
 	
@@ -330,10 +460,6 @@ public class Codex extends AbstractImposable implements Imposable {
 		
 		private void manipulate(Stack.Manipulation manipulation) {
 			stack.performManipulation(manipulation);
-		}
-		
-		private void flipHorizontally() {
-			stack.performManipulation(Stack.Flip.horizontal(currentWidth));
 		}
 	}
 	
@@ -414,6 +540,22 @@ public class Codex extends AbstractImposable implements Imposable {
 			Line foldAxis = new Line(new Point(halfWidth, 0), new Point(halfWidth, 1));
 			stack.manipulate(new Stack.Fold(foldAxis, direction.value()));
 			stack.currentWidth = halfWidth;
+		}
+	}
+	
+	/**
+	 * A flip along the vertical axis.
+	 */
+	private static class HorizontalFlip implements SheetStackManipulation {
+		
+		@Override
+		public void accommodateSheetDimensions(SheetDimensions dimensions) {
+			// Do nothing
+		}
+
+		@Override
+		public void putToStack(SheetStack stack) {
+			stack.manipulate(Stack.Flip.horizontal(stack.currentWidth));
 		}
 	}
 	
