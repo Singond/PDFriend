@@ -100,6 +100,7 @@ public class Codex extends AbstractImposable implements Imposable {
 	}
 	
 	/** Creates testing Volume as a proof of concept. */
+	@SuppressWarnings("unused")
 	private Volume imposeAsVolumeTest(VirtualDocument doc) {
 		double[] docDims = doc.maxPageDimensions();
 		Dimensions sheetSize;
@@ -113,7 +114,7 @@ public class Codex extends AbstractImposable implements Imposable {
 	 * Imposes the given virtual document into a new book volume
 	 * according to the current settings of this {@code Codex} object.
 	 */
-	private Volume imposeAsPages(VirtualDocument doc) {
+	private Volume imposeAsVolume(VirtualDocument doc) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("imposition_preprocessSettings", preprocess);
 			logger.debug("imposition_commonSettings", common);
@@ -152,7 +153,11 @@ public class Codex extends AbstractImposable implements Imposable {
 	 * @return the document imposed into a new volume
 	 */
 	private Volume caseAutoSize(VirtualDocument doc) {
-		throw new UnsupportedOperationException("Use case not implemented yet");
+		Preprocessor preprocessor = new Preprocessor(doc, preprocess);
+		Dimensions pageSize = preprocessor.getResolvedCellDimensions();
+		Dimensions sheetSize = sheetSizeFromPageSize(pageSize, manipulations);
+		doc = preprocessDocument(doc, preprocessor, 0); // last arg is not used
+		return buildVolume(sheetSize, pageSize, manipulations, doc);
 	}
 	
 	/**
@@ -299,7 +304,7 @@ public class Codex extends AbstractImposable implements Imposable {
 
 	@Override
 	public BoundBook impose(VirtualDocument source) {
-		return new BoundBook(imposeAsVolumeTest(source));
+		return new BoundBook(imposeAsVolume(source));
 	}
 
 	/**
