@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.apache.logging.log4j.Level;
-
 import com.github.singond.geometry.plane.Line;
 import com.github.singond.geometry.plane.Point;
 import com.github.singond.pdfriend.ExtendedLogger;
@@ -192,7 +190,13 @@ public class Codex extends AbstractImposable implements Imposable {
 		if (logger.isEnabled(ExtendedLogger.VERBOSE))
 			logger.verbose("codex_caseSheetSize");
 		
-		throw new UnsupportedOperationException("Use case not implemented yet");
+		assert common.getPageSize() != CommonSettings.AUTO_DIMENSIONS;
+		preprocess.setPageDimensions(common.getPageSize());
+		Preprocessor preprocessor = new Preprocessor(doc, preprocess);
+		Dimensions pageSize = preprocessor.getResolvedCellDimensions();
+		Dimensions sheetSize = sheetSizeFromPageSize(pageSize, manipulations);
+		doc = preprocessDocument(doc, preprocessor, 0); // last arg is not used
+		return buildVolume(sheetSize, pageSize, manipulations, doc);
 	}
 	
 	/**

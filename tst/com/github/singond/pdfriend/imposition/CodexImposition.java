@@ -26,6 +26,9 @@ import com.github.singond.pdfriend.format.ParsingException;
 import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.process.PDFParser;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
+import com.github.singond.pdfriend.geometry.Dimensions;
+import com.github.singond.pdfriend.geometry.PaperFormat;
+import com.github.singond.pdfriend.geometry.PaperFormats;
 
 @SuppressWarnings("unused")
 public class CodexImposition {
@@ -37,12 +40,20 @@ public class CodexImposition {
 	
 	@Test
 	public void moduleCodex() {
+		Preprocessor.Settings preprocess = Preprocessor.Settings.auto();
+//		preprocess.setRotation(0.1);
+		
+		CommonSettings.Builder sb = new CommonSettings.Builder();
+//		sb.setPageSize(PaperFormats.A5.dimensions(PaperFormat.Orientation.PORTRAIT));
+
 		Codex codex = Codex.leftBuilder()
 				.foldVerticallyUp()
 				.foldHorizontallyUp()
 				.foldVerticallyUp()
-				.foldHorizontallyUp()
+//				.foldHorizontallyUp()
 //				.setSheetsInSignature(2)
+				.acceptPreprocessSettings(preprocess)
+				.acceptCommonSettings(sb.build())
 				.build();
 		
 		File output = new File("test/imposed-codex.pdf");
@@ -60,7 +71,7 @@ public class CodexImposition {
 		}
 	}
 	
-	@Test
+//	@Test
 	public void hardCodedCodex() {
 		File output = new File("test/imposed-codex-hardcoded.pdf");
 		
