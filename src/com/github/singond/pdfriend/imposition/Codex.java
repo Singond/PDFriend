@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.apache.logging.log4j.Level;
+
 import com.github.singond.geometry.plane.Line;
 import com.github.singond.geometry.plane.Point;
 import com.github.singond.pdfriend.ExtendedLogger;
@@ -145,6 +147,8 @@ public class Codex extends AbstractImposable implements Imposable {
 		}
 	}
 	
+	// TODO Logging the use case is at DEBUG in other classes. Make it VERBOSE everywhere.
+	
 	/**
 	 * Assembles the final volume, using the preferred page size as the
 	 * basis for the final sheet size.
@@ -153,6 +157,9 @@ public class Codex extends AbstractImposable implements Imposable {
 	 * @return the document imposed into a new volume
 	 */
 	private Volume caseAutoSize(VirtualDocument doc) {
+		if (logger.isEnabled(ExtendedLogger.VERBOSE))
+			logger.verbose("codex_caseAutoSize");
+		
 		Preprocessor preprocessor = new Preprocessor(doc, preprocess);
 		Dimensions pageSize = preprocessor.getResolvedCellDimensions();
 		Dimensions sheetSize = sheetSizeFromPageSize(pageSize, manipulations);
@@ -168,6 +175,9 @@ public class Codex extends AbstractImposable implements Imposable {
 	 * @return the document imposed into a new volume
 	 */
 	private Volume casePageSize(VirtualDocument doc) {
+		if (logger.isEnabled(ExtendedLogger.VERBOSE))
+			logger.verbose("codex_casePageSize");
+		
 		throw new UnsupportedOperationException("Use case not implemented yet");
 	}
 	
@@ -179,6 +189,9 @@ public class Codex extends AbstractImposable implements Imposable {
 	 * @return the document imposed into a new volume
 	 */
 	private Volume caseSheetSize(VirtualDocument doc) {
+		if (logger.isEnabled(ExtendedLogger.VERBOSE))
+			logger.verbose("codex_caseSheetSize");
+		
 		throw new UnsupportedOperationException("Use case not implemented yet");
 	}
 	
