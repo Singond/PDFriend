@@ -27,6 +27,7 @@ import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.process.PDFParser;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
 
+@SuppressWarnings("unused")
 public class CodexImposition {
 
 	/** Logger */
@@ -37,9 +38,10 @@ public class CodexImposition {
 	@Test
 	public void moduleCodex() {
 		Codex codex = Codex.leftBuilder()
-//				.foldHorizontallyUp()
 				.foldVerticallyUp()
+				.foldHorizontallyUp()
 				.foldVerticallyUp()
+				.foldHorizontallyUp()
 //				.setSheetsInSignature(2)
 				.build();
 		
