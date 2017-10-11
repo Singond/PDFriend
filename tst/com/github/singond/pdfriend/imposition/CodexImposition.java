@@ -86,7 +86,7 @@ public class CodexImposition {
 		Line axis2 = new Line(new Point(fold2, 0), new Point(fold2, 1));
 		mm.add(new Stack.Fold(axis2, Stack.Fold.Direction.OVER));
 
-		mm.add(Flip.horizontal(pageWidth));
+//		mm.add(Flip.horizontal(pageWidth));
 		//mm.add(new Stack.Gather(2));
 		
 		stack.performManipulations(mm);
