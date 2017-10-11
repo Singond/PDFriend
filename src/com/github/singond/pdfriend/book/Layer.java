@@ -141,6 +141,16 @@ public class Layer {
 		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("layer on the ").append(orientation.frontIsAt())
+				.append(" side of ").append(sheet)
+				.append(" at ").append(position)
+				.append(" (").append(leaves.size()).append(" leaves)");
+		return builder.toString();
+	}
+
 	/**
 	 * Placement of the Layer on the Sheet: Either the front corresponds
 	 * to the front of the Sheet, or to the back.
@@ -151,15 +161,28 @@ public class Layer {
 	 */
 	public static enum Orientation {
 		/** Front of the Layer lies on the front of the Sheet */
-		POSITIVE {
+		POSITIVE("front") {
 			@Override public Orientation inverse() {return NEGATIVE;}
 		},
 		/** Front of the Layer lies on the back of the Sheet */
-		NEGATIVE {
+		NEGATIVE("back") {
 			@Override public Orientation inverse() {return POSITIVE;}
 		};
 		
+		private final String sheetSideWithFront;
+		
+		private Orientation(String sheetSideWithFront) {
+			this.sheetSideWithFront = sheetSideWithFront;
+		}
+		
 		/** Returns the inverse of this Orientation */
 		public abstract Orientation inverse();
+		
+		/**
+		 * Returns which side of the sheet corresponds with the front of this layer
+		 */
+		public String frontIsAt() {
+			return sheetSideWithFront;
+		}
 	}
 }
