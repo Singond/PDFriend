@@ -19,6 +19,7 @@ import com.github.singond.pdfriend.book.Volume;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.LengthUnit;
+import com.github.singond.pdfriend.imposition.Preprocessor.Resizing;
 
 /**
  * The common bound book, also called "codex", produced by folding a large
@@ -176,7 +177,23 @@ public class Codex extends AbstractImposable implements Imposable {
 		if (logger.isEnabled(ExtendedLogger.VERBOSE))
 			logger.verbose("codex_casePageSize");
 		
-		throw new UnsupportedOperationException("Use case not implemented yet");
+		// Use sheet size to determine page size
+		Dimensions sheetSize = common.getSheetSize();
+		// A factory to provide instances of Signature
+		SignatureFactory sf = new SignatureFactory(sheetSize, manipulations);
+		Dimensions pageSize = new Dimensions(
+				sf.stack.currentWidth, sf.stack.currentHeight, unit);
+		
+		// Apply the page size and build the Volume
+		if (preprocess.isAutoSize()) {
+			preprocess.setResizing(Resizing.FIT);
+		}
+		preprocess.setCellDimensions(pageSize);
+		Preprocessor preprocessor = new Preprocessor(doc, preprocess);
+		doc = preprocessDocument(doc, preprocessor, 0); // last arg is not used
+		// Source provider to fill pages with content
+		SourceProvider<Page> sp = new SequentialSourceProvider(doc);
+		return buildVolume(sf, sp);
 	}
 	
 	/**
@@ -238,6 +255,22 @@ public class Codex extends AbstractImposable implements Imposable {
 		SignatureFactory sf = new SignatureFactory(sheetSize, pageSize, manipulations);
 		// Source provider to fill pages with content
 		SourceProvider<Page> sp = new SequentialSourceProvider(doc);
+		
+		return buildVolume(sf, sp);
+	}
+	
+	/**
+	 * Builds a Volume by creating signatures from given stack properties,
+	 * filling them with pages of the given source document and appending
+	 * them to a volume, until all pages of the source are processed.
+	 * @param sheetSize
+	 * @param pageSize
+	 * @param manipulations
+	 * @param doc the source document to be imposed
+	 * @return a new instance of {@code Volume}
+	 */
+	private Volume buildVolume(SignatureFactory signatureFactory,
+	                           SourceProvider<Page> sourceProvider) {
 		// The final volume to be returned
 		Volume volume = new Volume();
 		
@@ -246,9 +279,9 @@ public class Codex extends AbstractImposable implements Imposable {
 		 * signatures and add them to the volume.
 		 */
 		int pageNumber = 1;
-		while (sp.hasNextPage()) {
-			Signature s = sf.newSignature();
-			sp.setSourceTo(s.pages());
+		while (sourceProvider.hasNextPage()) {
+			Signature s = signatureFactory.newSignature();
+			sourceProvider.setSourceTo(s.pages());
 			pageNumber = s.numberPagesFrom(pageNumber);
 			volume.add(s);
 		}
@@ -277,6 +310,24 @@ public class Codex extends AbstractImposable implements Imposable {
 			
 			stack = buildSheetStack(sheetSize, manipulations);
 			leaf = new Leaf(pageSize.width().in(unit), pageSize.height().in(unit));
+		}
+		
+		/**
+		 * Determines page size from the folded sheet.
+		 * @param sheetSize
+		 * @param manipulations
+		 */
+		SignatureFactory(Dimensions sheetSize,
+		                 List<SheetStackManipulation> manipulations) {
+			if (sheetSize == null)
+				throw new IllegalArgumentException
+						("The sheet size must not be null");
+			if (manipulations == null)
+				throw new IllegalArgumentException
+						("The list of manipulations must not be null");
+			
+			stack = buildSheetStack(sheetSize, manipulations);
+			leaf = new Leaf(stack.currentWidth, stack.currentHeight);
 		}
 		
 		private final SheetStack buildSheetStack(Dimensions sheetSize,

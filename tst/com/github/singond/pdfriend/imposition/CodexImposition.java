@@ -45,6 +45,7 @@ public class CodexImposition {
 		
 		CommonSettings.Builder sb = new CommonSettings.Builder();
 //		sb.setPageSize(PaperFormats.A5.dimensions(PaperFormat.Orientation.PORTRAIT));
+		sb.setSheetSize(PaperFormats.A2.dimensions(PaperFormat.Orientation.LANDSCAPE));
 
 		Codex codex = Codex.leftBuilder()
 				.foldVerticallyUp()
