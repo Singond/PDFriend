@@ -64,7 +64,7 @@ public class Codex extends AbstractImposable implements Imposable {
 		
 		this.sheetsInSignature = sheetsInSignature;
 		this.manipulations = new ArrayList<>(manipulations);
-		this.preprocess = preprocess;
+		this.preprocess = preprocess.copy();
 		this.common = common;
 	}
 	
