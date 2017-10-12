@@ -21,6 +21,9 @@ class ImposableResolver implements ParameterDelegate {
 	private BookletCli booklet = new BookletCli();
 	
 	@ParametersDelegate
+	private CodexCli codex = new CodexCli();
+	
+	@ParametersDelegate
 	private NUpCli nup = new NUpCli();
 	
 	@ParametersDelegate
@@ -31,7 +34,7 @@ class ImposableResolver implements ParameterDelegate {
 	 * If any is omitted from this set, it will be ignored in the command line.
 	 */
 	private final Set<? extends ImposableCli<?>> imposables =
-			new HashSet<>(Arrays.asList(booklet, nup, overlay));
+			new HashSet<>(Arrays.asList(booklet, codex, nup, overlay));
 	
 	/**
 	 * Resolves the type of imposed document from the command line
