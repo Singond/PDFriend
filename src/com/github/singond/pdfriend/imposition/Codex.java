@@ -540,31 +540,59 @@ public class Codex extends AbstractImposable implements Imposable {
 		 * the lower left corner) and flipping the stack of sheets
 		 * vertically in the end.
 		 * One implication of this is that the manipulations must undergo
-		 * some correction: For example, folding "up" is implemented as
+		 * some correction, if the lower right corner is reversed with
+		 * respect to the  origin (the lower left corner).
+		 * For example, folding "up" would then be implemented as
 		 * folding "down" (because the sheet is flipped; see above).
+		 * The corner gets reversed on the first vertical fold and stays
+		 * in that state (because it is now aligned with the origin
+		 * and all folds manipulate the halfplane not containing origin).
+		 * 
 		 */
+		
+		private boolean originReversed = false;
+		
+		private FoldDirection directionUp() {
+			if (originReversed) {
+				return FoldDirection.UNDER;
+			} else {
+				return FoldDirection.OVER;
+			}
+		}
+		
+		private FoldDirection directionDown() {
+			if (originReversed) {
+				return FoldDirection.OVER;
+			} else {
+				return FoldDirection.UNDER;
+			}
+		}
 		
 		@Override
 		public Builder foldHorizontallyDown() {
-			manipulate(new HorizontalFoldInHalf(FoldDirection.OVER));
+			manipulate(new HorizontalFoldInHalf(directionDown()));
 			return this;
 		}
 		
 		@Override
 		public Builder foldHorizontallyUp() {
-			manipulate(new HorizontalFoldInHalf(FoldDirection.UNDER));
+			manipulate(new HorizontalFoldInHalf(directionUp()));
 			return this;
 		}
 		
 		@Override
 		public Builder foldVerticallyDown() {
-			manipulate(new VerticalFoldInHalf(FoldDirection.OVER));
+			manipulate(new VerticalFoldInHalf(directionDown()));
+			if (!originReversed)
+				originReversed = true;
 			return this;
 		}
 		
 		@Override
 		public Builder foldVerticallyUp() {
-			manipulate(new VerticalFoldInHalf(FoldDirection.UNDER));
+			manipulate(new VerticalFoldInHalf(directionUp()));
+			if (!originReversed)
+				originReversed = true;
 			return this;
 		}
 		
