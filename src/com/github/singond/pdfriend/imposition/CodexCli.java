@@ -7,6 +7,8 @@ import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
+import com.github.singond.pdfriend.ExtendedLogger;
+import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.cli.ParameterConsistencyException;
 import com.github.singond.pdfriend.imposition.Codex.Builder;
 
@@ -19,6 +21,9 @@ import com.github.singond.pdfriend.imposition.Codex.Builder;
 @Parameters(resourceBundle="Help", separators="=")
 class CodexCli implements ImposableCli<Codex.Builder> {
 
+	/** Logger */
+	private static ExtendedLogger logger = Log.logger(Codex.class);
+	
 	/**
 	 * The list of sheet stack manipulations which describes the book block.
 	 * If this list is not null, then book imposition has been selected.
@@ -38,6 +43,11 @@ class CodexCli implements ImposableCli<Codex.Builder> {
 	// TODO Add validator
 	private int sheetsPerSignature = 1;
 	
+	@Parameter(names={"--right-to-left"},
+	           descriptionKey="book-rtl",
+	           description="Build the codex as for a right-to-left writing")
+	private boolean rightToLeft = false;
+	
 	@Override
 	public void postParse() throws ParameterConsistencyException {
 		// Do nothing
@@ -50,7 +60,19 @@ class CodexCli implements ImposableCli<Codex.Builder> {
 
 	@Override
 	public Codex.Builder getImposable() {
-		Codex.Builder codex = Codex.rightBuilder();
+		// Choose which side is fixed when doing the manipulations
+		Codex.Builder codex;
+		if (rightToLeft) {
+			if (logger.isVerboseEnabled())
+				logger.verbose("codex_cli_lowerLeftCornerReference");
+			codex = Codex.leftBuilder();
+		} else {
+			if (logger.isVerboseEnabled())
+				logger.verbose("codex_cli_lowerRightCornerReference");
+			codex = Codex.rightBuilder();
+		}
+		
+		// Set options to the codex builder
 		codex.setSheetsInSignature(sheetsPerSignature);
 		for (ManipulationProxy m : manipulations) {
 			m.applyTo(codex);
