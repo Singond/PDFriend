@@ -156,7 +156,7 @@ public class Codex extends AbstractImposable implements Imposable {
 	 * @return the document imposed into a new volume
 	 */
 	private Volume caseAutoSize(VirtualDocument doc) {
-		if (logger.isEnabled(ExtendedLogger.VERBOSE))
+		if (logger.isVerboseEnabled())
 			logger.verbose("codex_caseAutoSize");
 		
 		Preprocessor preprocessor = new Preprocessor(doc, preprocess);
@@ -174,7 +174,7 @@ public class Codex extends AbstractImposable implements Imposable {
 	 * @return the document imposed into a new volume
 	 */
 	private Volume casePageSize(VirtualDocument doc) {
-		if (logger.isEnabled(ExtendedLogger.VERBOSE))
+		if (logger.isVerboseEnabled())
 			logger.verbose("codex_casePageSize");
 		
 		// Use sheet size to determine page size
@@ -204,7 +204,7 @@ public class Codex extends AbstractImposable implements Imposable {
 	 * @return the document imposed into a new volume
 	 */
 	private Volume caseSheetSize(VirtualDocument doc) {
-		if (logger.isEnabled(ExtendedLogger.VERBOSE))
+		if (logger.isVerboseEnabled())
 			logger.verbose("codex_caseSheetSize");
 		
 		assert common.getPageSize() != CommonSettings.AUTO_DIMENSIONS;

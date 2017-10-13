@@ -26,7 +26,7 @@ public final class ExtendedLogger extends ExtendedLoggerWrapper {
     private final ExtendedLoggerWrapper logger;
 
     private static final String FQCN = ExtendedLogger.class.getName();
-    public static final Level VERBOSE = Level.forName("VERBOSE", 450);
+    private static final Level VERBOSE = Level.forName("VERBOSE", 450);
 
     private ExtendedLogger(final Logger logger) {
         super((AbstractLogger) logger, logger.getName(), logger.getMessageFactory());
@@ -130,6 +130,10 @@ public final class ExtendedLogger extends ExtendedLoggerWrapper {
         return new ExtendedLogger(wrapped);
     }
 
+    public boolean isVerboseEnabled() {
+    	return this.isEnabled(VERBOSE);
+    }
+    
     /**
      * Logs a message with the specific Marker at the {@code VERBOSE} level.
      * 
