@@ -124,19 +124,28 @@ class CodexCli implements ImposableCli<Codex.Builder> {
 	
 	/**
 	 * Parses a string into a representation of a sheet stack manipulation.
-	 * @param arg the stsring to be parsed
+	 * <ul>
+	 * <li>{@code H}: Fold the stack along a horizontal line
+	 * <li>{@code V}: Fold the stack along a vertical line
+	 * <li>Minus ({@code -}) after a command means that the folded part
+	 * of the page is placed to the front of the sheet (closer to the
+	 * observer).
+	 * This convention has been chosed so that the reference corner stays
+	 * in the front.
+	 * 
+	 * @param arg the string to be parsed
 	 * @return an object which is able to set the correct manipulation object
 	 *         to a given {@code Codex.Builder} instance
 	 */
 	private static ManipulationProxy parseManipulationProxy(String arg) {
 		if (arg.startsWith("H-")) {
-			return HorizontalFoldProxy.foldDown();
-		} else if (arg.startsWith("H")) {
 			return HorizontalFoldProxy.foldUp();
+		} else if (arg.startsWith("H")) {
+			return HorizontalFoldProxy.foldDown();
 		} else if (arg.startsWith("V-")) {
-			return VerticalFoldProxy.foldDown();
-		} else if (arg.startsWith("V")) {
 			return VerticalFoldProxy.foldUp();
+		} else if (arg.startsWith("V")) {
+			return VerticalFoldProxy.foldDown();
 		} else {
 			throw new IllegalArgumentException("Unknown sheet manipulation argument: " + arg);
 		}
