@@ -32,13 +32,13 @@ class PageSource implements Iterable<VirtualPage> {
 	/**
 	 * Constructs a new PageSource object which repeats the pages of the
 	 * given document.
-	 * @param doc the document whose pages are to be returned
+	 * @param pages the list of pages which are to be returned
 	 * @param repeatPage how many times to repeat each page before
 	 *        proceeding to next page
 	 * @param repeatDoc how many times to repeat the whole document
 	 */
-	PageSource(VirtualDocument doc, int repeatPage, int repeatDoc) {
-		if (doc == null)
+	private PageSource(List<VirtualPage> pages, int repeatPage, int repeatDoc) {
+		if (pages == null)
 			throw new IllegalArgumentException("The source of pages is null");
 		if (repeatPage < 1)
 			throw new IllegalArgumentException(
@@ -47,9 +47,17 @@ class PageSource implements Iterable<VirtualPage> {
 			throw new IllegalArgumentException(
 					"The number of document repetitions must be a positive number");
 		
-		this.pages = new ArrayList<>(doc.getPages());
+		this.pages = new ArrayList<>(pages);
 		this.repeatPage = repeatPage;
 		this.repeatDoc = repeatDoc;
+	}
+	
+	static Builder of(List<VirtualPage> pages) {
+		return new Builder(pages);
+	}
+	
+	static Builder of(VirtualDocument doc) {
+		return of(doc.getPages());
 	}
 
 	@Override
@@ -96,6 +104,89 @@ class PageSource implements Iterable<VirtualPage> {
 			} else {
 				throw new NoSuchElementException("No more documents");
 			}
+		}
+	}
+	
+	static final class Builder {
+		/** The queue of pages */
+		private final List<VirtualPage> pages;
+		/** How many times to repeat each page before proceeding to next page */
+		private int repeatPage = 1;
+		/** How many times to repeat the whole document before finishing */
+		private int repeatDoc = 1;
+		/** The first page to be used (inclusive) */
+		private int startPage = -1;
+		/** The last page to be used (exclusive) */
+		private int endPage = -1;
+		
+		private Builder(List<VirtualPage> pages) {
+			this.pages = pages;
+		}
+		
+		/** Sets how many times each page should be repeated */
+		Builder withPageRepeated(int repeatPage) {
+			this.repeatPage = repeatPage;
+			return this;
+		}
+		
+		/** Sets how many times the whole document should be repeated */
+		Builder withDocRepeated(int repeatDoc) {
+			this.repeatDoc = repeatDoc;
+			return this;
+		}
+		
+		/**
+		 * Selects the pages to be used.
+		 * 
+		 * @param from the first page to be used (inclusive)
+		 * @param to the last page to be used (exclusive)
+		 */
+		Builder withPageRange(int from, int to) {
+			if (from < 0)
+				throw new IndexOutOfBoundsException(
+						"The starting page must be greater than 0, but was " + from);
+			if (from < 0)
+				throw new IndexOutOfBoundsException(
+						"The end page must be between greater than 0, but was " + from);
+			if (from >= to)
+				throw new IndexOutOfBoundsException(
+						"The end page must come after the start page. "
+						+ "Start page: " + from + ", end page: " + to);
+			
+			this.startPage = from;
+			this.endPage = to;
+			return this;
+		}
+		
+		PageSource build() {
+			List<VirtualPage> pageList = pages;
+			
+			// If the page range is not default (the indices are not -1),
+			// use that page range
+			if (startPage != -1 || endPage != -1) {
+				// Resolve automatic values (if any)
+				if (startPage == -1) {
+					startPage = 0;
+				}
+				if (endPage == -1) {
+					endPage = pages.size();
+				}
+				
+				// Check validity
+				if (startPage < 0 || startPage > pages.size())
+					throw new IndexOutOfBoundsException(
+							"The end page must be between 0 and the document length. "
+							+ "Page index: " + startPage + ", document length: " + pages.size());
+				if (startPage >= endPage)
+					throw new IndexOutOfBoundsException(
+							"The end page must come after the start page. "
+							+ "Start page: " + startPage + ", end page: " + endPage);
+				
+				// Select the page range
+				pageList = pages.subList(startPage, endPage);
+			}
+			
+			return new PageSource(pageList, repeatPage, repeatDoc);
 		}
 	}
 }

@@ -23,7 +23,10 @@ public class PageRepetition {
 		int repeatPage = 3;
 		int repeatDoc = 2;
 		
-		PageSource pageSource = new PageSource(inDoc, repeatPage, repeatDoc);
+		PageSource pageSource = PageSource.of(inDoc)
+		                                  .withPageRepeated(repeatPage)
+		                                  .withDocRepeated(repeatDoc)
+		                                  .build();
 		int pageNumber = 0;
 		for (VirtualPage page : pageSource) {
 			System.out.println("Page " + ++pageNumber + ": " + page);
