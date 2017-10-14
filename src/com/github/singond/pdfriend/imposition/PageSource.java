@@ -57,7 +57,7 @@ class PageSource implements Iterable<VirtualPage> {
 		return new PageIterator();
 	}
 	
-	public final class PageIterator implements Iterator<VirtualPage> {
+	private final class PageIterator implements Iterator<VirtualPage> {
 		
 		/** An object to provide page iterators */
 		private final Iterator<Iterable<VirtualPage>> docIterator;
