@@ -74,7 +74,8 @@ public class SequentialSourceProvider implements SourceProvider<Page> {
 		@Override
 		public Void visit(GridPage p, Void param) throws NoException {
 			for (PageletView pg : p.pagelets()) {
-				pg.setSource(sourcePages.pop());
+				if (hasNextPage())
+					pg.setSource(sourcePages.pop());
 			}
 			return null;
 		}
