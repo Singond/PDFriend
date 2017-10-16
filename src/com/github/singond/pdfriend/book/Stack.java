@@ -345,7 +345,6 @@ public class Stack {
 			int layerCount = stack.layers.size();
 			// The folded part of the stack
 			List<Layer> foldedStack = new ArrayList<>(layerCount);
-			AffineTransform fold = Transformations.mirror(axis);
 			
 			if (direction == Direction.UNDER) {
 				// Iterate backwards, place new Layers to bottom of Stack
