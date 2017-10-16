@@ -9,10 +9,7 @@ import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.BoundBook;
 import com.github.singond.pdfriend.book.FlipDirection;
 import com.github.singond.pdfriend.book.Leaf;
-import com.github.singond.pdfriend.book.Page;
-import com.github.singond.pdfriend.book.SequentialSourceProvider;
 import com.github.singond.pdfriend.book.Signature;
-import com.github.singond.pdfriend.book.SourceProvider;
 import com.github.singond.pdfriend.book.Stack;
 import com.github.singond.pdfriend.book.Volume;
 import com.github.singond.pdfriend.book.Stack.Flip;
@@ -241,8 +238,8 @@ public class Booklet extends AbstractImposable implements Imposable {
 		/*
 		 * Fill the volume with content.
 		 */
-		SourceProvider<Page> sp = new SequentialSourceProvider(doc);
-		sp.setSourceTo(volume.pages());
+		PageSource source = PageSource.of(doc).build();
+		PageFillers.fillSequentially(volume.pages(), source);
 		
 		return volume;
 	}
