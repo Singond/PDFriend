@@ -230,7 +230,7 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 			page.setNumber(++pageNumber);
 			pages.add(page);
 		}
-		new SequentialSourceProvider(doc).setSourceTo(pages);
+		PageFillers.fillSequentially(pages, PageSource.of(doc).build());
 
 		return pages;
 	}
