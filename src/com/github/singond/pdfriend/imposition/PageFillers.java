@@ -22,7 +22,7 @@ final class PageFillers {
 
 	private PageFillers() {}
 	
-	public static void fillSequentially(Iterable<Page> pages, PageSource source) {
+	public static void fillSequentially(Iterable<? extends Page> pages, PageSource source) {
 		Iterator<VirtualPage> sourceIterator = source.iterator();
 		for (Page p : pages) {
 			if (sourceIterator.hasNext())
