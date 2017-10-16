@@ -18,9 +18,9 @@ import com.github.singond.pdfriend.document.VirtualPage;
  * @author Singon
  *
  */
-final class PageFiller {
+final class PageFillers {
 
-	private PageFiller() {}
+	private PageFillers() {}
 	
 	public static void fillSequentially(Iterable<Page> pages, PageSource source) {
 		Iterator<VirtualPage> sourceIterator = source.iterator();
