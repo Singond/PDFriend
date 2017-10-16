@@ -11,6 +11,7 @@ import com.github.singond.pdfriend.book.MultiPage.PageletView;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 
+@Deprecated
 public class LayerSourceProvider implements SourceProvider<LayeredPage>{
 	
 	/**

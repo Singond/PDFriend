@@ -10,6 +10,7 @@ package com.github.singond.pdfriend.book;
  * @author Singon
  * @param <P> the subtype of Page handled by this SourceProvider
  */
+@Deprecated
 public interface SourceProvider<P extends Page> {
 
 	/**

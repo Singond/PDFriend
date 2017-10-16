@@ -14,6 +14,7 @@ import com.github.singond.pdfriend.document.VirtualPage;
  * @author Singon
  *
  */
+@Deprecated
 public class SequentialSourceProvider implements SourceProvider<Page> {
 
 	private final Deque<VirtualPage> sourcePages;
