@@ -1,18 +1,14 @@
 package com.github.singond.pdfriend.imposition;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Queue;
-
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.Book;
-import com.github.singond.pdfriend.book.LayerSourceProvider;
 import com.github.singond.pdfriend.book.LayeredPage;
 import com.github.singond.pdfriend.book.LoosePages;
-import com.github.singond.pdfriend.book.SourceProvider;
 import com.github.singond.pdfriend.book.MultiPage.PageletView;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
@@ -379,7 +375,7 @@ public class Overlay extends AbstractImposable implements Imposable {
 		 * Queues of pages, each of which will fill one layer.
 		 * The layers are filled in the order of these queues.
 		 */
-		private final List<Queue<VirtualPage>> sourcePages;
+		private final List<Iterator<VirtualPage>> sourcePages;
 		/** The cached number of layers */
 		private final int layers;
 		/** Stores information whether empty warning has been issued for ith layer */
@@ -392,15 +388,16 @@ public class Overlay extends AbstractImposable implements Imposable {
 		LayeredPageFiller(List<VirtualDocument> documents) {
 			this.layers = documents.size();
 			queueEmptyWarningIssued = new boolean[layers];
-			List<Queue<VirtualPage>> srcList = new ArrayList<>(layers);
+			List<Iterator<VirtualPage>> srcList = new ArrayList<>(layers);
 			for (VirtualDocument doc : documents) {
-				srcList.add(new ArrayDeque<>(doc.getPages()));
+				// TODO: Page and doc repeating will be handled here
+				srcList.add(PageSource.of(doc).build().iterator());
 			}
 			this.sourcePages = srcList;
 		}
 
 		boolean hasNextPage() {
-			return sourcePages.stream().noneMatch(q -> q.isEmpty());
+			return sourcePages.stream().anyMatch(it -> it.hasNext());
 		}
 
 		void setSourceTo(Iterable<LayeredPage> pages) {
@@ -418,9 +415,9 @@ public class Overlay extends AbstractImposable implements Imposable {
 			int layerNo = 0;
 			for (PageletView layer : page.getLayers()) {
 				if (layerNo < layers) {
-					Queue<VirtualPage> pageQueue = sourcePages.get(layerNo);
-					if (!pageQueue.isEmpty()) {
-						layer.setSource(pageQueue.remove());
+					Iterator<VirtualPage> pageIter = sourcePages.get(layerNo);
+					if (pageIter.hasNext()) {
+						layer.setSource(pageIter.next());
 					} else if (!queueEmptyWarningIssued[layerNo]) {
 						logger.warn("layerSP_queueEmpty", layerNo, page);
 						queueEmptyWarningIssued[layerNo] = true;
