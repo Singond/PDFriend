@@ -1,8 +1,10 @@
 package com.github.singond.pdfriend.imposition;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Queue;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
@@ -10,7 +12,10 @@ import com.github.singond.pdfriend.book.Book;
 import com.github.singond.pdfriend.book.LayerSourceProvider;
 import com.github.singond.pdfriend.book.LayeredPage;
 import com.github.singond.pdfriend.book.LoosePages;
+import com.github.singond.pdfriend.book.SourceProvider;
+import com.github.singond.pdfriend.book.MultiPage.PageletView;
 import com.github.singond.pdfriend.document.VirtualDocument;
+import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.GeometryUtils;
 import com.github.singond.pdfriend.geometry.Length;
@@ -290,7 +295,7 @@ public class Overlay extends AbstractImposable implements Imposable {
 	 */
 	private void fillPages(List<VirtualDocument> source, List<LayeredPage> target) {
 		logger.verbose("overlay_filling");
-		LayerSourceProvider lsp = new LayerSourceProvider(source);
+		LayeredPageFiller lsp = new LayeredPageFiller(source);
 		lsp.setSourceTo(target);
 	}
 
@@ -333,6 +338,11 @@ public class Overlay extends AbstractImposable implements Imposable {
 		return source;
 	}
 	
+	/**
+	 * Builds instances of {@code Overlay} objects.
+	 *
+	 * @author Singon
+	 */
 	public static final class Builder implements ImposableBuilder<Overlay> {
 		private Preprocessor.Settings preprocess = Preprocessor.Settings.auto();
 		private CommonSettings common = CommonSettings.auto();
@@ -358,5 +368,66 @@ public class Overlay extends AbstractImposable implements Imposable {
 			return new Overlay(preprocess, common);
 		}
 		
+	}
+	
+	/**
+	 * Fills layered pages with content.
+	 */
+	private static class LayeredPageFiller {
+		
+		/**
+		 * Queues of pages, each of which will fill one layer.
+		 * The layers are filled in the order of these queues.
+		 */
+		private final List<Queue<VirtualPage>> sourcePages;
+		/** The cached number of layers */
+		private final int layers;
+		/** Stores information whether empty warning has been issued for ith layer */
+		private final boolean[] queueEmptyWarningIssued;
+		
+		/** Logger instance */
+		private static final ExtendedLogger logger = Log.logger(LayeredPageFiller.class);
+		
+		
+		LayeredPageFiller(List<VirtualDocument> documents) {
+			this.layers = documents.size();
+			queueEmptyWarningIssued = new boolean[layers];
+			List<Queue<VirtualPage>> srcList = new ArrayList<>(layers);
+			for (VirtualDocument doc : documents) {
+				srcList.add(new ArrayDeque<>(doc.getPages()));
+			}
+			this.sourcePages = srcList;
+		}
+
+		boolean hasNextPage() {
+			return sourcePages.stream().noneMatch(q -> q.isEmpty());
+		}
+
+		void setSourceTo(Iterable<LayeredPage> pages) {
+			for (LayeredPage pg : pages) {
+				setSourceTo(pg);
+			}
+			
+		}
+
+		void setSourceTo(LayeredPage page) {
+			int layersInPage = page.numberOfLayers();
+			if (layersInPage > layers) {
+				logger.debug("layerSP_tooManyLayersInPage", layersInPage, layers);
+			}
+			int layerNo = 0;
+			for (PageletView layer : page.getLayers()) {
+				if (layerNo < layers) {
+					Queue<VirtualPage> pageQueue = sourcePages.get(layerNo);
+					if (!pageQueue.isEmpty()) {
+						layer.setSource(pageQueue.remove());
+					} else if (!queueEmptyWarningIssued[layerNo]) {
+						logger.warn("layerSP_queueEmpty", layerNo, page);
+						queueEmptyWarningIssued[layerNo] = true;
+					}
+				}
+				layerNo++;
+			}
+		}
 	}
 }
