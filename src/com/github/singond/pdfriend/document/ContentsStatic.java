@@ -1,13 +1,15 @@
 package com.github.singond.pdfriend.document;
 
 import java.awt.geom.AffineTransform;
-import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.github.singond.pdfriend.document.Content.Movable;
 
 /**
  * Represents the whole content in a document page.
+ * The content elements are ordered.
+ * <p>
  * This variant does not permit content transformation and throws
  * {@code UnsupportedOperationException} when attempting to do so.
  * Because this class is merely a wrapper around the collection of content
@@ -22,14 +24,14 @@ import com.github.singond.pdfriend.document.Content.Movable;
  */
 class ContentsStatic extends Contents {
 
-	private final Collection<Content> contents;
+	private final List<Content> contents;
 	
-	ContentsStatic(Collection<Content> contents) {
+	ContentsStatic(List<Content> contents) {
 		this.contents = contents;
 	}
 	
 	@Override
-	public Collection<Content> get() {
+	public List<Content> get() {
 		return contents;
 	}
 
@@ -40,10 +42,10 @@ class ContentsStatic extends Contents {
 	}
 
 	@Override
-	Collection<Movable> getMovable() {
+	List<Movable> getMovable() {
 		return contents.stream()
 		               .map(c -> c.new Movable())
-		               .collect(Collectors.toSet());
+		               .collect(Collectors.toList());
 	}
 
 	@Override

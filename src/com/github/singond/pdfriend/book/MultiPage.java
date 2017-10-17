@@ -2,7 +2,6 @@ package com.github.singond.pdfriend.book;
 
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -106,7 +105,7 @@ public abstract class MultiPage extends Page {
 	
 	@Override
 	public Contents getContents() {
-		Set<Contents> contents = new HashSet<>();
+		Set<Contents> contents = new LinkedHashSet<>();
 		for (Pagelet p : pagelets) {
 			if (p.getSource() == null) continue;
 			Contents c = p.getSource().getContents();

@@ -2,8 +2,9 @@ package com.github.singond.pdfriend.document;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.github.singond.pdfriend.ExtendedLogger;
@@ -24,7 +25,7 @@ public final class VirtualPage {
 	/** The height of the output. */
 	private final double height;
 	/** A collection of all pages along with their positions. */
-	private final Collection<Content> content;
+	private final Set<Content> content;
 	
 	private static ExtendedLogger logger = Log.logger(VirtualPage.class);
 
@@ -37,7 +38,7 @@ public final class VirtualPage {
 	public VirtualPage(double width, double height) {
 		this.width = width;
 		this.height = height;
-		this.content = new HashSet<>();
+		this.content = new LinkedHashSet<>();
 	}
 	
 	/**
@@ -53,7 +54,7 @@ public final class VirtualPage {
 	public VirtualPage(double width, double height, Collection<Content> content) {
 		this.width = width;
 		this.height = height;
-		this.content = new HashSet<>(content);
+		this.content = new LinkedHashSet<>(content);
 	}
 	
 	/**
@@ -67,7 +68,7 @@ public final class VirtualPage {
 	public VirtualPage(double width, double height, Content content) {
 		this.width = width;
 		this.height = height;
-		this.content = new HashSet<>();
+		this.content = new LinkedHashSet<>();
 		this.content.add(content);
 	}
 	
@@ -79,7 +80,7 @@ public final class VirtualPage {
 	public VirtualPage(VirtualPage original) {
 		this.width = original.width;
 		this.height = original.height;
-		this.content = new HashSet<>(original.content);
+		this.content = new LinkedHashSet<>(original.content);
 	}
 
 
@@ -115,7 +116,7 @@ public final class VirtualPage {
 	 * @return a non-live view (but see {@link #Contents}) of the content
 	 */
 	public Contents getContentStatic() {
-		return new ContentsStatic(new HashSet<>(content));
+		return new ContentsStatic(new ArrayList<>(content));
 	}
 	
 	/**
@@ -124,10 +125,10 @@ public final class VirtualPage {
 	 * @return a shallow copy of the internal collection of content
 	 *         elements, each converted to a new Content.Movable
 	 */
-	Collection<Content.Movable> getMovableContent() {
+	List<Content.Movable> getMovableContent() {
 		return content.stream()
 		              .map(c -> c.new Movable())
-		              .collect(Collectors.toSet());
+		              .collect(Collectors.toList());
 	}
 	
 	/**

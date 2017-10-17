@@ -1,9 +1,9 @@
 package com.github.singond.pdfriend.document;
 
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * Represents the whole content in a document page.
@@ -51,7 +51,7 @@ public abstract class Contents {
 	 * @return a new instance of Contents
 	 */
 	public static Contents of(Collection<Contents> contents) {
-		Set<Content.Movable> all = new HashSet<>();
+		List<Content.Movable> all = new ArrayList<>();
 		for (Contents c : contents) {
 			all.addAll(c.getMovable());
 		}
