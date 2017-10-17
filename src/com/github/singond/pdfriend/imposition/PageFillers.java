@@ -22,7 +22,13 @@ final class PageFillers {
 
 	private PageFillers() {}
 	
-	public static void fillSequentially(Iterable<? extends Page> pages, PageSource source) {
+	/**
+	 * Feeds input pages from the source one by one to the given blank pages.
+	 * @param pages an iterable of pages to be filled with content
+	 * @param source the pages to be fed to {@code pages}
+	 */
+	public static void fillSequentially(Iterable<? extends Page> pages,
+	                                    Iterable<VirtualPage> source) {
 		Iterator<VirtualPage> sourceIterator = source.iterator();
 		for (Page p : pages) {
 			if (sourceIterator.hasNext())
@@ -31,7 +37,10 @@ final class PageFillers {
 		}
 	}
 
-	/** A PageVisitor which sets source to a page. */
+	/**
+	 * A PageVisitor which sets source to a page by simply filling the
+	 * available page slots in order.
+	 */
 	private static final PageVisitor<Void, Iterator<VirtualPage>, NoException> sequentialSourceSetter
 			= new PageVisitor<Void, Iterator<VirtualPage>, NoException>() {
 	
