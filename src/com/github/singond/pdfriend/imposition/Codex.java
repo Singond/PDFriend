@@ -1,6 +1,7 @@
 package com.github.singond.pdfriend.imposition;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -9,14 +10,12 @@ import com.github.singond.geometry.plane.Point;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.BoundBook;
-import com.github.singond.pdfriend.book.Page;
 import com.github.singond.pdfriend.book.Leaf;
-import com.github.singond.pdfriend.book.SequentialSourceProvider;
 import com.github.singond.pdfriend.book.Signature;
-import com.github.singond.pdfriend.book.SourceProvider;
 import com.github.singond.pdfriend.book.Stack;
 import com.github.singond.pdfriend.book.Volume;
 import com.github.singond.pdfriend.document.VirtualDocument;
+import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.imposition.Preprocessor.Resizing;
@@ -191,9 +190,9 @@ public class Codex extends AbstractImposable implements Imposable {
 		preprocess.setCellDimensions(pageSize);
 		Preprocessor preprocessor = new Preprocessor(doc, preprocess);
 		doc = preprocessDocument(doc, preprocessor, 0); // last arg is not used
-		// Source provider to fill pages with content
-		SourceProvider<Page> sp = new SequentialSourceProvider(doc);
-		return buildVolume(sf, sp);
+		// Fill pages with content
+		PageSource ps = PageSource.of(doc).build();
+		return buildVolume(sf, ps);
 	}
 	
 	/**
@@ -253,10 +252,10 @@ public class Codex extends AbstractImposable implements Imposable {
 	                           VirtualDocument doc) {
 		// A factory to provide instances of Signature
 		SignatureFactory sf = new SignatureFactory(sheetSize, pageSize, manipulations);
-		// Source provider to fill pages with content
-		SourceProvider<Page> sp = new SequentialSourceProvider(doc);
+		// Fill pages with content
+		PageSource ps = PageSource.of(doc).build();
 		
-		return buildVolume(sf, sp);
+		return buildVolume(sf, ps);
 	}
 	
 	/**
@@ -270,20 +269,22 @@ public class Codex extends AbstractImposable implements Imposable {
 	 * @return a new instance of {@code Volume}
 	 */
 	private Volume buildVolume(SignatureFactory signatureFactory,
-	                           SourceProvider<Page> sourceProvider) {
-		// The final volume to be returned
+	                           PageSource pageSource) {
+		/* The final volume to be returned */
 		Volume volume = new Volume();
+		/* Page source iterator */
+		Iterator<VirtualPage> sourceIterator = pageSource.iterator();
 		
 		/*
 		 * As long as there are more pages in the provider, create new
 		 * signatures and add them to the volume.
 		 */
 		int pageNumber = 1;
-		while (sourceProvider.hasNextPage()) {
-			Signature s = signatureFactory.newSignature();
-			sourceProvider.setSourceTo(s.pages());
-			pageNumber = s.numberPagesFrom(pageNumber);
-			volume.add(s);
+		while (sourceIterator.hasNext()) {
+			Signature signature = signatureFactory.newSignature();
+			PageFillers.fillSequentially(signature.pages().iterator(), sourceIterator);
+			pageNumber = signature.numberPagesFrom(pageNumber);
+			volume.add(signature);
 		}
 		return volume;
 	}

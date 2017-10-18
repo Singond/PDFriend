@@ -24,17 +24,25 @@ final class PageFillers {
 	
 	/**
 	 * Feeds input pages from the source one by one to the given blank pages.
+	 * @param pagesIterator an iterator of pages to be filled with content
+	 * @param sourceIterator the iterator of the pages to be passed to {@code pages}
+	 */
+	public static void fillSequentially(Iterator<? extends Page> pagesIterator,
+	                                    Iterator<VirtualPage> sourceIterator) {
+		while (pagesIterator.hasNext() && sourceIterator.hasNext()) {
+			Page p = pagesIterator.next();
+			p.invite(sequentialSourceSetter, sourceIterator);
+		}
+	}
+	
+	/**
+	 * Feeds input pages from the source one by one to the given blank pages.
 	 * @param pages an iterable of pages to be filled with content
-	 * @param source the pages to be fed to {@code pages}
+	 * @param source the pages to be passed to {@code pages}
 	 */
 	public static void fillSequentially(Iterable<? extends Page> pages,
 	                                    Iterable<VirtualPage> source) {
-		Iterator<VirtualPage> sourceIterator = source.iterator();
-		for (Page p : pages) {
-			if (sourceIterator.hasNext())
-				p.invite(sequentialSourceSetter, sourceIterator);
-			else break;
-		}
+		fillSequentially(pages.iterator(), source.iterator());
 	}
 
 	/**
