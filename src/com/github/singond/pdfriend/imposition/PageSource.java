@@ -124,13 +124,13 @@ class PageSource implements Iterable<VirtualPage> {
 		}
 		
 		/** Sets how many times each page should be repeated */
-		Builder withPageRepeated(int repeatPage) {
+		Builder setPageRepeated(int repeatPage) {
 			this.repeatPage = repeatPage;
 			return this;
 		}
 		
 		/** Sets how many times the whole document should be repeated */
-		Builder withDocRepeated(int repeatDoc) {
+		Builder setDocRepeated(int repeatDoc) {
 			this.repeatDoc = repeatDoc;
 			return this;
 		}
@@ -141,7 +141,7 @@ class PageSource implements Iterable<VirtualPage> {
 		 * @param from the first page to be used (inclusive)
 		 * @param to the last page to be used (exclusive)
 		 */
-		Builder withPageRange(int from, int to) {
+		Builder setPageRange(int from, int to) {
 			if (from < 0)
 				throw new IndexOutOfBoundsException(
 						"The starting page must be greater than 0, but was " + from);

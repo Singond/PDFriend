@@ -24,8 +24,8 @@ public class PageRepetition {
 		int repeatDoc = 2;
 		
 		PageSource pageSource = PageSource.of(inDoc)
-		                                  .withPageRepeated(repeatPage)
-		                                  .withDocRepeated(repeatDoc)
+		                                  .setPageRepeated(repeatPage)
+		                                  .setDocRepeated(repeatDoc)
 		                                  .build();
 		int pageNumber = 0;
 		for (VirtualPage page : pageSource) {
