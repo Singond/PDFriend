@@ -10,8 +10,6 @@ import com.github.singond.pdfriend.Util;
 import com.github.singond.pdfriend.book.GridPage;
 import com.github.singond.pdfriend.book.LoosePages;
 import com.github.singond.pdfriend.book.MultiPage;
-import com.github.singond.pdfriend.book.Page;
-import com.github.singond.pdfriend.book.SequentialSourceProvider;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.geometry.Dimensions;
@@ -220,22 +218,23 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 				builder.getOrientation(),
 				builder.getFillDirection());*/
 		
-		/*
-		 * If the number of pages is unset, calculate the number of pages
-		 * necessary to fit the whole document; otherwise use the value.
-		 */
-		if (pageCount < 0) {
-			logger.verbose("nup_gridCount", cellsPerPage);
-			pageCount = Util.ceilingDivision(doc.getLength(), cellsPerPage);
-			logger.verbose("nup_pageCountAll", pageCount);
-		} else {
-			logger.verbose("nup_pageCountPartial", pageCount);
-		}
-		
 		// Pre-processing
 		// TODO Pre-process only pages needed for pageCount
 		if (preprocess != null) {
 			doc = preprocessor.processAll();
+		}
+		
+		/*
+		 * If the number of pages is unset, calculate the number of pages
+		 * necessary to fit the whole document; otherwise use the value.
+		 */
+		PageSource pageSrc = pageSourceBuilder(common, doc).build();
+		if (pageCount < 0) {
+			logger.verbose("nup_gridCount", cellsPerPage);
+			pageCount = Util.ceilingDivision(pageSrc.size(), cellsPerPage);
+			logger.verbose("nup_pageCountAll", pageCount);
+		} else {
+			logger.verbose("nup_pageCountPartial", pageCount);
 		}
 		
 		// List of output pages
@@ -250,7 +249,7 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		// Fill the output pages
 		switch (fillMode) {
 			case FILL_PAGE:
-				Iterator<VirtualPage> srcIter = PageSource.of(doc).build().iterator();
+				Iterator<VirtualPage> srcIter = pageSrc.iterator();
 				Iterator<GridPage> pageIter = pages.iterator();
 				while (srcIter.hasNext() && pageIter.hasNext()) {
 					VirtualPage source = srcIter.next();
@@ -260,7 +259,7 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 				}
 				break;
 			case SEQUENTIAL:
-				PageFillers.fillSequentially(pages, PageSource.of(doc).build());
+				PageFillers.fillSequentially(pages, pageSrc);
 				break;
 			default:
 				break;
