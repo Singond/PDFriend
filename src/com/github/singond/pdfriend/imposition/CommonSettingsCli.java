@@ -2,6 +2,7 @@ package com.github.singond.pdfriend.imposition;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.beust.jcommander.validators.PositiveInteger;
 import com.github.singond.pdfriend.cli.ParameterConsistencyException;
 import com.github.singond.pdfriend.cli.DimensionsConverter;
 import com.github.singond.pdfriend.cli.MarginsConverter;
@@ -22,10 +23,25 @@ import com.github.singond.pdfriend.geometry.Margins;
 class CommonSettingsCli implements ParameterDelegate {
 
 	/** Number of pages in the output document */
-	@Parameter(names="--pages",
-	           description="Number of pages in the output document",
-	           descriptionKey="param-pageCount")
+	@Parameter(names = "--pages",
+	           description = "Number of pages in the output document",
+	           descriptionKey = "param-pageCount",
+	           validateWith = PositiveInteger.class)
 	private int pages = -1;
+	
+	/** How many times to repeat each page */
+	@Parameter(names = "--repeat-page",
+	           description = "How many times to repeat each page",
+	           descriptionKey = "param-repeatPage",
+	           validateWith = PositiveInteger.class)
+	private int repeatPage = 1;
+	
+	/** How many times to repeat each document */
+	@Parameter(names = "--repeat-doc",
+	           description = "How many times to repeat each document",
+	           descriptionKey = "param-repeatDoc",
+	           validateWith = PositiveInteger.class)
+	private int repeatDocument = 1;
 	
 	/**
 	 * Size of a single page of the assembled output document.
@@ -113,6 +129,8 @@ class CommonSettingsCli implements ParameterDelegate {
 		
 		CommonSettings.Builder sb = new CommonSettings.Builder();
 		sb.setPageCount(pages);
+		sb.setRepeatPage(repeatPage);
+		sb.setRepeatDocument(repeatDocument);
 		sb.setPageSize(flipFormat(pageSize, isLandscape));
 		sb.setSheetSize(flipFormat(sheetSize, isLandscape));
 		sb.setMargins(margins);
