@@ -113,6 +113,10 @@ public final class CommonSettings {
 	public int getPageCount() {
 		return pages;
 	}
+	
+	public boolean isAutoPageCount() {
+		return pages < 1;
+	}
 
 	public int getRepeatPage() {
 		return repeatPage;
@@ -142,6 +146,8 @@ public final class CommonSettings {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("pages: ").append(pages)
+				.append(", repeat page: ").append(repeatPage)
+				.append(", repeat document: ").append(repeatDocument)
 				.append(", page size: ").append(pageSize==AUTO_DIMENSIONS ? "auto" : pageSize)
 				.append(", sheet size: ").append(sheetSize==AUTO_DIMENSIONS ? "auto" : sheetSize)
 				.append(", margins: ").append(margins==AUTO_MARGINS ? "auto" : margins)
@@ -154,8 +160,8 @@ public final class CommonSettings {
 	 */
 	public static class Builder {
 		private int pages = -1;
-		private int repeatPage;
-		private int repeatDocument;
+		private int repeatPage = 1;
+		private int repeatDocument = 1;
 		private Dimensions pageSize = AUTO_DIMENSIONS;
 		private Dimensions sheetSize = AUTO_DIMENSIONS;
 		private Margins margins = AUTO_MARGINS;
