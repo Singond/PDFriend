@@ -52,12 +52,8 @@ class PageSource implements Iterable<VirtualPage> {
 		this.repeatDoc = repeatDoc;
 	}
 	
-	static Builder of(List<VirtualPage> pages) {
-		return new Builder(pages);
-	}
-	
 	static Builder of(VirtualDocument doc) {
-		return of(doc.getPages());
+		return new Builder(doc.getPages());
 	}
 
 	@Override
