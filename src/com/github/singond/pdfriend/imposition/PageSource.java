@@ -55,6 +55,15 @@ class PageSource implements Iterable<VirtualPage> {
 	static Builder of(VirtualDocument doc) {
 		return new Builder(doc.getPages());
 	}
+	
+	/**
+	 * Returns the number of pages this {@code PageSource} will provide.
+	 * @return the number of input pages multiplied by page repetitions
+	 *         and document repetitions
+	 */
+	public int size() {
+		return pages.size() * repeatPage * repeatDoc;
+	}
 
 	@Override
 	public Iterator<VirtualPage> iterator() {
