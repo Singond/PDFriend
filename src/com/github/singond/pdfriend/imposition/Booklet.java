@@ -204,6 +204,7 @@ public class Booklet extends AbstractImposable implements Imposable {
 		}
 		doc = preprocessor.processAll();
 		
+		// TODO: Fix this, sometimes shows -1
 		logger.info("booklet_constructing", pageCount);
 		
 		/*
