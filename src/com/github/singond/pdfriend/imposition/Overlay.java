@@ -35,9 +35,14 @@ public class Overlay extends AbstractImposable implements Imposable {
 	private final Preprocessor.Settings preprocess;
 	private final CommonSettings common;
 	private final LengthUnit unit = Imposition.LENGTH_UNIT;
+	/**
+	 * When a document in a layer has no more pages, repeat this document
+	 * (without affecting the total page count).
+	 */
+	private final boolean repeatInLayer;
 
 
-	private Overlay(Preprocessor.Settings preprocess, CommonSettings common) {
+	private Overlay(Preprocessor.Settings preprocess, CommonSettings common, boolean repeatInLayer) {
 		if (preprocess == null)
 			throw new IllegalArgumentException("Preprocessor settings must not be null");
 		if (common == null)
@@ -45,6 +50,7 @@ public class Overlay extends AbstractImposable implements Imposable {
 		
 		this.preprocess = preprocess.copy();
 		this.common = common;
+		this.repeatInLayer = repeatInLayer;
 	}
 	
 	
@@ -103,7 +109,7 @@ public class Overlay extends AbstractImposable implements Imposable {
 		                                       pageSize.height().in(unit),
 		                                       layerCount);
 		
-		int pageCount = resolvePageCount(common.getPageCount(), docs);
+		int pageCount = resolvePageCount(common, docs);
 		docs = preprocessDocuments(docs, preprocessor, pageCount);
 		List<LayeredPage> pages = buildPages(template, pageCount);
 		fillPages(docs, pages);
@@ -142,7 +148,7 @@ public class Overlay extends AbstractImposable implements Imposable {
 		                                       pageSize.height().in(unit),
 		                                       layerCount);
 		
-		int pageCount = resolvePageCount(common.getPageCount(), docs);
+		int pageCount = resolvePageCount(common, docs);
 		docs = preprocessDocuments(docs, preprocessor, pageCount);
 		List<LayeredPage> pages = buildPages(template, pageCount);
 		fillPages(docs, pages);
@@ -174,7 +180,7 @@ public class Overlay extends AbstractImposable implements Imposable {
 		                                       pageSize.height().in(unit),
 		                                       layerCount);
 		
-		int pageCount = resolvePageCount(common.getPageCount(), docs);
+		int pageCount = resolvePageCount(common, docs);
 		docs = preprocessDocuments(docs, preprocessor, pageCount);
 		List<LayeredPage> pages = buildPages(template, pageCount);
 		fillPages(docs, pages);
@@ -241,9 +247,11 @@ public class Overlay extends AbstractImposable implements Imposable {
 	 * @return the given page count, or the length of the longest document
 	 *         in {@code docs} if page count was not set (was negative)
 	 */
-	private int resolvePageCount(int pageCount, List<VirtualDocument> docs) {
+	private int resolvePageCount(CommonSettings common, List<VirtualDocument> docs) {
+		int pageCount = common.getPageCount();
 		if (pageCount < 0) {
 			pageCount = VirtualDocument.maxLength(docs);
+			pageCount = pageCount * common.getRepeatPage() * common.getRepeatDocument();
 			logger.verbose("overlay_pageCountAll", pageCount);
 		} else {
 			logger.verbose("overlay_pageCountPartial", pageCount);
@@ -342,7 +350,13 @@ public class Overlay extends AbstractImposable implements Imposable {
 	public static final class Builder implements ImposableBuilder<Overlay> {
 		private Preprocessor.Settings preprocess = Preprocessor.Settings.auto();
 		private CommonSettings common = CommonSettings.auto();
+		private boolean repeatInLayer = false;
 		
+		
+		public void setRepeatInLayer(boolean repeatInLayer) {
+			this.repeatInLayer = repeatInLayer;
+		}
+
 		@Override
 		public ImposableBuilder<Overlay> acceptPreprocessSettings(Settings settings) {
 			if (settings == null)
@@ -361,43 +375,45 @@ public class Overlay extends AbstractImposable implements Imposable {
 
 		@Override
 		public Overlay build() {
-			return new Overlay(preprocess, common);
+			return new Overlay(preprocess, common, repeatInLayer);
 		}
-		
 	}
 	
 	/**
 	 * Fills layered pages with content.
 	 */
-	private static class LayeredPageFiller {
+	private class LayeredPageFiller {
 		
+		/**
+		 * List of page source objects which provide the iterators for
+		 * {@link #pageIterators}
+		 * The layers are filled in the order of these objects.
+		 */
+		private final List<PageSource> pageSources;
 		/**
 		 * Queues of pages, each of which will fill one layer.
 		 * The layers are filled in the order of these queues.
 		 */
-		private final List<Iterator<VirtualPage>> sourcePages;
+		private final List<Iterator<VirtualPage>> pageIterators;
 		/** The cached number of layers */
 		private final int layers;
 		/** Stores information whether empty warning has been issued for ith layer */
 		private final boolean[] queueEmptyWarningIssued;
 		
-		/** Logger instance */
-		private static final ExtendedLogger logger = Log.logger(LayeredPageFiller.class);
-		
-		
 		LayeredPageFiller(List<VirtualDocument> documents) {
-			this.layers = documents.size();
+			// Each document is fed into one layer
+			layers = documents.size();
 			queueEmptyWarningIssued = new boolean[layers];
-			List<Iterator<VirtualPage>> srcList = new ArrayList<>(layers);
+			List<PageSource> srcList = new ArrayList<>(layers);
+			List<Iterator<VirtualPage>> iterList = new ArrayList<>(layers);
+			
 			for (VirtualDocument doc : documents) {
-				// TODO: Page and doc repeating will be handled here
-				srcList.add(PageSource.of(doc).build().iterator());
+				PageSource ps = pageSourceBuilder(common, doc).build();
+				srcList.add(ps);
+				iterList.add(ps.iterator());
 			}
-			this.sourcePages = srcList;
-		}
-
-		boolean hasNextPage() {
-			return sourcePages.stream().anyMatch(it -> it.hasNext());
+			this.pageSources = srcList;
+			this.pageIterators = iterList;
 		}
 
 		void setSourceTo(Iterable<LayeredPage> pages) {
@@ -410,16 +426,25 @@ public class Overlay extends AbstractImposable implements Imposable {
 		void setSourceTo(LayeredPage page) {
 			int layersInPage = page.numberOfLayers();
 			if (layersInPage > layers) {
-				logger.debug("layerSP_tooManyLayersInPage", layersInPage, layers);
+				logger.debug("overlay_tooManyLayersInPage", layersInPage, layers);
 			}
 			int layerNo = 0;
 			for (PageletView layer : page.getLayers()) {
 				if (layerNo < layers) {
-					Iterator<VirtualPage> pageIter = sourcePages.get(layerNo);
+					Iterator<VirtualPage> pageIter = pageIterators.get(layerNo);
 					if (pageIter.hasNext()) {
 						layer.setSource(pageIter.next());
+					} else if (repeatInLayer) {
+						// If there are no more pages, yet repeating is desired
+						// replace the iterator with a new instance
+						logger.verbose("overlay_repeating", layerNo, page);
+						Iterator<VirtualPage> newIter = pageSources.get(layerNo).iterator();
+						pageIterators.set(layerNo, newIter);
+						if (newIter.hasNext()) {
+							layer.setSource(newIter.next());
+						}
 					} else if (!queueEmptyWarningIssued[layerNo]) {
-						logger.warn("layerSP_queueEmpty", layerNo, page);
+						logger.warn("overlay_queueEmpty", layerNo, page);
 						queueEmptyWarningIssued[layerNo] = true;
 					}
 				}
