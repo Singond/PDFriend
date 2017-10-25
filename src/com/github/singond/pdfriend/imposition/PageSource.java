@@ -163,6 +163,19 @@ class PageSource implements Iterable<VirtualPage> {
 			return this;
 		}
 		
+		/**
+		 * Selects all pages to be used.
+		 * This reverses the effect of {@link #setPageRange} to the default
+		 * state of the builder.
+		 * 
+		 * @return this builder instance
+		 */
+		Builder unsetPageRange() {
+			this.startPage = -1;
+			this.endPage = -1;
+			return this;
+		}
+		
 		PageSource build() {
 			List<VirtualPage> pageList = pages;
 			
