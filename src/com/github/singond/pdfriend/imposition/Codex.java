@@ -253,7 +253,7 @@ public class Codex extends AbstractImposable implements Imposable {
 		// A factory to provide instances of Signature
 		SignatureFactory sf = new SignatureFactory(sheetSize, pageSize, manipulations);
 		// Fill pages with content
-		PageSource ps = PageSource.of(doc).build();
+		PageSource ps = pageSourceBuilder(common, doc).build();
 		
 		return buildVolume(sf, ps);
 	}
