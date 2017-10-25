@@ -13,6 +13,11 @@ class OverlayCli implements ImposableCli<Overlay.Builder> {
 
 	@Parameter(names="--overlay", description="Print pages on top of each other")
 	private boolean overlay = false;
+	
+	@Parameter(names={"--repeat-in-layer"},
+	           descriptionKey="overlay-repeatInLayer",
+	           description="When a document in a layer has no more pages, repeat this document")
+	private boolean repeatInLayer = false;
 
 	@Override
 	public void postParse() throws ParameterConsistencyException {
@@ -27,6 +32,7 @@ class OverlayCli implements ImposableCli<Overlay.Builder> {
 	@Override
 	public Overlay.Builder getImposable() {
 		Overlay.Builder builder = new Overlay.Builder();
+		builder.setRepeatInLayer(repeatInLayer);
 		return builder;
 	}
 }
