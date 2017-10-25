@@ -20,12 +20,12 @@ public abstract class AbstractImposable implements Imposable {
 	 * Returns a new builder of {@code PageSource} objects initialized to the
 	 * values inferred from common settings.
 	 * @param commonSettings
-	 * @param docs
+	 * @param doc
 	 * @return
 	 */
 	protected PageSource.Builder pageSourceBuilder(
-			CommonSettings commonSettings, VirtualDocument docs) {
-		return initPageSourceBuilder(PageSource.of(docs), commonSettings);
+			CommonSettings commonSettings, VirtualDocument doc) {
+		return initPageSourceBuilder(PageSource.of(doc), commonSettings);
 	}
 	
 	/**
