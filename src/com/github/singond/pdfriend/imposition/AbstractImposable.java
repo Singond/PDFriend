@@ -38,8 +38,8 @@ public abstract class AbstractImposable implements Imposable {
 			PageSource.Builder builder, CommonSettings commonSettings) {
 		builder.setPageRepeated(commonSettings.getRepeatPage());
 		builder.setDocRepeated(commonSettings.getRepeatDocument());
-		if (!commonSettings.isAutoPageCount())
-			builder.setPageRange(0, commonSettings.getPageCount());
+//		if (!commonSettings.isAutoPageCount())
+//			builder.setPageRange(0, commonSettings.getPageCount());
 		return builder;
 	}
 }
