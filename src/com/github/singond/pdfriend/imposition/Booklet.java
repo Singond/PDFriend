@@ -215,9 +215,10 @@ public class Booklet extends AbstractImposable implements Imposable {
 		 * of four to reflect the fact that each output sheet contains four
 		 * pages.
 		 */
+		PageSource source = pageSourceBuilder(common, doc).build();
 		if (pageCount < 1) {
 			// Page count is automatic: resolve from input document length
-			pageCount = doc.getLength();
+			pageCount = source.size();
 		}
 		// Pad to multiple of four
 		if (pageCount % 4 != 0) {
@@ -239,7 +240,6 @@ public class Booklet extends AbstractImposable implements Imposable {
 		/*
 		 * Fill the volume with content.
 		 */
-		PageSource source = PageSource.of(doc).build();
 		PageFillers.fillSequentially(volume.pages(), source);
 		
 		return volume;
