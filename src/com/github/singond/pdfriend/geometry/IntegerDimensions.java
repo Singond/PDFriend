@@ -1,7 +1,7 @@
 package com.github.singond.pdfriend.geometry;
 
 /** A pair of integer dimensions */
-public class IntegerDimensions {
+public final class IntegerDimensions {
 	private final int first;
 	private final int second;
 	
