@@ -74,4 +74,13 @@ public abstract class SpecVal<T extends Enum<T>, V> {
 			throw new UnsupportedOperationException("Cannot obtain regular value from special values");
 		}
 	}
+	
+	@Override
+	public String toString() {
+		if (special == valueConstant) {
+			return value.toString();
+		} else {
+			return special.toString();
+		}
+	}
 }
