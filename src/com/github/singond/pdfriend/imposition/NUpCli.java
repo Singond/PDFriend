@@ -5,6 +5,8 @@ import com.beust.jcommander.Parameter;
 import com.github.singond.pdfriend.cli.ParameterConsistencyException;
 import com.github.singond.pdfriend.cli.IntegerDimensionsConverter;
 import com.github.singond.pdfriend.geometry.IntegerDimensions;
+import com.github.singond.pdfriend.imposition.NUp.GridDimensions;
+import com.github.singond.pdfriend.imposition.NUp.GridType;
 
 /**
  * A command-line interface for the n-up imposable type {@link NUp}.
@@ -15,11 +17,6 @@ import com.github.singond.pdfriend.geometry.IntegerDimensions;
 class NUpCli implements ImposableCli<NUp> {
 
 	/**
-	 * FIXME Relies on the fact that IntegerDimensions is non-final.
-	 */
-	private static final IntegerDimensions AUTO = new IntegerDimensions(0, 0) {};
-	
-	/**
 	 * Use null to represent AUTO. Use this internally and do not expose
 	 * this smelly piece.
 	 * TODO It stinks anyway. Any nice way to avoid the null?
@@ -29,7 +26,7 @@ class NUpCli implements ImposableCli<NUp> {
 	@Parameter(names={"--n-up", "--nup"},
 			description="Several pages arranged into a grid on a larget sheet",
 			converter=NUpConverter.class)
-	private IntegerDimensions nup = null;
+	private GridDimensions nup = null;
 	
 	@Parameter(names={"--nup-repeat"},
 			descriptionKey="nup-copyToFill",
@@ -49,11 +46,18 @@ class NUpCli implements ImposableCli<NUp> {
 	@Override
 	public NUp getImposable() {
 		NUp task = new NUp();
-		if (nup == AUTO) {
-			task.setAutoGrid();
-		} else if (nup != null) {
-			task.setRows(nup.getFirstDimension());
-			task.setCols(nup.getSecondDimension());
+		if (nup != null) {
+			switch (nup.special()) {
+				case AUTO:
+					task.setAutoGrid();
+					break;
+				case VALUE:
+					task.setRows(nup.value().getFirstDimension());
+					task.setCols(nup.value().getSecondDimension());
+					break;
+				default:
+					throw new AssertionError(nup);
+			}
 		}
 		if (copyToFillPage) {
 			task.setFillMode(NUp.FillMode.FILL_PAGE);
@@ -61,13 +65,14 @@ class NUpCli implements ImposableCli<NUp> {
 		return task;
 	}
 	
-	private static class NUpConverter implements IStringConverter<IntegerDimensions> {
+	private static class NUpConverter implements IStringConverter<GridDimensions> {
 		@Override
-		public IntegerDimensions convert(String arg) {
+		public GridDimensions convert(String arg) {
 			if ("auto".equalsIgnoreCase(arg)) {
-				return AUTO;
+				return GridDimensions.of(GridType.AUTO);
 			} else {
-				return new IntegerDimensionsConverter().convert(arg);
+				IntegerDimensions dims = new IntegerDimensionsConverter().convert(arg);
+				return GridDimensions.of(dims);
 			}
 		}
 	}

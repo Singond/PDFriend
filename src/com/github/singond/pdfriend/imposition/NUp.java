@@ -1,11 +1,14 @@
 package com.github.singond.pdfriend.imposition;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
+import com.github.singond.pdfriend.SpecVal;
 import com.github.singond.pdfriend.Util;
 import com.github.singond.pdfriend.book.GridPage;
 import com.github.singond.pdfriend.book.LoosePages;
@@ -13,6 +16,7 @@ import com.github.singond.pdfriend.book.MultiPage;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.geometry.Dimensions;
+import com.github.singond.pdfriend.geometry.IntegerDimensions;
 import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
@@ -609,7 +613,41 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		FILL_PAGE;
 	}
 	
-	private static enum GridType {
+	/**
+	 * The number of rows and columns in the grid.
+	 */
+	static class GridDimensions extends SpecVal<GridType, IntegerDimensions> {
+
+		private static Map<GridType, GridDimensions> instanceMap = new EnumMap<>(GridType.class);
+		static {
+			for (GridType type : GridType.values()) {
+				instanceMap.put(type, new GridDimensions(type));
+			}
+		}
+		
+		private GridDimensions(GridType type) {
+			super(type);
+		}
+		
+		private GridDimensions(IntegerDimensions value) {
+			super(value);
+		}
+		
+		public static GridDimensions of(GridType type) {
+			return instanceMap.get(type);
+		}
+		
+		public static GridDimensions of(IntegerDimensions value) {
+			return new GridDimensions(value);
+		}
+
+		@Override
+		protected GridType getValueConstant() {
+			return GridType.VALUE;
+		}
+	}
+	
+	static enum GridType {
 		/** Grid is given explicitly by number of columns and rows */
 		VALUE,
 		/** Grid should be determined from other settings */

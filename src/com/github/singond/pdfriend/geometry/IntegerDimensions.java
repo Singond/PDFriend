@@ -17,4 +17,9 @@ public class IntegerDimensions {
 	public int getSecondDimension() {
 		return second;
 	}
+	
+	@Override
+	public String toString() {
+		return first + "x" + second;
+	}
 }
