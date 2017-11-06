@@ -406,7 +406,7 @@ public final class Preprocessor {
 		Resizing resize;
 		if (declaredResize == Resizing.AUTO) {
 			if (pageDimensions != AUTO) {
-				// Page dimensions are given eplicitly
+				// Page dimensions are given explicitly
 				resize = Resizing.FIT;
 			} else {
 				resize = Resizing.NONE;

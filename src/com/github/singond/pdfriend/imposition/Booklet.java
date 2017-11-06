@@ -188,8 +188,11 @@ public class Booklet extends AbstractImposable implements Imposable {
 					Length.subtract(pageSize.width(), mirroredMargins.horizontal()),
 					Length.subtract(pageSize.height(), mirroredMargins.vertical()));
 			preprocess.setCellDimensions(cellSize);
-			logger.verbose("booklet_setResizingToFit");
-			preprocess.setResizing(Resizing.FIT);
+			if (preprocess.getResizing() == Resizing.AUTO
+					&& !preprocess.isScaleGiven()) {
+				logger.verbose("booklet_setResizingToFit");
+				preprocess.setResizing(Resizing.FIT);
+			}
 		}
 		
 		/*
