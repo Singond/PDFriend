@@ -156,10 +156,10 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		 * If only sheet size is given, use it as page size.
 		 * In any case, use only the page size in the grid construction.
 		 */
-		Dimensions pageSize = common.getPageSize();
-		Dimensions sheetSize = common.getSheetSize();
-		if (sheetSize != CommonSettings.AUTO_DIMENSIONS) {
-			if (pageSize == CommonSettings.AUTO_DIMENSIONS) {
+		DimensionSettings pageSize = common.getPageSize();
+		DimensionSettings sheetSize = common.getSheetSize();
+		if (sheetSize != DimensionSettings.AUTO) {
+			if (pageSize == DimensionSettings.AUTO) {
 				logger.verbose("nup_pageSizeToSheetSize");
 				pageSize = sheetSize;
 			} else {
@@ -178,21 +178,24 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		 * a grid page builder.
 		 */
 		PageControllers pc = null; // TODO remove initial value after finishing
-		if (pageSize == CommonSettings.AUTO_DIMENSIONS) {
+		if (pageSize == DimensionSettings.AUTO) {
 			// Case A
 			pc = casePageSize(doc, pageCount, rows, cols, orientation,
 			                  direction, preprocess, common);
 		} else if (gridType == GridType.AUTO) {
 			// Case D
-			pc = caseGrid(doc, pageCount, pageSize, orientation,
+			assert pageSize.isValue();
+			pc = caseGrid(doc, pageCount, pageSize.value(), orientation,
 			              direction, preprocess, common);
 		} else if (preprocess.isAutoSize()) {
 			// Case C
-			pc = caseCellSize(doc, pageCount, rows, cols, pageSize,
+			assert pageSize.isValue();
+			pc = caseCellSize(doc, pageCount, rows, cols, pageSize.value(),
 			                  orientation, direction, preprocess, common);
 		} else if (common.getMargins() == CommonSettings.AUTO_MARGINS) {
 			// Case B
-			pc = caseMargins(doc, pageCount, rows, cols, pageSize,
+			assert pageSize.isValue();
+			pc = caseMargins(doc, pageCount, rows, cols, pageSize.value(),
 			                 orientation, direction, preprocess, common);
 		} else {
 			// All are set, a conflict
@@ -476,7 +479,7 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		
 		// Pass those to the preprocessor
 		Dimensions cell = new Dimensions(cellWidth, cellHeight, unit);
-		preprocess.setCellDimensions(cell);
+		preprocess.setCellDimensions(DimensionSettings.of(cell));
 		Preprocessor preprocessor = new Preprocessor(doc, preprocess);
 		
 		// A builder to provide the GridPages with desired settings
