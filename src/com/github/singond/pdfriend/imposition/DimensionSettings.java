@@ -14,15 +14,15 @@ import com.github.singond.pdfriend.imposition.DimensionSettings.Special;
  */
 public final class DimensionSettings extends SpecVal<Special, Dimensions> {
 	
-	public static final DimensionSettings AUTO = DimensionSettings.of(DimensionSettings.Special.AUTO);
-
-	private static Map<Special, DimensionSettings> instanceMap = new EnumMap<>(Special.class);
+	private static final Map<Special, DimensionSettings> instanceMap = new EnumMap<>(Special.class);
 	static {
 		for (Special type : Special.values()) {
 			instanceMap.put(type, new DimensionSettings(type));
 		}
 	}
 	
+	public static final DimensionSettings AUTO = DimensionSettings.of(Special.AUTO);
+
 	private DimensionSettings(Special type) {
 		super(type);
 	}
