@@ -7,7 +7,6 @@ import com.github.singond.pdfriend.cli.ParameterConsistencyException;
 import com.github.singond.pdfriend.cli.DimensionsConverter;
 import com.github.singond.pdfriend.cli.MarginsConverter;
 import com.github.singond.pdfriend.cli.ParameterDelegate;
-import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.Margins;
 
 /**
@@ -49,11 +48,11 @@ class CommonSettingsCli implements ParameterDelegate {
 	 * ie. in the case of a bound book this would be the format of one
 	 * page.
 	 */
-	@Parameter(names="--page-size",
-	           description="Size of a single page of the assembled output document",
-	           descriptionKey="param-pageSize",
-	           converter=DimensionsConverter.class)
-	private Dimensions pageSize = CommonSettings.AUTO_DIMENSIONS;
+	@Parameter(names = "--page-size",
+	           description = "Size of a single page of the assembled output document",
+	           descriptionKey = "param-pageSize",
+	           converter = DimensionsConverter.class)
+	private DimensionSettings pageSize = DimensionSettings.AUTO;
 	
 	/**
 	 * Size of the output sheet before assembling the document.
@@ -63,11 +62,11 @@ class CommonSettingsCli implements ParameterDelegate {
 	 * In the case of a bound book, this would be the format of the
 	 * printer's paper sheet upon which individual pages are imposed.
 	 */
-	@Parameter(names="--sheet-size",
-	           description="Size of a single page of the assembled output document",
-	           descriptionKey="param-pageSize",
-	           converter=DimensionsConverter.class)
-	private Dimensions sheetSize = CommonSettings.AUTO_DIMENSIONS;
+	@Parameter(names = "--sheet-size",
+	           description = "Size of a single page of the assembled output document",
+	           descriptionKey = "param-pageSize",
+	           converter = DimensionsConverter.class)
+	private DimensionSettings sheetSize = DimensionSettings.AUTO;
 	
 	/**
 	 * Interprets paper formats as landscape.
@@ -119,8 +118,8 @@ class CommonSettingsCli implements ParameterDelegate {
 	
 	public boolean isSet() {
 		return pages > 0
-				|| pageSize != CommonSettings.AUTO_DIMENSIONS
-				|| sheetSize != CommonSettings.AUTO_DIMENSIONS
+				|| pageSize != DimensionSettings.AUTO
+				|| sheetSize != DimensionSettings.AUTO
 				|| margins != CommonSettings.AUTO_MARGINS;
 	}
 	
@@ -138,13 +137,17 @@ class CommonSettingsCli implements ParameterDelegate {
 		return sb.build();
 	}
 	
-	private Dimensions flipFormat(Dimensions dims, boolean flip) {
-		if (dims == CommonSettings.AUTO_DIMENSIONS) {
+	private DimensionSettings flipFormat(DimensionSettings dims, boolean flip) {
+		if (dims == DimensionSettings.AUTO) {
 			return dims;
-		} else if (flip) {
-			return dims.changeOrientation();
+		} else if (dims.isValue()) {
+			if (flip) {
+				return DimensionSettings.of(dims.value().changeOrientation());
+			} else {
+				return dims;
+			}
 		} else {
-			return dims;
+			throw new AssertionError(dims);
 		}
 	}
 }
