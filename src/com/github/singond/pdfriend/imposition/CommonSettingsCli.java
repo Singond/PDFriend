@@ -4,7 +4,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.validators.PositiveInteger;
 import com.github.singond.pdfriend.cli.ParameterConsistencyException;
-import com.github.singond.pdfriend.cli.DimensionsConverter;
+import com.github.singond.pdfriend.cli.DimensionSettingsConverter;
 import com.github.singond.pdfriend.cli.MarginsConverter;
 import com.github.singond.pdfriend.cli.ParameterDelegate;
 import com.github.singond.pdfriend.geometry.Margins;
@@ -51,7 +51,7 @@ class CommonSettingsCli implements ParameterDelegate {
 	@Parameter(names = "--page-size",
 	           description = "Size of a single page of the assembled output document",
 	           descriptionKey = "param-pageSize",
-	           converter = DimensionsConverter.class)
+	           converter = DimensionSettingsConverter.class)
 	private DimensionSettings pageSize = DimensionSettings.AUTO;
 	
 	/**
@@ -65,7 +65,7 @@ class CommonSettingsCli implements ParameterDelegate {
 	@Parameter(names = "--sheet-size",
 	           description = "Size of a single page of the assembled output document",
 	           descriptionKey = "param-pageSize",
-	           converter = DimensionsConverter.class)
+	           converter = DimensionSettingsConverter.class)
 	private DimensionSettings sheetSize = DimensionSettings.AUTO;
 	
 	/**

@@ -3,13 +3,12 @@ package com.github.singond.pdfriend.imposition;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.github.singond.pdfriend.cli.ParameterConsistencyException;
-import com.github.singond.pdfriend.cli.DimensionsConverter;
+import com.github.singond.pdfriend.cli.DimensionSettingsConverter;
 import com.github.singond.pdfriend.cli.ParameterDelegate;
 import com.github.singond.pdfriend.cli.RotationConverter;
 import com.github.singond.pdfriend.cli.TwoNumbers;
 import com.github.singond.pdfriend.geometry.Angle;
 import com.github.singond.pdfriend.geometry.AngularUnits;
-import com.github.singond.pdfriend.geometry.Dimensions;
 
 /**
  * A command-line interface for some of the preprocessor settings.
@@ -24,7 +23,6 @@ class PreprocessorSettingsCli implements ParameterDelegate {
 	
 	private static final Angle DEFAULT_ROTATION = new Angle(0);
 	private static final TwoNumbers DEFAULT_ALIGNMENT = new TwoNumbers(0,0);
-	private static final Dimensions AUTO = Dimensions.dummy();
 
 	@Parameter(names={"-s", "--scale"},
 	           description="The scale of the content",
@@ -51,8 +49,8 @@ class PreprocessorSettingsCli implements ParameterDelegate {
 	@Parameter(names={"--size"},
 	           description="Size of the imposed pages before resizing",
 	           descriptionKey="param-inputPageSize",
-	           converter=DimensionsConverter.class)
-	private Dimensions pageSize = AUTO;
+	           converter=DimensionSettingsConverter.class)
+	private DimensionSettings pageSize = DimensionSettings.AUTO;
 	
 	@Override
 	public void postParse() throws ParameterConsistencyException {
@@ -64,7 +62,7 @@ class PreprocessorSettingsCli implements ParameterDelegate {
 		       || rotation != DEFAULT_ROTATION
 		       || resize != ResizingBehaviour.NONE
 		       || align != DEFAULT_ALIGNMENT
-		       || pageSize != AUTO;
+		       || pageSize != DimensionSettings.AUTO;
 	}
 	
 	/**
@@ -85,7 +83,7 @@ class PreprocessorSettingsCli implements ParameterDelegate {
 			settings.setHorizontalAndVerticalAlignment
 				(align.getFirst(), align.getSecond());
 		}
-		if (pageSize != AUTO) {
+		if (pageSize != DimensionSettings.AUTO) {
 			settings.setPageDimensions(pageSize);
 		}
 		return settings;
