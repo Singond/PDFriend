@@ -16,6 +16,7 @@ import com.github.singond.pdfriend.geometry.Margins;
  *
  */
 public final class CommonSettings {
+	@Deprecated
 	public static final Dimensions AUTO_DIMENSIONS = Dimensions.dummy();
 	public static final Margins AUTO_MARGINS = new Margins(null, null, null, null) {
 		@Override
@@ -58,7 +59,7 @@ public final class CommonSettings {
 	 * ie. in the case of a bound book this would be the format of one
 	 * page.
 	 */
-	private final Dimensions pageSize;
+	private final DimensionSettings pageSize;
 	
 	/**
 	 * Size of the output sheet before assembling the document.
@@ -68,7 +69,7 @@ public final class CommonSettings {
 	 * In the case of a bound book, this would be the format of the
 	 * printer's paper sheet upon which individual pages are imposed.
 	 */
-	private final Dimensions sheetSize;
+	private final DimensionSettings sheetSize;
 	
 	/**
 	 * Margins of the output page.
@@ -90,7 +91,7 @@ public final class CommonSettings {
 	 * @param mirrorMargins
 	 */
 	public CommonSettings(int pageCount, int repeatPage, int repeatDoc,
-	                      Dimensions pageSize, Dimensions sheetSize,
+	                      DimensionSettings pageSize, DimensionSettings sheetSize,
 	                      Margins margins, boolean mirrorMargins) {
 		this.pages = pageCount;
 		this.repeatPage = repeatPage;
@@ -106,8 +107,8 @@ public final class CommonSettings {
 	 * @return a new {@code CommonSettings} object
 	 */
 	public static CommonSettings auto() {
-		return new CommonSettings(-1, 1, 1, AUTO_DIMENSIONS, AUTO_DIMENSIONS,
-		                          AUTO_MARGINS, true);
+		return new CommonSettings(-1, 1, 1, DimensionSettings.AUTO,
+				DimensionSettings.AUTO, AUTO_MARGINS, true);
 	}
 
 	public int getPageCount() {
@@ -126,11 +127,11 @@ public final class CommonSettings {
 		return repeatDocument;
 	}
 
-	public Dimensions getPageSize() {
+	public DimensionSettings getPageSize() {
 		return pageSize;
 	}
 
-	public Dimensions getSheetSize() {
+	public DimensionSettings getSheetSize() {
 		return sheetSize;
 	}
 
@@ -148,8 +149,8 @@ public final class CommonSettings {
 		builder.append("pages: ").append(pages)
 				.append(", repeat page: ").append(repeatPage)
 				.append(", repeat document: ").append(repeatDocument)
-				.append(", page size: ").append(pageSize==AUTO_DIMENSIONS ? "auto" : pageSize)
-				.append(", sheet size: ").append(sheetSize==AUTO_DIMENSIONS ? "auto" : sheetSize)
+				.append(", page size: ").append(pageSize)
+				.append(", sheet size: ").append(sheetSize)
 				.append(", margins: ").append(margins==AUTO_MARGINS ? "auto" : margins)
 				.append(", margins mirrored: ").append(mirrorMargins);
 		return builder.toString();
@@ -162,8 +163,8 @@ public final class CommonSettings {
 		private int pages = -1;
 		private int repeatPage = 1;
 		private int repeatDocument = 1;
-		private Dimensions pageSize = AUTO_DIMENSIONS;
-		private Dimensions sheetSize = AUTO_DIMENSIONS;
+		private DimensionSettings pageSize = DimensionSettings.AUTO;
+		private DimensionSettings sheetSize = DimensionSettings.AUTO;
 		private Margins margins = AUTO_MARGINS;
 		private boolean mirrorMargins = true;
 		
@@ -185,16 +186,16 @@ public final class CommonSettings {
 		public void setRepeatDocument(int repeatDocument) {
 			this.repeatDocument = repeatDocument;
 		}
-		public Dimensions getPageSize() {
+		public DimensionSettings getPageSize() {
 			return pageSize;
 		}
-		public void setPageSize(Dimensions pageSize) {
+		public void setPageSize(DimensionSettings pageSize) {
 			this.pageSize = pageSize;
 		}
-		public Dimensions getSheetSize() {
+		public DimensionSettings getSheetSize() {
 			return sheetSize;
 		}
-		public void setSheetSize(Dimensions sheetSize) {
+		public void setSheetSize(DimensionSettings sheetSize) {
 			this.sheetSize = sheetSize;
 		}
 		public Margins getMargins() {
