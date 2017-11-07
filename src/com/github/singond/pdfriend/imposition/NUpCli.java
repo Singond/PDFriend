@@ -16,13 +16,6 @@ import com.github.singond.pdfriend.imposition.NUp.GridType;
  */
 class NUpCli implements ImposableCli<NUp> {
 
-	/**
-	 * Use null to represent AUTO. Use this internally and do not expose
-	 * this smelly piece.
-	 * TODO It stinks anyway. Any nice way to avoid the null?
-	 * Maybe just store the string and parse it manually when constructing
-	 * the output object in {@link #getImposable()}.
-	 */
 	@Parameter(names={"--n-up", "--nup"},
 			description="Several pages arranged into a grid on a larget sheet",
 			converter=NUpConverter.class)
