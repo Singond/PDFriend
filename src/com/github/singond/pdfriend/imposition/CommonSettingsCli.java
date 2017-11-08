@@ -4,9 +4,10 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.validators.PositiveInteger;
 import com.github.singond.pdfriend.cli.ParameterConsistencyException;
-import com.github.singond.pdfriend.cli.DimensionSettingsConverter;
+import com.github.singond.pdfriend.cli.DimensionsConverter;
 import com.github.singond.pdfriend.cli.MarginsConverter;
 import com.github.singond.pdfriend.cli.ParameterDelegate;
+import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.Margins;
 import com.github.singond.pdfriend.imposition.CommonSettings.MarginSettings;
 
@@ -43,7 +44,6 @@ class CommonSettingsCli implements ParameterDelegate {
 	           validateWith = PositiveInteger.class)
 	private int repeatDocument = 1;
 	
-	// TODO: Do not expose DimensionSettings?
 	/**
 	 * Size of a single page of the assembled output document.
 	 * This is the dimensions of the document page in its final form,
@@ -53,8 +53,8 @@ class CommonSettingsCli implements ParameterDelegate {
 	@Parameter(names = "--page-size",
 	           description = "Size of a single page of the assembled output document",
 	           descriptionKey = "param-pageSize",
-	           converter = DimensionSettingsConverter.class)
-	private DimensionSettings pageSize = DimensionSettings.AUTO;
+	           converter = DimensionsConverter.class)
+	private Dimensions pageSize = null;
 	
 	/**
 	 * Size of the output sheet before assembling the document.
@@ -67,8 +67,8 @@ class CommonSettingsCli implements ParameterDelegate {
 	@Parameter(names = "--sheet-size",
 	           description = "Size of a single page of the assembled output document",
 	           descriptionKey = "param-pageSize",
-	           converter = DimensionSettingsConverter.class)
-	private DimensionSettings sheetSize = DimensionSettings.AUTO;
+	           converter = DimensionsConverter.class)
+	private Dimensions sheetSize = null;
 	
 	/**
 	 * Interprets paper formats as landscape.
@@ -120,8 +120,8 @@ class CommonSettingsCli implements ParameterDelegate {
 	
 	public boolean isSet() {
 		return pages > 0
-				|| pageSize != DimensionSettings.AUTO
-				|| sheetSize != DimensionSettings.AUTO
+				|| pageSize != null
+				|| sheetSize != null
 				|| margins != null;
 	}
 	
@@ -132,24 +132,26 @@ class CommonSettingsCli implements ParameterDelegate {
 		sb.setPageCount(pages);
 		sb.setRepeatPage(repeatPage);
 		sb.setRepeatDocument(repeatDocument);
-		sb.setPageSize(flipFormat(pageSize, isLandscape));
-		sb.setSheetSize(flipFormat(sheetSize, isLandscape));
+		sb.setPageSize(dimSettings(flipFormat(pageSize, isLandscape)));
+		sb.setSheetSize(dimSettings(flipFormat(sheetSize, isLandscape)));
 		sb.setMargins(margins == null ? MarginSettings.AUTO : MarginSettings.of(margins));
 		sb.setMirrorMargins(marginsMirrored);
 		return sb.build();
 	}
 	
-	private DimensionSettings flipFormat(DimensionSettings dims, boolean flip) {
-		if (dims == DimensionSettings.AUTO) {
-			return dims;
-		} else if (dims.isValue()) {
-			if (flip) {
-				return DimensionSettings.of(dims.value().changeOrientation());
-			} else {
-				return dims;
-			}
+	private Dimensions flipFormat(Dimensions dims, boolean flip) {
+		if (flip) {
+			return dims.changeOrientation();
 		} else {
-			throw new AssertionError(dims);
+			return dims;
+		}
+	}
+	
+	private DimensionSettings dimSettings(Dimensions dims) {
+		if (dims == null) {
+			return DimensionSettings.AUTO;
+		} else {
+			return DimensionSettings.of(dims);
 		}
 	}
 }
