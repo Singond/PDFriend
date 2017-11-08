@@ -17,7 +17,9 @@ import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
+import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.geometry.Margins;
+import com.github.singond.pdfriend.imposition.CommonSettings.MarginSettings;
 import com.github.singond.pdfriend.imposition.Preprocessor.Resizing;
 import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
 import com.github.singond.geometry.plane.Line;
@@ -84,8 +86,10 @@ public class Booklet extends AbstractImposable implements Imposable {
 		/*
 		 * Resolve the margins into a valid value.
 		 */
-		Margins margins = common.getMargins();
-		if (margins == CommonSettings.AUTO_MARGINS) {
+		Margins margins;
+		if (common.getMargins().isValue()) {
+			margins = common.getMargins().value();
+		} else {
 			margins = Margins.NONE;
 		}
 		

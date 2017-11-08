@@ -21,6 +21,7 @@ import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.geometry.Margins;
+import com.github.singond.pdfriend.imposition.CommonSettings.MarginSettings;
 import com.github.singond.pdfriend.imposition.Preprocessor.Resizing;
 import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
 
@@ -192,7 +193,7 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 			assert pageSize.isValue();
 			pc = caseCellSize(doc, pageCount, rows, cols, pageSize.value(),
 			                  orientation, direction, preprocess, common);
-		} else if (common.getMargins() == CommonSettings.AUTO_MARGINS) {
+		} else if (common.getMargins() == MarginSettings.AUTO) {
 			// Case B
 			assert pageSize.isValue();
 			pc = caseMargins(doc, pageCount, rows, cols, pageSize.value(),
@@ -285,10 +286,18 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		final LengthUnit unit = Imposition.LENGTH_UNIT;
 		
 		// Resolve margins
-		Margins margins = common.getMargins();
-		if (margins == CommonSettings.AUTO_MARGINS) {
-			margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
-			logger.verbose("nup_marginsResolveAuto", margins);
+		MarginSettings marginSettings = common.getMargins();
+		Margins margins;
+		switch (marginSettings.special()) {
+			case AUTO:
+				margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
+				logger.verbose("nup_marginsResolveAuto", margins);
+				break;
+			case VALUE:
+				margins = marginSettings.value();
+				break;
+			default:
+				throw new AssertionError(marginSettings);
 		}
 		
 		// Determine grid cell dimensions
@@ -338,11 +347,20 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		double cellWidth = cell.width().in(unit);
 		double cellHeight = cell.height().in(unit);
 		
-		// Margins
-		Margins margins = common.getMargins();
-		if (margins == CommonSettings.AUTO_MARGINS) {
-			margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
-			logger.verbose("nup_marginsResolveAuto", margins);
+		
+		// Resolve margins
+		MarginSettings marginSettings = common.getMargins();
+		Margins margins;
+		switch (marginSettings.special()) {
+			case AUTO:
+				margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
+				logger.verbose("nup_marginsResolveAuto", margins);
+				break;
+			case VALUE:
+				margins = marginSettings.value();
+				break;
+			default:
+				throw new AssertionError(marginSettings);
 		}
 		
 		double contentWidth = pageWidth - margins.left().in(unit)
@@ -455,10 +473,18 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		double pageHeight = pageSize.height().in(unit);
 		
 		// Resolve margins
-		Margins margins = common.getMargins();
-		if (margins == CommonSettings.AUTO_MARGINS) {
-			margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
-			logger.verbose("nup_marginsResolveAuto", margins);
+		MarginSettings marginSettings = common.getMargins();
+		Margins margins;
+		switch (marginSettings.special()) {
+			case AUTO:
+				margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
+				logger.verbose("nup_marginsResolveAuto", margins);
+				break;
+			case VALUE:
+				margins = marginSettings.value();
+				break;
+			default:
+				throw new AssertionError(marginSettings);
 		}
 		
 		// Grid cell dimensions

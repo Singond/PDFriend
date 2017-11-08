@@ -8,6 +8,7 @@ import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.geometry.PaperFormat;
 import com.github.singond.pdfriend.imposition.DimensionSettings;
 
+// TODO: Move this to the same package as DimensionSettings to hide it
 public class DimensionSettingsConverter implements IStringConverter<DimensionSettings> {
 	
 	/** Default length unit to be used if none is found in the parsed string */

@@ -8,6 +8,7 @@ import com.github.singond.pdfriend.cli.DimensionSettingsConverter;
 import com.github.singond.pdfriend.cli.MarginsConverter;
 import com.github.singond.pdfriend.cli.ParameterDelegate;
 import com.github.singond.pdfriend.geometry.Margins;
+import com.github.singond.pdfriend.imposition.CommonSettings.MarginSettings;
 
 /**
  * A command-line interface for {@link CommonSettings}.
@@ -42,6 +43,7 @@ class CommonSettingsCli implements ParameterDelegate {
 	           validateWith = PositiveInteger.class)
 	private int repeatDocument = 1;
 	
+	// TODO: Do not expose DimensionSettings?
 	/**
 	 * Size of a single page of the assembled output document.
 	 * This is the dimensions of the document page in its final form,
@@ -100,7 +102,7 @@ class CommonSettingsCli implements ParameterDelegate {
 	           description="Margins of the output page",
 	           descriptionKey="param-margins",
 	           converter=MarginsConverter.class)
-	private Margins margins = CommonSettings.AUTO_MARGINS;
+	private Margins margins = null;
 	
 	@Parameter(names="--mirror-margins",
 	           arity=1,
@@ -120,7 +122,7 @@ class CommonSettingsCli implements ParameterDelegate {
 		return pages > 0
 				|| pageSize != DimensionSettings.AUTO
 				|| sheetSize != DimensionSettings.AUTO
-				|| margins != CommonSettings.AUTO_MARGINS;
+				|| margins != null;
 	}
 	
 	public CommonSettings getCommonSettings() {
@@ -132,7 +134,7 @@ class CommonSettingsCli implements ParameterDelegate {
 		sb.setRepeatDocument(repeatDocument);
 		sb.setPageSize(flipFormat(pageSize, isLandscape));
 		sb.setSheetSize(flipFormat(sheetSize, isLandscape));
-		sb.setMargins(margins);
+		sb.setMargins(margins == null ? MarginSettings.AUTO : MarginSettings.of(margins));
 		sb.setMirrorMargins(marginsMirrored);
 		return sb.build();
 	}

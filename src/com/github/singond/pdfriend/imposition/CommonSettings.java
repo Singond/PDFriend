@@ -1,5 +1,9 @@
 package com.github.singond.pdfriend.imposition;
 
+import java.util.EnumMap;
+import java.util.Map;
+
+import com.github.singond.pdfriend.SpecVal;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.Margins;
 
@@ -9,8 +13,6 @@ import com.github.singond.pdfriend.geometry.Margins;
  * of which can vary slightly depending on the type of imposition.
  * <p>
  * Instances of this class are immutable.
- * NOTE: The immutability is not guaranteed if {@code Margins} is subclassed.
- * TODO: Make {@code Margins} final?
  *
  * @author Singon
  *
@@ -18,10 +20,11 @@ import com.github.singond.pdfriend.geometry.Margins;
 public final class CommonSettings {
 	@Deprecated
 	public static final Dimensions AUTO_DIMENSIONS = Dimensions.dummy();
-	public static final Margins AUTO_MARGINS = new Margins(null, null, null, null) {
-		@Override
-		public String toString() {return "AUTO";}
-	};
+//	@Deprecated
+//	public static final Margins AUTO_MARGINS = new Margins(null, null, null, null) {
+//		@Override
+//		public String toString() {return "AUTO";}
+//	};
 
 	/**
 	 * Number of pages in the output document.
@@ -74,7 +77,7 @@ public final class CommonSettings {
 	/**
 	 * Margins of the output page.
 	 */
-	private final Margins margins;
+	private final MarginSettings margins;
 	
 	
 	/**
@@ -92,7 +95,7 @@ public final class CommonSettings {
 	 */
 	public CommonSettings(int pageCount, int repeatPage, int repeatDoc,
 	                      DimensionSettings pageSize, DimensionSettings sheetSize,
-	                      Margins margins, boolean mirrorMargins) {
+	                      MarginSettings margins, boolean mirrorMargins) {
 		this.pages = pageCount;
 		this.repeatPage = repeatPage;
 		this.repeatDocument = repeatDoc;
@@ -108,7 +111,7 @@ public final class CommonSettings {
 	 */
 	public static CommonSettings auto() {
 		return new CommonSettings(-1, 1, 1, DimensionSettings.AUTO,
-				DimensionSettings.AUTO, AUTO_MARGINS, true);
+				DimensionSettings.AUTO, MarginSettings.AUTO, true);
 	}
 
 	public int getPageCount() {
@@ -135,7 +138,7 @@ public final class CommonSettings {
 		return sheetSize;
 	}
 
-	public Margins getMargins() {
+	public MarginSettings getMargins() {
 		return margins;
 	}
 
@@ -151,7 +154,7 @@ public final class CommonSettings {
 				.append(", repeat document: ").append(repeatDocument)
 				.append(", page size: ").append(pageSize)
 				.append(", sheet size: ").append(sheetSize)
-				.append(", margins: ").append(margins==AUTO_MARGINS ? "auto" : margins)
+				.append(", margins: ").append(margins)
 				.append(", margins mirrored: ").append(mirrorMargins);
 		return builder.toString();
 	}
@@ -165,7 +168,7 @@ public final class CommonSettings {
 		private int repeatDocument = 1;
 		private DimensionSettings pageSize = DimensionSettings.AUTO;
 		private DimensionSettings sheetSize = DimensionSettings.AUTO;
-		private Margins margins = AUTO_MARGINS;
+		private MarginSettings margins = MarginSettings.AUTO;
 		private boolean mirrorMargins = true;
 		
 		public int getPageCount() {
@@ -198,10 +201,10 @@ public final class CommonSettings {
 		public void setSheetSize(DimensionSettings sheetSize) {
 			this.sheetSize = sheetSize;
 		}
-		public Margins getMargins() {
+		public MarginSettings getMargins() {
 			return margins;
 		}
-		public void setMargins(Margins margins) {
+		public void setMargins(MarginSettings margins) {
 			this.margins = margins;
 		}
 		public boolean isMirrorMargins() {
@@ -214,5 +217,49 @@ public final class CommonSettings {
 			return new CommonSettings(pages, repeatPage, repeatDocument,
 					pageSize, sheetSize, margins, mirrorMargins);
 		}
+	}
+	
+	/**
+	 * The number of rows and columns in the grid.
+	 */
+	static class MarginSettings extends SpecVal<MarginType, Margins> {
+
+		private static Map<MarginType, MarginSettings> instanceMap = new EnumMap<>(MarginType.class);
+		static {
+			for (MarginType type : MarginType.values()) {
+				instanceMap.put(type, new MarginSettings(type));
+			}
+		}
+		
+		public static final MarginSettings AUTO = MarginSettings.of(MarginType.AUTO);
+		public static final MarginSettings VALUE = MarginSettings.of(MarginType.VALUE);
+		
+		private MarginSettings(MarginType type) {
+			super(type);
+		}
+		
+		private MarginSettings(Margins value) {
+			super(value);
+		}
+		
+		public static MarginSettings of(MarginType type) {
+			return instanceMap.get(type);
+		}
+		
+		public static MarginSettings of(Margins value) {
+			return new MarginSettings(value);
+		}
+
+		@Override
+		protected MarginType getValueConstant() {
+			return MarginType.VALUE;
+		}
+	}
+	
+	static enum MarginType {
+		/** Margins are automatic */
+		AUTO,
+		/** Explicit value of margins */
+		VALUE;
 	}
 }

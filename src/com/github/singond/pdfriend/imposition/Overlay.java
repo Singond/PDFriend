@@ -18,6 +18,7 @@ import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.geometry.Margins;
+import com.github.singond.pdfriend.imposition.CommonSettings.MarginSettings;
 import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
 
 /**
@@ -73,7 +74,7 @@ public class Overlay extends AbstractImposable implements Imposable {
 		} else if (preprocess.isAutoSize()) {
 			// Case C
 			return caseContentSize(docs);
-		} else if (common.getMargins() == CommonSettings.AUTO_MARGINS) {
+		} else if (common.getMargins() == MarginSettings.AUTO) {
 			// Case B
 			return caseMargins(docs);
 		} else {
@@ -194,13 +195,15 @@ public class Overlay extends AbstractImposable implements Imposable {
 	 * @return the argument, if it is a valid value, and the default value
 	 *         of (0, 0, 0, 0) otherwise
 	 */
-	private Margins resolveAutoMargins(Margins margins) {
-		// Resolve automatic margins
-		if (margins == CommonSettings.AUTO_MARGINS) {
-			margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
-			logger.verbose("overlay_marginsResolveAuto", margins);
+	private Margins resolveAutoMargins(MarginSettings margins) {
+		if (margins.isValue()) {
+			return margins.value();
+		} else {
+			// Resolve automatic margins
+			Margins m = new Margins(0, 0, 0, 0, LengthUnits.METRE);
+			logger.verbose("overlay_marginsResolveAuto", m);
+			return m;
 		}
-		return margins;
 	}
 
 	/**
