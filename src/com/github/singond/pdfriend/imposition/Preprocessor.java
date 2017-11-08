@@ -664,6 +664,19 @@ public final class Preprocessor {
 		public DimensionSettings getPageDimensions() {
 			return pageDimensions;
 		}
+		
+		/**
+		 * Sets the dimensions of every page.
+		 * This overrides the preferred dimensions which would otherwise be
+		 * calculated from the initial dimensions, scale and cell dimensions.
+		 * This variant accepts {@code DimensionSettings} object directly.
+		 * @param dimensions the required cell dimensions
+		 */
+		void setPageDimensions(DimensionSettings dimensions) {
+			if (dimensions == null)
+				throw new IllegalArgumentException("Page dimensions cannot be null");
+			this.pageDimensions = dimensions;
+		}
 
 		/**
 		 * Sets the dimensions of every page.
@@ -671,10 +684,10 @@ public final class Preprocessor {
 		 * calculated from the initial dimensions, scale and cell dimensions.
 		 * @param dimensions the required cell dimensions
 		 */
-		public void setPageDimensions(DimensionSettings dimensions) {
+		public void setPageDimensions(Dimensions dimensions) {
 			if (dimensions == null)
 				throw new IllegalArgumentException("Page dimensions cannot be null");
-			this.pageDimensions = dimensions;
+			this.pageDimensions = DimensionSettings.of(dimensions);
 		}
 	
 		public double getRotation() {
@@ -731,12 +744,26 @@ public final class Preprocessor {
 		 * This overrides the preferred dimensions which would otherwise be
 		 * calculated from either the initial page dimensions and scale,
 		 * or the required page dimensions.
+		 * This variant accepts {@code DimensionSettings} object directly.
 		 * @param dimensions the required cell dimensions
 		 */
-		public void setCellDimensions(DimensionSettings dimensions) {
+		void setCellDimensions(DimensionSettings dimensions) {
 			if (dimensions == null)
 				throw new IllegalArgumentException("Cell dimensions cannot be null");
 			this.cellDimensions = dimensions;
+		}
+		
+		/**
+		 * Sets the dimensions of the circumscribed rectangle (the cell).
+		 * This overrides the preferred dimensions which would otherwise be
+		 * calculated from either the initial page dimensions and scale,
+		 * or the required page dimensions.
+		 * @param dimensions the required cell dimensions
+		 */
+		public void setCellDimensions(Dimensions dimensions) {
+			if (dimensions == null)
+				throw new IllegalArgumentException("Cell dimensions cannot be null");
+			this.cellDimensions = DimensionSettings.of(dimensions);
 		}
 		
 		/**
