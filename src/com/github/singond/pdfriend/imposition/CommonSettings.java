@@ -4,7 +4,6 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import com.github.singond.pdfriend.SpecVal;
-import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.Margins;
 
 /**
@@ -18,13 +17,6 @@ import com.github.singond.pdfriend.geometry.Margins;
  *
  */
 public final class CommonSettings {
-	@Deprecated
-	public static final Dimensions AUTO_DIMENSIONS = Dimensions.dummy();
-//	@Deprecated
-//	public static final Margins AUTO_MARGINS = new Margins(null, null, null, null) {
-//		@Override
-//		public String toString() {return "AUTO";}
-//	};
 
 	/**
 	 * Number of pages in the output document.
