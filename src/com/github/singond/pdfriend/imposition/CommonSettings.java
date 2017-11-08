@@ -224,7 +224,7 @@ public final class CommonSettings {
 	 */
 	static class MarginSettings extends SpecVal<MarginType, Margins> {
 
-		private static Map<MarginType, MarginSettings> instanceMap = new EnumMap<>(MarginType.class);
+		private static final Map<MarginType, MarginSettings> instanceMap = new EnumMap<>(MarginType.class);
 		static {
 			for (MarginType type : MarginType.values()) {
 				instanceMap.put(type, new MarginSettings(type));

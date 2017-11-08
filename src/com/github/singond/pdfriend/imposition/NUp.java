@@ -647,7 +647,7 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 	 */
 	static class GridDimensions extends SpecVal<GridType, IntegerDimensions> {
 
-		private static Map<GridType, GridDimensions> instanceMap = new EnumMap<>(GridType.class);
+		private static final Map<GridType, GridDimensions> instanceMap = new EnumMap<>(GridType.class);
 		static {
 			for (GridType type : GridType.values()) {
 				instanceMap.put(type, new GridDimensions(type));
