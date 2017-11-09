@@ -75,9 +75,8 @@ public final class Preprocessor {
 	private final Map<Dimensions, AffineTransform> positionsCache;
 	/**
 	 * The working length unit.
-	 * TODO: Substitute all occurences of Imposition.LENGTH_UNIT by this field
 	 */
-	private final LengthUnit unit = Imposition.LENGTH_UNIT;
+	private static final LengthUnit UNIT = Imposition.LENGTH_UNIT;
 	
 	/** Logger instance */
 	private static ExtendedLogger logger = Log.logger(Preprocessor.class);
@@ -169,19 +168,19 @@ public final class Preprocessor {
 				// to a page of these dimensions rotated by {@code settings.rotation}
 				logger.verbose("preprocess_cellSize_fromPageDimensions", pageDimensions, rotation);
 				halfHorizontalExtent = Rectangles.getHalfHorizontalExtent(
-						pageDimensions.width().in(Imposition.LENGTH_UNIT),
-						pageDimensions.height().in(Imposition.LENGTH_UNIT),
+						pageDimensions.width().in(UNIT),
+						pageDimensions.height().in(UNIT),
 						rotation);
 				halfVerticalExtent = Rectangles.getHalfVerticalExtent(
-						pageDimensions.width().in(Imposition.LENGTH_UNIT),
-						pageDimensions.height().in(Imposition.LENGTH_UNIT),
+						pageDimensions.width().in(UNIT),
+						pageDimensions.height().in(UNIT),
 						rotation);
 			}
 			
 			Length contentWidth = new Length(2 * halfHorizontalExtent,
-			                                 Imposition.LENGTH_UNIT);
+			                                 UNIT);
 			Length contentHeight = new Length(2 * halfVerticalExtent,
-			                                  Imposition.LENGTH_UNIT);
+			                                  UNIT);
 			Margins m = settings.cellMargins;
 			content = new Dimensions(contentWidth, contentHeight);
 			cell = new Dimensions(Length.sum(contentWidth, m.left(), m.right()),
@@ -234,7 +233,7 @@ public final class Preprocessor {
 	 */
 	public VirtualPage process(VirtualPage page) {
 		Dimensions pageDims = new Dimensions
-				(page.getWidth(), page.getHeight(), Imposition.LENGTH_UNIT);
+				(page.getWidth(), page.getHeight(), UNIT);
 		AffineTransform position = getResolvedPositionInCell(pageDims);
 		Contents contents = page.getContents();
 		contents.transform(position);
@@ -243,8 +242,8 @@ public final class Preprocessor {
 
 		VirtualPage.Builder result = new VirtualPage.Builder();
 		Dimensions d = getResolvedCellDimensions();
-		result.setWidth(d.width().in(Imposition.LENGTH_UNIT));
-		result.setHeight(d.height().in(Imposition.LENGTH_UNIT));
+		result.setWidth(d.width().in(UNIT));
+		result.setHeight(d.height().in(UNIT));
 		result.addContent(contents);
 		return result.build();
 	}
@@ -316,7 +315,7 @@ public final class Preprocessor {
 		Margins margins = settings.cellMargins;
 		/** Translation needed to induce the margins */
 		AffineTransform shift = AffineTransform.getTranslateInstance(
-				margins.left().in(unit), margins.bottom().in(unit));
+				margins.left().in(UNIT), margins.bottom().in(UNIT));
 		position.preConcatenate(shift);
 		return position;
 	}
@@ -337,7 +336,6 @@ public final class Preprocessor {
 		final DimensionSettings pageDimensions = settings.pageDimensions;
 		final Resizing declaredResize = settings.resizing;
 		final List<Alignment> align = settings.alignment;
-		final LengthUnit unit = Imposition.LENGTH_UNIT;
 		
 		if (logger.isDebugEnabled())
 			logger.debug("preprocess_pageSize_cell", orig, cellContent);
@@ -349,7 +347,7 @@ public final class Preprocessor {
 		 * constraints which will be specified now.
 		 */
 		final RectangleFrame frame = new RectangleFrame
-				(cellContent.width().in(unit), cellContent.height().in(unit));
+				(cellContent.width().in(UNIT), cellContent.height().in(UNIT));
 		
 		/*
 		 * The easiest constraint to resolve is the rotation, because it
@@ -519,7 +517,7 @@ public final class Preprocessor {
 		
 		// Now let RectangleFrame do its job
 		AffineTransform result = frame.positionRectangle
-				(pageBox.width().in(unit), pageBox.height().in(unit));
+				(pageBox.width().in(UNIT), pageBox.height().in(UNIT));
 		
 		/*
 		 * If the page box does not coincide with the page border,
@@ -528,9 +526,9 @@ public final class Preprocessor {
 		 */
 		if (pageBoxOffset) {
 			double horizontalShift =
-					(pageBox.width().in(unit) - orig.width().in(unit)) / 2;
+					(pageBox.width().in(UNIT) - orig.width().in(UNIT)) / 2;
 			double verticalShift =
-					(pageBox.height().in(unit) - orig.height().in(unit)) / 2;
+					(pageBox.height().in(UNIT) - orig.height().in(UNIT)) / 2;
 			result.concatenate(AffineTransform.getTranslateInstance
 					(horizontalShift, verticalShift));
 		}
