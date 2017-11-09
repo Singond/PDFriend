@@ -3,12 +3,13 @@ package com.github.singond.pdfriend.imposition;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.github.singond.pdfriend.cli.ParameterConsistencyException;
-import com.github.singond.pdfriend.cli.DimensionSettingsConverter;
+import com.github.singond.pdfriend.cli.DimensionsConverter;
 import com.github.singond.pdfriend.cli.ParameterDelegate;
 import com.github.singond.pdfriend.cli.RotationConverter;
 import com.github.singond.pdfriend.cli.TwoNumbers;
 import com.github.singond.pdfriend.geometry.Angle;
 import com.github.singond.pdfriend.geometry.AngularUnits;
+import com.github.singond.pdfriend.geometry.Dimensions;
 
 /**
  * A command-line interface for some of the preprocessor settings.
@@ -49,8 +50,8 @@ class PreprocessorSettingsCli implements ParameterDelegate {
 	@Parameter(names={"--size"},
 	           description="Size of the imposed pages before resizing",
 	           descriptionKey="param-inputPageSize",
-	           converter=DimensionSettingsConverter.class)
-	private DimensionSettings pageSize = DimensionSettings.AUTO;
+	           converter=DimensionsConverter.class)
+	private Dimensions pageSize = null;
 	
 	@Override
 	public void postParse() throws ParameterConsistencyException {
@@ -62,7 +63,7 @@ class PreprocessorSettingsCli implements ParameterDelegate {
 		       || rotation != DEFAULT_ROTATION
 		       || resize != ResizingBehaviour.NONE
 		       || align != DEFAULT_ALIGNMENT
-		       || pageSize != DimensionSettings.AUTO;
+		       || pageSize != null;
 	}
 	
 	/**
@@ -83,7 +84,7 @@ class PreprocessorSettingsCli implements ParameterDelegate {
 			settings.setHorizontalAndVerticalAlignment
 				(align.getFirst(), align.getSecond());
 		}
-		if (pageSize != DimensionSettings.AUTO) {
+		if (pageSize != null) {
 			settings.setPageDimensions(pageSize);
 		}
 		return settings;
