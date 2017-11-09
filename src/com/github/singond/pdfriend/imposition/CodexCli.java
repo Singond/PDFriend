@@ -82,12 +82,6 @@ class CodexCli implements ImposableCli<Codex.Builder> {
 	}
 	
 	private static abstract class ManipulationProxy {
-		/** The code identifying this manipulation in the command line */
-		/*private final String code;
-		
-		ManipulationProxy(String code) {
-			this.code = code;
-		}*/
 		
 		/** Applies the manipulation to the given codex builder object. */
 		abstract void applyTo(Codex.Builder codex);
