@@ -17,10 +17,7 @@ public class RenderPDF {
 
 	public static void main(String[] args) {
 
-		try {
-			/* Source */
-			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
-			
+		try (PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"))) {
 			/* Virtual Document */
 			VirtualDocument.Builder doc = new VirtualDocument.Builder();
 			VirtualPage.Builder pg1 = new VirtualPage.Builder();

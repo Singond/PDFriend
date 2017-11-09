@@ -39,9 +39,8 @@ public class ImposeSheet {
 		sheet.addLeaf(leaf);
 		sheet.addLeaf(leaf2);
 		
-		try {
+		try (PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));) {
 			// Get content
-			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
 			VirtualPage one = new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 0)));
 			VirtualPage two = new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 1)));
 			VirtualPage three = new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 2)));
