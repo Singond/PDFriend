@@ -52,7 +52,7 @@ public class PDFParser implements Parser {
 				pageWidth = box.getHeight();
 				pageHeight = box.getWidth();
 			} else {
-				throw new AssertionError("PDF Page rotation is not a multiple of 90: "
+				throw new RuntimeException("PDF Page rotation is not a multiple of 90: "
 						+ sourcePage.getRotation());
 			}
 			page.setWidth(pageWidth);
