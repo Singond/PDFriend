@@ -1,11 +1,14 @@
 package com.github.singond.pdfriend.imposition;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
+import com.github.singond.pdfriend.SpecVal;
 import com.github.singond.pdfriend.Util;
 import com.github.singond.pdfriend.book.GridPage;
 import com.github.singond.pdfriend.book.LoosePages;
@@ -13,10 +16,12 @@ import com.github.singond.pdfriend.book.MultiPage;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.geometry.Dimensions;
+import com.github.singond.pdfriend.geometry.IntegerDimensions;
 import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.geometry.Margins;
+import com.github.singond.pdfriend.imposition.CommonSettings.MarginSettings;
 import com.github.singond.pdfriend.imposition.Preprocessor.Resizing;
 import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
 
@@ -152,10 +157,10 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		 * If only sheet size is given, use it as page size.
 		 * In any case, use only the page size in the grid construction.
 		 */
-		Dimensions pageSize = common.getPageSize();
-		Dimensions sheetSize = common.getSheetSize();
-		if (sheetSize != CommonSettings.AUTO_DIMENSIONS) {
-			if (pageSize == CommonSettings.AUTO_DIMENSIONS) {
+		DimensionSettings pageSize = common.getPageSize();
+		DimensionSettings sheetSize = common.getSheetSize();
+		if (sheetSize != DimensionSettings.AUTO) {
+			if (pageSize == DimensionSettings.AUTO) {
 				logger.verbose("nup_pageSizeToSheetSize");
 				pageSize = sheetSize;
 			} else {
@@ -174,21 +179,24 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		 * a grid page builder.
 		 */
 		PageControllers pc = null; // TODO remove initial value after finishing
-		if (pageSize == CommonSettings.AUTO_DIMENSIONS) {
+		if (pageSize == DimensionSettings.AUTO) {
 			// Case A
 			pc = casePageSize(doc, pageCount, rows, cols, orientation,
 			                  direction, preprocess, common);
 		} else if (gridType == GridType.AUTO) {
 			// Case D
-			pc = caseGrid(doc, pageCount, pageSize, orientation,
+			assert pageSize.isValue();
+			pc = caseGrid(doc, pageCount, pageSize.value(), orientation,
 			              direction, preprocess, common);
 		} else if (preprocess.isAutoSize()) {
 			// Case C
-			pc = caseCellSize(doc, pageCount, rows, cols, pageSize,
+			assert pageSize.isValue();
+			pc = caseCellSize(doc, pageCount, rows, cols, pageSize.value(),
 			                  orientation, direction, preprocess, common);
-		} else if (common.getMargins() == CommonSettings.AUTO_MARGINS) {
+		} else if (common.getMargins() == MarginSettings.AUTO) {
 			// Case B
-			pc = caseMargins(doc, pageCount, rows, cols, pageSize,
+			assert pageSize.isValue();
+			pc = caseMargins(doc, pageCount, rows, cols, pageSize.value(),
 			                 orientation, direction, preprocess, common);
 		} else {
 			// All are set, a conflict
@@ -278,10 +286,18 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		final LengthUnit unit = Imposition.LENGTH_UNIT;
 		
 		// Resolve margins
-		Margins margins = common.getMargins();
-		if (margins == CommonSettings.AUTO_MARGINS) {
-			margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
-			logger.verbose("nup_marginsResolveAuto", margins);
+		MarginSettings marginSettings = common.getMargins();
+		Margins margins;
+		switch (marginSettings.special()) {
+			case AUTO:
+				margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
+				logger.verbose("nup_marginsResolveAuto", margins);
+				break;
+			case VALUE:
+				margins = marginSettings.value();
+				break;
+			default:
+				throw new AssertionError(marginSettings);
 		}
 		
 		// Determine grid cell dimensions
@@ -331,11 +347,20 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		double cellWidth = cell.width().in(unit);
 		double cellHeight = cell.height().in(unit);
 		
-		// Margins
-		Margins margins = common.getMargins();
-		if (margins == CommonSettings.AUTO_MARGINS) {
-			margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
-			logger.verbose("nup_marginsResolveAuto", margins);
+		
+		// Resolve margins
+		MarginSettings marginSettings = common.getMargins();
+		Margins margins;
+		switch (marginSettings.special()) {
+			case AUTO:
+				margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
+				logger.verbose("nup_marginsResolveAuto", margins);
+				break;
+			case VALUE:
+				margins = marginSettings.value();
+				break;
+			default:
+				throw new AssertionError(marginSettings);
 		}
 		
 		double contentWidth = pageWidth - margins.left().in(unit)
@@ -448,10 +473,18 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		double pageHeight = pageSize.height().in(unit);
 		
 		// Resolve margins
-		Margins margins = common.getMargins();
-		if (margins == CommonSettings.AUTO_MARGINS) {
-			margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
-			logger.verbose("nup_marginsResolveAuto", margins);
+		MarginSettings marginSettings = common.getMargins();
+		Margins margins;
+		switch (marginSettings.special()) {
+			case AUTO:
+				margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
+				logger.verbose("nup_marginsResolveAuto", margins);
+				break;
+			case VALUE:
+				margins = marginSettings.value();
+				break;
+			default:
+				throw new AssertionError(marginSettings);
 		}
 		
 		// Grid cell dimensions
@@ -472,7 +505,7 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		
 		// Pass those to the preprocessor
 		Dimensions cell = new Dimensions(cellWidth, cellHeight, unit);
-		preprocess.setCellDimensions(cell);
+		preprocess.setCellDimensions(DimensionSettings.of(cell));
 		Preprocessor preprocessor = new Preprocessor(doc, preprocess);
 		
 		// A builder to provide the GridPages with desired settings
@@ -609,7 +642,41 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		FILL_PAGE;
 	}
 	
-	private static enum GridType {
+	/**
+	 * The number of rows and columns in the grid.
+	 */
+	static class GridDimensions extends SpecVal<GridType, IntegerDimensions> {
+
+		private static final Map<GridType, GridDimensions> instanceMap = new EnumMap<>(GridType.class);
+		static {
+			for (GridType type : GridType.values()) {
+				instanceMap.put(type, new GridDimensions(type));
+			}
+		}
+		
+		private GridDimensions(GridType type) {
+			super(type);
+		}
+		
+		private GridDimensions(IntegerDimensions value) {
+			super(value);
+		}
+		
+		public static GridDimensions of(GridType type) {
+			return instanceMap.get(type);
+		}
+		
+		public static GridDimensions of(IntegerDimensions value) {
+			return new GridDimensions(value);
+		}
+
+		@Override
+		protected GridType getValueConstant() {
+			return GridType.VALUE;
+		}
+	}
+	
+	static enum GridType {
 		/** Grid is given explicitly by number of columns and rows */
 		VALUE,
 		/** Grid should be determined from other settings */

@@ -18,6 +18,7 @@ import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.geometry.Margins;
+import com.github.singond.pdfriend.imposition.CommonSettings.MarginSettings;
 import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
 
 /**
@@ -66,14 +67,14 @@ public class Overlay extends AbstractImposable implements Imposable {
 		}
 		
 		// Select a use case and run it
-		if (common.getPageSize() == CommonSettings.AUTO_DIMENSIONS
-				&& common.getSheetSize() == CommonSettings.AUTO_DIMENSIONS) {
+		if (common.getPageSize() == DimensionSettings.AUTO
+				&& common.getSheetSize() == DimensionSettings.AUTO) {
 			// Case A
 			return casePageSize(docs);
 		} else if (preprocess.isAutoSize()) {
 			// Case C
 			return caseContentSize(docs);
-		} else if (common.getMargins() == CommonSettings.AUTO_MARGINS) {
+		} else if (common.getMargins() == MarginSettings.AUTO) {
 			// Case B
 			return caseMargins(docs);
 		} else {
@@ -96,13 +97,11 @@ public class Overlay extends AbstractImposable implements Imposable {
 			logger.debug("overlay_casePageSize");
 		}
 		
-		Dimensions pageSize = resolvePageAndSheetSize
-				(common.getPageSize(), common.getSheetSize());
-		
 		Margins margins = resolveAutoMargins(common.getMargins());
 		preprocess.setCellMargins(margins);
 		Preprocessor preprocessor = new Preprocessor(docs, preprocess);
 		Dimensions contentSize = preprocessor.getResolvedCellDimensions();
+		Dimensions pageSize;
 		pageSize = GeometryUtils.rectanglePlusMargins(contentSize, margins);
 		int layerCount = docs.size();
 		LayeredPage template = new LayeredPage(pageSize.width().in(unit),
@@ -139,7 +138,7 @@ public class Overlay extends AbstractImposable implements Imposable {
 		Length oneVerticalMargin = Length.subtract(
 				pageSize.height(), contentSize.height()).times(1d/2);
 		Margins margins = new Margins(oneHorizontalMargin, oneVerticalMargin);
-		preprocess.setCellDimensions(pageSize);
+		preprocess.setCellDimensions(DimensionSettings.of(pageSize));
 		preprocess.setCellMargins(margins);
 		Preprocessor preprocessor = new Preprocessor(docs, preprocess);
 		pageSize = preprocessor.getResolvedCellDimensions();
@@ -171,7 +170,7 @@ public class Overlay extends AbstractImposable implements Imposable {
 		
 		Margins margins = resolveAutoMargins(common.getMargins());
 		Dimensions contentSize = GeometryUtils.rectangleMinusMargins(pageSize, margins);
-		preprocess.setCellDimensions(contentSize);
+		preprocess.setCellDimensions(DimensionSettings.of(contentSize));
 		preprocess.setCellMargins(margins);
 		Preprocessor preprocessor = new Preprocessor(docs, preprocess);
 		pageSize = preprocessor.getResolvedCellDimensions();
@@ -194,13 +193,15 @@ public class Overlay extends AbstractImposable implements Imposable {
 	 * @return the argument, if it is a valid value, and the default value
 	 *         of (0, 0, 0, 0) otherwise
 	 */
-	private Margins resolveAutoMargins(Margins margins) {
-		// Resolve automatic margins
-		if (margins == CommonSettings.AUTO_MARGINS) {
-			margins = new Margins(0, 0, 0, 0, LengthUnits.METRE);
-			logger.verbose("overlay_marginsResolveAuto", margins);
+	private Margins resolveAutoMargins(MarginSettings margins) {
+		if (margins.isValue()) {
+			return margins.value();
+		} else {
+			// Resolve automatic margins
+			Margins m = new Margins(0, 0, 0, 0, LengthUnits.METRE);
+			logger.verbose("overlay_marginsResolveAuto", m);
+			return m;
 		}
-		return margins;
 	}
 
 	/**
@@ -219,22 +220,31 @@ public class Overlay extends AbstractImposable implements Imposable {
 	 * @param pageSize the size of the page
 	 * @param sheetSize the size of the sheet
 	 * @return the page size
+	 * @throws IllegalArgumentException if both sizes are {@code auto}
 	 */
-	private Dimensions resolvePageAndSheetSize(Dimensions pageSize, Dimensions sheetSize) {
-		if (sheetSize != CommonSettings.AUTO_DIMENSIONS) {
-			if (pageSize == CommonSettings.AUTO_DIMENSIONS) {
+	private Dimensions resolvePageAndSheetSize(DimensionSettings pageSize,
+	                                           DimensionSettings sheetSize) {
+		if (sheetSize != DimensionSettings.AUTO) {
+			assert sheetSize.isValue();
+			if (pageSize == DimensionSettings.AUTO) {
 				logger.verbose("overlay_pageSizeToSheetSize");
 				pageSize = sheetSize;
 			} else {
+				assert pageSize.isValue();
 				if (!pageSize.equals(sheetSize)) {
 					// The page size and sheet size are in conflict.
 					throw new IllegalStateException
 						("Sheet size and page size are set to a different value");
 				}
 			}
+		} else {
+			if (pageSize == DimensionSettings.AUTO)
+				throw new IllegalArgumentException
+						("Both page size and sheet size are auto. Cannot resolve final size.");
 		}
 		// Otherwise just leave pageSize as it is
-		return pageSize;
+		assert pageSize.isValue();
+		return pageSize.value();
 	}
 	
 	/**

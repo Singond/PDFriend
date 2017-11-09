@@ -121,8 +121,8 @@ public class Codex extends AbstractImposable implements Imposable {
 //			logger.debug("imposition_imposableSettings", NAME, );
 		}
 		
-		boolean autoPage = common.getPageSize() == CommonSettings.AUTO_DIMENSIONS;
-		boolean autoSheet = common.getSheetSize() == CommonSettings.AUTO_DIMENSIONS;
+		boolean autoPage = common.getPageSize() == DimensionSettings.AUTO;
+		boolean autoSheet = common.getSheetSize() == DimensionSettings.AUTO;
 		
 		// Select use case and execute it
 		if (autoPage) {
@@ -177,9 +177,13 @@ public class Codex extends AbstractImposable implements Imposable {
 			logger.verbose("codex_casePageSize");
 		
 		// Use sheet size to determine page size
-		Dimensions sheetSize = common.getSheetSize();
+		DimensionSettings sheetSize = common.getSheetSize();
+		if (!sheetSize.isValue()) {
+			throw new IllegalStateException("Sheet size is not a regular value");
+		}
+		
 		// A factory to provide instances of Signature
-		SignatureFactory sf = new SignatureFactory(sheetSize, manipulations);
+		SignatureFactory sf = new SignatureFactory(sheetSize.value(), manipulations);
 		Dimensions pageSize = new Dimensions(
 				sf.stack.currentWidth, sf.stack.currentHeight, unit);
 		
@@ -187,7 +191,7 @@ public class Codex extends AbstractImposable implements Imposable {
 		if (preprocess.isAutoSize()) {
 			preprocess.setResizing(Resizing.FIT);
 		}
-		preprocess.setCellDimensions(pageSize);
+		preprocess.setCellDimensions(DimensionSettings.of(pageSize));
 		Preprocessor preprocessor = new Preprocessor(doc, preprocess);
 		doc = preprocessDocument(doc, preprocessor, 0); // last arg is not used
 		// Fill pages with content
@@ -206,7 +210,10 @@ public class Codex extends AbstractImposable implements Imposable {
 		if (logger.isVerboseEnabled())
 			logger.verbose("codex_caseSheetSize");
 		
-		assert common.getPageSize() != CommonSettings.AUTO_DIMENSIONS;
+//		assert common.getPageSize() != DimensionSettings.AUTO;
+		if (!common.getPageSize().isValue()) {
+			throw new IllegalStateException("Page size is not a regular value");
+		}
 		preprocess.setPageDimensions(common.getPageSize());
 		Preprocessor preprocessor = new Preprocessor(doc, preprocess);
 		Dimensions pageSize = preprocessor.getResolvedCellDimensions();
