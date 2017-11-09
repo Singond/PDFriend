@@ -12,7 +12,7 @@ import com.github.singond.pdfriend.imposition.DimensionSettings.Special;
  *
  * @author Singon
  */
-public final class DimensionSettings extends SpecVal<Special, Dimensions> {
+final class DimensionSettings extends SpecVal<Special, Dimensions> {
 	
 	private static final Map<Special, DimensionSettings> instanceMap = new EnumMap<>(Special.class);
 	static {
