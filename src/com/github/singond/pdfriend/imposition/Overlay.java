@@ -97,13 +97,11 @@ public class Overlay extends AbstractImposable implements Imposable {
 			logger.debug("overlay_casePageSize");
 		}
 		
-		Dimensions pageSize = resolvePageAndSheetSize
-				(common.getPageSize(), common.getSheetSize());
-		
 		Margins margins = resolveAutoMargins(common.getMargins());
 		preprocess.setCellMargins(margins);
 		Preprocessor preprocessor = new Preprocessor(docs, preprocess);
 		Dimensions contentSize = preprocessor.getResolvedCellDimensions();
+		Dimensions pageSize;
 		pageSize = GeometryUtils.rectanglePlusMargins(contentSize, margins);
 		int layerCount = docs.size();
 		LayeredPage template = new LayeredPage(pageSize.width().in(unit),
@@ -222,6 +220,7 @@ public class Overlay extends AbstractImposable implements Imposable {
 	 * @param pageSize the size of the page
 	 * @param sheetSize the size of the sheet
 	 * @return the page size
+	 * @throws IllegalArgumentException if both sizes are {@code auto}
 	 */
 	private Dimensions resolvePageAndSheetSize(DimensionSettings pageSize,
 	                                           DimensionSettings sheetSize) {
@@ -238,6 +237,10 @@ public class Overlay extends AbstractImposable implements Imposable {
 						("Sheet size and page size are set to a different value");
 				}
 			}
+		} else {
+			if (pageSize == DimensionSettings.AUTO)
+				throw new IllegalArgumentException
+						("Both page size and sheet size are auto. Cannot resolve final size.");
 		}
 		// Otherwise just leave pageSize as it is
 		assert pageSize.isValue();
