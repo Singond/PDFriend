@@ -345,7 +345,6 @@ public class Stack {
 			int layerCount = stack.layers.size();
 			// The folded part of the stack
 			List<Layer> foldedStack = new ArrayList<>(layerCount);
-			AffineTransform fold = Transformations.mirror(axis);
 			
 			if (direction == Direction.UNDER) {
 				// Iterate backwards, place new Layers to bottom of Stack
@@ -353,8 +352,10 @@ public class Stack {
 				ListIterator<Layer> iter = stack.layers.listIterator(end);
 				while (iter.hasPrevious()) {
 					Layer l = iter.previous();
-					AffineTransform position = new AffineTransform(fold);
-					position.concatenate(l.getPosition());
+					AffineTransform layerPosition = l.getPosition();
+					Line transformedAxis = axis.transform(layerPosition);
+					AffineTransform position = Transformations.mirror(transformedAxis);
+					position.concatenate(layerPosition);
 					Layer folded = new Layer(l.getSheet(),
 					                         position,
 					                         l.getOrientation().inverse());
@@ -365,8 +366,10 @@ public class Stack {
 			} else if (direction == Direction.OVER) {
 				// Iterate forward, place new Layers to the top of Stack
 				for (Layer l : stack.layers) {
-					AffineTransform position = new AffineTransform(fold);
-					position.concatenate(l.getPosition());
+					AffineTransform layerPosition = l.getPosition();
+					Line transformedAxis = axis.transform(layerPosition);
+					AffineTransform position = Transformations.mirror(transformedAxis);
+					position.concatenate(layerPosition);
 					Layer folded = new Layer(l.getSheet(),
 					                         position,
 					                         l.getOrientation().inverse());

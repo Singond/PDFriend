@@ -30,6 +30,11 @@ class NUpCli implements ImposableCli<NUp> {
 			description="Several pages arranged into a grid on a larget sheet",
 			converter=NUpConverter.class)
 	private IntegerDimensions nup = null;
+	
+	@Parameter(names={"--nup-repeat"},
+			descriptionKey="nup-copyToFill",
+			description="Fill each cell in a page with a copy of the same input page")
+	private boolean copyToFillPage = false;
 
 	@Override
 	public void postParse() throws ParameterConsistencyException {
@@ -49,6 +54,9 @@ class NUpCli implements ImposableCli<NUp> {
 		} else if (nup != null) {
 			task.setRows(nup.getFirstDimension());
 			task.setCols(nup.getSecondDimension());
+		}
+		if (copyToFillPage) {
+			task.setFillMode(NUp.FillMode.FILL_PAGE);
 		}
 		return task;
 	}

@@ -30,6 +30,29 @@ public final class CommonSettings {
 	private final int pages;
 	
 	/**
+	 * How many times to output each page in a document before proceeding
+	 * to the next page.
+	 * If this is combined with "repeat document", then each repetition
+	 * of the document will have its pages repeated by this number.
+	 * <p>
+	 * The default is one, zero means "repeat infinitely", negative values
+	 * are not allowed.
+	 */
+	private final int repeatPage;
+	
+	/**
+	 * How many times to output each document in a document before proceeding
+	 * to the next page.
+	 * If this is combined with "repeat page", then each repetition
+	 * of the document will have its pages repeated by the number given
+	 * in "repeat page"
+	 * <p>
+	 * The default is one, zero means "repeat infinitely", negative values
+	 * are not allowed.
+	 */
+	private final int repeatDocument;
+	
+	/**
 	 * Size of a single page of the assembled output document.
 	 * This is the dimensions of the document page in its final form,
 	 * ie. in the case of a bound book this would be the format of one
@@ -66,10 +89,12 @@ public final class CommonSettings {
 	 * @param margins
 	 * @param mirrorMargins
 	 */
-	public CommonSettings(int pageCount, Dimensions pageSize,
-	                      Dimensions sheetSize,
+	public CommonSettings(int pageCount, int repeatPage, int repeatDoc,
+	                      Dimensions pageSize, Dimensions sheetSize,
 	                      Margins margins, boolean mirrorMargins) {
 		this.pages = pageCount;
+		this.repeatPage = repeatPage;
+		this.repeatDocument = repeatDoc;
 		this.pageSize = pageSize;
 		this.sheetSize = sheetSize;
 		this.margins = margins;
@@ -81,12 +106,24 @@ public final class CommonSettings {
 	 * @return a new {@code CommonSettings} object
 	 */
 	public static CommonSettings auto() {
-		return new CommonSettings(-1, AUTO_DIMENSIONS, AUTO_DIMENSIONS,
+		return new CommonSettings(-1, 1, 1, AUTO_DIMENSIONS, AUTO_DIMENSIONS,
 		                          AUTO_MARGINS, true);
 	}
 
 	public int getPageCount() {
 		return pages;
+	}
+	
+	public boolean isAutoPageCount() {
+		return pages < 1;
+	}
+
+	public int getRepeatPage() {
+		return repeatPage;
+	}
+
+	public int getRepeatDocument() {
+		return repeatDocument;
 	}
 
 	public Dimensions getPageSize() {
@@ -109,9 +146,11 @@ public final class CommonSettings {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("pages: ").append(pages)
-				.append(", page size: ").append(pageSize)
-				.append(", sheet size: ").append(sheetSize)
-				.append(", margins: ").append(margins==AUTO_MARGINS ? "AUTO" : margins)
+				.append(", repeat page: ").append(repeatPage)
+				.append(", repeat document: ").append(repeatDocument)
+				.append(", page size: ").append(pageSize==AUTO_DIMENSIONS ? "auto" : pageSize)
+				.append(", sheet size: ").append(sheetSize==AUTO_DIMENSIONS ? "auto" : sheetSize)
+				.append(", margins: ").append(margins==AUTO_MARGINS ? "auto" : margins)
 				.append(", margins mirrored: ").append(mirrorMargins);
 		return builder.toString();
 	}
@@ -121,6 +160,8 @@ public final class CommonSettings {
 	 */
 	public static class Builder {
 		private int pages = -1;
+		private int repeatPage = 1;
+		private int repeatDocument = 1;
 		private Dimensions pageSize = AUTO_DIMENSIONS;
 		private Dimensions sheetSize = AUTO_DIMENSIONS;
 		private Margins margins = AUTO_MARGINS;
@@ -131,6 +172,18 @@ public final class CommonSettings {
 		}
 		public void setPageCount(int pages) {
 			this.pages = pages;
+		}
+		public int getRepeatPage() {
+			return repeatPage;
+		}
+		public void setRepeatPage(int repeatPage) {
+			this.repeatPage = repeatPage;
+		}
+		public int getRepeatDocument() {
+			return repeatDocument;
+		}
+		public void setRepeatDocument(int repeatDocument) {
+			this.repeatDocument = repeatDocument;
 		}
 		public Dimensions getPageSize() {
 			return pageSize;
@@ -157,7 +210,8 @@ public final class CommonSettings {
 			this.mirrorMargins = mirrorMargins;
 		}
 		public CommonSettings build() {
-			return new CommonSettings(pages, pageSize, sheetSize, margins, mirrorMargins);
+			return new CommonSettings(pages, repeatPage, repeatDocument,
+					pageSize, sheetSize, margins, mirrorMargins);
 		}
 	}
 }

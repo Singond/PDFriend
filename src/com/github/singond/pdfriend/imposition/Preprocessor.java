@@ -780,7 +780,7 @@ public final class Preprocessor {
 					.append("page dimensions: ").append((pageDimensions==AUTO)
 					                                    ? "AUTO" : pageDimensions).append(", ")
 					.append("cell dimensions: ").append((cellDimensions==AUTO)
-					                                    ? "AUTO" : pageDimensions).append(", ")
+					                                    ? "AUTO" : cellDimensions).append(", ")
 					.append("margins: ").append(cellMargins)
 					.toString();
 		}

@@ -11,6 +11,7 @@ import com.github.singond.pdfriend.book.MultiPage.PageletView;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 
+@Deprecated
 public class LayerSourceProvider implements SourceProvider<LayeredPage>{
 	
 	/**
@@ -35,6 +36,11 @@ public class LayerSourceProvider implements SourceProvider<LayeredPage>{
 			srcList.add(new ArrayDeque<>(doc.getPages()));
 		}
 		this.sourcePages = srcList;
+	}
+
+	@Override
+	public boolean hasNextPage() {
+		return sourcePages.stream().noneMatch(q -> q.isEmpty());
 	}
 
 	@Override

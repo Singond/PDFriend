@@ -9,10 +9,7 @@ import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.BoundBook;
 import com.github.singond.pdfriend.book.FlipDirection;
 import com.github.singond.pdfriend.book.Leaf;
-import com.github.singond.pdfriend.book.Page;
-import com.github.singond.pdfriend.book.SequentialSourceProvider;
 import com.github.singond.pdfriend.book.Signature;
-import com.github.singond.pdfriend.book.SourceProvider;
 import com.github.singond.pdfriend.book.Stack;
 import com.github.singond.pdfriend.book.Volume;
 import com.github.singond.pdfriend.book.Stack.Flip;
@@ -210,6 +207,7 @@ public class Booklet extends AbstractImposable implements Imposable {
 		}
 		doc = preprocessor.processAll();
 		
+		// TODO: Fix this, sometimes shows -1
 		logger.info("booklet_constructing", pageCount);
 		
 		/*
@@ -220,9 +218,10 @@ public class Booklet extends AbstractImposable implements Imposable {
 		 * of four to reflect the fact that each output sheet contains four
 		 * pages.
 		 */
+		PageSource source = pageSourceBuilder(common, doc).build();
 		if (pageCount < 1) {
 			// Page count is automatic: resolve from input document length
-			pageCount = doc.getLength();
+			pageCount = source.size();
 		}
 		// Pad to multiple of four
 		if (pageCount % 4 != 0) {
@@ -244,8 +243,7 @@ public class Booklet extends AbstractImposable implements Imposable {
 		/*
 		 * Fill the volume with content.
 		 */
-		SourceProvider<Page> sp = new SequentialSourceProvider(doc);
-		sp.setSourceTo(volume.pages());
+		PageFillers.fillSequentially(volume.pages(), source);
 		
 		return volume;
 	}
@@ -403,17 +401,19 @@ public class Booklet extends AbstractImposable implements Imposable {
 		}
 
 		@Override
-		public void acceptPreprocessSettings(Settings settings) {
+		public ImposableBuilder<Booklet> acceptPreprocessSettings(Settings settings) {
 			if (settings == null)
 				throw new IllegalArgumentException("Preprocess settings cannot be null");
 			this.preprocess = settings;
+			return this;
 		}
 		
 		@Override
-		public void acceptCommonSettings(CommonSettings settings) {
+		public ImposableBuilder<Booklet> acceptCommonSettings(CommonSettings settings) {
 			if (settings == null)
 				throw new IllegalArgumentException("Settings cannot be null");
 			this.common = settings;
+			return this;
 		}
 
 		@Override

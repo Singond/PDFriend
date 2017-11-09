@@ -130,6 +130,10 @@ public final class ExtendedLogger extends ExtendedLoggerWrapper {
         return new ExtendedLogger(wrapped);
     }
 
+    public boolean isVerboseEnabled() {
+    	return this.isEnabled(VERBOSE);
+    }
+    
     /**
      * Logs a message with the specific Marker at the {@code VERBOSE} level.
      * 

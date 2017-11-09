@@ -107,6 +107,10 @@ public class Leaf implements BookElement {
 		this.width = width;
 		this.height = height;
 		this.instanceNumber = nextInstanceNumber++;
+
+		// Initialize position
+		this.referencePosition = new AffineTransform();
+		this.referenceIsFront = true;
 	}
 	
 	/**

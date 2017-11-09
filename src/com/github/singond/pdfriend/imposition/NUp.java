@@ -1,6 +1,7 @@
 package com.github.singond.pdfriend.imposition;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.github.singond.pdfriend.ExtendedLogger;
@@ -8,9 +9,9 @@ import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.Util;
 import com.github.singond.pdfriend.book.GridPage;
 import com.github.singond.pdfriend.book.LoosePages;
-import com.github.singond.pdfriend.book.Page;
-import com.github.singond.pdfriend.book.SequentialSourceProvider;
+import com.github.singond.pdfriend.book.MultiPage;
 import com.github.singond.pdfriend.document.VirtualDocument;
+import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
@@ -37,6 +38,7 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 	private GridType gridType = GridType.VALUE;
 	private NUpOrientation orientation = NUpOrientation.UPRIGHT;
 	private FillDirection direction = FillDirection.ROWS;
+	private FillMode fillMode = FillMode.SEQUENTIAL;
 	private Preprocessor.Settings preprocess = null;
 	private CommonSettings common = null;
 	
@@ -108,10 +110,22 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 	}
 
 	/**
+	 * Sets whe
+	 * @param fillMode
+	 * @return
+	 */
+	public NUp setFillMode(FillMode fillMode) {
+		if (fillMode == null)
+			throw new IllegalArgumentException("Fill mode must not be null");
+		this.fillMode = fillMode;
+		return this;
+	}
+
+	/**
 	 * Imposes the given virtual document into a list of grid pages
 	 * according to the current settings of this {@code NUp} object.
 	 */
-	private List<Page> imposeAsPages(VirtualDocument doc) {
+	private List<GridPage> imposeAsPages(VirtualDocument doc) {
 		// Copy all nonfinal values defensively
 		final int rows = this.rows;
 		final int cols = this.cols;
@@ -204,33 +218,52 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 				builder.getOrientation(),
 				builder.getFillDirection());*/
 		
-		/*
-		 * If the number of pages is unset, calculate the number of pages
-		 * necessary to fit the whole document; otherwise use the value.
-		 */
-		if (pageCount < 0) {
-			logger.verbose("nup_gridCount", cellsPerPage);
-			pageCount = Util.ceilingDivision(doc.getLength(), cellsPerPage);
-			logger.verbose("nup_pageCountAll", pageCount);
-		} else {
-			logger.verbose("nup_pageCountPartial", pageCount);
-		}
-		
 		// Pre-processing
 		// TODO Pre-process only pages needed for pageCount
 		if (preprocess != null) {
 			doc = preprocessor.processAll();
 		}
 		
-		// Output
-		List<Page> pages = new ArrayList<>(pageCount);
+		/*
+		 * If the number of pages is unset, calculate the number of pages
+		 * necessary to fit the whole document; otherwise use the value.
+		 */
+		PageSource pageSrc = pageSourceBuilder(common, doc).build();
+		if (pageCount < 0) {
+			logger.verbose("nup_gridCount", cellsPerPage);
+			pageCount = Util.ceilingDivision(pageSrc.size(), cellsPerPage);
+			logger.verbose("nup_pageCountAll", pageCount);
+		} else {
+			logger.verbose("nup_pageCountPartial", pageCount);
+		}
+		
+		// List of output pages
+		List<GridPage> pages = new ArrayList<>(pageCount);
 		int pageNumber = 0;
 		while (pages.size() < pageCount) {
 			GridPage page = builder.build();
 			page.setNumber(++pageNumber);
 			pages.add(page);
 		}
-		new SequentialSourceProvider(doc).setSourceTo(pages);
+		
+		// Fill the output pages
+		switch (fillMode) {
+			case FILL_PAGE:
+				Iterator<VirtualPage> srcIter = pageSrc.iterator();
+				Iterator<GridPage> pageIter = pages.iterator();
+				while (srcIter.hasNext() && pageIter.hasNext()) {
+					VirtualPage source = srcIter.next();
+					for (MultiPage.PageletView pglt : pageIter.next().pagelets()) {
+						pglt.setSource(source);
+					}
+				}
+				break;
+			case SEQUENTIAL:
+				PageFillers.fillSequentially(pages, pageSrc);
+				break;
+			default:
+				break;
+		}
 
 		return pages;
 	}
@@ -471,17 +504,19 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 	}
 	
 	@Override
-	public void acceptPreprocessSettings(Settings settings) {
+	public ImposableBuilder<NUp> acceptPreprocessSettings(Settings settings) {
 		if (settings == null)
 			throw new IllegalArgumentException("Preprocess settings cannot be null");
 		this.preprocess = settings.copy();
+		return this;
 	}
 	
 	@Override
-	public void acceptCommonSettings(CommonSettings settings) {
+	public ImposableBuilder<NUp> acceptCommonSettings(CommonSettings settings) {
 		if (settings == null)
 			throw new IllegalArgumentException("Settings cannot be null");
 		this.common = settings;
+		return this;
 	}
 	
 	@Override
@@ -556,6 +591,22 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		public GridPage.Direction getValue() {
 			return value;
 		}
+	}
+	
+	/**
+	 * Options for filling input pages into the imposed document.
+	 */
+	public static enum FillMode {
+		/**
+		 * Each input page is used once.
+		 * This is the default mode.
+		 */
+		SEQUENTIAL,
+		/**
+		 * Each page is used to populate entire output page before
+		 * moving onto next input page.
+		 */
+		FILL_PAGE;
 	}
 	
 	private static enum GridType {
