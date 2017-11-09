@@ -17,9 +17,7 @@ import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
-import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.geometry.Margins;
-import com.github.singond.pdfriend.imposition.CommonSettings.MarginSettings;
 import com.github.singond.pdfriend.imposition.Preprocessor.Resizing;
 import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
 import com.github.singond.geometry.plane.Line;
@@ -189,8 +187,8 @@ public class Booklet extends AbstractImposable implements Imposable {
 		if (pageSize != DimensionSettings.AUTO) {
 			assert pageSize.isValue();
 			Dimensions cellSize = new Dimensions(
-        			Length.subtract(pageSize.value().width(), mirroredMargins.horizontal()),
-        			Length.subtract(pageSize.value().height(), mirroredMargins.vertical()));
+					Length.subtract(pageSize.value().width(), mirroredMargins.horizontal()),
+					Length.subtract(pageSize.value().height(), mirroredMargins.vertical()));
 			preprocess.setCellDimensions(cellSize);
 			if (preprocess.getResizing() == Resizing.AUTO
 					&& !preprocess.isScaleGiven()) {
