@@ -79,9 +79,6 @@ public final class Preprocessor {
 	 */
 	private final LengthUnit unit = Imposition.LENGTH_UNIT;
 	
-	/** Specifies that the dimensions are not given and should be calculated */
-//	private static final Dimensions AUTO = Dimensions.dummy();
-	
 	/** Logger instance */
 	private static ExtendedLogger logger = Log.logger(Preprocessor.class);
 	
