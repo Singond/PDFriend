@@ -84,8 +84,10 @@ public class Booklet extends AbstractImposable implements Imposable {
 		/*
 		 * Resolve the margins into a valid value.
 		 */
-		Margins margins = common.getMargins();
-		if (margins == CommonSettings.AUTO_MARGINS) {
+		Margins margins;
+		if (common.getMargins().isValue()) {
+			margins = common.getMargins().value();
+		} else {
 			margins = Margins.NONE;
 		}
 		
@@ -133,8 +135,8 @@ public class Booklet extends AbstractImposable implements Imposable {
 		 * 
 		 * Start by validating the page and sheet size.
 		 */
-		Dimensions pageSize = common.getPageSize();
-		Dimensions sheetSize = common.getSheetSize();
+		DimensionSettings pageSize = common.getPageSize();
+		DimensionSettings sheetSize = common.getSheetSize();
 		if (pageSize == null) {
 			throw new IllegalStateException("Page size is null");
 		}
@@ -142,14 +144,16 @@ public class Booklet extends AbstractImposable implements Imposable {
 			throw new IllegalStateException("Sheet size is null");
 		}
 		
-		boolean autoPage = pageSize == CommonSettings.AUTO_DIMENSIONS;
-		boolean autoSheet = sheetSize == CommonSettings.AUTO_DIMENSIONS;
+		boolean autoPage = pageSize == DimensionSettings.AUTO;
+		boolean autoSheet = sheetSize == DimensionSettings.AUTO;
 		
 		if (!autoPage && autoSheet) {
 			// Do nothing
 		} else if (autoPage && !autoSheet) {
+			assert sheetSize.isValue();
 			// Sheet size is given: determine page size
-			pageSize = pageFromSheet(sheetSize, binding, mirroredMargins);
+			pageSize = DimensionSettings.of
+					(pageFromSheet(sheetSize.value(),binding, mirroredMargins));
 			logger.verbose("booklet_sheetSizeToPageSize", pageSize, sheetSize, margins);
 		} else if (!autoPage && !autoSheet){
 			// Both are given: a conflict
@@ -180,10 +184,11 @@ public class Booklet extends AbstractImposable implements Imposable {
 		 * the cell, otherwise the default resizing will leave the pages
 		 * overlapping or with gaps in between.
 		 */
-		if (pageSize != CommonSettings.AUTO_DIMENSIONS) {
+		if (pageSize != DimensionSettings.AUTO) {
+			assert pageSize.isValue();
 			Dimensions cellSize = new Dimensions(
-					Length.subtract(pageSize.width(), mirroredMargins.horizontal()),
-					Length.subtract(pageSize.height(), mirroredMargins.vertical()));
+					Length.subtract(pageSize.value().width(), mirroredMargins.horizontal()),
+					Length.subtract(pageSize.value().height(), mirroredMargins.vertical()));
 			preprocess.setCellDimensions(cellSize);
 			if (preprocess.getResizing() == Resizing.AUTO
 					&& !preprocess.isScaleGiven()) {
@@ -197,11 +202,11 @@ public class Booklet extends AbstractImposable implements Imposable {
 		 * if they are still unknown.
 		 */
 		Preprocessor preprocessor = new Preprocessor(doc, preprocess);
-		if (pageSize == CommonSettings.AUTO_DIMENSIONS) {
+		if (pageSize == DimensionSettings.AUTO) {
 			Dimensions cell = preprocessor.getResolvedCellDimensions();
-			pageSize = new Dimensions(
+			pageSize = DimensionSettings.of(new Dimensions(
 					Length.sum(cell.width(), mirroredMargins.horizontal()),
-					Length.sum(cell.height(), mirroredMargins.vertical()));
+					Length.sum(cell.height(), mirroredMargins.vertical())));
 			if (logger.isTraceEnabled())
 				logger.trace("Page size = preprocessor cell size + margins");
 		}
@@ -235,7 +240,9 @@ public class Booklet extends AbstractImposable implements Imposable {
 		 * Build the volume.
 		 */
 		Volume volume = new Volume();
-		SignatureMaker maker = new SignatureMaker(pageSize, mirroredMargins, unit, pageCount);
+		assert pageSize.isValue();
+		SignatureMaker maker = new SignatureMaker
+				(pageSize.value(), mirroredMargins, unit, pageCount);
 		Signature signature = maker.makeSignature();
 		signature.numberPagesFrom(1);
 		volume.add(signature);

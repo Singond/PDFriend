@@ -24,7 +24,6 @@ class PreprocessorSettingsCli implements ParameterDelegate {
 	
 	private static final Angle DEFAULT_ROTATION = new Angle(0);
 	private static final TwoNumbers DEFAULT_ALIGNMENT = new TwoNumbers(0,0);
-	private static final Dimensions AUTO = Dimensions.dummy();
 
 	@Parameter(names={"-s", "--scale"},
 	           description="The scale of the content",
@@ -52,7 +51,7 @@ class PreprocessorSettingsCli implements ParameterDelegate {
 	           description="Size of the imposed pages before resizing",
 	           descriptionKey="param-inputPageSize",
 	           converter=DimensionsConverter.class)
-	private Dimensions pageSize = AUTO;
+	private Dimensions pageSize = null;
 	
 	@Override
 	public void postParse() throws ParameterConsistencyException {
@@ -64,7 +63,7 @@ class PreprocessorSettingsCli implements ParameterDelegate {
 		       || rotation != DEFAULT_ROTATION
 		       || resize != ResizingBehaviour.NONE
 		       || align != DEFAULT_ALIGNMENT
-		       || pageSize != AUTO;
+		       || pageSize != null;
 	}
 	
 	/**
@@ -85,7 +84,7 @@ class PreprocessorSettingsCli implements ParameterDelegate {
 			settings.setHorizontalAndVerticalAlignment
 				(align.getFirst(), align.getSecond());
 		}
-		if (pageSize != AUTO) {
+		if (pageSize != null) {
 			settings.setPageDimensions(pageSize);
 		}
 		return settings;

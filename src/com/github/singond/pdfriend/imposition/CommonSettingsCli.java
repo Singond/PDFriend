@@ -9,6 +9,7 @@ import com.github.singond.pdfriend.cli.MarginsConverter;
 import com.github.singond.pdfriend.cli.ParameterDelegate;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.Margins;
+import com.github.singond.pdfriend.imposition.CommonSettings.MarginSettings;
 
 /**
  * A command-line interface for {@link CommonSettings}.
@@ -49,11 +50,11 @@ class CommonSettingsCli implements ParameterDelegate {
 	 * ie. in the case of a bound book this would be the format of one
 	 * page.
 	 */
-	@Parameter(names="--page-size",
-	           description="Size of a single page of the assembled output document",
-	           descriptionKey="param-pageSize",
-	           converter=DimensionsConverter.class)
-	private Dimensions pageSize = CommonSettings.AUTO_DIMENSIONS;
+	@Parameter(names = "--page-size",
+	           description = "Size of a single page of the assembled output document",
+	           descriptionKey = "param-pageSize",
+	           converter = DimensionsConverter.class)
+	private Dimensions pageSize = null;
 	
 	/**
 	 * Size of the output sheet before assembling the document.
@@ -63,11 +64,11 @@ class CommonSettingsCli implements ParameterDelegate {
 	 * In the case of a bound book, this would be the format of the
 	 * printer's paper sheet upon which individual pages are imposed.
 	 */
-	@Parameter(names="--sheet-size",
-	           description="Size of a single page of the assembled output document",
-	           descriptionKey="param-pageSize",
-	           converter=DimensionsConverter.class)
-	private Dimensions sheetSize = CommonSettings.AUTO_DIMENSIONS;
+	@Parameter(names = "--sheet-size",
+	           description = "Size of a single page of the assembled output document",
+	           descriptionKey = "param-pageSize",
+	           converter = DimensionsConverter.class)
+	private Dimensions sheetSize = null;
 	
 	/**
 	 * Interprets paper formats as landscape.
@@ -101,7 +102,7 @@ class CommonSettingsCli implements ParameterDelegate {
 	           description="Margins of the output page",
 	           descriptionKey="param-margins",
 	           converter=MarginsConverter.class)
-	private Margins margins = CommonSettings.AUTO_MARGINS;
+	private Margins margins = null;
 	
 	@Parameter(names="--mirror-margins",
 	           arity=1,
@@ -119,9 +120,9 @@ class CommonSettingsCli implements ParameterDelegate {
 	
 	public boolean isSet() {
 		return pages > 0
-				|| pageSize != CommonSettings.AUTO_DIMENSIONS
-				|| sheetSize != CommonSettings.AUTO_DIMENSIONS
-				|| margins != CommonSettings.AUTO_MARGINS;
+				|| pageSize != null
+				|| sheetSize != null
+				|| margins != null;
 	}
 	
 	public CommonSettings getCommonSettings() {
@@ -131,20 +132,26 @@ class CommonSettingsCli implements ParameterDelegate {
 		sb.setPageCount(pages);
 		sb.setRepeatPage(repeatPage);
 		sb.setRepeatDocument(repeatDocument);
-		sb.setPageSize(flipFormat(pageSize, isLandscape));
-		sb.setSheetSize(flipFormat(sheetSize, isLandscape));
-		sb.setMargins(margins);
+		sb.setPageSize(dimSettings(flipFormat(pageSize, isLandscape)));
+		sb.setSheetSize(dimSettings(flipFormat(sheetSize, isLandscape)));
+		sb.setMargins(margins == null ? MarginSettings.AUTO : MarginSettings.of(margins));
 		sb.setMirrorMargins(marginsMirrored);
 		return sb.build();
 	}
 	
 	private Dimensions flipFormat(Dimensions dims, boolean flip) {
-		if (dims == CommonSettings.AUTO_DIMENSIONS) {
-			return dims;
-		} else if (flip) {
+		if (flip) {
 			return dims.changeOrientation();
 		} else {
 			return dims;
+		}
+	}
+	
+	private DimensionSettings dimSettings(Dimensions dims) {
+		if (dims == null) {
+			return DimensionSettings.AUTO;
+		} else {
+			return DimensionSettings.of(dims);
 		}
 	}
 }

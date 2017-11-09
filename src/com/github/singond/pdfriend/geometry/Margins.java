@@ -8,7 +8,7 @@ package com.github.singond.pdfriend.geometry;
  * @author Singon
  *
  */
-public class Margins {
+public final class Margins {
 
 	private final Length top;
 	private final Length right;

@@ -79,9 +79,6 @@ public final class Preprocessor {
 	 */
 	private final LengthUnit unit = Imposition.LENGTH_UNIT;
 	
-	/** Specifies that the dimensions are not given and should be calculated */
-	private static final Dimensions AUTO = Dimensions.dummy();
-	
 	/** Logger instance */
 	private static ExtendedLogger logger = Log.logger(Preprocessor.class);
 	
@@ -135,12 +132,12 @@ public final class Preprocessor {
 		Dimensions content;
 		
 		logger.verbose("preprocess_cellSize_resolve", documents, settings);
-		if (settings.cellDimensions == AUTO) {
+		if (settings.cellDimensions == DimensionSettings.AUTO) {
 			logger.verbose("preprocess_cellSize_resolvePref");
 			final double rotation = settings.rotation;
 			double halfHorizontalExtent;
 			double halfVerticalExtent;
-			if (settings.pageDimensions == AUTO) {
+			if (settings.pageDimensions == DimensionSettings.AUTO) {
 				// Circumscribe the cell to the pages scaled by {@code settings.scale}
 				// and rotated by {@code settings.rotation}
 				logger.verbose("preprocess_cellSize_fromPageScale", settings.scale, rotation);
@@ -166,16 +163,18 @@ public final class Preprocessor {
 					halfVerticalExtent *= settings.scale;
 				}
 			} else {
+				assert settings.pageDimensions.isValue();
+				Dimensions pageDimensions = settings.pageDimensions.value();
 				// Page dimensions are given explicitly: circumscribe the cell
 				// to a page of these dimensions rotated by {@code settings.rotation}
-				logger.verbose("preprocess_cellSize_fromPageDimensions", settings.pageDimensions, rotation);
+				logger.verbose("preprocess_cellSize_fromPageDimensions", pageDimensions, rotation);
 				halfHorizontalExtent = Rectangles.getHalfHorizontalExtent(
-						settings.pageDimensions.width().in(Imposition.LENGTH_UNIT),
-						settings.pageDimensions.height().in(Imposition.LENGTH_UNIT),
+						pageDimensions.width().in(Imposition.LENGTH_UNIT),
+						pageDimensions.height().in(Imposition.LENGTH_UNIT),
 						rotation);
 				halfVerticalExtent = Rectangles.getHalfVerticalExtent(
-						settings.pageDimensions.width().in(Imposition.LENGTH_UNIT),
-						settings.pageDimensions.height().in(Imposition.LENGTH_UNIT),
+						pageDimensions.width().in(Imposition.LENGTH_UNIT),
+						pageDimensions.height().in(Imposition.LENGTH_UNIT),
 						rotation);
 			}
 			
@@ -188,9 +187,10 @@ public final class Preprocessor {
 			cell = new Dimensions(Length.sum(contentWidth, m.left(), m.right()),
 			                      Length.sum(contentHeight, m.top(), m.bottom()));
 		} else {
+			assert settings.cellDimensions.isValue();
 			// Cell dimensions are given explicitly; return the value
 			logger.verbose("preprocess_cellSize_explicit", settings.cellDimensions);
-			cell = settings.cellDimensions;
+			cell = settings.cellDimensions.value();
 			// Shrink content area according to margins
 			Margins m = settings.cellMargins;
 			Length horizontalMargins = Length.sum(m.left(), m.right());
@@ -334,7 +334,7 @@ public final class Preprocessor {
 		final double declaredScale = settings.scale;
 		final boolean scaleExplicit = settings.isScaleGiven();
 		final double rotation = settings.rotation;
-		final Dimensions pageDimensions = settings.pageDimensions;
+		final DimensionSettings pageDimensions = settings.pageDimensions;
 		final Resizing declaredResize = settings.resizing;
 		final List<Alignment> align = settings.alignment;
 		final LengthUnit unit = Imposition.LENGTH_UNIT;
@@ -405,7 +405,7 @@ public final class Preprocessor {
 		 */
 		Resizing resize;
 		if (declaredResize == Resizing.AUTO) {
-			if (pageDimensions != AUTO) {
+			if (pageDimensions != DimensionSettings.AUTO) {
 				// Page dimensions are given explicitly
 				resize = Resizing.FIT;
 			} else {
@@ -434,9 +434,10 @@ public final class Preprocessor {
 				scale = declaredScale;
 				if (logger.isDebugEnabled())
 					logger.debug("preprocess_pageScale_explicit", scale);
-			} else if (pageDimensions != AUTO) {
+			} else if (pageDimensions != DimensionSettings.AUTO) {
+				assert pageDimensions.isValue();
 				// No scale given, calculate it from output page size
-				scale = scaleFromDimensions(pageDimensions, orig);
+				scale = scaleFromDimensions(pageDimensions.value(), orig);
 				if (logger.isDebugEnabled())
 					logger.debug("preprocess_pageScale_fromPage", pageDimensions, scale);
 			} else {
@@ -478,9 +479,10 @@ public final class Preprocessor {
 		 */
 		Dimensions pageBox;
 		boolean pageBoxOffset = false;  // Page box coincides with page border
-		if (pageDimensions != AUTO && scaleExplicit) {
+		if (pageDimensions != DimensionSettings.AUTO && scaleExplicit) {
+			assert pageDimensions.isValue();
 			// Magnification needed to make the input page fit the pageDimensions
-			double s = scaleFromDimensions(pageDimensions, orig);
+			double s = scaleFromDimensions(pageDimensions.value(), orig);
 			double correction = s/declaredScale;
 			pageBox = orig.scaleUp(correction);
 			pageBoxOffset = true;
@@ -588,7 +590,7 @@ public final class Preprocessor {
 		 * it is an instruction to render the image of each page in the
 		 * preferred dimensions as calculated from the other settings.
 		 */
-		private Dimensions pageDimensions = AUTO;
+		private DimensionSettings pageDimensions = DimensionSettings.AUTO;
 		/** Rotation of the page in radians in the direction from x-axis to y-axis. */
 		private double rotation;
 		/**
@@ -604,7 +606,7 @@ public final class Preprocessor {
 		 * This property can be set to override the preferred dimensions
 		 * as calculated from the other settings.
 		 */
-		private Dimensions cellDimensions = AUTO;
+		private DimensionSettings cellDimensions = DimensionSettings.AUTO;
 		
 		/**
 		 * The margins of the cell.
@@ -656,8 +658,21 @@ public final class Preprocessor {
 			this.scale = scale;
 		}
 	
-		public Dimensions getPageDimensions() {
+		public DimensionSettings getPageDimensions() {
 			return pageDimensions;
+		}
+		
+		/**
+		 * Sets the dimensions of every page.
+		 * This overrides the preferred dimensions which would otherwise be
+		 * calculated from the initial dimensions, scale and cell dimensions.
+		 * This variant accepts {@code DimensionSettings} object directly.
+		 * @param dimensions the required cell dimensions
+		 */
+		void setPageDimensions(DimensionSettings dimensions) {
+			if (dimensions == null)
+				throw new IllegalArgumentException("Page dimensions cannot be null");
+			this.pageDimensions = dimensions;
 		}
 
 		/**
@@ -669,7 +684,7 @@ public final class Preprocessor {
 		public void setPageDimensions(Dimensions dimensions) {
 			if (dimensions == null)
 				throw new IllegalArgumentException("Page dimensions cannot be null");
-			this.pageDimensions = dimensions;
+			this.pageDimensions = DimensionSettings.of(dimensions);
 		}
 	
 		public double getRotation() {
@@ -717,10 +732,24 @@ public final class Preprocessor {
 			this.alignment = Arrays.asList(horizontal, vertical);
 		}
 		
-		public Dimensions getCellDimensions() {
+		public DimensionSettings getCellDimensions() {
 			return cellDimensions;
 		}
 
+		/**
+		 * Sets the dimensions of the circumscribed rectangle (the cell).
+		 * This overrides the preferred dimensions which would otherwise be
+		 * calculated from either the initial page dimensions and scale,
+		 * or the required page dimensions.
+		 * This variant accepts {@code DimensionSettings} object directly.
+		 * @param dimensions the required cell dimensions
+		 */
+		void setCellDimensions(DimensionSettings dimensions) {
+			if (dimensions == null)
+				throw new IllegalArgumentException("Cell dimensions cannot be null");
+			this.cellDimensions = dimensions;
+		}
+		
 		/**
 		 * Sets the dimensions of the circumscribed rectangle (the cell).
 		 * This overrides the preferred dimensions which would otherwise be
@@ -731,7 +760,7 @@ public final class Preprocessor {
 		public void setCellDimensions(Dimensions dimensions) {
 			if (dimensions == null)
 				throw new IllegalArgumentException("Cell dimensions cannot be null");
-			this.cellDimensions = dimensions;
+			this.cellDimensions = DimensionSettings.of(dimensions);
 		}
 		
 		/**
@@ -766,8 +795,8 @@ public final class Preprocessor {
 		 */
 		public boolean isAutoSize() {
 			return scale <= 0
-					&& pageDimensions == AUTO
-					&& cellDimensions == AUTO;
+					&& pageDimensions == DimensionSettings.AUTO
+					&& cellDimensions == DimensionSettings.AUTO;
 		}
 	
 		@Override
@@ -777,10 +806,8 @@ public final class Preprocessor {
 					.append("rotation: ").append(rotation).append(" rad, ")
 					.append("resizing: ").append(resizing).append(", ")
 					.append("alignment: ").append(alignment).append(", ")
-					.append("page dimensions: ").append((pageDimensions==AUTO)
-					                                    ? "AUTO" : pageDimensions).append(", ")
-					.append("cell dimensions: ").append((cellDimensions==AUTO)
-					                                    ? "AUTO" : cellDimensions).append(", ")
+					.append("page dimensions: ").append(pageDimensions).append(", ")
+					.append("cell dimensions: ").append(cellDimensions).append(", ")
 					.append("margins: ").append(cellMargins)
 					.toString();
 		}
