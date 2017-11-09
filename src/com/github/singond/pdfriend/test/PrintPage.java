@@ -25,7 +25,6 @@ public class PrintPage {
 
 		SinglePage page1 = new SinglePage(612, 792);
 		GridPage page2 = new GridPage(2, 2, 306, 396);
-		page2.fitPages();
 		
 		SourceProvider<Page> sp = new SequentialSourceProvider(source);
 		sp.setSourceTo(page1);

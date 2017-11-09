@@ -42,9 +42,7 @@ public class ImposeGridPage {
 		GridPage page1 = new GridPage(2, 2, 306, 396, 0, 0, go);
 		GridPage page2 = new GridPage(2, 2, 306, 396, go);
 //		page1.scalePages(0.55);
-		page1.fitPages();
 //		page1.rotatePages(Math.PI/2);
-		page2.fitPages();
 		page2.setDirection(Direction.COLUMNS);
 		
 		Leaf leaf = new Leaf(page1, page2);
