@@ -2,8 +2,9 @@ package com.github.singond.pdfriend.document;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.github.singond.pdfriend.ExtendedLogger;
@@ -17,14 +18,14 @@ import com.github.singond.pdfriend.Log;
  * @author Singon
  *
  */
-public class VirtualPage {
+public final class VirtualPage {
 
 	/** The width of the output. */
 	private final double width;
 	/** The height of the output. */
 	private final double height;
 	/** A collection of all pages along with their positions. */
-	private final Collection<Content> content;
+	private final Set<Content> content;
 	
 	private static ExtendedLogger logger = Log.logger(VirtualPage.class);
 
@@ -37,7 +38,7 @@ public class VirtualPage {
 	public VirtualPage(double width, double height) {
 		this.width = width;
 		this.height = height;
-		this.content = new HashSet<>();
+		this.content = new LinkedHashSet<>();
 	}
 	
 	/**
@@ -53,7 +54,7 @@ public class VirtualPage {
 	public VirtualPage(double width, double height, Collection<Content> content) {
 		this.width = width;
 		this.height = height;
-		this.content = new HashSet<>(content);
+		this.content = new LinkedHashSet<>(content);
 	}
 	
 	/**
@@ -67,7 +68,7 @@ public class VirtualPage {
 	public VirtualPage(double width, double height, Content content) {
 		this.width = width;
 		this.height = height;
-		this.content = new HashSet<>();
+		this.content = new LinkedHashSet<>();
 		this.content.add(content);
 	}
 	
@@ -79,7 +80,7 @@ public class VirtualPage {
 	public VirtualPage(VirtualPage original) {
 		this.width = original.width;
 		this.height = original.height;
-		this.content = new HashSet<>(original.content);
+		this.content = new LinkedHashSet<>(original.content);
 	}
 
 
@@ -90,14 +91,32 @@ public class VirtualPage {
 	public double getHeight() {
 		return height;
 	}
-
+	
 	/**
-	 * Returns the content of the sheet as a collection of all content elements.
-	 * @return a shallow copy of the internal collection of content elements.
-	 *         The returned collection can be empty, but will not be null.
+	 * Returns an object representing all content elements of this page.
+	 * The returned object allows transforming the content using arbitrary
+	 * affine transform, but this ability is associated with some overhead
+	 * in both object construction and method execution.
+	 * In case that transformable content is not required, the method
+	 * {@link #getContentStatic} should be preferred for better performance.
+	 * @return a non-live view (but see {@link #Contents}) of the content
 	 */
-	public Collection<Content> getContent() {
-		return new HashSet<>(content);
+	public Contents getContents() {
+		return new ContentsMovable(getMovableContent());
+	}
+	
+	/**
+	 * Returns an object representing all content elements of this page.
+	 * The returned object does not permit transformations and throws
+	 * {@code UnsupportedOperationException} on invocation of the
+	 * {@link Content#transform} method.
+	 * The object returned by this method is expected to perform better when
+	 * compared to that returned by {@link #getContents}, both in instance
+	 * creation and method execution.
+	 * @return a non-live view (but see {@link #Contents}) of the content
+	 */
+	public Contents getContentStatic() {
+		return new ContentsStatic(new ArrayList<>(content));
 	}
 	
 	/**
@@ -106,10 +125,10 @@ public class VirtualPage {
 	 * @return a shallow copy of the internal collection of content
 	 *         elements, each converted to a new Content.Movable
 	 */
-	public Collection<Content.Movable> getMovableContent() {
+	List<Content.Movable> getMovableContent() {
 		return content.stream()
 		              .map(c -> c.new Movable())
-		              .collect(Collectors.toSet());
+		              .collect(Collectors.toList());
 	}
 	
 	/**
@@ -190,13 +209,13 @@ public class VirtualPage {
 		 * of content elements.
 		 * <p><b>Warning:</b> This removes all previously set content
 		 * in this page!</p>
-		 * @param content
+		 * @param contents
 		 */
-		public void setContent(List<Content> content) {
+		public void setContent(Contents contents) {
 			if (!this.content.isEmpty()) {
 				logger.warn("vpage_overwritingContent", Builder.this);
 			}
-			this.content = content;
+			this.content = new ArrayList<>(contents.get());
 		}
 
 		/**
@@ -205,6 +224,14 @@ public class VirtualPage {
 		 */
 		public void addContent(Content content) {
 			this.content.add(content);
+		}
+		
+		/**
+		 * Adds all given contents.
+		 * @param contents
+		 */
+		public void addContent(Contents contents) {
+			this.content.addAll(contents.get());
 		}
 		
 		/**

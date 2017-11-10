@@ -4,17 +4,18 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import com.github.singond.pdfriend.book.control.SequentialSourceProvider;
-import com.github.singond.pdfriend.book.control.SourceProvider;
-import com.github.singond.pdfriend.book.model.GridPage;
-import com.github.singond.pdfriend.book.model.Page;
-import com.github.singond.pdfriend.book.model.SinglePage;
+import com.github.singond.pdfriend.book.GridPage;
+import com.github.singond.pdfriend.book.Page;
+import com.github.singond.pdfriend.book.SequentialSourceProvider;
+import com.github.singond.pdfriend.book.SinglePage;
+import com.github.singond.pdfriend.book.SourceProvider;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.format.ParsingException;
 import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.process.PDFParser;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
 
+@SuppressWarnings("deprecation")
 public class PrintPage {
 
 	public static void main(String[] args) throws ParsingException, RenderingException, IOException {

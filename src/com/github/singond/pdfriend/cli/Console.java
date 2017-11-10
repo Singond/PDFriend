@@ -14,9 +14,7 @@ import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.Out;
 import com.github.singond.pdfriend.Util;
 import com.github.singond.pdfriend.Version;
-import com.github.singond.pdfriend.cli.parsing.GlobalOptions;
-import com.github.singond.pdfriend.cli.parsing.InputFiles;
-import com.github.singond.pdfriend.cli.parsing.OutputFile;
+import com.github.singond.pdfriend.imposition.ImposeCommand;
 import com.github.singond.pdfriend.modules.Module;
 import com.github.singond.pdfriend.modules.ModuleException;
 import com.github.singond.pdfriend.pipe.Pipe;
@@ -57,14 +55,22 @@ public class Console {
 		 * @param key
 		 * @return
 		 */
-		public SubCommand getAndReplace(Object key) {
-			SubCommand value = get(key);
+		public SubCommand getAndReplace(String key) {
+			SubCommand value = super.get(key);
 			if (value != null) {
-				// It should be safe to cast because if the key is not
-				// a string, the value variable is null.
 				put((String) key, value.newInstance());
 			}
 			return value;
+		}
+		
+		/**
+		 * Prevents calling get().
+		 * @throws UnsupportedOperationException on every invocation
+		 */
+		@Override
+		public SubCommand get(Object key) {
+			throw new UnsupportedOperationException(
+					"Cannot retrieve key from this map without replacing it. Use getAndReplace.");
 		}
 	}
 	
@@ -85,9 +91,15 @@ public class Console {
 		setVerbosity(global.quiet(), global.verbose(), global.debug());
 		
 		Pipe pipe = new Pipe();
-		for (SubCommand subcmd : subcommands) {
-			subcmd.postParse();
-			pipe.addOperation(subcmd.getModule());
+		try {
+			for (SubCommand subcmd : subcommands) {
+				subcmd.postParse();
+				pipe.addOperation(subcmd.getModule());
+			}
+		} catch (ParameterConsistencyException e) {
+			// TODO Handle the exception somehow
+			logger.error("Conflicting arguments", e);
+			return;
 		}
 		
 		/* Run the whole thing */
@@ -115,10 +127,12 @@ public class Console {
 			pipe.execute();
 		} catch (ModuleException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Exception in module", e);
+			return;
 		} catch (PipeException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Exception in pipe", e);
+			return;
 		}
 	}
 	

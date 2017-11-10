@@ -33,6 +33,7 @@ import org.apache.pdfbox.multipdf.LayerUtility;
  * Example to show superimposing a PDF page onto another PDF.
  * Copied from org.apache.pdfbox.examples.documentmanipulation.SuperimposePage
  */
+@SuppressWarnings("unused")
 public class SuperimposePage {
 
 	public static void main(final String[] args) {
@@ -82,7 +83,7 @@ public class SuperimposePage {
 			contentStream.saveGraphicsState();
 			// or layerUtility.wrapInSaveRestore(page);
 
-			// use some sample transformations 
+			// use some sample transformations
 			/*AffineTransform transform = new AffineTransform(0, 0.5, -0.5, 0, cropBox.getWidth(), 0);
 			contentStream.drawXObject(mountable, transform);
 			transform = new AffineTransform(0.5, 0.5, -0.5, 0.5, 0.5 * cropBox.getWidth(), 0.2 * cropBox.getHeight());

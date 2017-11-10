@@ -1,8 +1,6 @@
 package com.github.singond.pdfriend.cli;
 
 import com.beust.jcommander.ParametersDelegate;
-import com.github.singond.pdfriend.cli.parsing.InputFiles;
-import com.github.singond.pdfriend.cli.parsing.OutputFile;
 import com.github.singond.pdfriend.modules.Module;
 
 public abstract class SubCommand {
@@ -40,8 +38,6 @@ public abstract class SubCommand {
 	public void setOutputFile(OutputFile outputFile) {
 		this.outputFile = outputFile;
 	}
-
-	/* Abstract methods */
 	
 	/**
 	 * Creates a new instance of this SubCommand.
@@ -49,14 +45,30 @@ public abstract class SubCommand {
 	public abstract SubCommand newInstance();
 	
 	/**
-	 * Method to be invoked after the SubCommand object is built
+	 * Method to be invoked after this SubCommand object is built
 	 * and initialized with values from the command line.
+	 * @throws ParameterConsistencyException if the parsed values put the object
+	 *         into an invalid state
 	 */
-	public abstract void postParse();
+	public void postParse() throws ParameterConsistencyException {
+		inputFiles.postParse();
+		outputFile.postParse();
+		postParseSpecific();
+	}
 	
 	/**
-	 * Returns a PDFriend module which performs the task represented
-	 * by this subcommand.
+	 * Method to be invoked after the SubCommand subclass object is built
+	 * and initialized with values from the command line.
+	 * This is a subclass-specific implementation which is invoked by
+	 * {@code postParseDefault} in {@link SubCommand}.
+	 * @throws ParameterConsistencyException if the parsed values put the object
+	 *         into an invalid state
+	 */
+	protected abstract void postParseSpecific() throws ParameterConsistencyException;
+	
+	/**
+	 * Returns a PDFriend module with fully initialized state ready
+	 * to perform the task represented by this subcommand.
 	 */
 	public abstract Module getModule();
 }

@@ -4,7 +4,7 @@
 		<Console name="Log" target="SYSTEM_OUT">
 			<!--<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>-->
 			<!--<PatternLayout pattern="[%t] %-5level %logger{36} - %msg%n"/>-->
-			<PatternLayout pattern="[%t] %-16.16c{1} %-5level{VERBOSE=VERB} | %msg%n"/>
+			<PatternLayout pattern="[%t] %-24.-24c{1} %-5level{VERBOSE=VERB} | %msg%n"/>
 		</Console>
 		<!-- Writes the log messages to standard error so that stdout can be piped. --> 
 		<Console name="CommandLineInterface" target="SYSTEM_ERR">

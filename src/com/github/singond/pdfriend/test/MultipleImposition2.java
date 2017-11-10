@@ -7,7 +7,7 @@ import java.util.Arrays;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 
-import com.github.singond.pdfriend.book.model.MultiPage;
+import com.github.singond.pdfriend.book.MultiPage;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.format.RenderingException;
@@ -29,7 +29,7 @@ public class MultipleImposition2 {
 		}
 		
 		public void addPage(VirtualPage page, AffineTransform position) {
-			Pagelet p = new Pagelet(page.getWidth(), page.getHeight(), position);
+			Pagelet p = new AutoPagelet(page.getWidth(), page.getHeight(), position);
 			p.setSource(page);
 			super.addPagelet(p);
 		}

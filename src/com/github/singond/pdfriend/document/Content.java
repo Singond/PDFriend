@@ -39,12 +39,12 @@ public abstract class Content {
 	}
 	
 	/**
-	 * Returns a piece of content which is a identical to this instance
+	 * Returns a piece of content which is identical to this instance
 	 * transformed using the given transformation, keeping the original
 	 * unchanged.
 	 * If the original transformation matrix is T, this method returns
 	 * content at position given by matrix T2, such that T2 is the product
-	 * of {@code trans} and T. In mathematical formulation:
+	 * of {@code transform} and T. In mathematical formulation:
 	 * <pre>[T2] = [trans] x [T]</pre>
 	 * This implementation works by transforming the position to T2 in the
 	 * aforementioned way and calling {@code atPosition(T2)} internally.
@@ -59,14 +59,14 @@ public abstract class Content {
 	}
 	
 	/**
-	 * Returns a piece of content which is a identical to this instance
+	 * Returns a piece of content which is identical to this instance
 	 * moved to the position specified by the given transformation matrix,
 	 * keeping the original unchanged.
 	 * @param position the transformation matrix to be used as the position
 	 *        of the returned Content element
 	 * @return the transformed piece of content
 	 */
-	public abstract Content atPosition(AffineTransform position);
+	protected abstract Content atPosition(AffineTransform position);
 	
 	/**
 	 * Invite a ContentVisitor
@@ -85,7 +85,7 @@ public abstract class Content {
 	 * 
 	 * @author Singon
 	 */
-	public final class Movable {
+	final class Movable {
 		/**
 		 * The current position of the Content element.
 		 * This is the transformation matrix representing the position of

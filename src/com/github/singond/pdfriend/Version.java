@@ -49,6 +49,6 @@ public class Version {
 		if (suffix.isEmpty()) {
 			return ""+major+"."+minor+"."+revision;
 		}
-		return ""+major+"."+minor+"."+revision+"_"+suffix;
+		return ""+major+"."+minor+"."+revision+"-"+suffix;
 	}
 }

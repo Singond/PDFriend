@@ -23,7 +23,7 @@ public abstract class Util {
 	 */
 	public static File getApplicationDir() {
 		try {
-			CodeSource src = Main.class.getProtectionDomain().getCodeSource();
+			CodeSource src = Application.class.getProtectionDomain().getCodeSource();
 			File srcPath = new File(src.getLocation().toURI().getPath());
 			return srcPath.getParentFile();
 		} catch (SecurityException e) {

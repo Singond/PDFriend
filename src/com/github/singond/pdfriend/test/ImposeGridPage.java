@@ -8,16 +8,16 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.book.control.SequentialSourceProvider;
-import com.github.singond.pdfriend.book.control.SourceProvider;
-import com.github.singond.pdfriend.book.model.FlipDirection;
-import com.github.singond.pdfriend.book.model.GridPage;
-import com.github.singond.pdfriend.book.model.Leaf;
-import com.github.singond.pdfriend.book.model.Sheet;
-import com.github.singond.pdfriend.book.model.GridPage.Direction;
-import com.github.singond.pdfriend.book.model.GridPage.GridOrientation;
-import com.github.singond.pdfriend.book.model.Leaf.Orientation;
-import com.github.singond.pdfriend.book.model.Page;
+import com.github.singond.pdfriend.book.FlipDirection;
+import com.github.singond.pdfriend.book.GridPage;
+import com.github.singond.pdfriend.book.Leaf;
+import com.github.singond.pdfriend.book.Page;
+import com.github.singond.pdfriend.book.SequentialSourceProvider;
+import com.github.singond.pdfriend.book.Sheet;
+import com.github.singond.pdfriend.book.SourceProvider;
+import com.github.singond.pdfriend.book.GridPage.Direction;
+import com.github.singond.pdfriend.book.GridPage.GridOrientation;
+import com.github.singond.pdfriend.book.Leaf.Orientation;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.format.ParsingException;
@@ -31,6 +31,7 @@ import com.github.singond.pdfriend.format.process.PDFRenderer;
  * @author Singon
  *
  */
+@SuppressWarnings("deprecation")
 public class ImposeGridPage {
 	
 	private static ExtendedLogger logger = Log.logger(ImposeGridPage.class);
