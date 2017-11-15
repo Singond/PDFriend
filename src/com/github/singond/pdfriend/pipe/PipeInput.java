@@ -1,6 +1,6 @@
 package com.github.singond.pdfriend.pipe;
 
-interface PipeInput {
+interface PipeInput extends AutoCloseable {
 
 	/**
 	 * Returns the next unit of pipe data.
