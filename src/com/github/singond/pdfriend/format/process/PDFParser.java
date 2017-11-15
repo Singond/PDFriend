@@ -87,15 +87,25 @@ public class PDFParser implements Parser, AutoCloseable {
 	 * produced by this {@code PDFParser} to be closed, too, thus making
 	 * the virtual documents (and all documents derived from them) unusable
 	 * in output.
+	 * @throws IOException when at least one of the backing documents fails
+	 *         to close. The exception accompanying the first failure is
+	 *         passed to the thrown exception as its cause.
 	 */
-	public void close() {
+	public void close() throws IOException {
+		List<IOException> exceptions = new ArrayList<>();
 		for (PDDocument openDoc : openDocs) {
 			try {
 				logger.debug("parse_pdf_close");
 				openDoc.close();
 			} catch (IOException e) {
+				exceptions.add(e);
 				logger.error("PDF document could not be closed: " + openDoc, e);
 			}
+		}
+		if (!exceptions.isEmpty()) {
+			int size = exceptions.size();
+			throw new IOException
+					(size + " documents failed to close; the first doc failed with ", exceptions.get(0));
 		}
 	}
 }
