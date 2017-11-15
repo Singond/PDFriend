@@ -95,7 +95,7 @@ public class PDFParser implements Parser, AutoCloseable {
 		List<IOException> exceptions = new ArrayList<>();
 		for (PDDocument openDoc : openDocs) {
 			try {
-				logger.debug("parse_pdf_close");
+				logger.debug("parse_pdf_close", openDoc);
 				openDoc.close();
 			} catch (IOException e) {
 				exceptions.add(e);
