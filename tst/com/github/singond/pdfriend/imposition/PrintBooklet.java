@@ -22,8 +22,8 @@ public class PrintBooklet {
 		File targetFile = new File("test/printed-booklet.pdf");
 		VirtualDocument source;
 		
-		try {
-			source = new PDFParser().parseDocument(Files.readAllBytes(sourceFile.toPath()));
+		try (PDFParser parser = new PDFParser()) {
+			source = parser.parseDocument(Files.readAllBytes(sourceFile.toPath()));
 			Booklet booklet = new Booklet.Builder().build();
 //			booklet.setBinding(Binding.LEFT);
 //			booklet.setVersoOpposite(true);
