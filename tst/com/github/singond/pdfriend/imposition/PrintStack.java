@@ -71,6 +71,7 @@ public class PrintStack {
 		try {
 			// Get content
 			File srcFile = new File("test/lorem-letter-bg.pdf");
+			@SuppressWarnings("resource")
 			VirtualDocument source = new PDFParser().parseDocument(Files.readAllBytes(srcFile.toPath()));
 			new SequentialSourceProvider(source).setSourceTo(volume.pages());
 			VirtualDocument output = volume.renderDocument();

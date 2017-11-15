@@ -75,6 +75,7 @@ public class ImposeSignature {
 		try {
 			// Get content
 			File src = new File("test/lorem-letter.pdf");
+			@SuppressWarnings("resource")
 			VirtualDocument doc = new PDFParser().parseDocument(Files.readAllBytes(src.toPath()));
 			new SequentialSourceProvider(doc).setSourceTo(volume.pages());
 			

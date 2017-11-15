@@ -27,6 +27,7 @@ public class MultipleImposition {
 
 	public static void main(String[] args) throws ParsingException, RenderingException, IOException {
 		File srcFile = new File("test/lorem-letter.pdf");
+		@SuppressWarnings("resource")
 		VirtualDocument source = new PDFParser().parseDocument(Files.readAllBytes(srcFile.toPath()));
 		VirtualPage page = source.getPage(1);
 		
