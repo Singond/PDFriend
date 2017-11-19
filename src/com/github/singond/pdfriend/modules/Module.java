@@ -15,7 +15,13 @@ public interface Module {
 	 * invoking this method.
 	 * @param document the virtual documents to be processed
 	 * @return the processed document as a new virtual document
-	 * @throws RenderingException 
+	 * @throws RenderingException
 	 */
 	public ModuleData process(ModuleData document) throws ModuleException;
+	
+	/**
+	 * Returns the name of this module.
+	 * @return a user-friendly name of this module
+	 */
+	public String name();
 }

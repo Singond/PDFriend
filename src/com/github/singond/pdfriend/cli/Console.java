@@ -126,8 +126,8 @@ public class Console {
 			pipe.setOutput(outputFile.getOutput());
 			pipe.execute();
 		} catch (ModuleException e) {
-			// TODO Auto-generated catch block
-			logger.error("Exception in module", e);
+			logger.error("Exception in module " + e.getModule().name()
+			             + "; caused by: ", e.getCause());
 			return;
 		} catch (PipeException e) {
 			// TODO Auto-generated catch block
