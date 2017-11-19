@@ -1,6 +1,7 @@
 package com.github.singond.pdfriend;
 
 import com.github.singond.pdfriend.cli.Console;
+import com.github.singond.pdfriend.cli.ExitStatus;
 
 /**
  * The main class; this represents a single instance of PDFriend.
@@ -30,9 +31,11 @@ public class Application {
 			Out.line("This is PDFriend version %s", Version.current().toString());
 			System.exit(0);
 		} else {
-			new Console().execute(args);
-			long end = System.currentTimeMillis();
-			logger.info("total_time", end-start);
+			ExitStatus status = new Console().execute(args);
+			if (status == ExitStatus.SUCCESS) {
+				long end = System.currentTimeMillis();
+				logger.info("total_time", end-start);
+			}
 		}
 	}
 	
