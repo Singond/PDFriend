@@ -74,6 +74,7 @@ public class PrintVolume {
 		try {
 			// Get content
 			File srcFile = new File("test/lorem-letter.pdf");
+			@SuppressWarnings("resource")
 			VirtualDocument source = new PDFParser().parseDocument(Files.readAllBytes(srcFile.toPath()));
 			new SequentialSourceProvider(source).setSourceTo(volume.pages());
 			VirtualDocument doc = volume.renderDocument();

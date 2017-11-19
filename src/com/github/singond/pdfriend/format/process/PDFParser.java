@@ -1,6 +1,8 @@
 package com.github.singond.pdfriend.format.process;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -14,9 +16,12 @@ import com.github.singond.pdfriend.format.ParsingException;
 import com.github.singond.pdfriend.format.Parser;
 import com.github.singond.pdfriend.format.content.PDFPage;
 
-public class PDFParser implements Parser {
+public class PDFParser implements Parser, AutoCloseable {
 
 	private static ExtendedLogger logger = Log.logger(PDFParser.class);
+	
+	/** A list of open PDDocuments which need to be closed */
+	private final List<PDDocument> openDocs = new ArrayList<>();
 	
 	public PDFParser() {}
 	
@@ -24,15 +29,26 @@ public class PDFParser implements Parser {
 	 * {@inheritDoc}
 	 * Imports the file given in constructor, if it is a PDF file.
 	 */
+	@SuppressWarnings("resource") // Resources are closed later in close() method
 	@Override
 	public VirtualDocument parseDocument(byte[] bytes) throws ParsingException {
 		PDDocument sourceDoc = null;
 		try {
 			logger.info("parse_pdf");
 			sourceDoc = PDDocument.load(bytes);
+			openDocs.add(sourceDoc);
+			VirtualDocument result = parseDocument(sourceDoc);
+			return result;
 		} catch (IOException e) {
 			logger.error("Error when parsing the file", e);
+			throw new ParsingException("Error when parsing the PDF file", e);
 		}
+	}
+	
+	/**
+	 * Converts the given PDF document into a virtual document.
+	 */
+	private VirtualDocument parseDocument(PDDocument sourceDoc) throws ParsingException {
 		VirtualDocument.Builder result = new VirtualDocument.Builder();
 		for (PDPage sourcePage : sourceDoc.getPages()) {
 			VirtualPage.Builder page = new VirtualPage.Builder();
@@ -61,5 +77,35 @@ public class PDFParser implements Parser {
 			result.addPage(page.build());
 		}
 		return result.build();
+	}
+	
+	/**
+	 * Closes the PDF documents created when parsing the input.
+	 * <p>
+	 * <strong>Warning:</strong>
+	 * This causes the PDF content in {@code VirtualDocument} instances
+	 * produced by this {@code PDFParser} to be closed, too, thus making
+	 * the virtual documents (and all documents derived from them) unusable
+	 * in output.
+	 * @throws IOException when at least one of the backing documents fails
+	 *         to close. The exception accompanying the first failure is
+	 *         passed to the thrown exception as its cause.
+	 */
+	public void close() throws IOException {
+		List<IOException> exceptions = new ArrayList<>();
+		for (PDDocument openDoc : openDocs) {
+			try {
+				logger.debug("parse_pdf_close", openDoc);
+				openDoc.close();
+			} catch (IOException e) {
+				exceptions.add(e);
+				logger.error("PDF document could not be closed: " + openDoc, e);
+			}
+		}
+		if (!exceptions.isEmpty()) {
+			int size = exceptions.size();
+			throw new IOException
+					(size + " documents failed to close; the first doc failed with ", exceptions.get(0));
+		}
 	}
 }

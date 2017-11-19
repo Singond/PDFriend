@@ -1,8 +1,11 @@
 package com.github.singond.pdfriend.pipe;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.singond.pdfriend.ExtendedLogger;
+import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.io.Input;
 import com.github.singond.pdfriend.io.Output;
@@ -10,6 +13,8 @@ import com.github.singond.pdfriend.modules.Module;
 import com.github.singond.pdfriend.modules.ModuleException;
 
 public class Pipe {
+
+	private static ExtendedLogger logger = Log.logger(Pipe.class);
 
 	private final List<Operation> operations;
 	private PipeInput inputProvider;
@@ -57,5 +62,11 @@ public class Pipe {
 			data = op.process(data);
 		}
 		outputConsumer.consumePipeData(data);
+		try {
+			inputProvider.close();
+		} catch (IOException e) {
+			logger.error("Pipe input could not be closed", e);
+			throw new PipeException("Pipe input could not be closed", e);
+		}
 	}
 }

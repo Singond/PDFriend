@@ -1,6 +1,8 @@
 package com.github.singond.pdfriend.pipe;
 
-interface PipeInput {
+import java.io.IOException;
+
+interface PipeInput extends AutoCloseable {
 
 	/**
 	 * Returns the next unit of pipe data.
@@ -10,4 +12,6 @@ interface PipeInput {
 	
 	/** Checks whether there is unconsumed input. */
 	boolean hasMore();
+	
+	public void close() throws IOException;
 }

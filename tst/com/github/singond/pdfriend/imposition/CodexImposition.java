@@ -65,6 +65,7 @@ public class CodexImposition {
 		File output = new File("test/imposed-codex.pdf");
 		
 		try {
+			@SuppressWarnings("resource")
 			VirtualDocument inDoc = new PDFParser().parseDocument(Files.readAllBytes(input.toPath()));
 			VirtualDocument outDoc = codex.imposeAndRender(inDoc);
 			new PDFRenderer().renderAndSave(outDoc, output);
@@ -117,6 +118,7 @@ public class CodexImposition {
 		
 		try {
 			// Get content
+			@SuppressWarnings("resource")
 			VirtualDocument source = new PDFParser().parseDocument(Files.readAllBytes(input.toPath()));
 			new SequentialSourceProvider(source).setSourceTo(volume.pages());
 			VirtualDocument outputDoc = volume.renderDocument();

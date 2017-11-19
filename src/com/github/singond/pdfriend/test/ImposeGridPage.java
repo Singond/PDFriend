@@ -58,6 +58,7 @@ public class ImposeGridPage {
 		try {
 			// Get content
 			File srcFile = new File("test/lorem-letter.pdf");
+			@SuppressWarnings("resource")
 			VirtualDocument source = new PDFParser().parseDocument(Files.readAllBytes(srcFile.toPath()));
 			SourceProvider<Page> sp = new SequentialSourceProvider(source);
 			sp.setSourceTo(page1);

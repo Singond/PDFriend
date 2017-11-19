@@ -21,6 +21,7 @@ public class PrintPage {
 	public static void main(String[] args) throws ParsingException, RenderingException, IOException {
 		File srcFile = new File("test/lorem-letter.pdf");
 		File output = new File("test/printed-page.pdf");
+		@SuppressWarnings("resource")
 		VirtualDocument source = new PDFParser().parseDocument(Files.readAllBytes(srcFile.toPath()));
 
 		SinglePage page1 = new SinglePage(612, 792);

@@ -19,6 +19,7 @@ public class PageRepetition {
 	
 	@Test
 	public void repeatPage() throws ParsingException, IOException {
+		@SuppressWarnings("resource")
 		VirtualDocument inDoc = new PDFParser().parseDocument(Files.readAllBytes(input));
 		int repeatPage = 3;
 		int repeatDoc = 2;
