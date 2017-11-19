@@ -43,7 +43,7 @@ public class ParsingManager implements AutoCloseable {
 		// TODO Handle different file formats
 		try {
 			return pdfParser.parseDocument(input.getBytes());
-		} catch (InputException e) {
+		} catch (Exception e) {
 			throw new ParsingException(e);
 		}
 	}
