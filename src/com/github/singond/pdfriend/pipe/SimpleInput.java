@@ -36,7 +36,7 @@ class SimpleInput implements PipeInput {
 			consumed = true;
 			return pd;
 		} catch (ParsingException e) {
-			throw new PipeException(e);
+			throw new PipeException(e.getCause());
 		}
 	}
 

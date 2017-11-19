@@ -130,8 +130,12 @@ public class Console {
 			             + "; caused by: ", e.getCause());
 			return;
 		} catch (PipeException e) {
-			// TODO Auto-generated catch block
-			logger.error("Exception in pipe", e);
+			// Show the cause, hide PipeException to the user
+			Throwable cause = e.getCause();
+			if (logger.isDebugEnabled())
+				logger.debug(cause);
+			else
+				logger.error(cause.getMessage());
 			return;
 		}
 	}
