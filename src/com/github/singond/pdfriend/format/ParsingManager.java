@@ -24,11 +24,10 @@ public class ParsingManager implements AutoCloseable {
 	 * Imports multiple input as a list of virtual documents.
 	 * @param input
 	 * @return
-	 * @throws InputException
 	 * @throws ParsingException
 	 */
 	public final List<VirtualDocument> parseToDocuments(Input input)
-			throws InputException, ParsingException {
+			throws ParsingException {
 		List<VirtualDocument> docs = new ArrayList<>();
 		while (input.hasNext()) {
 			docs.add(parseToDocument(input.next()));

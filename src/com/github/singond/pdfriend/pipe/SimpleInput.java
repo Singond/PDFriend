@@ -35,7 +35,7 @@ class SimpleInput implements PipeInput {
 			PipeData pd = new PipeData(md);
 			consumed = true;
 			return pd;
-		} catch (InputException | ParsingException e) {
+		} catch (ParsingException e) {
 			throw new PipeException(e);
 		}
 	}
