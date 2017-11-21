@@ -7,5 +7,5 @@ package com.github.singond.pdfriend.io;
 public interface InputElement {
 	
 	/** Returns the input as a byte array */
-	public byte[] getBytes() throws InputException;
+	public byte[] getBytes() throws Exception;
 }

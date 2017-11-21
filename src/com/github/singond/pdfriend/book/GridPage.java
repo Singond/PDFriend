@@ -253,44 +253,6 @@ public class GridPage extends MultiPage {
 		return pagelets(direction);
 	}
 	
-	/*
-	 * TODO Remove these methods. We assume pre-processing will be used
-	 * to control input page position in the slots.
-	 */
-	
-	/**
-	 * Makes all pages fit their cell.
-	 */
-	@Deprecated
-	public void fitPages() {
-		for (Pagelet p : getPagelets()) {
-			((AutoPagelet) p).fitPage();
-		}
-	}
-	
-	/**
-	 * Scales up all pages by a fixed amount.
-	 * @param scale magnification to be applied to all pages
-	 */
-	@Deprecated
-	public void scalePages(double scale) {
-		for (Pagelet p : getPagelets()) {
-			((AutoPagelet) p).scalePage(scale);
-		}
-	}
-	
-	/**
-	 * Rotates all pages by the given angle.
-	 * @param angle the angle of rotation in counter-clockwise direction
-	 *        in radians to be applied to all pages
-	 */
-	@Deprecated
-	public void rotatePages(double angle) {
-		for (Pagelet p : getPagelets()) {
-			((AutoPagelet) p).rotatePage(angle);
-		}
-	}
-	
 	@Override
 	public <R, P, E extends Throwable> R invite(PageVisitor<R, P, E> visitor, P param) throws E {
 		return visitor.visit(this, param);

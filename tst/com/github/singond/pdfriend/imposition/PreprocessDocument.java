@@ -41,6 +41,7 @@ public class PreprocessDocument {
 		
 		try {
 			/* Input Document */
+			@SuppressWarnings("resource")
 			VirtualDocument inDoc1 = new PDFParser().parseDocument(Files.readAllBytes(input1.toPath()));
 			
 			Preprocessor.Settings settings = new Preprocessor.Settings();

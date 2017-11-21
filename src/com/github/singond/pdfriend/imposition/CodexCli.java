@@ -7,6 +7,7 @@ import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
+import com.beust.jcommander.validators.PositiveInteger;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.cli.ParameterConsistencyException;
@@ -39,8 +40,8 @@ class CodexCli implements ImposableCli<Codex.Builder> {
 
 	@Parameter(names={"--stack", "--sheets-per-signature"},
 	           descriptionKey="book-stack",
-	           description="Number of sheets per signature")
-	// TODO Add validator
+	           description="Number of sheets per signature",
+	           validateWith=PositiveInteger.class)
 	private int sheetsPerSignature = 1;
 	
 	@Parameter(names={"--right-to-left"},
@@ -81,12 +82,6 @@ class CodexCli implements ImposableCli<Codex.Builder> {
 	}
 	
 	private static abstract class ManipulationProxy {
-		/** The code identifying this manipulation in the command line */
-		/*private final String code;
-		
-		ManipulationProxy(String code) {
-			this.code = code;
-		}*/
 		
 		/** Applies the manipulation to the given codex builder object. */
 		abstract void applyTo(Codex.Builder codex);

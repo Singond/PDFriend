@@ -1,5 +1,6 @@
 package com.github.singond.pdfriend.pipe;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.github.singond.pdfriend.document.VirtualDocument;
@@ -34,14 +35,19 @@ class SimpleInput implements PipeInput {
 			PipeData pd = new PipeData(md);
 			consumed = true;
 			return pd;
-		} catch (InputException | ParsingException e) {
-			throw new PipeException(e);
+		} catch (ParsingException e) {
+			throw new PipeException(e.getCause());
 		}
 	}
 
 	@Override
 	public boolean hasMore() {
 		return !consumed;
+	}
+
+	@Override
+	public void close() throws IOException {
+		imgr.close();
 	}
 
 }

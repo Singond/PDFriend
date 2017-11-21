@@ -29,9 +29,8 @@ public class ImposeLeaf {
 		leaf.setOrientation(Orientation.RECTO_UP);
 		leaf.setFlipDirection(FlipDirection.AROUND_Y);
 				
-		try {
+		try (PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"))) {
 			// Get content
-			PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
 			VirtualPage one = new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 0)));
 			VirtualPage two = new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 1)));
 //			((SinglePage) leaf.getFrontPage()).setSource(one);
@@ -47,6 +46,7 @@ public class ImposeLeaf {
 			PDDocument out = new PDFRenderer().render(document);
 			out.save(new File("test/imposed-leaf.pdf"));
 			out.close();
+			source.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (RenderingException e) {

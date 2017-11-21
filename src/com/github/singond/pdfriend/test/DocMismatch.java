@@ -34,7 +34,7 @@ public class DocMismatch {
 				aDoc, aPage, PDPageContentStream.AppendMode.APPEND, true);
 
 			contentStream.saveGraphicsState();
-			// Rotate pi/2 CCW, scale by 0.5, and move width/2 to right  
+			// Rotate pi/2 CCW, scale by 0.5, and move width/2 to right
 			AffineTransform transform = new AffineTransform(0, 0.5, -0.5, 0, cropBox.getWidth(), 0);
 			contentStream.transform(new Matrix(transform));
 			contentStream.drawForm(mountable);
@@ -47,6 +47,7 @@ public class DocMismatch {
 			
 			aDoc.save("test/mismatched.pdf");
 			aDoc.close();
+			bDoc.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

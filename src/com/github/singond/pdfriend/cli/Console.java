@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.logging.log4j.Level;
 
 import com.beust.jcommander.JCommander;
+import com.github.singond.pdfriend.ExitStatus;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.Out;
@@ -78,7 +79,7 @@ public class Console {
 	 * Run PDFriend in command-line mode.
 	 * @param args the whole argument array passed into the program
 	 */
-	public void execute(String[] args) {
+	public ExitStatus execute(String[] args) {
 		/** The argument line split into sections by subcommand */
 		List<List<String>> splitArgs = splitArgs(Arrays.asList(args));
 		/** A helper object grouping the parsed objects */
@@ -99,7 +100,7 @@ public class Console {
 		} catch (ParameterConsistencyException e) {
 			// TODO Handle the exception somehow
 			logger.error("Conflicting arguments", e);
-			return;
+			return ExitStatus.INPUT_FAILURE;
 		}
 		
 		/* Run the whole thing */
@@ -111,13 +112,13 @@ public class Console {
 		// Display version and exit (--version)
 		if (global.version()) {
 			version();
-			System.exit(0);
+			return ExitStatus.SIMPLE;
 		}
 		
 		// Display help and exit (--help)
 		if (global.help()) {
 			help();
-			System.exit(0);
+			return ExitStatus.SIMPLE;
 		}
 		
 		// End global-level option processing and run the subcommand
@@ -125,14 +126,19 @@ public class Console {
 			pipe.setInput(inputFiles.getInput());
 			pipe.setOutput(outputFile.getOutput());
 			pipe.execute();
+			return ExitStatus.SUCCESS;
 		} catch (ModuleException e) {
-			// TODO Auto-generated catch block
-			logger.error("Exception in module", e);
-			return;
+			logger.error("Exception in module " + e.getModule().name()
+			             + "; caused by: ", e.getCause());
+			return ExitStatus.FAILURE;
 		} catch (PipeException e) {
-			// TODO Auto-generated catch block
-			logger.error("Exception in pipe", e);
-			return;
+			// Show the cause, hide PipeException to the user
+			Throwable cause = e.getCause();
+			if (logger.isDebugEnabled())
+				logger.error(cause.getMessage(), cause);
+			else
+				logger.error(cause.getMessage());
+			return ExitStatus.FAILURE;
 		}
 	}
 	

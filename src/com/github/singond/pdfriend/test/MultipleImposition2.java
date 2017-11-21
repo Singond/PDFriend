@@ -67,6 +67,8 @@ public class MultipleImposition2 {
 			e.printStackTrace();
 		} catch (RenderingException e) {
 			e.printStackTrace();
+		} finally {
+			source.close();
 		}
 	}
 

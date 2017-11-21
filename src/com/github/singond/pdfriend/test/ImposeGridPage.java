@@ -42,9 +42,7 @@ public class ImposeGridPage {
 		GridPage page1 = new GridPage(2, 2, 306, 396, 0, 0, go);
 		GridPage page2 = new GridPage(2, 2, 306, 396, go);
 //		page1.scalePages(0.55);
-		page1.fitPages();
 //		page1.rotatePages(Math.PI/2);
-		page2.fitPages();
 		page2.setDirection(Direction.COLUMNS);
 		
 		Leaf leaf = new Leaf(page1, page2);
@@ -60,6 +58,7 @@ public class ImposeGridPage {
 		try {
 			// Get content
 			File srcFile = new File("test/lorem-letter.pdf");
+			@SuppressWarnings("resource")
 			VirtualDocument source = new PDFParser().parseDocument(Files.readAllBytes(srcFile.toPath()));
 			SourceProvider<Page> sp = new SequentialSourceProvider(source);
 			sp.setSourceTo(page1);

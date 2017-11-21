@@ -43,11 +43,9 @@ public class PDFRenderer extends Renderer<PDDocument> {
 	
 	@Override
 	public byte[] renderRaw(VirtualDocument document) throws RenderingException {
-		PDDocument doc = render(document);
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		try {
+		try (PDDocument doc = render(document)) {
     		doc.save(bytes);
-    		doc.close();
 		} catch (IOException e) {
 			throw new RenderingException("Error when converting the PDDocument to a byte array", e);
 		}
