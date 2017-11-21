@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.logging.log4j.Level;
 
 import com.beust.jcommander.JCommander;
+import com.github.singond.pdfriend.ExitStatus;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.Out;
@@ -111,13 +112,13 @@ public class Console {
 		// Display version and exit (--version)
 		if (global.version()) {
 			version();
-			return ExitStatus.SUCCESS;
+			return ExitStatus.SIMPLE;
 		}
 		
 		// Display help and exit (--help)
 		if (global.help()) {
 			help();
-			return ExitStatus.SUCCESS;
+			return ExitStatus.SIMPLE;
 		}
 		
 		// End global-level option processing and run the subcommand

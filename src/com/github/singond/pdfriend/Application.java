@@ -1,7 +1,6 @@
 package com.github.singond.pdfriend;
 
 import com.github.singond.pdfriend.cli.Console;
-import com.github.singond.pdfriend.cli.ExitStatus;
 
 /**
  * The main class; this represents a single instance of PDFriend.
