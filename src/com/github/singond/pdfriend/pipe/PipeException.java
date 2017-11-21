@@ -10,14 +10,6 @@ public class PipeException extends Exception {
 
 	private static final long serialVersionUID = 7973543569121762961L;
 
-	public PipeException() {
-		super();
-	};
-	
-	public PipeException(String message) {
-		super(message);
-	}
-	
 	public PipeException(String message, Throwable cause) {
 		super(message, cause);
 	}

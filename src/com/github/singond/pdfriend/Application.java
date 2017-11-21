@@ -30,9 +30,11 @@ public class Application {
 			Out.line("This is PDFriend version %s", Version.current().toString());
 			System.exit(0);
 		} else {
-			new Console().execute(args);
-			long end = System.currentTimeMillis();
-			logger.info("total_time", end-start);
+			ExitStatus status = new Console().execute(args);
+			if (status == ExitStatus.SUCCESS) {
+				long end = System.currentTimeMillis();
+				logger.info("total_time", end-start);
+			}
 		}
 	}
 	

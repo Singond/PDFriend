@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
-import com.github.singond.pdfriend.io.InputException;
 import com.github.singond.pdfriend.io.Output;
 import com.github.singond.pdfriend.io.OutputException;
 
@@ -18,8 +17,8 @@ public class RenderingManager {
 	 * Renders multiple documents as a list of virtual documents.
 	 * @param output
 	 * @return
-	 * @throws InputException
-	 * @throws ParsingException 
+	 * @throws OutputException
+	 * @throws RenderingException
 	 */
 	public final void renderDocuments(List<VirtualDocument> docs, Output output)
 			throws OutputException, RenderingException {

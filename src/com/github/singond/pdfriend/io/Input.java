@@ -4,7 +4,6 @@ public interface Input {
 
 	/**
 	 * Returns the next piece of input data.
-	 * @throws InputException 
 	 */
 	public InputElement next();
 	

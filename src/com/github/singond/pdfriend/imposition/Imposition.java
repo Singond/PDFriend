@@ -24,6 +24,9 @@ public class Imposition implements Module {
 	 */
 	private Imposable task;
 	
+	/** The name of this module */
+	private static final String MODULE_NAME = "Imposition";
+	
 	/** The unit used in working with book object model */
 	public static final LengthUnit LENGTH_UNIT = LengthUnits.POINT_POSTSCRIPT;
 	
@@ -54,4 +57,10 @@ public class Imposition implements Module {
 		}
 		return ModuleDataFactory.of(document);
 	}
+
+	@Override
+	public String name() {
+		return MODULE_NAME;
+	}
+	
 }

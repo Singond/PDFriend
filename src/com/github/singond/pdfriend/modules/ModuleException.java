@@ -5,24 +5,33 @@ package com.github.singond.pdfriend.modules;
  * @author Singon
  *
  */
-public class ModuleException extends Exception {
-
-	private static final long serialVersionUID = -2909204466624598226L;
+public final class ModuleException extends Exception {
 	
-	public ModuleException() {
+	private static final long serialVersionUID = -2909204466624598226L;
+
+	private final Module module;
+	
+	public ModuleException(Module module) {
 		super();
+		this.module = module;
 	};
 	
-	public ModuleException(String message) {
+	public ModuleException(Module module, String message) {
 		super(message);
+		this.module = module;
 	}
 	
-	public ModuleException(String message, Throwable cause) {
+	public ModuleException(Module module, String message, Throwable cause) {
 		super(message, cause);
+		this.module = module;
 	}
 	
-	public ModuleException(Throwable cause) {
+	public ModuleException(Module module, Throwable cause) {
 		super(cause);
+		this.module = module;
 	}
 
+	public Module getModule() {
+		return module;
+	}
 }
