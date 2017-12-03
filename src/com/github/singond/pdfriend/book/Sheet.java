@@ -90,6 +90,17 @@ public class Sheet implements BookElement {
 	/**
 	 * Prints the back side of this Sheet onto a new virtual page.
 	 * The page is not added to any document automatically.
+	 * 
+	 * TODO Enable both ways of flipping the back side. Currently,
+	 * the backside is always printed as if it was flipped about the vertical
+	 * axis, while sometimes it may be desirable to flip it horizontally.
+	 * The only difference this will make is the rotation of the backside:
+	 * The backside flipped horizontally will be rotated by 180 degrees
+	 * with respect to a backside flipped vertically.
+	 * This concerns only the process of rendering the document into
+	 * a virtual document; the internal representation of back side content
+	 * is independent of rendering.
+	 * 
 	 * @return A new VirtualPage object with the front side of this Sheet.
 	 */
 	public VirtualPage renderBack() {
