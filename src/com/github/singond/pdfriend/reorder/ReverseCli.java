@@ -5,7 +5,8 @@ import com.beust.jcommander.Parameters;
 import com.github.singond.pdfriend.cli.ParameterConsistencyException;
 
 /**
- * A command-line interface for the booklet imposable type {@link Booklet}.
+ * A command-line interface for the reverse reordering task type
+ * {@link Reverse}.
  *
  * @author Singon
  *
@@ -13,7 +14,8 @@ import com.github.singond.pdfriend.cli.ParameterConsistencyException;
 @Parameters(separators="=")
 class ReverseCli implements ReorderableCli<Reverse> {
 
-	@Parameter(names="--reverse", description="A simple stack of sheets folded in half")
+	@Parameter(names="--reverse",
+			description="Reverse the order of pages in the document")
 	private boolean reverse = false;
 
 	@Override
