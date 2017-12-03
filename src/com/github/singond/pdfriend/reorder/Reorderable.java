@@ -1,5 +1,7 @@
 package com.github.singond.pdfriend.reorder;
 
+import java.util.List;
+
 import com.github.singond.pdfriend.document.VirtualDocument;
 
 public interface Reorderable {
@@ -18,4 +20,12 @@ public interface Reorderable {
 	 * @return the output document
 	 */
 	public VirtualDocument reorder(VirtualDocument source);
+	
+	/**
+	 * Reorders the pages of the given source documents and places
+	 * them into a new virtual document.
+	 * @param sources the document whose pages are to be reordered
+	 * @return the output document
+	 */
+	public VirtualDocument reorder(List<VirtualDocument> sources);
 }
