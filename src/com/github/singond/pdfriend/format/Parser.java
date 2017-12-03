@@ -8,6 +8,8 @@ public interface Parser {
 	 * Process the given binary data into a new VirtualDocument.
 	 * For each page of the input, create a new VirtualPage with the
 	 * input page set as its only content in the default position.
+	 * TODO Use {@code InputStream} in place of {@code byte}.
+	 * 
 	 * @param bytes the raw data to import
 	 * @return a new VirtualDocument
 	 */
