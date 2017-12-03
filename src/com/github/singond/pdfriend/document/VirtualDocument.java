@@ -1,8 +1,8 @@
 package com.github.singond.pdfriend.document;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
@@ -166,9 +166,14 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 		return "VirtualDocument@"+hashCode()+" ("+pages.size()+" pages)";
 	}
 	
+	public ListIterator<VirtualPage> iterator(int index) {
+		// TODO Any other way to provide non-mutating iterator?
+		return getPages().listIterator(index);
+	}
+
 	@Override
-	public Iterator<VirtualPage> iterator() {
-		return pages.iterator();
+	public ListIterator<VirtualPage> iterator() {
+		return iterator(0);
 	}
 
 	/**
