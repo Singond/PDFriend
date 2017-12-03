@@ -20,7 +20,7 @@ public class Reverse implements Reorderable {
 		VirtualDocument.Builder output = new VirtualDocument.Builder();
 		ListIterator<VirtualPage> iter = source.iterator(source.getLength());
 		while (iter.hasPrevious()) {
-			output.addPage(iter.next());
+			output.addPage(iter.previous());
 		}
 		return output.build();
 	}
