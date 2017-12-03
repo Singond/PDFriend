@@ -218,6 +218,15 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 		}
 		
 		/**
+		 * Appends all pages of the given document into this document
+		 * in the order they appear in {@code doc}.
+		 * @param doc the document whose pages are to be added
+		 */
+		public void appendDocument(VirtualDocument doc) {
+			pages.addAll(doc.pages);
+		}
+		
+		/**
 		 * Removes the first occurence of the given page from the list.
 		 */
 		public void removePage(VirtualPage page) {
