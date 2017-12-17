@@ -19,6 +19,15 @@ public class SinglePage extends Page {
 		super(width, height);
 	}
 	
+	/**
+	 * A copy constructor.
+	 * Creates a new SinglePage which is an exact copy of the original.
+	 * @param original the original page
+	 */
+	public SinglePage(SinglePage original) {
+		super(original.getWidth(), original.getHeight());
+	}
+	
 	public VirtualPage getSource() {
 		return source;
 	}
