@@ -347,19 +347,6 @@ public class SimpleTransformTask extends AbstractImposable implements Imposable 
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * <p>
-	 * This is the trivial case with only one layer.
-	 * This imposition task has has no effect and returns the unchanged
-	 * input document.
-	 * @return the unchanged document given as {@code source}
-	 */
-	@Override
-	public VirtualDocument imposeAndRender(VirtualDocument source) {
-		return source;
-	}
-	
-	/**
 	 * Builds instances of {@code Overlay} objects.
 	 *
 	 * @author Singon
