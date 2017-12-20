@@ -26,7 +26,7 @@ public class SimpleTransformCommand extends SubCommand {
 	
 	/** Common imposition settings */
 	@ParametersDelegate
-	private CommonSettingsCli commonOpts = new CommonSettingsCli();
+	private CommonSettingsCliSimple commonOpts = new CommonSettingsCliSimple();
 	
 	@Override
 	public SimpleTransformCommand newInstance() {

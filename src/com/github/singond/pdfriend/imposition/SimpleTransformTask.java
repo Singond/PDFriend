@@ -1,21 +1,14 @@
 package com.github.singond.pdfriend.imposition;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.Book;
-import com.github.singond.pdfriend.book.LayeredPage;
 import com.github.singond.pdfriend.book.LoosePages;
-import com.github.singond.pdfriend.book.MultiPage.PageletView;
 import com.github.singond.pdfriend.book.SinglePage;
 import com.github.singond.pdfriend.document.VirtualDocument;
-import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.geometry.Dimensions;
-import com.github.singond.pdfriend.geometry.GeometryUtils;
-import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.geometry.Margins;
@@ -51,8 +44,8 @@ public class SimpleTransformTask extends AbstractImposable implements Imposable 
 	
 	
 	/**
-	 * Imposes the given virtual document into a list of grid pages
-	 * according to the current settings of this {@code Overlay} object.
+	 * Imposes the given virtual document into a list of pages
+	 * according to the current settings of this {@code SimpleTransformTask} object.
 	 */
 	private List<SinglePage> imposeAsPages(VirtualDocument doc) {
 		if (logger.isDebugEnabled()) {
@@ -61,128 +54,21 @@ public class SimpleTransformTask extends AbstractImposable implements Imposable 
 //			logger.debug("imposition_imposableSettings", NAME, );
 		}
 		
-		// Select a use case and run it
-		if (common.getPageSize() == DimensionSettings.AUTO
-				&& common.getSheetSize() == DimensionSettings.AUTO) {
-			// Case A
-			return casePageSize(doc);
-		} else if (preprocess.isAutoSize()) {
-			// Case C
-			return caseContentSize(doc);
-		} else if (common.getMargins() == MarginSettings.AUTO) {
-			// Case B
-			return caseMargins(doc);
-		} else {
-			// All are set, a conflict
-			logger.verbose("overlay_caseConflict");
-			throw new IllegalStateException
-					("Conflicting settings: page size, margins and content size are all set");
-		}
-	}
-	
-
-	/**
-	 * Builds the list of pages, determining page size from remaining parameters.
-	 * 
-	 * @param docs the documents to be imposed
-	 * @return the imposed document as a list of pages
-	 */
-	private List<SinglePage> casePageSize(VirtualDocument doc) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("simple_casePageSize");
+		if (common.getPageSize() != DimensionSettings.AUTO
+				|| common.getSheetSize() != DimensionSettings.AUTO) {
+			DimensionSettings pageSize = common.getPageSize();
+			DimensionSettings sheetSize = common.getSheetSize();
+			Dimensions resolvedDims = resolvePageAndSheetSize(pageSize, sheetSize);
+			preprocess.setCellDimensions(resolvedDims);
 		}
 		
 		Margins margins = resolveAutoMargins(common.getMargins());
 		preprocess.setCellMargins(margins);
+		
 		Preprocessor preprocessor = new Preprocessor(doc, preprocess);
-		Dimensions contentSize = preprocessor.getResolvedCellDimensions();
-		Dimensions pageSize;
-		pageSize = GeometryUtils.rectanglePlusMargins(contentSize, margins);
+		Dimensions pageSize = preprocessor.getResolvedCellDimensions();
 		SinglePage template = new SinglePage(pageSize.width().in(unit),
 		                                     pageSize.height().in(unit));
-		
-		doc = preprocessor.processAll();
-		List<SinglePage> pages = buildPages(common, template, doc);
-		return pages;
-		
-//		PageSource pageSrc = pageSourceBuilder(common, doc).build();
-////		int pageCount = resolvePageCount(common, doc);
-//		int pageCount = pageSrc.size();
-//		List<SinglePage> pages = buildEmptyPages(template, pageCount);
-//		PageFillers.fillSequentially(pages, pageSrc);
-//		fillPages(docs, pages);
-//		return pages;
-	}
-	
-	/**
-	 * Builds the list of pages, determining the width of margins from
-	 * remaining parameters.
-	 * 
-	 * @param doc the documents to be imposed
-	 * @return the imposed document as a list of pages
-	 */
-	private List<SinglePage> caseMargins(VirtualDocument doc) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("simple_caseMargins");
-		}
-		
-		Dimensions pageSize = resolvePageAndSheetSize
-				(common.getPageSize(), common.getSheetSize());
-		
-		// Helper preprocessor to resolve cell size
-		Preprocessor helper = new Preprocessor(doc, preprocess);
-		Dimensions contentSize = helper.getResolvedCellDimensions();
-		Length oneHorizontalMargin = Length.subtract(
-				pageSize.width(), contentSize.width()).times(1d/2);
-		Length oneVerticalMargin = Length.subtract(
-				pageSize.height(), contentSize.height()).times(1d/2);
-		Margins margins = new Margins(oneHorizontalMargin, oneVerticalMargin);
-		preprocess.setCellDimensions(DimensionSettings.of(pageSize));
-		preprocess.setCellMargins(margins);
-		Preprocessor preprocessor = new Preprocessor(doc, preprocess);
-		pageSize = preprocessor.getResolvedCellDimensions();
-		SinglePage template = new SinglePage(pageSize.width().in(unit),
-		                                     pageSize.height().in(unit));
-		
-//		int pageCount = resolvePageCount(common, doc);
-//		doc = preprocessDocuments(doc, preprocessor, pageCount);
-//		List<LayeredPage> pages = buildEmptyPages(template, pageCount);
-//		fillPages(doc, pages);
-//		return pages;
-		
-		doc = preprocessor.processAll();
-		List<SinglePage> pages = buildPages(common, template, doc);
-		return pages;
-	}
-	
-	/**
-	 * Builds the list of pages, determining content size from remaining parameters.
-	 * 
-	 * @param doc the documents to be imposed
-	 * @return the imposed document as a list of pages
-	 */
-	private List<SinglePage> caseContentSize(VirtualDocument doc) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("simple_caseContentSize");
-		}
-		
-		Dimensions pageSize = resolvePageAndSheetSize
-				(common.getPageSize(), common.getSheetSize());
-		
-		Margins margins = resolveAutoMargins(common.getMargins());
-		Dimensions contentSize = GeometryUtils.rectangleMinusMargins(pageSize, margins);
-		preprocess.setCellDimensions(DimensionSettings.of(contentSize));
-		preprocess.setCellMargins(margins);
-		Preprocessor preprocessor = new Preprocessor(doc, preprocess);
-		pageSize = preprocessor.getResolvedCellDimensions();
-		SinglePage template = new SinglePage(pageSize.width().in(unit),
-		                                     pageSize.height().in(unit));
-		
-//		int pageCount = resolvePageCount(common, doc);
-//		doc = preprocessDocuments(doc, preprocessor, pageCount);
-//		List<LayeredPage> pages = buildEmptyPages(template, pageCount);
-//		fillPages(doc, pages);
-//		return pages;
 		
 		doc = preprocessor.processAll();
 		List<SinglePage> pages = buildPages(common, template, doc);
@@ -211,18 +97,17 @@ public class SimpleTransformTask extends AbstractImposable implements Imposable 
 	 * Resolves the page size and sheet size to a single value, which
 	 * becomes the size of the page.
 	 * 
-	 * In the output document of an "overlay" imposition, the page and the
+	 * In the output document of simple transformation, the page and the
 	 * sheet are the same thing. This implies that page size and sheet
 	 * size should both resolve to the same value.
 	 * If both are explicitly set to a different value, an exception
 	 * will be thrown to indicate this.
-	 * If only sheet size is given, use it as page size.
-	 * In any case, only the page size will be used afterwards and the
-	 * sheet size can be discarded.
+	 * If only sheet size is given, it is used as the page size,
+	 * and if only page size is given, it is used directly.
 	 * 
 	 * @param pageSize the size of the page
 	 * @param sheetSize the size of the sheet
-	 * @return the page size
+	 * @return the resulting page size
 	 * @throws IllegalArgumentException if both sizes are {@code auto}
 	 */
 	private Dimensions resolvePageAndSheetSize(DimensionSettings pageSize,
@@ -249,28 +134,6 @@ public class SimpleTransformTask extends AbstractImposable implements Imposable 
 		assert pageSize.isValue();
 		return pageSize.value();
 	}
-	
-	/**
-	 * Resolves page count into a valid value.
-	 * If the number of pages is unset, calculates the number of pages
-	 * necessary to fit all given documents; otherwise uses the given value.
-	 * 
-	 * @param pageCount the declared page count
-	 * @param doc document used in automatic determining the page count
-	 * @return the given page count, or the length of the longest document
-	 *         in {@code docs} if page count was not set (was negative)
-	 */
-//	private int resolvePageCount(CommonSettings common, VirtualDocument doc) {
-//		int pageCount = common.getPageCount();
-//		if (pageCount < 0) {
-//			pageCount = doc.getLength();
-//			pageCount = pageCount * common.getRepeatPage() * common.getRepeatDocument();
-//			logger.verbose("overlay_pageCountAll", pageCount);
-//		} else {
-//			logger.verbose("overlay_pageCountPartial", pageCount);
-//		}
-//		return pageCount;
-//	}
 	
 	/**
 	 * Builds a new list of pages.
@@ -310,17 +173,6 @@ public class SimpleTransformTask extends AbstractImposable implements Imposable 
 	}
 
 
-//	/**
-//	 * Fills the given target pages with pages of the given source documents.
-//	 * @param source the documents to be used as the source of the pages
-//	 * @param target the pages to be filled with the source pages
-//	 */
-//	private void fillPages(List<VirtualDocument> source, List<SinglePage> target) {
-//		logger.verbose("overlay_filling");
-//		LayeredPageFiller lsp = new LayeredPageFiller(source);
-//		lsp.setSourceTo(target);
-//	}
-
 	@Override
 	public String getName() {
 		return NAME;
@@ -347,7 +199,7 @@ public class SimpleTransformTask extends AbstractImposable implements Imposable 
 	}
 
 	/**
-	 * Builds instances of {@code Overlay} objects.
+	 * Builds instances of {@code SimpleTransformTask} objects.
 	 *
 	 * @author Singon
 	 */
