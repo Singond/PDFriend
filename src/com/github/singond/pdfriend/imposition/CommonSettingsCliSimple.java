@@ -25,12 +25,12 @@ import com.github.singond.pdfriend.imposition.CommonSettings.MarginSettings;
 @Parameters(resourceBundle="Help", separators="=")
 class CommonSettingsCliSimple implements ParameterDelegate {
 
-	/** Number of pages in the output document */
-	@Parameter(names = "--pages",
-	           description = "Number of pages in the output document",
-	           descriptionKey = "param-pageCount",
-	           validateWith = PositiveInteger.class)
-	private int pages = -1;
+//	/** Number of pages in the output document */
+//	@Parameter(names = "--pages",
+//	           description = "Number of pages in the output document",
+//	           descriptionKey = "param-pageCount",
+//	           validateWith = PositiveInteger.class)
+//	private int pages = -1;
 	
 	/** How many times to repeat each page */
 	@Parameter(names = "--repeat-page",
@@ -107,17 +107,18 @@ class CommonSettingsCliSimple implements ParameterDelegate {
 	}
 	
 	public boolean isSet() {
-		return pages > 0
-				|| pageSize != null
+//		return pages > 0
+//				|| pageSize != null
 //				|| sheetSize != null
-				|| margins != null;
+//				|| margins != null;
+		return pageSize != null || margins != null;
 	}
 	
 	public CommonSettings getCommonSettings() {
 		boolean isLandscape = landscape;
 		
 		CommonSettings.Builder sb = new CommonSettings.Builder();
-		sb.setPageCount(pages);
+//		sb.setPageCount(pages);
 		sb.setRepeatPage(repeatPage);
 		sb.setRepeatDocument(repeatDocument);
 		sb.setPageSize(dimSettings(flipFormat(pageSize, isLandscape)));
