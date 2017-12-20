@@ -13,7 +13,7 @@ import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.geometry.Margins;
 import com.github.singond.pdfriend.imposition.CommonSettings.MarginSettings;
-import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
+import com.github.singond.pdfriend.imposition.Preprocessor.Resizing;
 
 /**
  * A document consisting of layered pages.
@@ -64,6 +64,11 @@ public class SimpleTransformTask extends AbstractImposable implements Imposable 
 		
 		Margins margins = resolveAutoMargins(common.getMargins());
 		preprocess.setCellMargins(margins);
+		
+		// Use "resize to fit" as the default
+		if (preprocess.getResizing() == Resizing.AUTO) {
+			preprocess.setResizing(Resizing.FIT);
+		}
 		
 		Preprocessor preprocessor = new Preprocessor(doc, preprocess);
 		Dimensions pageSize = preprocessor.getResolvedCellDimensions();
@@ -203,27 +208,7 @@ public class SimpleTransformTask extends AbstractImposable implements Imposable 
 	 *
 	 * @author Singon
 	 */
-	public static final class Builder implements ImposableBuilder<SimpleTransformTask> {
-		private Preprocessor.Settings preprocess = Preprocessor.Settings.auto();
-		private CommonSettings common = CommonSettings.auto();
-		
-
-		@Override
-		public ImposableBuilder<SimpleTransformTask> acceptPreprocessSettings(Settings settings) {
-			if (settings == null)
-				throw new IllegalArgumentException("Preprocess settings cannot be null");
-			this.preprocess = settings;
-			return this;
-		}
-
-		@Override
-		public ImposableBuilder<SimpleTransformTask> acceptCommonSettings(CommonSettings settings) {
-			if (settings == null)
-				throw new IllegalArgumentException("Settings cannot be null");
-			this.common = settings;
-			return this;
-		}
-
+	public static final class Builder extends AbstractImposableBuilder<SimpleTransformTask> {
 		@Override
 		public SimpleTransformTask build() {
 			return new SimpleTransformTask(preprocess, common);
