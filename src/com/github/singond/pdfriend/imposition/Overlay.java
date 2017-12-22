@@ -13,7 +13,6 @@ import com.github.singond.pdfriend.book.MultiPage.PageletView;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.geometry.Dimensions;
-import com.github.singond.pdfriend.geometry.GeometryUtils;
 import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
@@ -100,9 +99,7 @@ public class Overlay extends AbstractImposable implements Imposable {
 		Margins margins = resolveAutoMargins(common.getMargins());
 		preprocess.setCellMargins(margins);
 		Preprocessor preprocessor = new Preprocessor(docs, preprocess);
-		Dimensions contentSize = preprocessor.getResolvedCellDimensions();
-		Dimensions pageSize;
-		pageSize = GeometryUtils.rectanglePlusMargins(contentSize, margins);
+		Dimensions pageSize = preprocessor.getResolvedCellDimensions();
 		int layerCount = docs.size();
 		LayeredPage template = new LayeredPage(pageSize.width().in(unit),
 		                                       pageSize.height().in(unit),
@@ -169,8 +166,7 @@ public class Overlay extends AbstractImposable implements Imposable {
 				(common.getPageSize(), common.getSheetSize());
 		
 		Margins margins = resolveAutoMargins(common.getMargins());
-		Dimensions contentSize = GeometryUtils.rectangleMinusMargins(pageSize, margins);
-		preprocess.setCellDimensions(DimensionSettings.of(contentSize));
+		preprocess.setCellDimensions(DimensionSettings.of(pageSize));
 		preprocess.setCellMargins(margins);
 		Preprocessor preprocessor = new Preprocessor(docs, preprocess);
 		pageSize = preprocessor.getResolvedCellDimensions();
