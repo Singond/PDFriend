@@ -28,6 +28,7 @@ public abstract class Renderer<T> {
 	
 	/**
 	 * Renders the given virtual document into a real document.
+	 * TODO Use {@code OutputStream} in place of {@code byte}.
 	 * @return The document as a byte stream suitable for saving.
 	 */
 	public abstract byte[] renderRaw(VirtualDocument document) throws RenderingException;
