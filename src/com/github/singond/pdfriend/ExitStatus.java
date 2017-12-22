@@ -6,6 +6,8 @@ public enum ExitStatus {
 	SIMPLE,
 	/** All operations requested by the user completed successfully */
 	SUCCESS,
+	/** Unknown command */
+	UNKNOWN_COMMAND,
 	/** Error in input */
 	INPUT_FAILURE,
 	/** Error in processed data */

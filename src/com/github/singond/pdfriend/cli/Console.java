@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.logging.log4j.Level;
 
 import com.beust.jcommander.JCommander;
+import com.beust.jcommander.MissingCommandException;
 import com.github.singond.pdfriend.ExitStatus;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
@@ -89,7 +90,13 @@ public class Console {
 		
 		/* Parse and setup */
 		
-		parse(splitArgs, arguments);
+		try {
+			parse(splitArgs, arguments);
+		} catch (MissingCommandException e) {
+			logger.fatal("'{}' is not a pdfriend command. See 'pdfriend --help'.",
+			             e.getUnknownCommand());
+			return ExitStatus.UNKNOWN_COMMAND;
+		}
 		// Set verbosity level as early as possible
 		setVerbosity(global.quiet(), global.verbose(), global.debug());
 		
