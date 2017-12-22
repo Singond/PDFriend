@@ -16,6 +16,7 @@ import com.github.singond.pdfriend.Out;
 import com.github.singond.pdfriend.Util;
 import com.github.singond.pdfriend.Version;
 import com.github.singond.pdfriend.imposition.ImposeCommand;
+import com.github.singond.pdfriend.imposition.SimpleTransformCommand;
 import com.github.singond.pdfriend.modules.Module;
 import com.github.singond.pdfriend.modules.ModuleException;
 import com.github.singond.pdfriend.pipe.Pipe;
@@ -46,6 +47,7 @@ public class Console {
 	@SuppressWarnings("serial")
 	private static class SubCommands extends HashMap<String, SubCommand> {
 		{
+			put("transform", new SimpleTransformCommand());
 			put("impose", new ImposeCommand());
 		}
 		
