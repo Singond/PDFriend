@@ -112,11 +112,7 @@ public class Console {
 			return ExitStatus.INPUT_FAILURE;
 		}
 		
-		/* Run the whole thing */
-		
-		logger.debug("The working directory is {}", Util.getWorkingDir());
-		logger.debug("The application directory is {}", Util.getApplicationDir());
-		logger.debug("PDFriend arguments: " + Arrays.toString(args));
+		/* Run simple commands, if any, and exit */
 		
 		// Display version and exit (--version)
 		if (global.version()) {
@@ -130,7 +126,19 @@ public class Console {
 			return ExitStatus.SIMPLE;
 		}
 		
-		// End global-level option processing and run the subcommand
+		/* Print debugging info */
+		
+		if (logger.isVerboseEnabled()) {
+			logger.verbose("PDFriend version {}", Version.current().toString());
+		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("The working directory is {}", Util.getWorkingDir());
+			logger.debug("The application directory is {}", Util.getApplicationDir());
+			logger.debug("PDFriend arguments: " + Arrays.toString(args));
+		}
+		
+		/* Invoke modules */
+		
 		try {
 			pipe.setInput(inputFiles.getInput());
 			pipe.setOutput(outputFile.getOutput());
