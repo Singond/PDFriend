@@ -262,6 +262,7 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		}
 		
 		// Fill the output pages
+		// TODO: Implement TWO_SIDED
 		switch (fillMode) {
 			case FILL_PAGE:
 				Iterator<VirtualPage> srcIter = pageSrc.iterator();
@@ -277,7 +278,7 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 				PageFillers.fillSequentially(pages, pageSrc);
 				break;
 			default:
-				break;
+				throw new UnsupportedOperationException("TWO_SIDED not implemented yet");
 		}
 
 		return pages;
@@ -646,7 +647,12 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		 * Each page is used to populate entire output page before
 		 * moving onto next input page.
 		 */
-		FILL_PAGE;
+		FILL_PAGE,
+		/**
+		 * Keep the verso of each input page aligned with its respective
+		 * recto in the output.
+		 */
+		TWO_SIDED;
 	}
 	
 	/**
