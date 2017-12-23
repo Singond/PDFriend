@@ -233,6 +233,13 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		}
 		
 		/*
+		 * FIXME: Resolve the page count only when filling the pages.
+		 * For example, imposing 2x2 --nup-repeat currently produces
+		 * only the first quarter of the output. (Ie. the page count
+		 * does not take the page filling option into account.)
+		 */
+		
+		/*
 		 * If the number of pages is unset, calculate the number of pages
 		 * necessary to fit the whole document; otherwise use the value.
 		 */
