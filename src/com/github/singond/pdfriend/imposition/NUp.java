@@ -29,6 +29,12 @@ import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
  * An n-up layout.
  * This is a simple imposition task which places several pages onto
  * a larger page.
+ *
+ * TODO: Implement orientation in CLI
+ * TODO: Implement direction in CLI
+ * FIXME: Use correct number of pages when --nup-repeat is used
+ * (also, if feasible, rename the option to something memorable)
+ *
  * @author Singon
  */
 public class NUp extends AbstractImposable implements Imposable, ImposableBuilder<NUp> {
