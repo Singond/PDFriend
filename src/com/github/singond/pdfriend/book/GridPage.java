@@ -84,7 +84,7 @@ public class GridPage extends MultiPage {
 		// Initialize the matrix with null values
 		Matrix<Pagelet> cells = new ArrayMatrix<>(rows, columns);
 		// Fill the matrix with pagelets
-		MatrixIterator<Pagelet> iterator = cells.horizontallyAll().iterator();
+		MatrixIterator<Pagelet> iterator = cells.horizontally().iterator();
 		while (iterator.hasNext()) {
 			iterator.next();
 			int[] index = iterator.previousIndex();
@@ -171,7 +171,7 @@ public class GridPage extends MultiPage {
 		
 		int[] dimensions = ((ArrayMatrix<?>) original.matrix).getDimensions();
 		Matrix<Pagelet> cells = new ArrayMatrix<>(dimensions[0], dimensions[1]);
-		MatrixIterator<Pagelet> origIter = original.matrix.horizontallyAll().iterator();
+		MatrixIterator<Pagelet> origIter = original.matrix.horizontally().iterator();
 		
 		while (origIter.hasNext()) {
 			Pagelet p = origIter.next().copy();
