@@ -232,7 +232,7 @@ public class GridPage extends MultiPage {
 	 * @param direction the manner in which to iterate
 	 * @return an iterable traversing the grid in {@code direction}
 	 */
-	public MatrixIterable<PageletView> pagelets(Direction direction) {
+	public Iterable<PageletView> pagelets(Direction direction) {
 		switch (direction) {
 			case COLUMNS:
 				return pageletViewIterator(matrix.vertically());
@@ -249,7 +249,7 @@ public class GridPage extends MultiPage {
 	 * @return an iterable traversing the grid according to current value
 	 *         of the {@code direction} field
 	 */
-	public MatrixIterable<PageletView> pagelets() {
+	public Iterable<PageletView> pagelets() {
 		return pagelets(direction);
 	}
 	
