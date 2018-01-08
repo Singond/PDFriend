@@ -23,12 +23,12 @@ class NUpCli implements ImposableCli<NUp> {
 	
 	@Parameter(names={"--nup-repeat"},
 			descriptionKey="nup-copyToFill",
-			description="Fill each cell in a page with a copy of the same input page")
+			description="In n-up, fill each cell in a page with a copy of the same input page")
 	private boolean copyToFillPage = false;
 	
 	@Parameter(names={"--two-sided"},
 			descriptionKey="nup-twoSided",
-			description="Keep the verso and recto pairs together in the output.")
+			description="In n-up, keep the verso and recto pairs together in the output.")
 	private boolean twoSided = false;
 
 	@Override
