@@ -21,7 +21,7 @@ class NUpCli implements ImposableCli<NUp> {
 			converter=NUpConverter.class)
 	private GridDimensions nup = null;
 	
-	@Parameter(names={"--nup-repeat"},
+	@Parameter(names={"--nup-repeat", "--repeat-to-fill"},
 			descriptionKey="nup-copyToFill",
 			description="In n-up, fill each cell in a page with a copy of the same input page")
 	private boolean copyToFillPage = false;
