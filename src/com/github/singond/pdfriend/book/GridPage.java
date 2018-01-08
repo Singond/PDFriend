@@ -234,10 +234,14 @@ public class GridPage extends MultiPage {
 	 */
 	public Iterable<PageletView> pagelets(Direction direction) {
 		switch (direction) {
-			case COLUMNS:
-				return pageletViewIterator(matrix.vertically());
 			case ROWS:
 				return pageletViewIterator(matrix.horizontally());
+			case COLUMNS:
+				return pageletViewIterator(matrix.vertically());
+			case ROWS_REVERSE:
+				return pageletViewIterator(matrix.horizontallyReverse());
+			case COLUMNS_REVERSE:
+				return pageletViewIterator(matrix.verticallyReverse());
 			default:
 				throw new AssertionError("Bad GridPage direction is set: "+direction);
 		}
@@ -266,7 +270,11 @@ public class GridPage extends MultiPage {
 		/** Traverse the grid from left to right, top to bottom */
 		ROWS,
 		/** Traverse the grid from top to bottom, left to right */
-		COLUMNS;
+		COLUMNS,
+		/** Traverse the grid from right to left, top to bottom */
+		ROWS_REVERSE,
+		/** Traverse the grid from bottom to top, left to right */
+		COLUMNS_REVERSE;
 	}
 	
 	/**
