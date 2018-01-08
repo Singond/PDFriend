@@ -9,11 +9,8 @@ import java.util.Map;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.SpecVal;
-import com.github.singond.pdfriend.Util;
 import com.github.singond.pdfriend.book.GridPage;
 import com.github.singond.pdfriend.book.LoosePages;
-import com.github.singond.pdfriend.book.MultiPage;
-import com.github.singond.pdfriend.book.Page;
 import com.github.singond.pdfriend.book.MultiPage.PageletView;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
@@ -245,50 +242,36 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		 * If the number of pages is unset, calculate the number of pages
 		 * necessary to fit the whole document; otherwise use the value.
 		 */
+		List<GridPage> pages;
 		PageSource pageSrc = pageSourceBuilder(common, doc).build();
 		if (pageCount < 0) {
 			logger.verbose("nup_gridCount", cellsPerPage);
-			pageCount = Util.ceilingDivision(pageSrc.size(), cellsPerPage);
-			logger.verbose("nup_pageCountAll", pageCount);
+//			pageCount = Util.ceilingDivision(pageSrc.size(), cellsPerPage);
+//			logger.verbose("nup_pageCountAll", pageCount);
+			pages = new ArrayList<>();
 		} else {
 			logger.verbose("nup_pageCountPartial", pageCount);
+			pages = new ArrayList<>(pageCount);
 		}
 		
-		// List of output pages
-		List<GridPage> pages = new ArrayList<>(pageCount);
-//		int pageNumber = 0;
-//		while (pages.size() < pageCount) {
-//			GridPage page = builder.build();
-//			page.setNumber(++pageNumber);
-//			pages.add(page);
-//		}
-		Iterator<VirtualPage> srcIter = pageSrc.iterator();
-		
 		// Fill the output pages
-		// TODO: Implement TWO_SIDED
-		// testing
-		fillMode = FillMode.TWO_SIDED;
+		Iterator<VirtualPage> srcIter = pageSrc.iterator();
 		switch (fillMode) {
 			case FILL_PAGE:
-//				Iterator<GridPage> pageIter = pages.iterator();
-//				while (srcIter.hasNext() && pageIter.hasNext()) {
-//					VirtualPage source = srcIter.next();
-//					for (MultiPage.PageletView pglt : pageIter.next().pagelets()) {
-//						pglt.setSource(source);
-//					}
-//				}
-				while (srcIter.hasNext()) {
+				while (srcIter.hasNext()
+						&& !(pageCount > 0 && pages.size() >= pageCount)) {
 					addRepeatPage(srcIter, pages, builder);
 				}
 				break;
 			case SEQUENTIAL:
-//				PageFillers.fillSequentially(pages, pageSrc);
-				while (srcIter.hasNext()) {
+				while (srcIter.hasNext()
+						&& !(pageCount > 0 && pages.size() >= pageCount)) {
 					addSequentialPage(srcIter, pages, builder);
 				}
 				break;
 			case TWO_SIDED:
-				while (srcIter.hasNext()) {
+				while (srcIter.hasNext()
+						&& !(pageCount > 0 && pages.size() >= pageCount)) {
 					addDoublePage(srcIter, pages, builder);
 				}
 				break;
