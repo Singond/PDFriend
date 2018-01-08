@@ -4,7 +4,6 @@ import java.awt.geom.AffineTransform;
 
 import com.github.singond.collections.ArrayMatrix;
 import com.github.singond.collections.Matrix;
-import com.github.singond.collections.MatrixIterable;
 import com.github.singond.collections.MatrixIterator;
 
 

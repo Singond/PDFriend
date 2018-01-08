@@ -13,6 +13,8 @@ import com.github.singond.pdfriend.Util;
 import com.github.singond.pdfriend.book.GridPage;
 import com.github.singond.pdfriend.book.LoosePages;
 import com.github.singond.pdfriend.book.MultiPage;
+import com.github.singond.pdfriend.book.Page;
+import com.github.singond.pdfriend.book.MultiPage.PageletView;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.geometry.Dimensions;
@@ -254,31 +256,44 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		
 		// List of output pages
 		List<GridPage> pages = new ArrayList<>(pageCount);
-		int pageNumber = 0;
-		while (pages.size() < pageCount) {
-			GridPage page = builder.build();
-			page.setNumber(++pageNumber);
-			pages.add(page);
-		}
+//		int pageNumber = 0;
+//		while (pages.size() < pageCount) {
+//			GridPage page = builder.build();
+//			page.setNumber(++pageNumber);
+//			pages.add(page);
+//		}
+		Iterator<VirtualPage> srcIter = pageSrc.iterator();
 		
 		// Fill the output pages
 		// TODO: Implement TWO_SIDED
+		// testing
+		fillMode = FillMode.TWO_SIDED;
 		switch (fillMode) {
 			case FILL_PAGE:
-				Iterator<VirtualPage> srcIter = pageSrc.iterator();
-				Iterator<GridPage> pageIter = pages.iterator();
-				while (srcIter.hasNext() && pageIter.hasNext()) {
-					VirtualPage source = srcIter.next();
-					for (MultiPage.PageletView pglt : pageIter.next().pagelets()) {
-						pglt.setSource(source);
-					}
+//				Iterator<GridPage> pageIter = pages.iterator();
+//				while (srcIter.hasNext() && pageIter.hasNext()) {
+//					VirtualPage source = srcIter.next();
+//					for (MultiPage.PageletView pglt : pageIter.next().pagelets()) {
+//						pglt.setSource(source);
+//					}
+//				}
+				while (srcIter.hasNext()) {
+					addRepeatPage(srcIter, pages, builder);
 				}
 				break;
 			case SEQUENTIAL:
-				PageFillers.fillSequentially(pages, pageSrc);
+//				PageFillers.fillSequentially(pages, pageSrc);
+				while (srcIter.hasNext()) {
+					addSequentialPage(srcIter, pages, builder);
+				}
+				break;
+			case TWO_SIDED:
+				while (srcIter.hasNext()) {
+					addDoublePage(srcIter, pages, builder);
+				}
 				break;
 			default:
-				throw new UnsupportedOperationException("TWO_SIDED not implemented yet");
+				throw new AssertionError(fillMode);
 		}
 
 		return pages;
@@ -532,6 +547,62 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 		return new PageControllers(preprocessor, builder, rows*cols);
 	}
 	
+	private static void addSequentialPage(Iterator<VirtualPage> srcIter,
+			List<GridPage> target, GridPage.Builder pageBuilder) {
+		int lastPageNumber = target.size();
+		if (srcIter.hasNext()) {
+			GridPage page = pageBuilder.build();
+			page.setNumber(++lastPageNumber);
+			for (PageletView pg : page.pagelets()) {
+				if (srcIter.hasNext())
+					pg.setSource(srcIter.next());
+			}
+			target.add(page);
+		}
+	}
+	
+	private static void addRepeatPage(Iterator<VirtualPage> srcIter,
+			List<GridPage> target, GridPage.Builder pageBuilder) {
+		int lastPageNumber = target.size();
+		if (srcIter.hasNext()) {
+			GridPage page = pageBuilder.build();
+			page.setNumber(++lastPageNumber);
+			VirtualPage vp = srcIter.next();
+			for (PageletView pg : page.pagelets()) {
+				pg.setSource(vp);
+			}
+			target.add(page);
+		}
+	}
+	
+	private static void addDoublePage(Iterator<VirtualPage> srcIter,
+			List<GridPage> target, GridPage.Builder pageBuilder) {
+		int lastPageNumber = target.size();
+		if (srcIter.hasNext()) {
+			GridPage recto = pageBuilder.build();
+			// TODO: Handle mirrored margins!
+			pageBuilder.setFillDirection(mirrorVertically(pageBuilder.getFillDirection()));
+			GridPage verso = pageBuilder.build();
+			pageBuilder.setFillDirection(mirrorVertically(pageBuilder.getFillDirection()));
+			recto.setNumber(++lastPageNumber);
+			verso.setNumber(++lastPageNumber);
+			Iterator<PageletView> rectoIter = recto.pagelets().iterator();
+			Iterator<PageletView> versoIter = verso.pagelets().iterator();
+			while (rectoIter.hasNext() && versoIter.hasNext()) {
+				if (srcIter.hasNext()) {
+					rectoIter.next().setSource(srcIter.next());
+				}
+				if (srcIter.hasNext()) {
+					versoIter.next().setSource(srcIter.next());
+				} else {
+					break;      // Short-circuit out of rectoIter and versoIter
+				}
+			}
+			target.add(recto);
+			target.add(verso);
+		}
+	}
+	
 	private static class PageControllers {
 		private final Preprocessor preprocessor;
 		private final GridPage.Builder builder;
@@ -620,7 +691,9 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 
 	public static enum FillDirection {
 		ROWS (GridPage.Direction.ROWS),
-		COLUMNS (GridPage.Direction.COLUMNS);
+		COLUMNS (GridPage.Direction.COLUMNS),
+		ROWS_REVERSE (GridPage.Direction.ROWS_REVERSE),
+		COLUMNS_REVERSE (GridPage.Direction.COLUMNS_REVERSE);
 		
 		/** The underlying direction object used in implementation */
 		private GridPage.Direction value;
@@ -629,8 +702,23 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 			this.value = direction;
 		}
 		
-		public GridPage.Direction getValue() {
+		GridPage.Direction getValue() {
 			return value;
+		}
+	}
+	
+	private static GridPage.Direction mirrorVertically(GridPage.Direction dir) {
+		switch (dir) {
+			case COLUMNS:
+				return GridPage.Direction.COLUMNS_REVERSE;
+			case COLUMNS_REVERSE:
+				return GridPage.Direction.COLUMNS;
+			case ROWS:
+				return GridPage.Direction.ROWS_REVERSE;
+			case ROWS_REVERSE:
+				return GridPage.Direction.ROWS;
+			default:
+				throw new AssertionError(dir);
 		}
 	}
 	
