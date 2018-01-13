@@ -88,8 +88,9 @@ public class Sheet implements BookElement {
 	}
 	
 	/**
-	 * Prints the back side of this Sheet onto a new virtual page.
-	 * The page is not added to any document automatically.
+	 * Prints the back side of this Sheet onto a new virtual page
+	 * with the given relationship between the front and back side
+	 * of the medium.
 	 * 
 	 * TODO Enable both ways of flipping the back side. Currently,
 	 * the backside is always printed as if it was flipped about the vertical
@@ -100,17 +101,21 @@ public class Sheet implements BookElement {
 	 * This concerns only the process of rendering the document into
 	 * a virtual document; the internal representation of back side content
 	 * is independent of rendering.
+	 * NOTE This implementation covers only documents composed of Signatures,
+	 * not single Pages.
 	 * 
+	 * @param flip the orientation of the back side with respect to front
 	 * @return A new VirtualPage object with the front side of this Sheet.
 	 */
-	public VirtualPage renderBack() {
+	public VirtualPage renderBack(FlipDirection flip) {
 		logger.verbose("sheet_renderingBack", this);
 		/** Back side of this sheet compiled into page */
 		VirtualPage.Builder paper = new VirtualPage.Builder();
 		paper.setWidth(width);
 		paper.setHeight(height);
-		final AffineTransform backside = AffineTransform.getTranslateInstance(width, 0);
-		backside.concatenate(AffineTransform.getScaleInstance(-1,  1));
+		final AffineTransform backside = backTransform(width, height, flip);
+//		final AffineTransform backside = AffineTransform.getTranslateInstance(width, 0);
+//		backside.concatenate(AffineTransform.getScaleInstance(-1,  1));
 		for (Leaf leaf : leaves) {
 			/** The page to be imposed */
 			Page page = leaf.getBackPage();
@@ -122,6 +127,38 @@ public class Sheet implements BookElement {
 			}
 		}
 		return paper.build();
+	}
+	
+	/**
+	 * Prints the back side of this Sheet onto a new virtual page,
+	 * assuming the backside is flipped around vertical axis with respect
+	 * to the front side.
+	 *
+	 * @return A new VirtualPage object with the front side of this Sheet.
+	 */
+	public VirtualPage renderBack() {
+		return renderBack(FlipDirection.AROUND_Y);
+	}
+	
+	/**
+	 * Calculates the transformation of the back side given the sheet
+	 * dimensions and flip directions.
+	 */
+	private AffineTransform backTransform(double width, double height,
+	                                      FlipDirection flip) {
+		final AffineTransform backside;
+		switch (flip) {
+			case AROUND_X:
+				backside = AffineTransform.getTranslateInstance(0, height);
+				break;
+			case AROUND_Y:
+				backside = AffineTransform.getTranslateInstance(width, 0);
+				break;
+			default:
+				throw new AssertionError(flip);
+		}
+		backside.concatenate(flip.getBackOrientation());
+		return backside;
 	}
 	
 	/**
