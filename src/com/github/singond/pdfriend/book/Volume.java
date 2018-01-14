@@ -113,17 +113,50 @@ public class Volume implements BookElement {
 	 * Renders this Volume as a new VirtualDocument.
 	 * @return a new VirtualDocument instance
 	 */
-	public VirtualDocument renderDocument() {
+	public VirtualDocument renderDocument(RenderingSettings settings) {
 		logger.info("volume_rendering", this);
 		VirtualDocument.Builder document = new VirtualDocument.Builder();
 		for (Signature s : signatures) {
-			s.renderAllSheets(document);
+			s.renderAllSheets(document, settings);
 		}
 		return document.build();
+	}
+	
+	/**
+	 * Renders this Volume as a new VirtualDocument with default rendering
+	 * settings.
+	 * @return a new VirtualDocument instance
+	 */
+	public VirtualDocument renderDocument() {
+		return renderDocument(new RenderingSettings());
 	}
 	
 	@Override
 	public String toString() {
 		return "Volume@" + hashCode();
+	}
+	
+	public static class RenderingSettings {
+		private final FlipDirection flip;
+
+		public RenderingSettings(FlipDirection flip) {
+			this.flip = flip;
+		}
+		
+		private RenderingSettings() {
+			this.flip = FlipDirection.AROUND_Y;
+		}
+
+		/**
+		 * Returns the orientation of the back side of a printed sheet
+		 * to its front side.
+		 * Consider a sheet with content on both sides. This value specifies
+		 * the way sheet is to be flipped before printing the back side
+		 * (whether to flip along the horizontal edge or the vertical edge).
+		 * @return
+		 */
+		public FlipDirection getFlip() {
+			return flip;
+		}
 	}
 }
