@@ -9,7 +9,7 @@ import com.github.singond.pdfriend.document.VirtualDocument;
  * A represetation of a document produced by imposition.
  * @author Singon
  */
-public interface Imposable {
+public interface Imposable<T extends Book> {
 
 	/**
 	 * Returns a name of this imposition task.
@@ -36,7 +36,7 @@ public interface Imposable {
 	 * @throws UnsupportedOperationException if this imposition type does
 	 *        not support imposing a single document
 	 */
-	public Book impose(VirtualDocument source);
+	public T impose(VirtualDocument source);
 	
 	/**
 	 * Imposes the given multiple source documents into a new document model.
@@ -45,7 +45,7 @@ public interface Imposable {
 	 * @throws UnsupportedOperationException if this imposition type does
 	 *        not support imposing multiple documents
 	 */
-	public Book impose(List<VirtualDocument> sources);
+	public T impose(List<VirtualDocument> sources);
 	
 	/**
 	 * Imposes the given single source document into a new virtual document.
