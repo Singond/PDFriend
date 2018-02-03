@@ -80,7 +80,9 @@ public class ImposeSignature {
 			new SequentialSourceProvider(doc).setSourceTo(volume.pages());
 			
 			VirtualDocument.Builder outDoc = new VirtualDocument.Builder();
-			signature.renderAllSheets(outDoc);
+			Volume.RenderingSettings settings
+					= new Volume.RenderingSettings(FlipDirection.AROUND_Y);
+			signature.renderAllSheets(outDoc, settings);
 			
 			// Render and save
 			PDDocument output = new PDFRenderer().render(outDoc.build());
