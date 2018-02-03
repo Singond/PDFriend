@@ -416,6 +416,8 @@ public class Booklet extends AbstractImposable<BoundBook>
 
 		@Override
 		public ImpositionTask buildTask() {
+			if (logger.isDebugEnabled())
+				logger.debug("imposition_renderSettings", render);
 			FlipDirection flip = render.getFlipDirection();
 			return ImpositionTaskFactory.twoSided(build(), flip);
 		}

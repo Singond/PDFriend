@@ -2,13 +2,15 @@ package com.github.singond.pdfriend.imposition;
 
 import java.util.List;
 
+import com.github.singond.pdfriend.ExtendedLogger;
+import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.FlipDirection;
 import com.github.singond.pdfriend.book.OneSidedBook;
 import com.github.singond.pdfriend.book.TwoSidedBook;
 import com.github.singond.pdfriend.document.VirtualDocument;
 
 class ImpositionTaskFactory {
-
+	
 	private ImpositionTaskFactory() {
 		throw new AssertionError("This is a non-instantiable class");
 	}
@@ -26,8 +28,9 @@ class ImpositionTaskFactory {
 	 * An imposition task which treats documents as one-sided.
 	 */
 	private static class OneSidedImpositionTask implements ImpositionTask {
-
+		
 		private final Imposable<? extends OneSidedBook> imposable;
+		private static ExtendedLogger logger = Log.logger(ImpositionTask.class);
 		
 		private OneSidedImpositionTask
 				(Imposable<? extends OneSidedBook> imposable) {
@@ -41,6 +44,7 @@ class ImpositionTaskFactory {
 
 		@Override
 		public VirtualDocument process(List<VirtualDocument> sources) {
+			logger.verbose("render_oneSided", getName());
 			return imposable.impose(sources).renderOneSided();
 		}
 	}
@@ -52,6 +56,7 @@ class ImpositionTaskFactory {
 
 		private final Imposable<? extends TwoSidedBook> imposable;
 		private final FlipDirection flip;
+		private static ExtendedLogger logger = Log.logger(ImpositionTask.class);
 		
 		private TwoSidedImpositionTask(
 				Imposable<? extends TwoSidedBook> imposable,
@@ -67,6 +72,7 @@ class ImpositionTaskFactory {
 
 		@Override
 		public VirtualDocument process(List<VirtualDocument> sources) {
+			logger.verbose("render_twoSided", getName());
 			return imposable.impose(sources).renderTwoSided(flip);
 		}
 	}

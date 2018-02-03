@@ -34,4 +34,11 @@ class RenderingSettings {
 			return new RenderingSettings(flipDirection);
 		}
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("flip direction: ").append(flipDirection);
+		return builder.toString();
+	}
 }
