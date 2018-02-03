@@ -52,7 +52,7 @@ public class ImposeCommand extends SubCommand {
 		taskBuilder.acceptCommonSettings(commonOpts.getCommonSettings());
 		// TODO Pass settings
 //		taskBuilder.acceptRenderingSettings(renderingOpts.getRenderingSettings());
-		impose.setTask(taskBuilder.build());
+		impose.setTask(taskBuilder.buildTask());
 		return impose;
 	}
 	
