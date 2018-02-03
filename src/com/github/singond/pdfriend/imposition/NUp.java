@@ -30,7 +30,8 @@ import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
  * a larger page.
  * @author Singon
  */
-public class NUp extends AbstractImposable implements Imposable, ImposableBuilder<NUp> {
+public class NUp extends AbstractImposable<LoosePages>
+		implements Imposable<LoosePages>, ImposableBuilder<NUp> {
 
 	/** The internal name of this imposable document type */
 	private static final String NAME = "n-up";
@@ -628,12 +629,13 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 	 * {@inheritDoc}
 	 * @return always the value of {@code false}
 	 */
-	@Override
+//	@Override
+	@Deprecated
 	public boolean prefersMultipleInput() {
 		return false;
 	}
 
-	@Override
+//	@Override
 	public LoosePages impose(VirtualDocument source) {
 		return new LoosePages(imposeAsPages(source));
 	}

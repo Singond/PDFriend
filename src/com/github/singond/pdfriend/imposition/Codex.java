@@ -27,7 +27,8 @@ import com.github.singond.pdfriend.imposition.Preprocessor.Resizing;
  *
  * @author Singon
  */
-public class Codex extends AbstractImposable implements Imposable {
+public class Codex extends AbstractImposable<BoundBook>
+		implements Imposable<BoundBook> {
 
 	/** The internal name of this imposable document type */
 	private static final String NAME = "codex";
@@ -370,15 +371,15 @@ public class Codex extends AbstractImposable implements Imposable {
 	}
 
 	/**
-	 * {@inheritDoc}
 	 * @return always the value of {@code false}
 	 */
-	@Override
+//	@Override
+	@Deprecated
 	public boolean prefersMultipleInput() {
 		return false;
 	}
 
-	@Override
+//	@Override
 	public BoundBook impose(VirtualDocument source) {
 		return new BoundBook(imposeAsVolume(source));
 	}

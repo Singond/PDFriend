@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.book.Book;
 import com.github.singond.pdfriend.book.LayeredPage;
 import com.github.singond.pdfriend.book.LoosePages;
 import com.github.singond.pdfriend.book.MultiPage.PageletView;
@@ -25,7 +24,8 @@ import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
  *
  * @author Singon
  */
-public class Overlay extends AbstractImposable implements Imposable {
+public class Overlay extends AbstractImposable<LoosePages>
+		implements Imposable<LoosePages> {
 
 	/** The internal name of this imposable document type */
 	private static final String NAME = "overlay";
@@ -319,19 +319,20 @@ public class Overlay extends AbstractImposable implements Imposable {
 	 * documents in order for it to have any effect.
 	 * @return always the value of {@code true}
 	 */
-	@Override
+//	@Override
+	@Deprecated
 	public boolean prefersMultipleInput() {
 		return true;
 	}
 
-	@Override
-	public Book impose(VirtualDocument source) {
+//	@Override
+	public LoosePages impose(VirtualDocument source) {
 		logger.warn("overlay_singleFile");
 		return impose(Collections.singletonList(source));
 	}
 
-	@Override
-	public Book impose(List<VirtualDocument> sources) {
+//	@Override
+	public LoosePages impose(List<VirtualDocument> sources) {
 		return new LoosePages(imposeAsPages(sources));
 	}
 
@@ -343,10 +344,10 @@ public class Overlay extends AbstractImposable implements Imposable {
 	 * input document.
 	 * @return the unchanged document given as {@code source}
 	 */
-	@Override
-	public VirtualDocument imposeAndRender(VirtualDocument source) {
-		return source;
-	}
+//	@Override
+//	public VirtualDocument imposeAndRender(VirtualDocument source) {
+//		return source;
+//	}
 	
 	/**
 	 * Builds instances of {@code Overlay} objects.

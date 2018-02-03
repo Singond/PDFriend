@@ -33,7 +33,8 @@ import com.github.singond.geometry.plane.Point;
  * @author Singon
  *
  */
-public class Booklet extends AbstractImposable implements Imposable {
+public class Booklet extends AbstractImposable<BoundBook>
+		implements Imposable<BoundBook> {
 	
 	/** The internal name of this imposable document type */
 	private static final String NAME = "booklet";
@@ -333,15 +334,15 @@ public class Booklet extends AbstractImposable implements Imposable {
 	}
 
 	/**
-	 * {@inheritDoc}
 	 * @return always the value of {@code false}
 	 */
-	@Override
+//	@Override
+	@Deprecated
 	public boolean prefersMultipleInput() {
 		return false;
 	}
 
-	@Override
+//	@Override
 	public BoundBook impose(VirtualDocument source) {
 		return new BoundBook(imposeAsVolume(source));
 	}
