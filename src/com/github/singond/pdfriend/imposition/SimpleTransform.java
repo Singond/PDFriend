@@ -39,7 +39,7 @@ public class SimpleTransform implements Module {
 		logger.info("*** PDFriend Simple Transform ***");
 		
 		VirtualDocument document;
-		document = task.imposeAndRender(data.asSingleDocument());
+		document = task.impose(data.asSingleDocument()).renderOneSided();
 		return ModuleDataFactory.of(document);
 	}
 

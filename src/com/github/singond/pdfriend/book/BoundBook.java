@@ -8,7 +8,7 @@ import com.github.singond.pdfriend.document.VirtualDocument;
  * @author Singon
  *
  */
-public class BoundBook implements Book {
+public class BoundBook implements TwoSidedBook {
 
 	/** The sole volume of this book */
 	private final Volume volume;
@@ -28,7 +28,8 @@ public class BoundBook implements Book {
 	}
 
 	@Override
-	public VirtualDocument renderDocument() {
-		return volume.renderDocument();
+	public VirtualDocument renderTwoSided(FlipDirection flip) {
+		Volume.RenderingSettings rs = new Volume.RenderingSettings(flip);
+		return volume.renderDocument(rs);
 	}
 }

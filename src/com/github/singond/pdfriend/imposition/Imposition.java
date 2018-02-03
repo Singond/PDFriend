@@ -22,7 +22,7 @@ public class Imposition implements Module {
 	 * These include preprocessor settings and settings specific to this
 	 * imposition type.
 	 */
-	private Imposable task;
+	private ImpositionTask task;
 	
 	/** The name of this module */
 	private static final String MODULE_NAME = "Imposition";
@@ -33,11 +33,11 @@ public class Imposition implements Module {
 	/** Logger instance */
 	private static ExtendedLogger logger = Log.logger(Imposition.class);
 	
-	public Imposable getTask() {
+	public ImpositionTask getTask() {
 		return task;
 	}
 
-	public void setTask(Imposable task) {
+	public void setTask(ImpositionTask task) {
 		this.task = task;
 	}
 
@@ -50,11 +50,7 @@ public class Imposition implements Module {
 		logger.verbose("Selected imposition type is: " + task.getName());
 		
 		VirtualDocument document;
-		if (task.prefersMultipleInput()) {
-			document = task.imposeAndRender(data.asMultipleDocuments());
-		} else {
-			document = task.imposeAndRender(data.asSingleDocument());
-		}
+		document = task.process(data.asMultipleDocuments());
 		return ModuleDataFactory.of(document);
 	}
 

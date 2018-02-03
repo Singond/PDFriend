@@ -186,11 +186,12 @@ public class Signature implements BookElement {
 	 * @param i
 	 * @param doc
 	 */
-	private void renderSheet(Sheet sheet, VirtualDocument.Builder doc) {
+	private void renderSheet(Sheet sheet, VirtualDocument.Builder doc,
+	                         Volume.RenderingSettings settings) {
 		logger.verbose("signature_renderingSheet", sheet);
 		VirtualPage front = sheet.renderFront();
 		doc.addPage(front);
-		VirtualPage back = sheet.renderBack();
+		VirtualPage back = sheet.renderBack(settings.getFlip());
 		doc.addPage(back);
 	}
 	
@@ -198,10 +199,11 @@ public class Signature implements BookElement {
 	 * Renders all Sheets in this signature into the given document,
 	 * each as two new pages (recto first, verso second).
 	 */
-	public void renderAllSheets(VirtualDocument.Builder doc) {
+	public void renderAllSheets(VirtualDocument.Builder doc,
+	                            Volume.RenderingSettings settings) {
 		logger.verbose("signature_rendering", this);
 		for (Sheet s : sheets) {
-			renderSheet(s, doc);
+			renderSheet(s, doc, settings);
 		}
 	}
 	

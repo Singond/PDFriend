@@ -9,6 +9,7 @@ import java.util.Map;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.SpecVal;
+import com.github.singond.pdfriend.book.FlipDirection;
 import com.github.singond.pdfriend.book.GridPage;
 import com.github.singond.pdfriend.book.LoosePages;
 import com.github.singond.pdfriend.book.MultiPage.PageletView;
@@ -30,7 +31,8 @@ import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
  * a larger page.
  * @author Singon
  */
-public class NUp extends AbstractImposable implements Imposable, ImposableBuilder<NUp> {
+public class NUp extends AbstractImposable<LoosePages>
+		implements Imposable<LoosePages>, ImposableBuilder<NUp> {
 
 	/** The internal name of this imposable document type */
 	private static final String NAME = "n-up";
@@ -45,6 +47,7 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 	private FillMode fillMode = FillMode.SEQUENTIAL;
 	private Preprocessor.Settings preprocess = null;
 	private CommonSettings common = null;
+	private RenderingSettings render = null;
 	
 	/**
 	 * Sets the number of rows in the grid.
@@ -615,8 +618,28 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 	}
 	
 	@Override
+	public ImposableBuilder<NUp> acceptRenderingSettings(RenderingSettings settings) {
+		if (settings == null)
+			throw new IllegalArgumentException("Rendering settings cannot be null");
+		this.render = settings;
+		return this;
+	}
+	
+	@Override
 	public NUp build() {
 		return this;
+	}
+	
+	@Override
+	public ImpositionTask buildTask() {
+		if (logger.isDebugEnabled())
+			logger.debug("imposition_renderSettings", render);
+		if (render.isTwoSided()) {
+			FlipDirection flip = render.getFlipDirection();
+			return ImpositionTaskFactory.twoSided(build(), flip);
+		} else {
+			return ImpositionTaskFactory.oneSided(build());
+		}
 	}
 
 	@Override
@@ -628,12 +651,13 @@ public class NUp extends AbstractImposable implements Imposable, ImposableBuilde
 	 * {@inheritDoc}
 	 * @return always the value of {@code false}
 	 */
-	@Override
+//	@Override
+	@Deprecated
 	public boolean prefersMultipleInput() {
 		return false;
 	}
 
-	@Override
+//	@Override
 	public LoosePages impose(VirtualDocument source) {
 		return new LoosePages(imposeAsPages(source));
 	}
