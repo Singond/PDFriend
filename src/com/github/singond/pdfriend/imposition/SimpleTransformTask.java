@@ -6,6 +6,7 @@ import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.Book;
 import com.github.singond.pdfriend.book.LoosePages;
+import com.github.singond.pdfriend.book.OneSidedBook;
 import com.github.singond.pdfriend.book.SinglePage;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.geometry.Dimensions;
@@ -20,7 +21,8 @@ import com.github.singond.pdfriend.imposition.Preprocessor.Resizing;
  *
  * @author Singon
  */
-public class SimpleTransformTask extends AbstractImposable implements Imposable {
+public class SimpleTransformTask extends AbstractImposable<LoosePages>
+		implements Imposable<LoosePages> {
 
 	/** The internal name of this imposable document type */
 	private static final String NAME = "simple transformation";
@@ -183,23 +185,13 @@ public class SimpleTransformTask extends AbstractImposable implements Imposable 
 		return NAME;
 	}
 
-	/**
-	 * Returns true, because Overlay, by its nature, requires at least two
-	 * documents in order for it to have any effect.
-	 * @return always the value of {@code true}
-	 */
-	@Override
-	public boolean prefersMultipleInput() {
-		return false;
-	}
-
-	@Override
-	public Book impose(VirtualDocument source) {
+//	@Override
+	public LoosePages impose(VirtualDocument source) {
 		return new LoosePages(imposeAsPages(source));
 	}
 
 	@Override
-	public Book impose(List<VirtualDocument> sources) {
+	public LoosePages impose(List<VirtualDocument> sources) {
 		return impose(VirtualDocument.concatenate(sources));
 	}
 
@@ -212,6 +204,11 @@ public class SimpleTransformTask extends AbstractImposable implements Imposable 
 		@Override
 		public SimpleTransformTask build() {
 			return new SimpleTransformTask(preprocess, common);
+		}
+
+		@Override
+		public ImpositionTask buildTask() {
+			return ImpositionTaskFactory.oneSided(build());
 		}
 	}
 }
