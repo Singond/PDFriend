@@ -19,7 +19,6 @@ import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.Margins;
 import com.github.singond.pdfriend.imposition.Preprocessor.Resizing;
-import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
 import com.github.singond.geometry.plane.Line;
 import com.github.singond.geometry.plane.Point;
 
@@ -333,16 +332,6 @@ public class Booklet extends AbstractImposable<BoundBook>
 		return NAME;
 	}
 
-	/**
-	 * @return always the value of {@code false}
-	 */
-//	@Override
-	@Deprecated
-	public boolean prefersMultipleInput() {
-		return false;
-	}
-
-//	@Override
 	public BoundBook impose(VirtualDocument source) {
 		return new BoundBook(imposeAsVolume(source));
 	}

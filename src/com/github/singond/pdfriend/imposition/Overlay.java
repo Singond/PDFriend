@@ -18,7 +18,6 @@ import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.geometry.Margins;
 import com.github.singond.pdfriend.imposition.CommonSettings.MarginSettings;
-import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
 
 /**
  * A document consisting of layered pages.
@@ -315,24 +314,12 @@ public class Overlay extends AbstractImposable<LoosePages>
 		return NAME;
 	}
 
-	/**
-	 * Returns true, because Overlay, by its nature, requires at least two
-	 * documents in order for it to have any effect.
-	 * @return always the value of {@code true}
-	 */
-//	@Override
-	@Deprecated
-	public boolean prefersMultipleInput() {
-		return true;
-	}
-
-//	@Override
 	public LoosePages impose(VirtualDocument source) {
 		logger.warn("overlay_singleFile");
 		return impose(Collections.singletonList(source));
 	}
 
-//	@Override
+	@Override
 	public LoosePages impose(List<VirtualDocument> sources) {
 		return new LoosePages(imposeAsPages(sources));
 	}

@@ -212,7 +212,6 @@ public class Codex extends AbstractImposable<BoundBook>
 		if (logger.isVerboseEnabled())
 			logger.verbose("codex_caseSheetSize");
 		
-//		assert common.getPageSize() != DimensionSettings.AUTO;
 		if (!common.getPageSize().isValue()) {
 			throw new IllegalStateException("Page size is not a regular value");
 		}
@@ -371,16 +370,6 @@ public class Codex extends AbstractImposable<BoundBook>
 		return NAME;
 	}
 
-	/**
-	 * @return always the value of {@code false}
-	 */
-//	@Override
-	@Deprecated
-	public boolean prefersMultipleInput() {
-		return false;
-	}
-
-//	@Override
 	public BoundBook impose(VirtualDocument source) {
 		return new BoundBook(imposeAsVolume(source));
 	}

@@ -647,17 +647,6 @@ public class NUp extends AbstractImposable<LoosePages>
 		return NAME;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * @return always the value of {@code false}
-	 */
-//	@Override
-	@Deprecated
-	public boolean prefersMultipleInput() {
-		return false;
-	}
-
-//	@Override
 	public LoosePages impose(VirtualDocument source) {
 		return new LoosePages(imposeAsPages(source));
 	}

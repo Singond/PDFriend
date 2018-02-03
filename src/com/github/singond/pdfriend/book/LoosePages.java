@@ -41,7 +41,6 @@ public class LoosePages implements OneSidedBook, TwoSidedBook {
 		return renderAllUpright();
 	}
 
-	// TODO: Implement flip direction
 	@Override
 	public VirtualDocument renderTwoSided(FlipDirection flip) {
 		switch (flip) {

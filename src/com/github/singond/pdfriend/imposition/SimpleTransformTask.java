@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.book.Book;
 import com.github.singond.pdfriend.book.LoosePages;
-import com.github.singond.pdfriend.book.OneSidedBook;
 import com.github.singond.pdfriend.book.SinglePage;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.geometry.Dimensions;
@@ -185,7 +183,6 @@ public class SimpleTransformTask extends AbstractImposable<LoosePages>
 		return NAME;
 	}
 
-//	@Override
 	public LoosePages impose(VirtualDocument source) {
 		return new LoosePages(imposeAsPages(source));
 	}

@@ -1,22 +1,10 @@
 package com.github.singond.pdfriend.imposition;
 
-import java.util.List;
-
 import com.github.singond.pdfriend.book.Book;
 import com.github.singond.pdfriend.document.VirtualDocument;
 
 abstract class AbstractImposable<T extends Book> implements Imposable<T> {
 
-//	@Override
-//	public VirtualDocument imposeAndRender(VirtualDocument source) {
-//		return impose(source).renderDocument();
-//	}
-//
-//	@Override
-//	public VirtualDocument imposeAndRender(List<VirtualDocument> sources) {
-//		return impose(sources).renderDocument();
-//	}
-	
 	/**
 	 * Returns a new builder of {@code PageSource} objects initialized to the
 	 * values inferred from common settings.
