@@ -50,6 +50,8 @@ public class ImposeCommand extends SubCommand {
 		ImposableBuilder<?> taskBuilder = imposable.getImpositionTask();
 		taskBuilder.acceptPreprocessSettings(pageOpts.getPreprocessorSettings());
 		taskBuilder.acceptCommonSettings(commonOpts.getCommonSettings());
+		// TODO Pass settings
+//		taskBuilder.acceptRenderingSettings(renderingOpts.getRenderingSettings());
 		impose.setTask(taskBuilder.build());
 		return impose;
 	}
