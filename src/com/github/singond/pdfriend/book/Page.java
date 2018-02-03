@@ -1,5 +1,7 @@
 package com.github.singond.pdfriend.book;
 
+import java.awt.geom.AffineTransform;
+
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.document.Contents;
@@ -107,6 +109,52 @@ public abstract class Page implements BookElement {
 	}
 	
 	/**
+	 * Renders this page directly into a new virtual page.
+	 * This method places this page onto the virutal page without any
+	 * transformation except for simple rotation by a multiple of 90 degrees.
+	 * It ignores any notion of leaves, sheets or signatures
+	 * ans as such is only useful for simple imposition tasks which can be
+	 * handled by the Page subclasses themselves.
+	 *
+	 * @param rotation the rotation of the page
+	 * @return a new VirtualPage object representing this page,
+	 *         rotated by {@code rotation}
+	 */
+	public VirtualPage render(Rotation rotation) {
+		logger.verbose("page_renderingRotated", this, rotation);
+		/** Front side of this sheet compiled into page */
+		VirtualPage.Builder paper = new VirtualPage.Builder();
+		final double outputWidth, outputHeight;
+		switch (rotation) {
+			case UPRIGHT:
+			case UPSIDE_DOWN:
+				outputWidth = width;
+				outputHeight = height;
+				break;
+			case LEFT:
+			case RIGHT:
+				outputWidth = height;
+				outputHeight = width;
+				break;
+			default:
+				throw new AssertionError(rotation);
+		}
+		paper.setWidth(outputWidth);
+		paper.setHeight(outputHeight);
+		
+		if (!isBlank()) {
+			Contents contents = getContents();
+			AffineTransform transform = new AffineTransform();
+			transform.translate(outputWidth/2, outputHeight/2);
+			transform.concatenate(rotation.getTransformation());
+			transform.translate(-width/2, -height/2);
+			contents.transform(transform);
+			paper.addContent(contents);
+		}
+		return paper.build();
+	}
+	
+	/**
 	 * Invites a PageVisitor.
 	 * @param <R> Return type of the visitor.
 	 * @param <P> Parameter type for the vistor.
@@ -124,6 +172,28 @@ public abstract class Page implements BookElement {
 			return "Page ?";
 		} else {
 			return "Page "+number;
+		}
+	}
+	
+	enum Rotation {
+		UPRIGHT(0),
+		LEFT(1),
+		UPSIDE_DOWN(2),
+		RIGHT(3);
+		
+		private final int quadrants;
+		
+		private Rotation(int quadrants) {
+			this.quadrants = quadrants;
+		}
+		
+		AffineTransform getTransformation() {
+			return AffineTransform.getQuadrantRotateInstance(quadrants);
+		}
+		
+		@Override
+		public String toString() {
+			return name().toLowerCase().replace('_', ' ');
 		}
 	}
 }

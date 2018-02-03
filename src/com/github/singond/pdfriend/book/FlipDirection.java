@@ -36,6 +36,7 @@ public enum FlipDirection {
 	 * from the front side of a transparent medium.
 	 */
 	public AffineTransform getBackOrientation() {
-		return backOrientation;
+		// Return a defensive copy (AffineTransform is mutable)
+		return new AffineTransform(backOrientation);
 	}
 }

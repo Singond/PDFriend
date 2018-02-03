@@ -6,27 +6,26 @@ import java.util.Iterator;
 import java.util.List;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.book.Book;
+import com.github.singond.pdfriend.book.FlipDirection;
 import com.github.singond.pdfriend.book.LayeredPage;
 import com.github.singond.pdfriend.book.LoosePages;
 import com.github.singond.pdfriend.book.MultiPage.PageletView;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.geometry.Dimensions;
-import com.github.singond.pdfriend.geometry.GeometryUtils;
 import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.geometry.Margins;
 import com.github.singond.pdfriend.imposition.CommonSettings.MarginSettings;
-import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
 
 /**
  * A document consisting of layered pages.
  *
  * @author Singon
  */
-public class Overlay extends AbstractImposable implements Imposable {
+public class Overlay extends AbstractImposable<LoosePages>
+		implements Imposable<LoosePages> {
 
 	/** The internal name of this imposable document type */
 	private static final String NAME = "overlay";
@@ -100,9 +99,7 @@ public class Overlay extends AbstractImposable implements Imposable {
 		Margins margins = resolveAutoMargins(common.getMargins());
 		preprocess.setCellMargins(margins);
 		Preprocessor preprocessor = new Preprocessor(docs, preprocess);
-		Dimensions contentSize = preprocessor.getResolvedCellDimensions();
-		Dimensions pageSize;
-		pageSize = GeometryUtils.rectanglePlusMargins(contentSize, margins);
+		Dimensions pageSize = preprocessor.getResolvedCellDimensions();
 		int layerCount = docs.size();
 		LayeredPage template = new LayeredPage(pageSize.width().in(unit),
 		                                       pageSize.height().in(unit),
@@ -169,8 +166,7 @@ public class Overlay extends AbstractImposable implements Imposable {
 				(common.getPageSize(), common.getSheetSize());
 		
 		Margins margins = resolveAutoMargins(common.getMargins());
-		Dimensions contentSize = GeometryUtils.rectangleMinusMargins(pageSize, margins);
-		preprocess.setCellDimensions(DimensionSettings.of(contentSize));
+		preprocess.setCellDimensions(DimensionSettings.of(pageSize));
 		preprocess.setCellMargins(margins);
 		Preprocessor preprocessor = new Preprocessor(docs, preprocess);
 		pageSize = preprocessor.getResolvedCellDimensions();
@@ -318,24 +314,13 @@ public class Overlay extends AbstractImposable implements Imposable {
 		return NAME;
 	}
 
-	/**
-	 * Returns true, because Overlay, by its nature, requires at least two
-	 * documents in order for it to have any effect.
-	 * @return always the value of {@code true}
-	 */
-	@Override
-	public boolean prefersMultipleInput() {
-		return true;
-	}
-
-	@Override
-	public Book impose(VirtualDocument source) {
+	public LoosePages impose(VirtualDocument source) {
 		logger.warn("overlay_singleFile");
 		return impose(Collections.singletonList(source));
 	}
 
 	@Override
-	public Book impose(List<VirtualDocument> sources) {
+	public LoosePages impose(List<VirtualDocument> sources) {
 		return new LoosePages(imposeAsPages(sources));
 	}
 
@@ -347,19 +332,18 @@ public class Overlay extends AbstractImposable implements Imposable {
 	 * input document.
 	 * @return the unchanged document given as {@code source}
 	 */
-	@Override
-	public VirtualDocument imposeAndRender(VirtualDocument source) {
-		return source;
-	}
+//	@Override
+//	public VirtualDocument imposeAndRender(VirtualDocument source) {
+//		return source;
+//	}
 	
 	/**
 	 * Builds instances of {@code Overlay} objects.
 	 *
 	 * @author Singon
 	 */
-	public static final class Builder implements ImposableBuilder<Overlay> {
-		private Preprocessor.Settings preprocess = Preprocessor.Settings.auto();
-		private CommonSettings common = CommonSettings.auto();
+	public static final class Builder extends AbstractImposableBuilder<Overlay>
+			implements ImposableBuilder<Overlay> {
 		private boolean repeatInLayer = false;
 		
 		
@@ -368,24 +352,20 @@ public class Overlay extends AbstractImposable implements Imposable {
 		}
 
 		@Override
-		public ImposableBuilder<Overlay> acceptPreprocessSettings(Settings settings) {
-			if (settings == null)
-				throw new IllegalArgumentException("Preprocess settings cannot be null");
-			this.preprocess = settings;
-			return this;
-		}
-
-		@Override
-		public ImposableBuilder<Overlay> acceptCommonSettings(CommonSettings settings) {
-			if (settings == null)
-				throw new IllegalArgumentException("Settings cannot be null");
-			this.common = settings;
-			return this;
-		}
-
-		@Override
 		public Overlay build() {
 			return new Overlay(preprocess, common, repeatInLayer);
+		}
+
+		@Override
+		public ImpositionTask buildTask() {
+			if (logger.isDebugEnabled())
+				logger.debug("imposition_renderSettings", render);
+			if (render.isTwoSided()) {
+				FlipDirection flip = render.getFlipDirection();
+				return ImpositionTaskFactory.twoSided(build(), flip);
+			} else {
+				return ImpositionTaskFactory.oneSided(build());
+			}
 		}
 	}
 	

@@ -19,7 +19,6 @@ import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.Margins;
 import com.github.singond.pdfriend.imposition.Preprocessor.Resizing;
-import com.github.singond.pdfriend.imposition.Preprocessor.Settings;
 import com.github.singond.geometry.plane.Line;
 import com.github.singond.geometry.plane.Point;
 
@@ -33,7 +32,8 @@ import com.github.singond.geometry.plane.Point;
  * @author Singon
  *
  */
-public class Booklet extends AbstractImposable implements Imposable {
+public class Booklet extends AbstractImposable<BoundBook>
+		implements Imposable<BoundBook> {
 	
 	/** The internal name of this imposable document type */
 	private static final String NAME = "booklet";
@@ -332,16 +332,6 @@ public class Booklet extends AbstractImposable implements Imposable {
 		return NAME;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * @return always the value of {@code false}
-	 */
-	@Override
-	public boolean prefersMultipleInput() {
-		return false;
-	}
-
-	@Override
 	public BoundBook impose(VirtualDocument source) {
 		return new BoundBook(imposeAsVolume(source));
 	}
@@ -360,7 +350,8 @@ public class Booklet extends AbstractImposable implements Imposable {
 	/**
 	 * A builder for Booklet objects.
 	 */
-	public static class Builder implements ImposableBuilder<Booklet> {
+	public static class Builder extends AbstractImposableBuilder<Booklet>
+			implements ImposableBuilder<Booklet> {
 		private Edge binding = Edge.LEFT;
 		private boolean versoOpposite = false;
 		private Preprocessor.Settings preprocess = Preprocessor.Settings.auto();
@@ -408,24 +399,16 @@ public class Booklet extends AbstractImposable implements Imposable {
 		}
 
 		@Override
-		public ImposableBuilder<Booklet> acceptPreprocessSettings(Settings settings) {
-			if (settings == null)
-				throw new IllegalArgumentException("Preprocess settings cannot be null");
-			this.preprocess = settings;
-			return this;
-		}
-		
-		@Override
-		public ImposableBuilder<Booklet> acceptCommonSettings(CommonSettings settings) {
-			if (settings == null)
-				throw new IllegalArgumentException("Settings cannot be null");
-			this.common = settings;
-			return this;
+		public Booklet build() {
+			return new Booklet(binding, versoOpposite, preprocess, common);
 		}
 
 		@Override
-		public Booklet build() {
-			return new Booklet(binding, versoOpposite, preprocess, common);
+		public ImpositionTask buildTask() {
+			if (logger.isDebugEnabled())
+				logger.debug("imposition_renderSettings", render);
+			FlipDirection flip = render.getFlipDirection();
+			return ImpositionTaskFactory.twoSided(build(), flip);
 		}
 	}
 	

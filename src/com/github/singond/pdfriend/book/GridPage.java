@@ -4,7 +4,6 @@ import java.awt.geom.AffineTransform;
 
 import com.github.singond.collections.ArrayMatrix;
 import com.github.singond.collections.Matrix;
-import com.github.singond.collections.MatrixIterable;
 import com.github.singond.collections.MatrixIterator;
 
 
@@ -84,7 +83,7 @@ public class GridPage extends MultiPage {
 		// Initialize the matrix with null values
 		Matrix<Pagelet> cells = new ArrayMatrix<>(rows, columns);
 		// Fill the matrix with pagelets
-		MatrixIterator<Pagelet> iterator = cells.horizontallyAll().iterator();
+		MatrixIterator<Pagelet> iterator = cells.horizontally().iterator();
 		while (iterator.hasNext()) {
 			iterator.next();
 			int[] index = iterator.previousIndex();
@@ -171,7 +170,7 @@ public class GridPage extends MultiPage {
 		
 		int[] dimensions = ((ArrayMatrix<?>) original.matrix).getDimensions();
 		Matrix<Pagelet> cells = new ArrayMatrix<>(dimensions[0], dimensions[1]);
-		MatrixIterator<Pagelet> origIter = original.matrix.horizontallyAll().iterator();
+		MatrixIterator<Pagelet> origIter = original.matrix.horizontally().iterator();
 		
 		while (origIter.hasNext()) {
 			Pagelet p = origIter.next().copy();
@@ -232,12 +231,16 @@ public class GridPage extends MultiPage {
 	 * @param direction the manner in which to iterate
 	 * @return an iterable traversing the grid in {@code direction}
 	 */
-	public MatrixIterable<PageletView> pagelets(Direction direction) {
+	public Iterable<PageletView> pagelets(Direction direction) {
 		switch (direction) {
-			case COLUMNS:
-				return pageletViewIterator(matrix.vertically());
 			case ROWS:
 				return pageletViewIterator(matrix.horizontally());
+			case COLUMNS:
+				return pageletViewIterator(matrix.vertically());
+			case ROWS_REVERSE:
+				return pageletViewIterator(matrix.horizontallyReverse());
+			case COLUMNS_REVERSE:
+				return pageletViewIterator(matrix.verticallyReverse());
 			default:
 				throw new AssertionError("Bad GridPage direction is set: "+direction);
 		}
@@ -249,7 +252,7 @@ public class GridPage extends MultiPage {
 	 * @return an iterable traversing the grid according to current value
 	 *         of the {@code direction} field
 	 */
-	public MatrixIterable<PageletView> pagelets() {
+	public Iterable<PageletView> pagelets() {
 		return pagelets(direction);
 	}
 	
@@ -266,7 +269,11 @@ public class GridPage extends MultiPage {
 		/** Traverse the grid from left to right, top to bottom */
 		ROWS,
 		/** Traverse the grid from top to bottom, left to right */
-		COLUMNS;
+		COLUMNS,
+		/** Traverse the grid from right to left, top to bottom */
+		ROWS_REVERSE,
+		/** Traverse the grid from bottom to top, left to right */
+		COLUMNS_REVERSE;
 	}
 	
 	/**

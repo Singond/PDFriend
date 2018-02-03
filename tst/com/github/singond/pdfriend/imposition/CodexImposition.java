@@ -13,6 +13,7 @@ import com.github.singond.geometry.plane.Line;
 import com.github.singond.geometry.plane.Point;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
+import com.github.singond.pdfriend.book.BoundBook;
 import com.github.singond.pdfriend.book.FlipDirection;
 import com.github.singond.pdfriend.book.Leaf;
 import com.github.singond.pdfriend.book.SequentialSourceProvider;
@@ -67,7 +68,8 @@ public class CodexImposition {
 		try {
 			@SuppressWarnings("resource")
 			VirtualDocument inDoc = new PDFParser().parseDocument(Files.readAllBytes(input.toPath()));
-			VirtualDocument outDoc = codex.imposeAndRender(inDoc);
+			BoundBook book = codex.impose(inDoc);
+			VirtualDocument outDoc = book.renderTwoSided(FlipDirection.AROUND_Y);
 			new PDFRenderer().renderAndSave(outDoc, output);
 		} catch (ParsingException e) {
 			e.printStackTrace();

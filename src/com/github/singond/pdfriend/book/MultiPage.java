@@ -2,12 +2,11 @@ package com.github.singond.pdfriend.book;
 
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.github.singond.collections.MatrixIterable;
-import com.github.singond.collections.MatrixIterator;
 import com.github.singond.geometry.plane.RectangleFrame;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.document.Contents;
@@ -66,14 +65,14 @@ public abstract class MultiPage extends Page {
 	 * @return an iterable, whose iterator returns the pagelets wrapped
 	 *         in {@code PageletView} objects
 	 */
-	protected MatrixIterable<PageletView> pageletViewIterator(MatrixIterable<Pagelet> pagelets) {
-		return new MatrixIterable<PageletView>() {
-			private final MatrixIterable<Pagelet> iterable = pagelets;
+	protected Iterable<PageletView> pageletViewIterator(Iterable<Pagelet> pagelets) {
+		return new Iterable<PageletView>() {
+			private final Iterable<Pagelet> iterable = pagelets;
 			
 			@Override
-			public MatrixIterator<PageletView> iterator() {
-				return new MatrixIterator<PageletView>() {
-					private final MatrixIterator<Pagelet> iterator = iterable.iterator();
+			public Iterator<PageletView> iterator() {
+				return new Iterator<PageletView>() {
+					private final Iterator<Pagelet> iterator = iterable.iterator();
 
 					@Override
 					public boolean hasNext() {
@@ -83,11 +82,6 @@ public abstract class MultiPage extends Page {
 					@Override
 					public PageletView next() {
 						return new PageletView(iterator.next());
-					}
-
-					@Override
-					public int[] previousIndex() {
-						return iterator.previousIndex();
 					}
 				};
 			}
