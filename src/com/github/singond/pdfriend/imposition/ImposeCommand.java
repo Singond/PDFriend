@@ -28,6 +28,10 @@ public class ImposeCommand extends SubCommand {
 	@ParametersDelegate
 	private CommonSettingsCli commonOpts = new CommonSettingsCli();
 	
+	/** Common imposition settings */
+	@ParametersDelegate
+	private RenderingSettingsCli renderOpts = new RenderingSettingsCli();
+	
 	/** The imposition task */
 	@ParametersDelegate
 	private ImposableResolver imposable = new ImposableResolver();
@@ -41,6 +45,7 @@ public class ImposeCommand extends SubCommand {
 	protected void postParseSpecific() throws ParameterConsistencyException {
 		pageOpts.postParse();
 		commonOpts.postParse();
+		renderOpts.postParse();
 		imposable.postParse();
 	}
 	
@@ -50,8 +55,7 @@ public class ImposeCommand extends SubCommand {
 		ImposableBuilder<?> taskBuilder = imposable.getImpositionTask();
 		taskBuilder.acceptPreprocessSettings(pageOpts.getPreprocessorSettings());
 		taskBuilder.acceptCommonSettings(commonOpts.getCommonSettings());
-		// TODO Pass settings
-//		taskBuilder.acceptRenderingSettings(renderingOpts.getRenderingSettings());
+		taskBuilder.acceptRenderingSettings(renderOpts.getRenderingSettings());
 		impose.setTask(taskBuilder.buildTask());
 		return impose;
 	}
