@@ -10,6 +10,11 @@ class RenderingSettings {
 		this.flipDirection = flip;
 	}
 	
+	/** Returns the default rendering settings */
+	static RenderingSettings auto() {
+		return new Builder().build();
+	}
+	
 	/**
 	 * Returns the relationship between the front and back side of the
 	 * output document.
