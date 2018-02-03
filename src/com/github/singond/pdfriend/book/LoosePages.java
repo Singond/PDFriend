@@ -13,7 +13,7 @@ import com.github.singond.pdfriend.document.VirtualDocument;
  * @author Singon
  *
  */
-public class LoosePages implements Book {
+public class LoosePages implements OneSidedBook {
 
 	/** The pages of this document */
 	private final List<? extends Page> pages;
@@ -35,13 +35,23 @@ public class LoosePages implements Book {
 	public List<? extends Page> getPages() {
 		return Collections.unmodifiableList(pages);
 	}
-
+	
 	@Override
-	public VirtualDocument renderDocument() {
+	public VirtualDocument renderOneSided() {
 		VirtualDocument.Builder doc = new VirtualDocument.Builder();
 		for (Page page : pages) {
 			doc.addPage(page.render());
 		}
 		return doc.build();
 	}
+
+//	// TODO: Implement flip direction
+//	@Override
+//	public VirtualDocument renderDocument(FlipDirection flip) {
+//		VirtualDocument.Builder doc = new VirtualDocument.Builder();
+//		for (Page page : pages) {
+//			doc.addPage(page.render());
+//		}
+//		return doc.build();
+//	}
 }
