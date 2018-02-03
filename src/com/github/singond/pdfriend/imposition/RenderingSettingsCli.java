@@ -19,9 +19,13 @@ import com.github.singond.pdfriend.cli.ParameterDelegate;
 @Parameters(resourceBundle="Help", separators="=")
 class RenderingSettingsCli implements ParameterDelegate {
 	
-	/** Duplex printing with flip along vertical edge. */
+	/**
+	 * Duplex printing with flip along vertical edge.
+	 * This is the same way as one-sided print, making this the de-facto
+	 * default value.
+	 */
 	@Parameter(names = "--duplex",
-			description = "Keep even-numbered pages upright. This is the default",
+			description = "Keep even-numbered pages upright",
 			descriptionKey = "param-duplex")
 	private boolean duplex = false;
 
@@ -41,6 +45,7 @@ class RenderingSettingsCli implements ParameterDelegate {
 	
 	public RenderingSettings getRenderingSettings() {
 		RenderingSettings.Builder sb = new RenderingSettings.Builder();
+		sb.setTwoSided(tumble || duplex);
 		if (tumble) {
 			sb.setFlipDirection(FlipDirection.AROUND_X);
 		} else {

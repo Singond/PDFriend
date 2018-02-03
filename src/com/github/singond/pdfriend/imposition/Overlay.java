@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
+import com.github.singond.pdfriend.book.FlipDirection;
 import com.github.singond.pdfriend.book.LayeredPage;
 import com.github.singond.pdfriend.book.LoosePages;
 import com.github.singond.pdfriend.book.MultiPage.PageletView;
@@ -370,7 +371,14 @@ public class Overlay extends AbstractImposable<LoosePages>
 
 		@Override
 		public ImpositionTask buildTask() {
-			return ImpositionTaskFactory.oneSided(build());
+			if (logger.isDebugEnabled())
+				logger.debug("imposition_renderSettings", render);
+			if (render.isTwoSided()) {
+				FlipDirection flip = render.getFlipDirection();
+				return ImpositionTaskFactory.twoSided(build(), flip);
+			} else {
+				return ImpositionTaskFactory.oneSided(build());
+			}
 		}
 	}
 	

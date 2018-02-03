@@ -72,7 +72,7 @@ class ImpositionTaskFactory {
 
 		@Override
 		public VirtualDocument process(List<VirtualDocument> sources) {
-			logger.verbose("render_twoSided", getName());
+			logger.verbose("render_twoSided", getName(), flip);
 			return imposable.impose(sources).renderTwoSided(flip);
 		}
 	}

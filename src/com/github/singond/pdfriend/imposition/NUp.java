@@ -9,6 +9,7 @@ import java.util.Map;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.SpecVal;
+import com.github.singond.pdfriend.book.FlipDirection;
 import com.github.singond.pdfriend.book.GridPage;
 import com.github.singond.pdfriend.book.LoosePages;
 import com.github.singond.pdfriend.book.MultiPage.PageletView;
@@ -631,7 +632,14 @@ public class NUp extends AbstractImposable<LoosePages>
 	
 	@Override
 	public ImpositionTask buildTask() {
-		return ImpositionTaskFactory.oneSided(build());
+		if (logger.isDebugEnabled())
+			logger.debug("imposition_renderSettings", render);
+		if (render.isTwoSided()) {
+			FlipDirection flip = render.getFlipDirection();
+			return ImpositionTaskFactory.twoSided(build(), flip);
+		} else {
+			return ImpositionTaskFactory.oneSided(build());
+		}
 	}
 
 	@Override
