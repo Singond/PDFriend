@@ -45,13 +45,19 @@ public class LoosePages implements OneSidedBook {
 		return doc.build();
 	}
 
-//	// TODO: Implement flip direction
+	// TODO: Implement flip direction
 //	@Override
-//	public VirtualDocument renderDocument(FlipDirection flip) {
-//		VirtualDocument.Builder doc = new VirtualDocument.Builder();
-//		for (Page page : pages) {
-//			doc.addPage(page.render());
-//		}
-//		return doc.build();
-//	}
+	public VirtualDocument renderTwoSided(FlipDirection flip) {
+		VirtualDocument.Builder doc = new VirtualDocument.Builder();
+		boolean even = false;
+		for (Page page : pages) {
+			if (even) {
+				doc.addPage(page.render(Page.Rotation.UPSIDE_DOWN));
+			} else {
+				doc.addPage(page.render(Page.Rotation.UPRIGHT));
+			}
+			even = !even;
+		}
+		return doc.build();
+	}
 }
