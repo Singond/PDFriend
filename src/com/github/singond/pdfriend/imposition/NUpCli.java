@@ -21,10 +21,15 @@ class NUpCli implements ImposableCli<NUp> {
 			converter=NUpConverter.class)
 	private GridDimensions nup = null;
 	
-	@Parameter(names={"--nup-repeat"},
+	@Parameter(names={"--nup-repeat", "--repeat-to-fill"},
 			descriptionKey="nup-copyToFill",
-			description="Fill each cell in a page with a copy of the same input page")
+			description="In n-up, fill each cell in a page with a copy of the same input page")
 	private boolean copyToFillPage = false;
+	
+	@Parameter(names={"--two-sided"},
+			descriptionKey="nup-twoSided",
+			description="In n-up, keep the verso and recto pairs together in the output.")
+	private boolean twoSided = false;
 
 	@Override
 	public void postParse() throws ParameterConsistencyException {
@@ -54,6 +59,12 @@ class NUpCli implements ImposableCli<NUp> {
 		}
 		if (copyToFillPage) {
 			task.setFillMode(NUp.FillMode.FILL_PAGE);
+		} else if (twoSided) {
+			/*
+			 * This can be exclusive with copyToFillPage, because
+			 * copyToFillPage by its nature implies twoSided.
+			 */
+			task.setFillMode(NUp.FillMode.TWO_SIDED);
 		}
 		return task;
 	}
