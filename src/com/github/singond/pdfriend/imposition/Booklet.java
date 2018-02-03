@@ -361,7 +361,8 @@ public class Booklet extends AbstractImposable<BoundBook>
 	/**
 	 * A builder for Booklet objects.
 	 */
-	public static class Builder implements ImposableBuilder<Booklet> {
+	public static class Builder extends AbstractImposableBuilder<Booklet>
+			implements ImposableBuilder<Booklet> {
 		private Edge binding = Edge.LEFT;
 		private boolean versoOpposite = false;
 		private Preprocessor.Settings preprocess = Preprocessor.Settings.auto();
@@ -409,24 +410,14 @@ public class Booklet extends AbstractImposable<BoundBook>
 		}
 
 		@Override
-		public ImposableBuilder<Booklet> acceptPreprocessSettings(Settings settings) {
-			if (settings == null)
-				throw new IllegalArgumentException("Preprocess settings cannot be null");
-			this.preprocess = settings;
-			return this;
-		}
-		
-		@Override
-		public ImposableBuilder<Booklet> acceptCommonSettings(CommonSettings settings) {
-			if (settings == null)
-				throw new IllegalArgumentException("Settings cannot be null");
-			this.common = settings;
-			return this;
+		public Booklet build() {
+			return new Booklet(binding, versoOpposite, preprocess, common);
 		}
 
 		@Override
-		public Booklet build() {
-			return new Booklet(binding, versoOpposite, preprocess, common);
+		public ImpositionTask buildTask() {
+			FlipDirection flip = render.getFlipDirection();
+			return ImpositionTaskFactory.twoSided(build(), flip);
 		}
 	}
 	

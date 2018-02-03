@@ -354,9 +354,8 @@ public class Overlay extends AbstractImposable<LoosePages>
 	 *
 	 * @author Singon
 	 */
-	public static final class Builder implements ImposableBuilder<Overlay> {
-		private Preprocessor.Settings preprocess = Preprocessor.Settings.auto();
-		private CommonSettings common = CommonSettings.auto();
+	public static final class Builder extends AbstractImposableBuilder<Overlay>
+			implements ImposableBuilder<Overlay> {
 		private boolean repeatInLayer = false;
 		
 		
@@ -365,24 +364,13 @@ public class Overlay extends AbstractImposable<LoosePages>
 		}
 
 		@Override
-		public ImposableBuilder<Overlay> acceptPreprocessSettings(Settings settings) {
-			if (settings == null)
-				throw new IllegalArgumentException("Preprocess settings cannot be null");
-			this.preprocess = settings;
-			return this;
-		}
-
-		@Override
-		public ImposableBuilder<Overlay> acceptCommonSettings(CommonSettings settings) {
-			if (settings == null)
-				throw new IllegalArgumentException("Settings cannot be null");
-			this.common = settings;
-			return this;
-		}
-
-		@Override
 		public Overlay build() {
 			return new Overlay(preprocess, common, repeatInLayer);
+		}
+
+		@Override
+		public ImpositionTask buildTask() {
+			return ImpositionTaskFactory.oneSided(build());
 		}
 	}
 	

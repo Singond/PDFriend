@@ -10,6 +10,7 @@ import com.github.singond.geometry.plane.Point;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.BoundBook;
+import com.github.singond.pdfriend.book.FlipDirection;
 import com.github.singond.pdfriend.book.Leaf;
 import com.github.singond.pdfriend.book.Signature;
 import com.github.singond.pdfriend.book.Stack;
@@ -499,6 +500,12 @@ public class Codex extends AbstractImposable<BoundBook>
 		@Override
 		public Codex build() {
 			return new Codex(sheetsInSignature, manipulations, preprocess, common);
+		}
+
+		@Override
+		public ImpositionTask buildTask() {
+			FlipDirection flip = render.getFlipDirection();
+			return ImpositionTaskFactory.twoSided(build(), flip);
 		}
 	}
 	

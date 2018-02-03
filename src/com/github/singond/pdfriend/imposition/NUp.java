@@ -46,6 +46,7 @@ public class NUp extends AbstractImposable<LoosePages>
 	private FillMode fillMode = FillMode.SEQUENTIAL;
 	private Preprocessor.Settings preprocess = null;
 	private CommonSettings common = null;
+	private RenderingSettings render = null;
 	
 	/**
 	 * Sets the number of rows in the grid.
@@ -616,8 +617,21 @@ public class NUp extends AbstractImposable<LoosePages>
 	}
 	
 	@Override
+	public ImposableBuilder<NUp> acceptRenderingSettings(RenderingSettings settings) {
+		if (settings == null)
+			throw new IllegalArgumentException("Rendering settings cannot be null");
+		this.render = settings;
+		return this;
+	}
+	
+	@Override
 	public NUp build() {
 		return this;
+	}
+	
+	@Override
+	public ImpositionTask buildTask() {
+		return ImpositionTaskFactory.oneSided(build());
 	}
 
 	@Override
