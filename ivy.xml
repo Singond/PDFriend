@@ -3,7 +3,7 @@
 
 	<dependencies>
 		<dependency org="com.github.singond" name="collections" rev="0.4.+"/>
-		<dependency org="com.github.singond" name="geometry" rev="latest.integration"/>
+		<dependency org="com.github.singond" name="geometry" rev="0.6.+"/>
 		<!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
 		<!-- Available versions 1.8+ and 2.0+ -->
 		<dependency org="org.apache.pdfbox" name="pdfbox" rev="2.0.6"/>
