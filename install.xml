@@ -1,0 +1,37 @@
+<installation version="1.0">
+	<info>
+		<appname>PDFriend</appname>
+		<appversion>0.6.0</appversion>
+		<authors>
+			 <author name="Singon" email="slanyj@centrum.cz"/>
+		</authors>
+		<javaversion>1.8</javaversion>
+	</info>
+	
+	<locale>
+		<langpack iso3="eng"/>
+	</locale>
+	
+	<guiprefs width="400" height="300" resizable="yes">
+		<laf name="substance">
+			<os family="windows"/>
+			<os family="unix"/>
+			<os family="mac"/>
+			<param name="variant" value="moderate"/>
+		</laf>
+	</guiprefs>
+	
+	<panels>
+		<panel classname="TargetPanel"/>
+		<panel classname="PacksPanel"/>
+		<panel classname="InstallPanel"/>
+		<panel classname="FinishPanel"/>
+	</panels>
+	
+	<packs>
+		<pack name="Core" required="yes">
+			<description>The core files needed for the application</description>
+			<fileset dir="dist" targetdir="${INSTALL_PATH}" override="true"/>
+		</pack>
+	</packs>
+</installation>

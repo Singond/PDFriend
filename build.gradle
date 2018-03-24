@@ -1,0 +1,29 @@
+apply plugin: 'com.bmuschko.izpack'
+
+buildscript {
+	repositories {
+		jcenter()
+	}
+
+	dependencies {
+		classpath 'com.bmuschko:gradle-izpack-plugin:2.1'
+	}
+}
+
+repositories {
+	jcenter()
+}
+
+dependencies {
+	izpack 'org.codehaus.izpack:izpack-standalone-compiler:4.3.4'
+}
+
+izpack {
+	baseDir = file("build")
+	installFile = file("install.xml")
+	outputFile = file("dist/pdfriend-installer.jar")
+}
+
+task installer(dependsOn: izPackCreateInstaller) {
+	description = "Create installer from build/dist"
+}
