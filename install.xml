@@ -48,9 +48,11 @@
 		<pack name="Unix launcher" required="no" os="unix">
 			<description>Wraps the application into a launchable script</description>
 			<file src="distfiles/pdfriend" targetdir="${INSTALL_PATH}"/>
-			<parsable targetfile="${INSTALL_PATH}/pdfriend">
-				<os family="unix"/>
-			</parsable>
+			<file src="installers/setup-personal.sh" targetdir="${INSTALL_PATH}"/>
+			<parsable targetfile="${INSTALL_PATH}/pdfriend"/>
+			<parsable type="shell" targetfile="${INSTALL_PATH}/setup-personal.sh"/>
+			<executable targetfile="${INSTALL_PATH}/setup-personal.sh"
+			            stage="postinstall" keep="false" failure="warn"/>
 		</pack>
 	</packs>
 </installation>
