@@ -18,12 +18,27 @@ dependencies {
 	izpack 'org.codehaus.izpack:izpack-standalone-compiler:4.3.4'
 }
 
+/** The files to be installed */
+def instFiles = "build/distfiles"
+
 izpack {
 	baseDir = file("build")
 	installFile = file("install.xml")
 	outputFile = file("dist/pdfriend-installer.jar")
 }
 
+task launchers (type: Copy) {
+	description = "Copies the launcher scripts into the directory used by installer"
+	from ("ext/launchers")
+	into instFiles
+}
+
+izPackCreateInstaller.dependsOn launchers
+
+/**
+ * Creates an installer from the build/distfiles directory.
+ */
 task installer(dependsOn: izPackCreateInstaller) {
-	description = "Create installer from build/distfiles"
+	description = "Create a standalone offline installer"
+	group = "Distribution"
 }

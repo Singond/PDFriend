@@ -31,9 +31,26 @@
 	</panels>
 	
 	<packs>
-		<pack name="Core" required="yes">
+		<pack name="PDFriend" required="yes">
 			<description>The core files needed for the application</description>
-			<fileset dir="distfiles" targetdir="${INSTALL_PATH}" override="true"/>
+			<fileset dir="distfiles" targetdir="${INSTALL_PATH}" override="true">
+				<exclude name="pdfriend"/>
+				<exclude name="pdfriend.bat"/>
+			</fileset>
+		</pack>
+		<pack name="Windows launcher" required="no" os="windows">
+			<description>Wraps the application into a launchable script</description>
+			<file src="distfiles/pdfriend.bat" targetdir="${INSTALL_PATH}"/>
+			<parsable targetfile="${INSTALL_PATH}/pdfriend.bat">
+				<os family="windows"/>
+			</parsable>
+		</pack>
+		<pack name="Unix launcher" required="no" os="unix">
+			<description>Wraps the application into a launchable script</description>
+			<file src="distfiles/pdfriend" targetdir="${INSTALL_PATH}"/>
+			<parsable targetfile="${INSTALL_PATH}/pdfriend">
+				<os family="unix"/>
+			</parsable>
 		</pack>
 	</packs>
 </installation>
