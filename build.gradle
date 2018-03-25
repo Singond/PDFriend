@@ -25,5 +25,5 @@ izpack {
 }
 
 task installer(dependsOn: izPackCreateInstaller) {
-	description = "Create installer from build/dist"
+	description = "Create installer from build/distfiles"
 }

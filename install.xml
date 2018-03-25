@@ -31,7 +31,7 @@
 	<packs>
 		<pack name="Core" required="yes">
 			<description>The core files needed for the application</description>
-			<fileset dir="dist" targetdir="${INSTALL_PATH}" override="true"/>
+			<fileset dir="distfiles" targetdir="${INSTALL_PATH}" override="true"/>
 		</pack>
 	</packs>
 </installation>
