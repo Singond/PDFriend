@@ -19,6 +19,8 @@
 			<os family="mac"/>
 			<param name="variant" value="moderate"/>
 		</laf>
+		<modifier key="allXGap" value="8"/>
+		<modifier key="allYGap" value="8"/>
 	</guiprefs>
 	
 	<panels>
