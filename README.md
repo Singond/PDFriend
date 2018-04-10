@@ -25,7 +25,7 @@ Download the `pdfriend-standalone.jar` and put it anywhere on your computer.
 You can then run the application like any other executable jar:
 
 ```
-java -jar pdfriend-standalone.jar [arguments]
+java -jar /path/to/pdfriend-standalone.jar [arguments]
 ```
 
 You can simplify this by creating a script called `pdfriend`,
