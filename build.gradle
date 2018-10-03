@@ -1,8 +1,12 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
 apply plugin: 'com.bmuschko.izpack'
 
 buildscript {
 	repositories {
 		jcenter()
+		mavenLocal()
 	}
 
 	dependencies {
@@ -10,13 +14,37 @@ buildscript {
 	}
 }
 
+sourceSets {
+	dev
+}
+
+
 repositories {
 	jcenter()
+	mavenLocal()
 }
 
 dependencies {
+	implementation 'com.github.singond:collections:0.4.+'
+	implementation 'com.github.singond:geometry:0.6.+'
+
+	implementation 'org.apache.pdfbox:pdfbox:2.0.6'
+	implementation 'org.apache.logging.log4j:log4j-api:2.8.2'
+	implementation 'org.apache.logging.log4j:log4j-core:2.8.2'
+	implementation 'org.apache.commons:commons-collections4:4.1'
+	implementation 'com.beust:jcommander:1.72'
+
+	testCompile 'junit:junit:4.12'
+
 	izpack 'org.codehaus.izpack:izpack-standalone-compiler:4.3.4'
 }
+
+eclipse {
+	classpath {
+		downloadJavadoc = true
+	}
+}
+
 
 /** Auxiliary files to be used during the installation */
 def auxFiles = "build/installers"
