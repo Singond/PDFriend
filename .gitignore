@@ -1,7 +1,4 @@
-.classpath
-.project
-.settings/
-
+.gradle/
 /bin/
 /build/
 /dist/
@@ -9,5 +6,8 @@
 /log/
 /test/
 
+.settings/
 .ant-targets-build.xml
+.classpath
+.project
 *.pdf

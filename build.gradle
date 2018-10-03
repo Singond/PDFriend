@@ -1,0 +1,53 @@
+apply plugin: 'com.bmuschko.izpack'
+
+buildscript {
+	repositories {
+		jcenter()
+	}
+
+	dependencies {
+		classpath 'com.bmuschko:gradle-izpack-plugin:2.1'
+	}
+}
+
+repositories {
+	jcenter()
+}
+
+dependencies {
+	izpack 'org.codehaus.izpack:izpack-standalone-compiler:4.3.4'
+}
+
+/** Auxiliary files to be used during the installation */
+def auxFiles = "build/installers"
+/** The files to be installed */
+def instFiles = "build/distfiles"
+
+izpack {
+	baseDir = file("build")
+	installFile = file("install.xml")
+	outputFile = file("dist/pdfriend-installer.jar")
+}
+
+task installerScripts (type: Copy) {
+	description = "Copies the auxiliary installer scripts into the directory used by installer"
+	from ("ext/installers")
+	into auxFiles
+}
+
+task launchers (type: Copy) {
+	description = "Copies the launcher scripts into the directory used by installer"
+	from ("ext/launchers")
+	into instFiles
+}
+
+izPackCreateInstaller.dependsOn installerScripts
+izPackCreateInstaller.dependsOn launchers
+
+/**
+ * Creates an installer from the build/distfiles directory.
+ */
+task installer(dependsOn: izPackCreateInstaller) {
+	description = "Create a standalone offline installer"
+	group = "Distribution"
+}
