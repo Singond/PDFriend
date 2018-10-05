@@ -24,26 +24,25 @@ import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.LengthUnits;
 import com.github.singond.pdfriend.geometry.Margins;
-import com.github.singond.pdfriend.imposition.Preprocessor;
 import com.github.singond.pdfriend.imposition.Preprocessor.Resizing;
 
 @SuppressWarnings("unused")
 public class PreprocessDocument {
-	
+
 	private static ExtendedLogger logger = Log.logger(PreprocessDocument.class);
-	
+
 	private static final LengthUnit PT = LengthUnits.POINT_POSTSCRIPT;
 	private static final LengthUnit MM = LengthUnits.MILLIMETRE;
 
 	public static void main(String[] args) {
 		File input1 = new File("test/lorem-letter-bg.pdf");
 		File output = new File("test/preprocessed-doc.pdf");
-		
+
 		try {
 			/* Input Document */
 			@SuppressWarnings("resource")
-			VirtualDocument inDoc1 = new PDFParser().parseDocument(Files.readAllBytes(input1.toPath()));
-			
+			VirtualDocument inDoc1 = new PDFParser().parseDocument(Files.newInputStream(input1.toPath()));
+
 			Preprocessor.Settings settings = new Preprocessor.Settings();
 //			settings.setScale(1);
 //			settings.setRotation(Math.PI/2);
@@ -66,16 +65,16 @@ public class PreprocessDocument {
 //			align.addAlignment("MiddleAlignment", 0);
 //			align.setAlignment(settings);
 			settings.setHorizontalAndVerticalAlignment(0, 0);
-			
+
 //			settings.setCellDimensions(new Dimensions(200, 100, MM));
 			Preprocessor pp = new Preprocessor(Arrays.asList(inDoc1), settings);
-			
+
 			/* Output */
 			VirtualDocument.Builder outDoc = new VirtualDocument.Builder();
 			for (VirtualPage pg : inDoc1.getPages()) {
 				outDoc.addPage(pp.process(pg));
 			}
-			
+
 			new PDFRenderer().renderAndSave(outDoc.build(), output);
 			logger.info("Finished writing document");
 		} catch (IOException e) {
@@ -85,12 +84,12 @@ public class PreprocessDocument {
 		} catch (ParsingException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	private static class AlignmentSetter {
 		private List<Object> align = new ArrayList<>(2);
-		
+
 		private void addAlignment(String className, double value) {
 			Class<?> class1;
 			try {
@@ -103,7 +102,7 @@ public class PreprocessDocument {
 				e.printStackTrace();
 			}
 		}
-		
+
 		private void setAlignment(Preprocessor.Settings target) {
 			Field alignment;
 			try {

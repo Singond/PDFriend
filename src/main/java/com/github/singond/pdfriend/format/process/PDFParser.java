@@ -1,6 +1,7 @@
 package com.github.singond.pdfriend.format.process;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,30 +13,30 @@ import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
-import com.github.singond.pdfriend.format.ParsingException;
 import com.github.singond.pdfriend.format.Parser;
+import com.github.singond.pdfriend.format.ParsingException;
 import com.github.singond.pdfriend.format.content.PDFPage;
 
 public class PDFParser implements Parser, AutoCloseable {
 
 	private static ExtendedLogger logger = Log.logger(PDFParser.class);
-	
+
 	/** A list of open PDDocuments which need to be closed */
 	private final List<PDDocument> openDocs = new ArrayList<>();
-	
+
 	public PDFParser() {}
-	
+
 	/**
 	 * {@inheritDoc}
 	 * Imports the file given in constructor, if it is a PDF file.
 	 */
 	@SuppressWarnings("resource") // Resources are closed later in close() method
 	@Override
-	public VirtualDocument parseDocument(byte[] bytes) throws ParsingException {
+	public VirtualDocument parseDocument(InputStream in) throws ParsingException {
 		PDDocument sourceDoc = null;
 		try {
 			logger.info("parse_pdf");
-			sourceDoc = PDDocument.load(bytes);
+			sourceDoc = PDDocument.load(in);
 			openDocs.add(sourceDoc);
 			VirtualDocument result = parseDocument(sourceDoc);
 			return result;
@@ -44,7 +45,7 @@ public class PDFParser implements Parser, AutoCloseable {
 			throw new ParsingException("Error when parsing the PDF file", e);
 		}
 	}
-	
+
 	/**
 	 * Converts the given PDF document into a virtual document.
 	 */
@@ -78,7 +79,7 @@ public class PDFParser implements Parser, AutoCloseable {
 		}
 		return result.build();
 	}
-	
+
 	/**
 	 * Closes the PDF documents created when parsing the input.
 	 * <p>
@@ -91,6 +92,7 @@ public class PDFParser implements Parser, AutoCloseable {
 	 *         to close. The exception accompanying the first failure is
 	 *         passed to the thrown exception as its cause.
 	 */
+	@Override
 	public void close() throws IOException {
 		List<IOException> exceptions = new ArrayList<>();
 		for (PDDocument openDoc : openDocs) {

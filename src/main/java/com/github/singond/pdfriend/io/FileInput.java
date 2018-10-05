@@ -2,6 +2,7 @@ package com.github.singond.pdfriend.io;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,15 +17,15 @@ import com.github.singond.pdfriend.Log;
 class FileInput implements InputElement {
 	private final Path file;
 	private static ExtendedLogger logger = Log.logger(FileInput.class);
-	
+
 	public FileInput(Path file) {
 		this.file = file;
 	}
-	
+
 	public FileInput(String file) {
 		this(Paths.get(file));
 	}
-	
+
 	/** Returns the input file */
 	public Path getFile() {
 		return file;
@@ -36,11 +37,11 @@ class FileInput implements InputElement {
 	 * @throws IOException if an error occurs when reading the file
 	 */
 	@Override
-	public byte[] getBytes() throws FileNotFoundException, IOException {
+	public InputStream getInputStream() throws FileNotFoundException, IOException {
 		if (Files.exists(file)) {
 			// The file is verified to exist
 			logger.info("readFile", file);
-			return Files.readAllBytes(file);
+			return Files.newInputStream(file);
 		} else if (Files.notExists(file)) {
 			// The file is verified not to exist
 			throw new FileNotFoundException("Cannot find file " + file);
