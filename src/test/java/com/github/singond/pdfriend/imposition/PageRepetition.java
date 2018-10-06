@@ -16,14 +16,14 @@ import com.github.singond.pdfriend.format.process.PDFParser;
 public class PageRepetition {
 
 	Path input = Paths.get("test/lorem-letter-bg.pdf");
-	
+
 	@Test
 	public void repeatPage() throws ParsingException, IOException {
 		@SuppressWarnings("resource")
-		VirtualDocument inDoc = new PDFParser().parseDocument(Files.readAllBytes(input));
+		VirtualDocument inDoc = new PDFParser().parseDocument(Files.newInputStream(input));
 		int repeatPage = 3;
 		int repeatDoc = 2;
-		
+
 		PageSource pageSource = PageSource.of(inDoc)
 		                                  .setPageRepeated(repeatPage)
 		                                  .setDocRepeated(repeatDoc)
@@ -35,5 +35,5 @@ public class PageRepetition {
 		int pagesExpected = inDoc.getLength() * repeatPage * repeatDoc;
 		Assert.assertEquals(pagesExpected, pageNumber);
 	}
-	
+
 }

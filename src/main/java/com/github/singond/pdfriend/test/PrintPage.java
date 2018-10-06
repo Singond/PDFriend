@@ -22,11 +22,11 @@ public class PrintPage {
 		File srcFile = new File("test/lorem-letter.pdf");
 		File output = new File("test/printed-page.pdf");
 		@SuppressWarnings("resource")
-		VirtualDocument source = new PDFParser().parseDocument(Files.readAllBytes(srcFile.toPath()));
+		VirtualDocument source = new PDFParser().parseDocument(Files.newInputStream(srcFile.toPath()));
 
 		SinglePage page1 = new SinglePage(612, 792);
 		GridPage page2 = new GridPage(2, 2, 306, 396);
-		
+
 		SourceProvider<Page> sp = new SequentialSourceProvider(source);
 		sp.setSourceTo(page1);
 		sp.setSourceTo(page2);

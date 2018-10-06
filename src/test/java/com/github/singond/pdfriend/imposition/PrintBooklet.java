@@ -11,19 +11,18 @@ import com.github.singond.pdfriend.format.ParsingException;
 import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.process.PDFParser;
 import com.github.singond.pdfriend.format.process.PDFRenderer;
-import com.github.singond.pdfriend.imposition.Booklet;
 
 public class PrintBooklet {
-	
+
 	private static ExtendedLogger logger = Log.logger(PrintBooklet.class);
 
 	public static void main(String[] args) {
 		File sourceFile = new File("test/lorem-letter.pdf");
 		File targetFile = new File("test/printed-booklet.pdf");
 		VirtualDocument source;
-		
+
 		try (PDFParser parser = new PDFParser()) {
-			source = parser.parseDocument(Files.readAllBytes(sourceFile.toPath()));
+			source = parser.parseDocument(Files.newInputStream(sourceFile.toPath()));
 			Booklet booklet = new Booklet.Builder().build();
 //			booklet.setBinding(Binding.LEFT);
 //			booklet.setVersoOpposite(true);
