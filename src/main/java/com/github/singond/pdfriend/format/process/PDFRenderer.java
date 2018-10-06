@@ -3,6 +3,7 @@ package com.github.singond.pdfriend.format.process;
 import java.awt.geom.AffineTransform;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.apache.pdfbox.multipdf.LayerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -24,41 +25,46 @@ import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.content.PDFPage;
 
 public class PDFRenderer extends Renderer<PDDocument> {
-	
+
 	private static ExtendedLogger logger = Log.logger(PDFRenderer.class);
 
 	@Override
 	public PDDocument render(VirtualDocument document) throws RenderingException {
 		logger.verbose("render_doc", document);
-		
+
 		PDDocument targetDoc = new PDDocument();
 		LayerUtility lutil = new LayerUtility(targetDoc);
 		DocumentController docCtrl = new DocumentController(targetDoc, lutil);
-		
+
 		for (VirtualPage pg : document.getPages()) {
 			targetDoc.addPage(renderPage(pg, docCtrl));
 		}
 		return targetDoc;
 	}
-	
+
 	@Override
 	public byte[] renderBinary(VirtualDocument document) throws RenderingException {
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		try (PDDocument doc = render(document)) {
-    		doc.save(bytes);
-		} catch (IOException e) {
-			throw new RenderingException("Error when converting the PDDocument to a byte array", e);
-		}
+		render(document, bytes);
 		return bytes.toByteArray();
 	}
 
+	@Override
+	public void render(VirtualDocument document, OutputStream out)
+			throws RenderingException {
+		try (PDDocument doc = render(document)) {
+			doc.save(out);
+		} catch (IOException e) {
+			throw new RenderingException("Error writing the document", e);
+		}
+	}
 
 	private PDPage renderPage(VirtualPage page, DocumentController docCtrl) throws RenderingException {
 		logger.verbose("render_page", page);
 		PDPage targetPage = new PDPage();
 		targetPage.setMediaBox(new PDRectangle((float) page.getWidth(), (float) page.getHeight()));
 		ContentRenderer contentRndr = new ContentRenderer();
-		
+
 		if (page.getContents().isEmpty()) {
 			logger.debug("render_pageBlank", page);
 			return targetPage;
@@ -66,7 +72,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 		try {
 			PDPageContentStream content = new PDPageContentStream(docCtrl.doc, targetPage);
 			PageController pageCtrl = new PageController(docCtrl, targetPage, content);
-			
+
 			if (logger.isDebugEnabled()) {
 				logger.debug("render_content", page.getContents().get().size(), page);
 			}
@@ -79,20 +85,18 @@ public class PDFRenderer extends Renderer<PDDocument> {
 		}
 		return targetPage;
 	}
-	
+
 	/**
 	 * A Content Visitor providing the actual imposing logic.
-	 * @author Singon
-	 *
 	 */
 	private static class ContentRenderer extends AContentVisitor<Void, PageController, RenderingException> {
-		
+
 		@Override
 		public Void visit(PDFPage source, PageController controller) throws RenderingException {
 			LayerUtility layerUtility = controller.doc.layerUtility;
 			PDPageContentStream content = controller.cs;
 			AffineTransform trMatrix = source.getPosition();
-			
+
 			logger.debug("render_pdf_matrix", source, Util.toString(trMatrix));
 			PDPage page = source.getPage();
 			PDRectangle box = PDFSettings.getBox(page);
@@ -111,7 +115,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 			} // End hack
 			// Move to the box position
 			trMatrix.translate(box.getLowerLeftX(), box.getLowerLeftY());
-			
+
 			try {
 				PDFormXObject form = layerUtility.importPageAsForm(source.getDoc(), page);
 				content.saveGraphicsState();
@@ -122,45 +126,45 @@ public class PDFRenderer extends Renderer<PDDocument> {
 				logger.error("render_pdf_ioException", source, controller.page);
 				throw new RenderingException("Error when writing the contents of page "+source, e);
 			}
-			
+
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Container aggregating objects necessary for document rendering.
 	 * Makes no guarantee regarding the objects' compatibility.
 	 */
 	private static class DocumentController {
-		
+
 		/** The document being rendered */
 		private final PDDocument doc;
-		
+
 		/** Layer utility of the document */
 		private final LayerUtility layerUtility;
-		
+
 		private DocumentController(PDDocument document,
 		                           LayerUtility layerUtility) {
 			this.doc = document;
 			this.layerUtility = layerUtility;
 		}
 	}
-	
+
 	/**
 	 * Container aggregating objects necessary for page rendering.
 	 * Makes no guarantee regarding the objects' compatibility.
 	 */
 	private static class PageController {
-		
+
 		/** The controller of the document being rendered */
 		private final DocumentController doc;
-		
+
 		/** The page being rendered */
 		private final PDPage page;
-		
+
 		/** Content stream of the rendered page */
 		private final PDPageContentStream cs;
-		
+
 		private PageController(DocumentController document,
 		                       PDPage page,
 		                       PDPageContentStream stream) {
