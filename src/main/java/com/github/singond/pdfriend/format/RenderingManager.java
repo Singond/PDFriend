@@ -25,7 +25,7 @@ public class RenderingManager {
 		// TODO Handle different file formats?
 		PDFRenderer renderer = new PDFRenderer();
 		for (VirtualDocument doc : docs) {
-			output.acceptBytes(renderer.renderRaw(doc));
+			output.acceptBytes(renderer.renderBinary(doc));
 		}
 	}
 }

@@ -42,7 +42,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 	}
 	
 	@Override
-	public byte[] renderRaw(VirtualDocument document) throws RenderingException {
+	public byte[] renderBinary(VirtualDocument document) throws RenderingException {
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 		try (PDDocument doc = render(document)) {
     		doc.save(bytes);
