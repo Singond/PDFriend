@@ -8,6 +8,11 @@ import java.io.InputStream;
  */
 public interface InputElement {
 
-	/** Returns the input as a byte array */
+	/**
+	 * Returns the input as a data stream.
+	 *
+	 * @return the input
+	 * @throws Exception
+	 */
 	public InputStream getInputStream() throws Exception;
 }
