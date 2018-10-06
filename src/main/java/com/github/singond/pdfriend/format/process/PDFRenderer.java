@@ -53,7 +53,9 @@ public class PDFRenderer extends Renderer<PDDocument> {
 	public void render(VirtualDocument document, OutputStream out)
 			throws RenderingException {
 		try (PDDocument doc = render(document)) {
+			logger.info("writeFile");
 			doc.save(out);
+			logger.info("writeFile_done");
 		} catch (IOException e) {
 			throw new RenderingException("Error writing the document", e);
 		}
