@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.github.singond.pdfriend.document.Content.Movable;
-
 /**
  * Creates {@code Contents} objects.
  *
@@ -25,22 +23,22 @@ public final class ContentsFactory {
 	 * @return a new instance of Contents
 	 */
 	public static TransformableContents merge(Collection<Contents> contents) {
-		List<Content.Movable> all = new ArrayList<>();
+		List<MovableContent> all = new ArrayList<>();
 		for (Contents c : contents) {
 			all.addAll(makeMovable(c));
 		}
 		return new ContentsMovable(all);
 	}
 
-	private static List<Movable> makeMovable(Contents contents) {
+	private static List<MovableContent> makeMovable(Contents contents) {
 		// Bypass new object creation if possible
 		if (contents instanceof ContentsMovable) {
 			return ((ContentsMovable) contents).getMovable();
 		}
 
 		// Otherwise do it the normal way
-    	return contents.get().stream()
-    	               .map(c -> c.new Movable())
-    	               .collect(Collectors.toList());
-    }
+		return contents.get().stream()
+		               .map(MovableContent::new)
+		               .collect(Collectors.toList());
+	}
 }

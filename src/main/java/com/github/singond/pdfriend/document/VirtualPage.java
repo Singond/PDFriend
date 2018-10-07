@@ -125,9 +125,9 @@ public final class VirtualPage {
 	 * @return a shallow copy of the internal collection of content
 	 *         elements, each converted to a new Content.Movable
 	 */
-	List<Content.Movable> getMovableContent() {
+	List<MovableContent> getMovableContent() {
 		return content.stream()
-		              .map(c -> c.new Movable())
+		              .map(MovableContent::new)
 		              .collect(Collectors.toList());
 	}
 	
