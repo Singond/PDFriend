@@ -1,6 +1,6 @@
 package com.github.singond.pdfriend.book;
 
-import com.github.singond.pdfriend.document.Contents;
+import com.github.singond.pdfriend.document.TransformableContents;
 import com.github.singond.pdfriend.document.VirtualPage;
 
 /**
@@ -53,7 +53,7 @@ public class SinglePage extends Page {
 	}
 	
 	@Override
-	public Contents getContents() {
+	public TransformableContents getContents() {
 		return source.getContents();
 	}
 

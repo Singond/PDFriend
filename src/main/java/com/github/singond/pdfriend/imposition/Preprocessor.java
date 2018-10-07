@@ -12,7 +12,7 @@ import com.github.singond.geometry.plane.RectangleFrame;
 import com.github.singond.geometry.plane.Rectangles;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.document.Contents;
+import com.github.singond.pdfriend.document.TransformableContents;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.geometry.Dimensions;
@@ -235,7 +235,7 @@ public final class Preprocessor {
 		Dimensions pageDims = new Dimensions
 				(page.getWidth(), page.getHeight(), UNIT);
 		AffineTransform position = getResolvedPositionInCell(pageDims);
-		Contents contents = page.getContents();
+		TransformableContents contents = page.getContents();
 		contents.transform(position);
 		if (logger.isDebugEnabled())
 			logger.debug("preprocess_position_final", page, position);

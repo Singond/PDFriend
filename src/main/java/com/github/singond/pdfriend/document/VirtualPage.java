@@ -101,7 +101,7 @@ public final class VirtualPage {
 	 * {@link #getContentStatic} should be preferred for better performance.
 	 * @return a non-live view (but see {@link #Contents}) of the content
 	 */
-	public Contents getContents() {
+	public TransformableContents getContents() {
 		return new ContentsMovable(getMovableContent());
 	}
 	

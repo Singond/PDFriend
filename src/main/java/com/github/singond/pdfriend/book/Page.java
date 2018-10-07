@@ -4,7 +4,7 @@ import java.awt.geom.AffineTransform;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.document.Contents;
+import com.github.singond.pdfriend.document.TransformableContents;
 import com.github.singond.pdfriend.document.VirtualPage;
 
 /**
@@ -20,14 +20,14 @@ public abstract class Page implements BookElement {
 	private final double width;
 	/** The page height (y-direction) */
 	private final double height;
-	
+
 	private static ExtendedLogger logger = Log.logger(Page.class);
-	
+
 	public Page(double width, double height) {
 		this.width = width;
 		this.height = height;
 	}
-	
+
 	public double getWidth() {
 		return width;
 	}
@@ -47,7 +47,7 @@ public abstract class Page implements BookElement {
 		}
 		return number;
 	}
-	
+
 	/**
 	 * Sets the page number of this page.
 	 * @param n
@@ -60,7 +60,7 @@ public abstract class Page implements BookElement {
 		}
 		number = n;
 	}
-	
+
 	/**
 	 * Indicates that this page can be considered blank.
 	 * <p>
@@ -73,7 +73,7 @@ public abstract class Page implements BookElement {
 	 *         make any visible changes to the output
 	 */
 	public abstract boolean isBlank();
-	
+
 
 	/**
 	 * Returns the content of this page collected from its VirtualPage(s)
@@ -85,8 +85,8 @@ public abstract class Page implements BookElement {
 	 * use more than one VirtualPage.</p>
 	 * @return The collection of Content obtained from the source page.
 	 */
-	public abstract Contents getContents();
-	
+	public abstract TransformableContents getContents();
+
 	/**
 	 * Renders this page directly into a new virtual page.
 	 * This method places this page onto the virutal page without any
@@ -101,13 +101,13 @@ public abstract class Page implements BookElement {
 		VirtualPage.Builder paper = new VirtualPage.Builder();
 		paper.setWidth(width);
 		paper.setHeight(height);
-		
+
 		if (!isBlank()) {
 			paper.addContent(getContents());
 		}
 		return paper.build();
 	}
-	
+
 	/**
 	 * Renders this page directly into a new virtual page.
 	 * This method places this page onto the virutal page without any
@@ -141,9 +141,9 @@ public abstract class Page implements BookElement {
 		}
 		paper.setWidth(outputWidth);
 		paper.setHeight(outputHeight);
-		
+
 		if (!isBlank()) {
-			Contents contents = getContents();
+			TransformableContents contents = getContents();
 			AffineTransform transform = new AffineTransform();
 			transform.translate(outputWidth/2, outputHeight/2);
 			transform.concatenate(rotation.getTransformation());
@@ -153,7 +153,7 @@ public abstract class Page implements BookElement {
 		}
 		return paper.build();
 	}
-	
+
 	/**
 	 * Invites a PageVisitor.
 	 * @param <R> Return type of the visitor.
@@ -161,7 +161,7 @@ public abstract class Page implements BookElement {
 	 * @param <E> Exception type thrown by the visitor.
 	 */
 	public abstract <R, P, E extends Throwable> R invite(PageVisitor<R, P, E> visitor, P param) throws E;
-	
+
 	/**
 	 * Question mark in the output means that page number has not yet
 	 * been set for this Page.
@@ -174,23 +174,23 @@ public abstract class Page implements BookElement {
 			return "Page "+number;
 		}
 	}
-	
+
 	enum Rotation {
 		UPRIGHT(0),
 		LEFT(1),
 		UPSIDE_DOWN(2),
 		RIGHT(3);
-		
+
 		private final int quadrants;
-		
+
 		private Rotation(int quadrants) {
 			this.quadrants = quadrants;
 		}
-		
+
 		AffineTransform getTransformation() {
 			return AffineTransform.getQuadrantRotateInstance(quadrants);
 		}
-		
+
 		@Override
 		public String toString() {
 			return name().toLowerCase().replace('_', ' ');

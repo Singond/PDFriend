@@ -1,10 +1,6 @@
 package com.github.singond.pdfriend.document;
 
-import java.awt.geom.AffineTransform;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import com.github.singond.pdfriend.document.Content.Movable;
 
 /**
  * Represents the whole content in a document page.
@@ -22,30 +18,17 @@ import com.github.singond.pdfriend.document.Content.Movable;
  * @author Singon
  *
  */
-class ContentsStatic extends Contents {
+class ContentsStatic implements Contents {
 
 	private final List<Content> contents;
-	
+
 	ContentsStatic(List<Content> contents) {
 		this.contents = contents;
 	}
-	
+
 	@Override
 	public List<Content> get() {
 		return contents;
-	}
-
-	@Override
-	public void transform(AffineTransform transform) {
-		throw new UnsupportedOperationException
-				("This object does not support transforming content");
-	}
-
-	@Override
-	List<Movable> getMovable() {
-		return contents.stream()
-		               .map(c -> c.new Movable())
-		               .collect(Collectors.toList());
 	}
 
 	@Override

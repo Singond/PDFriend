@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.Set;
 
 import com.github.singond.geometry.plane.RectangleFrame;
-import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.document.Contents;
+import com.github.singond.pdfriend.document.ContentsFactory;
+import com.github.singond.pdfriend.document.TransformableContents;
+import com.github.singond.pdfriend.document.VirtualPage;
 
 
 /**
@@ -58,7 +60,7 @@ public abstract class MultiPage extends Page {
 	protected final List<Pagelet> getPagelets() {
 		return new ArrayList<>(pagelets);
 	}
-	
+
 	/**
 	 * Wraps a {@code Pagelet} iterable in a {@code PageletView} iterable.
 	 * @param pagelets the iterable of pagelets
@@ -68,7 +70,7 @@ public abstract class MultiPage extends Page {
 	protected Iterable<PageletView> pageletViewIterator(Iterable<Pagelet> pagelets) {
 		return new Iterable<PageletView>() {
 			private final Iterable<Pagelet> iterable = pagelets;
-			
+
 			@Override
 			public Iterator<PageletView> iterator() {
 				return new Iterator<PageletView>() {
@@ -96,13 +98,13 @@ public abstract class MultiPage extends Page {
 	public boolean isBlank() {
 		return pagelets.isEmpty();
 	}
-	
+
 	@Override
-	public Contents getContents() {
+	public TransformableContents getContents() {
 		Set<Contents> contents = new LinkedHashSet<>();
 		for (Pagelet p : pagelets) {
 			if (p.getSource() == null) continue;
-			Contents c = p.getSource().getContents();
+			TransformableContents c = p.getSource().getContents();
 			c.transform(p.getPosition());
 			contents.add(c);
 //			for (Content.Movable cm : p.source.getContents().get()) {
@@ -110,7 +112,7 @@ public abstract class MultiPage extends Page {
 //				contents.add(cm);
 //			}
 		}
-		return Contents.of(contents);
+		return ContentsFactory.merge(contents);
 	}
 
 	@Override
@@ -150,7 +152,7 @@ public abstract class MultiPage extends Page {
 		 *         this pagelet
 		 */
 		public VirtualPage getSource();
-		
+
 		/**
 		 * Returns the position of the source page on the parent Page.
 		 * This is the transformation needed to transform the page from
@@ -165,7 +167,7 @@ public abstract class MultiPage extends Page {
 		 */
 		public void setSource(VirtualPage source);
 	}
-	
+
 	/** A skeletal implementation of a pagelet */
 	protected static abstract class APagelet implements Pagelet {
 		/** Width of this pagelet */
@@ -183,7 +185,7 @@ public abstract class MultiPage extends Page {
 		final AffineTransform position;
 		/** The source page */
 		VirtualPage source;
-		
+
 		/**
 		 * Constructs a new Pagelet with empty source
 		 * at the given position in the parent MultiPage.
@@ -194,11 +196,13 @@ public abstract class MultiPage extends Page {
 			this.height = height;
 			this.position = position;
 		}
-		
+
+		@Override
 		public double getWidth() {
 			return width;
 		}
 
+		@Override
 		public double getHeight() {
 			return height;
 		}
@@ -222,7 +226,7 @@ public abstract class MultiPage extends Page {
 			this.source = source;
 		}
 	}
-	
+
 	/**
 	 * A Pagelet implementation which further transforms the source pages
 	 * relative to the pagelet's frame using the given constraints.
@@ -254,7 +258,7 @@ public abstract class MultiPage extends Page {
 			super(width, height, position);
 			this.positioner = new RectangleFrame(width, height);
 		}
-		
+
 		/**
 		 * A copy constructor.
 		 * Constructs a new AutoPagelet which is a copy of the given AutoPagelet.
@@ -307,13 +311,13 @@ public abstract class MultiPage extends Page {
 		public AffineTransform getFramePosition() {
 			return new AffineTransform(position);
 		}
-		
+
 		/** Makes the source page fit this frame. */
 		public void fitPage() {
 			positioner.setSize(positioner.new Fit());
 			positionValid = false;
 		}
-		
+
 		/**
 		 * Scales the source page by a constant amount.
 		 * @param scale the scale as magnification (values greater
@@ -323,7 +327,7 @@ public abstract class MultiPage extends Page {
 			positioner.setSize(positioner.new Scale(scale));
 			positionValid = false;
 		}
-		
+
 		/**
 		 * Rotates the source page by the given angle.
 		 * @param angle the angle of rotation in counter-clockwise direction
@@ -334,7 +338,7 @@ public abstract class MultiPage extends Page {
 			positionValid = false;
 		}
 	}
-	
+
 	/**
 	 * A simple implementation of Pagelet where the source page becomes
 	 * the pagelet, effectively erasing the distinction.
@@ -346,7 +350,7 @@ public abstract class MultiPage extends Page {
 		public SimplePagelet(double width, double height, AffineTransform position) {
 			super(width, height, position);
 		}
-		
+
 		@Override
 		public SimplePagelet copy() {
 			return new SimplePagelet(width, height, position);
@@ -356,9 +360,9 @@ public abstract class MultiPage extends Page {
 		public AffineTransform getPosition() {
 			return super.getPosition();
 		}
-		
+
 	}
-	
+
 	/**
 	 * Represents a slot for a page in this {@code MultiPage},
 	 * along with a position.
@@ -368,11 +372,11 @@ public abstract class MultiPage extends Page {
 	public static final class PageletView {
 		/** The target of this view */
 		private final Pagelet pagelet;
-		
+
 		protected PageletView(Pagelet pagelet) {
 			this.pagelet = pagelet;
 		}
-		
+
 		/**
 		 * Returns the width of this pagelet.
 		 */
@@ -386,7 +390,7 @@ public abstract class MultiPage extends Page {
 		public double getHeight() {
 			return pagelet.getHeight();
 		}
-		
+
 		/**
 		 * Returns the position of the source page on the parent Page.
 		 * This is the transformation needed to transform the page from
@@ -396,7 +400,7 @@ public abstract class MultiPage extends Page {
 		public AffineTransform getPosition() {
 			return pagelet.getPosition();
 		}
-		
+
 		/**
 		 * Sets the given virtual page into the
 		 * @param source

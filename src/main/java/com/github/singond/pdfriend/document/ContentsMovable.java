@@ -3,6 +3,7 @@ package com.github.singond.pdfriend.document;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
+
 import com.github.singond.pdfriend.document.Content.Movable;
 
 /**
@@ -19,10 +20,10 @@ import com.github.singond.pdfriend.document.Content.Movable;
  * @author Singon
  *
  */
-class ContentsMovable extends Contents {
+class ContentsMovable implements TransformableContents {
 
 	private final List<Content.Movable> contents;
-	
+
 	/**
 	 * Constructs a new instance by shallowly copying the given content.
 	 * @param contents all content of the page, wrapped in an object with
@@ -31,7 +32,7 @@ class ContentsMovable extends Contents {
 	ContentsMovable(List<Content.Movable> contents) {
 		this.contents = new ArrayList<>(contents);
 	}
-	
+
 	@Override
 	public List<Content> get() {
 		List<Content> result = new ArrayList<>(contents.size());
@@ -40,7 +41,7 @@ class ContentsMovable extends Contents {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public void transform(AffineTransform transform) {
 		for (Content.Movable cm : contents) {
@@ -48,7 +49,6 @@ class ContentsMovable extends Contents {
 		}
 	}
 
-	@Override
 	List<Movable> getMovable() {
 		return contents;
 	}
