@@ -28,19 +28,21 @@ public class ImposeLeaf {
 		leaf.setAsFrontPosition(new Leaf.Position(306, 396, 0));
 		leaf.setOrientation(Orientation.RECTO_UP);
 		leaf.setFlipDirection(FlipDirection.AROUND_Y);
-				
+
 		try (PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"))) {
 			// Get content
-			VirtualPage one = new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 0)));
-			VirtualPage two = new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 1)));
+			VirtualPage one = new VirtualPage(612, 792, Arrays.asList(
+					new PDFPage(source, 0, "page-1")));
+			VirtualPage two = new VirtualPage(612, 792, Arrays.asList(
+					new PDFPage(source, 1, "page-2")));
 //			((SinglePage) leaf.getFrontPage()).setSource(one);
 //			((SinglePage) leaf.getBackPage()).setSource(two);
-			
+
 			// Impose
 			VirtualDocument.Builder doc = new VirtualDocument.Builder();
 			doc.addPage(one);
 			doc.addPage(two);
-			
+
 			// Output
 			VirtualDocument document = doc.build();
 			PDDocument out = new PDFRenderer().render(document);

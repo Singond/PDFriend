@@ -23,15 +23,17 @@ public class RenderPDF {
 			VirtualPage.Builder pg1 = new VirtualPage.Builder();
 			pg1.setWidth(612);
 			pg1.setHeight(792);
-			Content src1 = new PDFPage(source, source.getPage(0), AffineTransform.getRotateInstance(0.06));
+			Content src1 = new PDFPage(source, source.getPage(0),
+					AffineTransform.getRotateInstance(0.06), "page-1");
 			pg1.addContent(src1.transform(AffineTransform.getTranslateInstance(15, -30)));
 			doc.addPage(pg1.build());
 			VirtualPage.Builder pg2 = new VirtualPage.Builder();
 			pg2.setWidth(612);
 			pg2.setHeight(792);
-			pg2.addContent(new PDFPage(source, source.getPage(1), AffineTransform.getTranslateInstance(-30, 30)));
+			pg2.addContent(new PDFPage(source, source.getPage(1),
+					AffineTransform.getTranslateInstance(-30, 30), "page-2"));
 			doc.addPage(pg2.build());
-			
+
 			/* Output */
 			VirtualDocument document = doc.build();
 			PDDocument out = new PDFRenderer().render(document);
@@ -42,7 +44,7 @@ public class RenderPDF {
 		} catch (RenderingException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 }
