@@ -5,6 +5,7 @@ import java.awt.geom.AffineTransform;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 
+import com.github.singond.pdfriend.document.AbstractContent;
 import com.github.singond.pdfriend.document.Content;
 import com.github.singond.pdfriend.document.ContentVisitor;
 
@@ -13,15 +14,15 @@ import com.github.singond.pdfriend.document.ContentVisitor;
  * @author Singon
  *
  */
-public class PDFPage extends Content {
-	
+public class PDFPage extends AbstractContent implements Content {
+
 	/** The page */
 	private final PDPage page;
 	/** The parent document */
 	private final PDDocument doc;
 	/** The number of the page in the document, starting from 1 */
 	private final int pageNumber;
-	
+
 	public PDFPage(PDDocument doc, PDPage page, AffineTransform position) {
 		super(position);
 		this.doc = doc;
@@ -51,10 +52,10 @@ public class PDFPage extends Content {
 	public PDDocument getDoc() {
 		return doc;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @return a shallow copy of this PDFPage in the position given
 	 *         by the {@code transform} argument
 	 */
@@ -62,12 +63,12 @@ public class PDFPage extends Content {
 	public PDFPage atPosition(AffineTransform newPosition) {
 		return new PDFPage(doc, page, newPosition);
 	}
-	
+
 	@Override
 	public <T, P, E extends Throwable> T invite(ContentVisitor<T, P, E> visitor, P param) throws E {
 		return visitor.visit(this, param);
 	}
-	
+
 	@Override
 	public String toString() {
 		// TODO Include file name if available
