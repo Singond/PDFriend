@@ -11,14 +11,14 @@ import com.github.singond.pdfriend.document.VirtualPage;
  *
  */
 public class SinglePage extends Page {
-	
+
 	/** The page of a virtual document represented by this Page object. */
 	private VirtualPage source;
-	
+
 	public SinglePage(double width, double height) {
 		super(width, height);
 	}
-	
+
 	/**
 	 * A copy constructor.
 	 * Creates a new SinglePage which is an exact copy of the original.
@@ -27,7 +27,7 @@ public class SinglePage extends Page {
 	public SinglePage(SinglePage original) {
 		super(original.getWidth(), original.getHeight());
 	}
-	
+
 	public VirtualPage getSource() {
 		return source;
 	}
@@ -40,7 +40,7 @@ public class SinglePage extends Page {
 	public void setSource(VirtualPage page) {
 		this.source = page;
 	}
-	
+
 	/**
 	 * Indicates that the page is blank and calling methods on its source
 	 * page would generate a NullPointerException.
@@ -51,7 +51,7 @@ public class SinglePage extends Page {
 	public boolean isBlank() {
 		return source == null;
 	}
-	
+
 	@Override
 	public TransformableContents getContents() {
 		return source.getContents();
@@ -69,7 +69,7 @@ public class SinglePage extends Page {
 	public VirtualPage render() {
 		return new VirtualPage(getWidth(), getHeight(), source.getContentStatic().get());
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -77,7 +77,7 @@ public class SinglePage extends Page {
 	public <R, P, E extends Throwable> R invite(PageVisitor<R, P, E> visitor, P param) throws E {
 		return visitor.visit(this, param);
 	}
-	
+
 	/**
 	 * Question mark in the output means that page number has not yet
 	 * been set for this Page.

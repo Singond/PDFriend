@@ -1,5 +1,6 @@
 package com.github.singond.pdfriend.io;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -14,5 +15,7 @@ public interface InputElement {
 	 * @return the input
 	 * @throws Exception
 	 */
-	public InputStream getInputStream() throws Exception;
+	public InputStream getInputStream() throws IOException;
+
+	public String getName();
 }

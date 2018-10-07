@@ -20,13 +20,13 @@ import com.github.singond.pdfriend.Log;
  */
 public final class VirtualPage {
 
-	/** The width of the output. */
+	/** The width of the page in output. */
 	private final double width;
-	/** The height of the output. */
+	/** The height of the page in output. */
 	private final double height;
-	/** A collection of all pages along with their positions. */
+	/** A collection of all content elements along with their positions. */
 	private final Set<Content> content;
-	
+
 	private static ExtendedLogger logger = Log.logger(VirtualPage.class);
 
 
@@ -40,7 +40,7 @@ public final class VirtualPage {
 		this.height = height;
 		this.content = new LinkedHashSet<>();
 	}
-	
+
 	/**
 	 * Creates a new instance of VirtualPage with the given dimensions
 	 * and content.
@@ -56,7 +56,7 @@ public final class VirtualPage {
 		this.height = height;
 		this.content = new LinkedHashSet<>(content);
 	}
-	
+
 	/**
 	 * Creates a new instance of VirtualPage with the given dimensions
 	 * and content.
@@ -71,7 +71,7 @@ public final class VirtualPage {
 		this.content = new LinkedHashSet<>();
 		this.content.add(content);
 	}
-	
+
 	/**
 	 * A copy constructor.
 	 * Creates a new instance of VirtualPagae which is a copy of the given
@@ -91,7 +91,7 @@ public final class VirtualPage {
 	public double getHeight() {
 		return height;
 	}
-	
+
 	/**
 	 * Returns an object representing all content elements of this page.
 	 * The returned object allows transforming the content using arbitrary
@@ -104,7 +104,7 @@ public final class VirtualPage {
 	public TransformableContents getContents() {
 		return new ContentsMovable(getMovableContent());
 	}
-	
+
 	/**
 	 * Returns an object representing all content elements of this page.
 	 * The returned object does not permit transformations and throws
@@ -118,7 +118,7 @@ public final class VirtualPage {
 	public Contents getContentStatic() {
 		return new ContentsStatic(new ArrayList<>(content));
 	}
-	
+
 	/**
 	 * Returns the content of the sheet as a collection of all content
 	 * elements, wrapped in a builder object to facilitate transforming.
@@ -130,7 +130,7 @@ public final class VirtualPage {
 		              .map(MovableContent::new)
 		              .collect(Collectors.toList());
 	}
-	
+
 	/**
 	 * Indicates that this page can be considered blank.
 	 * <p>
@@ -146,25 +146,24 @@ public final class VirtualPage {
 	public boolean isBlank() {
 		return content.isEmpty();
 	}
-	
+
 	@Override
 	public String toString() {
 //		return "Virtualpage@"+hashCode()+" ("+content.size()+" pieces of content)";
 		return "VirtualPage@"+hashCode();
 	}
-	
+
 	/**
-	 * A builder class for DocPage.
-	 * Enables building a new DocPage incrementally.
+	 * A builder class for {@code VirtualPage}.
+	 * Enables specifying a new {@code VirtualPage} incrementally.
 	 */
 	public static class Builder {
 		private double width;
 		private double height;
 		private List<Content> content;
 
-
 		/**
-		 * Constructs a new DocPage.Builder with a default page size.
+		 * Constructs a new page builder with a default page size.
 		 * The default size of the page is 595x842 pt, which is roughly
 		 * equivalent to an A4 page. These dimensions can be changed any time.
 		 */
@@ -173,16 +172,16 @@ public final class VirtualPage {
 			height = 842;
 			content = new ArrayList<>();
 		};
+
 		/**
-		 * Constructs a new DocPage.Builder initialized from an existing
-		 * DocPage object.
+		 * Constructs a new page builder initialized from an existing
+		 * virtual page object.
 		 */
 		public Builder(VirtualPage page) {
 			width = page.width;
 			height = page.height;
 			content = new ArrayList<>(page.content);
 		}
-
 
 		public double getWidth() {
 			return width;
@@ -209,6 +208,7 @@ public final class VirtualPage {
 		 * of content elements.
 		 * <p><b>Warning:</b> This removes all previously set content
 		 * in this page!</p>
+		 *
 		 * @param contents
 		 */
 		public void setContent(Contents contents) {
@@ -220,27 +220,30 @@ public final class VirtualPage {
 
 		/**
 		 * Adds a single piece of content.
+		 *
 		 * @param content
 		 */
 		public void addContent(Content content) {
 			this.content.add(content);
 		}
-		
+
 		/**
 		 * Adds all given contents.
+		 *
 		 * @param contents
 		 */
 		public void addContent(Contents contents) {
 			this.content.addAll(contents.get());
 		}
-		
+
 		/**
 		 * Builds the VirtualPage.
-		 * @return A new instance of VirtualPage.
+		 *
+		 * @return a new instance of VirtualPage
 		 */
 		public VirtualPage build() {
-			logger.debug("vpage_building",
-			             width, height, content.size());
+			if (logger.isDebugEnabled())
+				logger.debug("vpage_building", width, height, content.size());
 			return new VirtualPage(width, height, content);
 		}
 	}

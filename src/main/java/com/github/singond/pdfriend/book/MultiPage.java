@@ -13,7 +13,6 @@ import com.github.singond.pdfriend.document.ContentsFactory;
 import com.github.singond.pdfriend.document.TransformableContents;
 import com.github.singond.pdfriend.document.VirtualPage;
 
-
 /**
  * A page of a document, ie. one side of a Leaf.
  * This page can hold multiple pages of a source document at arbitrary
@@ -402,8 +401,9 @@ public abstract class MultiPage extends Page {
 		}
 
 		/**
-		 * Sets the given virtual page into the
-		 * @param source
+		 * Sets the given virtual page into the pagelet.
+		 *
+		 * @param source the page to be set as source
 		 */
 		public void setSource(VirtualPage source) {
 			pagelet.setSource(source);

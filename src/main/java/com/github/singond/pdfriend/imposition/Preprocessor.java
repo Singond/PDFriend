@@ -23,7 +23,7 @@ import com.github.singond.pdfriend.geometry.Margins;
 
 /**
  * Pre-processes pages of input document prior to imposition.
- * 
+ *
  * This procedure includes tasks such as rotating and resizing pages
  * or unifying the pages' dimensions.
  * An instance of this class aggregates various preprocessing options
@@ -47,7 +47,7 @@ import com.github.singond.pdfriend.geometry.Margins;
  *
  */
 public final class Preprocessor {
-	
+
 	/**
 	 * The settings used when processing pages.
 	 * This is a mutable object and therefore should stay private!
@@ -77,10 +77,10 @@ public final class Preprocessor {
 	 * The working length unit.
 	 */
 	private static final LengthUnit UNIT = Imposition.LENGTH_UNIT;
-	
+
 	/** Logger instance */
 	private static ExtendedLogger logger = Log.logger(Preprocessor.class);
-	
+
 	Preprocessor(List<VirtualDocument> documents, Settings settings) {
 		// Storing documents and settings might not be necessary if the cell
 		// dimension is determined now.
@@ -91,11 +91,11 @@ public final class Preprocessor {
 		this.cellContent = cp.cellContent;
 		this.positionsCache = new HashMap<>();
 	}
-	
+
 	Preprocessor(VirtualDocument document, Settings settings) {
 		this(Arrays.asList(document), settings);
 	}
-	
+
 	/**
 	 * Checks whether this preprocessor was initialized with this page
 	 * in mind, ie. if this page is contained in the documents passed
@@ -107,7 +107,7 @@ public final class Preprocessor {
 		return documents.stream()
 				.anyMatch(doc -> doc.getPages().contains(page));
 	}
-	
+
 	/**
 	 * Returns the cell dimensions resolved for the list of documents
 	 * and settings specified during initialization.
@@ -129,7 +129,7 @@ public final class Preprocessor {
 			List<VirtualDocument> documents, Settings settings) {
 		Dimensions cell;
 		Dimensions content;
-		
+
 		logger.verbose("preprocess_cellSize_resolve", documents, settings);
 		if (settings.cellDimensions == DimensionSettings.AUTO) {
 			logger.verbose("preprocess_cellSize_resolvePref");
@@ -176,7 +176,7 @@ public final class Preprocessor {
 						pageDimensions.height().in(UNIT),
 						rotation);
 			}
-			
+
 			Length contentWidth = new Length(2 * halfHorizontalExtent,
 			                                 UNIT);
 			Length contentHeight = new Length(2 * halfVerticalExtent,
@@ -198,11 +198,11 @@ public final class Preprocessor {
 					Length.subtract(cell.width(), horizontalMargins),
 					Length.subtract(cell.height(), verticalMargins));
 		}
-		
+
 		logger.verbose("preprocess_cellSize_result", cell, content);
 		return new CellProperties(cell, content);
 	}
-	
+
 	/**
 	 * Groups the cell size with and without margins.
 	 */
@@ -211,13 +211,13 @@ public final class Preprocessor {
 		private final Dimensions cell;
 		/** Cell size without margins */
 		private final Dimensions cellContent;
-		
+
 		private CellProperties(Dimensions cell, Dimensions cellContent) {
 			this.cell = cell;
 			this.cellContent = cellContent;
 		}
 	}
-	
+
 	/**
 	 * Performs the pre-processing of a given page and returns the result.
 	 * <p>
@@ -247,7 +247,7 @@ public final class Preprocessor {
 		result.addContent(contents);
 		return result.build();
 	}
-	
+
 	/**
 	 * Processes all pages of the given document.
 	 */
@@ -258,7 +258,7 @@ public final class Preprocessor {
 		}
 		return processed.build();
 	}
-	
+
 	/**
 	 * Processes all pages of all documents given during initialization.
 	 * If more than one document was given in initialization, they are
@@ -273,7 +273,7 @@ public final class Preprocessor {
 		}
 		return processed.build();
 	}
-	
+
 	/**
 	 * Returns the position of a rectangle of the given dimensions
 	 * inside the cell; looking it up in cached values and calculating
@@ -296,7 +296,7 @@ public final class Preprocessor {
 			return position;
 		}
 	}
-	
+
 	/**
 	 * Resolves the position of a rectangle of the given dimensions
 	 * inside the cell.
@@ -319,7 +319,7 @@ public final class Preprocessor {
 		position.preConcatenate(shift);
 		return position;
 	}
-	
+
 	/**
 	 * Resolves the position of a rectangle of the given dimensions
 	 * inside the cell content rectangle.
@@ -336,10 +336,10 @@ public final class Preprocessor {
 		final DimensionSettings pageDimensions = settings.pageDimensions;
 		final Resizing declaredResize = settings.resizing;
 		final List<Alignment> align = settings.alignment;
-		
+
 		if (logger.isDebugEnabled())
 			logger.debug("preprocess_pageSize_cell", orig, cellContent);
-		
+
 		/*
 		 * To position the page box we are using a RectangleFrame object.
 		 * Its "frame" represents the cell, whose dimensions are now known.
@@ -348,7 +348,7 @@ public final class Preprocessor {
 		 */
 		final RectangleFrame frame = new RectangleFrame
 				(cellContent.width().in(UNIT), cellContent.height().in(UNIT));
-		
+
 		/*
 		 * The easiest constraint to resolve is the rotation, because it
 		 * is not dependent on anything else. We can set it now.
@@ -356,7 +356,7 @@ public final class Preprocessor {
 		if (rotation != 0) {
 			frame.setRotation(rotation);
 		}
-		
+
 		/*
 		 * Another constraint which needs to be set is the size of the page.
 		 * However, this applies only for some values of {@code resizing},
@@ -412,7 +412,7 @@ public final class Preprocessor {
 		} else {
 			resize = declaredResize;
 		}
-		
+
 		/*
 		 * Next, rule out those resizing options which operate solely with
 		 * the size of the cell. For the rest, determine the scale at which
@@ -447,15 +447,15 @@ public final class Preprocessor {
 			// Use the determined scale in the frame
 			frame.setSize(frame.new Scale(scale));
 		}
-		
+
 		/*
 		 * Up to now, the size of the page box is still unknown.
 		 * By default, this will be equal to the original page dimensions.
-		 * 
+		 *
 		 * However, if both {@code pageDimensions} and {@code scale} have
 		 * been set to an explicit size, we need to take some measures to
 		 * obtain the correct result:
-		 * 
+		 *
 		 * The RectangleFrame (representing the "cell") simply takes
 		 * a rectangle, and positions it into itself, completely agnostic
 		 * of the contents of the rectangle.
@@ -492,7 +492,7 @@ public final class Preprocessor {
 			if (logger.isDebugEnabled())
 				logger.debug("preprocess_pageSize_fromPage", declaredScale);
 		}
-		
+
 		/*
 		 * By now, the size and rotation of the page are known as well as
 		 * the page box size.
@@ -514,11 +514,11 @@ public final class Preprocessor {
 			a.invite(aligner, null);
 		}
 		aligner.prepareRectangleFrame();    // The return value is the frame, which we already have
-		
+
 		// Now let RectangleFrame do its job
 		AffineTransform result = frame.positionRectangle
 				(pageBox.width().in(UNIT), pageBox.height().in(UNIT));
-		
+
 		/*
 		 * If the page box does not coincide with the page border,
 		 * (ie. if scale correction has been applied), shift the page
@@ -532,11 +532,11 @@ public final class Preprocessor {
 			result.concatenate(AffineTransform.getTranslateInstance
 					(horizontalShift, verticalShift));
 		}
-		
+
 		/* Phew, done */
 		return result;
 	}
-	
+
 	/**
 	 * Calculates the scale corresponding to given output page dimensions.
 	 * @param dim output page dimensions
@@ -549,7 +549,7 @@ public final class Preprocessor {
 		double scaleY = dim.height().in(u)/orig.height().in(u);
 		return Math.min(scaleX, scaleY);
 	}
-	
+
 	@Override
 	public String toString() {
 		return new StringBuilder()
@@ -558,11 +558,11 @@ public final class Preprocessor {
 				.append("settings: ").append(settings)
 				.toString();
 	}
-	
+
 	/**
 	 * A reusable container of all the settings available for preprocessing
 	 * the input pages.
-	 * 
+	 *
 	 * TODO: Make the settings class final and provide a separate builder?
 	 * The Preprocessor itself is immutable, but it might be better not to
 	 * share its instances directly. Instantiating a new one from settings
@@ -572,7 +572,7 @@ public final class Preprocessor {
 	 *
 	 */
 	public static class Settings {
-	
+
 		/**
 		 * A uniform scale to be applied to the page.
 		 * Setting this value to negative means that scale is not given
@@ -605,14 +605,14 @@ public final class Preprocessor {
 		 * as calculated from the other settings.
 		 */
 		private DimensionSettings cellDimensions = DimensionSettings.AUTO;
-		
+
 		/**
 		 * The margins of the cell.
 		 */
 		private Margins cellMargins = new Margins(new Length());
-		
+
 		public Settings() {}
-		
+
 		/**
 		 * Constructs a new settings object with all values set to auto.
 		 * @return a new {@code Preprocessor.Settings} object
@@ -620,7 +620,7 @@ public final class Preprocessor {
 		public static Settings auto() {
 			return new Settings();
 		}
-		
+
 		/**
 		 * Returns a new {@code Preprocessor.Settings} object initialized
 		 * to the current state of this instance.
@@ -639,7 +639,7 @@ public final class Preprocessor {
 			copy.cellMargins = cellMargins;
 			return copy;
 		}
-		
+
 		public double getScale() {
 			return scale;
 		}
@@ -655,11 +655,11 @@ public final class Preprocessor {
 				throw new IllegalArgumentException("Scale must be a positive number");
 			this.scale = scale;
 		}
-	
+
 		public DimensionSettings getPageDimensions() {
 			return pageDimensions;
 		}
-		
+
 		/**
 		 * Sets the dimensions of every page.
 		 * This overrides the preferred dimensions which would otherwise be
@@ -684,7 +684,7 @@ public final class Preprocessor {
 				throw new IllegalArgumentException("Page dimensions cannot be null");
 			this.pageDimensions = DimensionSettings.of(dimensions);
 		}
-	
+
 		public double getRotation() {
 			return rotation;
 		}
@@ -693,7 +693,7 @@ public final class Preprocessor {
 		public void setRotation(double rotation) {
 			this.rotation = rotation;
 		}
-	
+
 		public Resizing getResizing() {
 			return resizing;
 		}
@@ -729,7 +729,7 @@ public final class Preprocessor {
 			Alignment vertical = new VerticalWeightedAlignment(verticalWeight);
 			this.alignment = Arrays.asList(horizontal, vertical);
 		}
-		
+
 		public DimensionSettings getCellDimensions() {
 			return cellDimensions;
 		}
@@ -747,7 +747,7 @@ public final class Preprocessor {
 				throw new IllegalArgumentException("Cell dimensions cannot be null");
 			this.cellDimensions = dimensions;
 		}
-		
+
 		/**
 		 * Sets the dimensions of the circumscribed rectangle (the cell).
 		 * This overrides the preferred dimensions which would otherwise be
@@ -760,7 +760,7 @@ public final class Preprocessor {
 				throw new IllegalArgumentException("Cell dimensions cannot be null");
 			this.cellDimensions = DimensionSettings.of(dimensions);
 		}
-		
+
 		/**
 		 * Gets the margins of the cell.
 		 * @return the cell margins
@@ -781,7 +781,7 @@ public final class Preprocessor {
 		public boolean isScaleGiven() {
 			return scale > 0;
 		}
-		
+
 		/**
 		 * Checks whether the resulting cell size is constrained by
 		 * some concrete value given in settings.
@@ -796,7 +796,7 @@ public final class Preprocessor {
 					&& pageDimensions == DimensionSettings.AUTO
 					&& cellDimensions == DimensionSettings.AUTO;
 		}
-	
+
 		@Override
 		public String toString() {
 			return new StringBuilder()
@@ -810,7 +810,7 @@ public final class Preprocessor {
 					.toString();
 		}
 	}
-	
+
 	/* Resizing */
 
 	/**
@@ -842,7 +842,7 @@ public final class Preprocessor {
 	}
 
 	/* Alignment */
-	
+
 	/**
 	 * Specifies page alignment within the cell.
 	 * In order to be able to share instances, all implementing classes
@@ -852,7 +852,7 @@ public final class Preprocessor {
 		/** Invite a visitor */
 		<P, R> R invite(AlignmentVisitor<P, R> visitor, P param);
 	}
-	
+
 	private static interface AlignmentVisitor<P, R> {
 		// Implement for all subclasses of Alignment
 		abstract R visit(LeftAlignment align, P param);
@@ -864,15 +864,15 @@ public final class Preprocessor {
 		abstract R visit(BottomAlignment align, P param);
 		abstract R visit(VerticalWeightedAlignment align, P param);
 	}
-	
+
 	private static interface Aligner extends AlignmentVisitor<Void, Void> {
 		RectangleFrame prepareRectangleFrame();
 	}
-	
+
 	private static class InnerAligner implements Aligner {
 		private final RectangleFrame frame;
 		private final RectangleFrame.InnerAlignment alignment;
-		
+
 		InnerAligner(RectangleFrame frame) {
 			this.frame = frame;
 			this.alignment = frame.new InnerAlignment();
@@ -931,7 +931,7 @@ public final class Preprocessor {
 			frame.setAlignment(alignment);
 			return frame;
 		}
-		
+
 		@Override
 		public String toString() {
 			return "Inner aligner for frame" + frame;
@@ -941,7 +941,7 @@ public final class Preprocessor {
 	/** A class with a single scalar value */
 	private abstract static class SingleValued {
 		final double value;
-		
+
 		private SingleValued(double value) {
 			this.value = value;
 		}
@@ -957,7 +957,7 @@ public final class Preprocessor {
 		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
 			return visitor.visit(this, param);
 		}
-		
+
 		@Override
 		public String toString() {return "Left " + value;}
 	}
@@ -967,12 +967,12 @@ public final class Preprocessor {
 		private CenterAlignment(double value) {
 			super(value);
 		}
-		
+
 		@Override
 		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
 			return visitor.visit(this, param);
 		}
-		
+
 		@Override
 		public String toString() {return "Center " + value;}
 	}
@@ -982,27 +982,27 @@ public final class Preprocessor {
 		private RightAlignment(double value) {
 			super(value);
 		}
-		
+
 		@Override
 		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
 			return visitor.visit(this, param);
 		}
-		
+
 		@Override
 		public String toString() {return "Right " + value;}
 	}
-	
+
 	/** Alignment by weighted distribution of the free space */
 	private static class HorizontalWeightedAlignment extends SingleValued implements Alignment {
 		private HorizontalWeightedAlignment(double value) {
 			super(value);
 		}
-		
+
 		@Override
 		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
 			return visitor.visit(this, param);
 		}
-		
+
 		@Override
 		public String toString() {return "Horizontal weighted " + value;}
 	}
@@ -1012,12 +1012,12 @@ public final class Preprocessor {
 		private TopAlignment(double value) {
 			super(value);
 		}
-		
+
 		@Override
 		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
 			return visitor.visit(this, param);
 		}
-		
+
 		@Override
 		public String toString() {return "Top " + value;}
 	}
@@ -1027,12 +1027,12 @@ public final class Preprocessor {
 		private MiddleAlignment(double value) {
 			super(value);
 		}
-		
+
 		@Override
 		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
 			return visitor.visit(this, param);
 		}
-		
+
 		@Override
 		public String toString() {return "Middle " + value;}
 	}
@@ -1042,27 +1042,27 @@ public final class Preprocessor {
 		private BottomAlignment(double value) {
 			super(value);
 		}
-		
+
 		@Override
 		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
 			return visitor.visit(this, param);
 		}
-		
+
 		@Override
 		public String toString() {return "Bottom " + value;}
 	}
-	
+
 	/** Alignment by weighted distribution of the free space */
 	private static class VerticalWeightedAlignment extends SingleValued implements Alignment {
 		private VerticalWeightedAlignment(double value) {
 			super(value);
 		}
-		
+
 		@Override
 		public <P, R> R invite(AlignmentVisitor<P, R> visitor, P param) {
 			return visitor.visit(this, param);
 		}
-		
+
 		@Override
 		public String toString() {return "Vertical weighted " + value;}
 	}

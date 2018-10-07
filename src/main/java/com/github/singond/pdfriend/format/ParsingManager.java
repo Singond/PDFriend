@@ -41,7 +41,7 @@ public class ParsingManager implements AutoCloseable {
 	private VirtualDocument parseToDocument(InputElement input) throws ParsingException {
 		// TODO Handle different file formats
 		try {
-			return pdfParser.parseDocument(input.getInputStream());
+			return pdfParser.parseDocument(input);
 		} catch (Exception e) {
 			throw new ParsingException(e);
 		}
