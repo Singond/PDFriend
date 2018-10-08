@@ -10,7 +10,7 @@ import org.apache.commons.collections4.list.SetUniqueList;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.document.Contents;
+import com.github.singond.pdfriend.document.TransformableContents;
 import com.github.singond.pdfriend.document.VirtualPage;
 
 /**
@@ -29,16 +29,16 @@ public class Sheet implements BookElement {
 	 * order.
 	 */
 	private final List<Leaf> leaves;
-	
+
 	private static ExtendedLogger logger = Log.logger(Sheet.class);
-	
+
 	public Sheet(double width, double height) {
 		this.width = width;
 		this.height = height;
 		this.leaves = SetUniqueList.setUniqueList(new LinkedList<Leaf>());
 	}
-	
-	
+
+
 	/**
 	 * Provides access to the Leaves in this Sheet.
 	 * @return A shallow copy of the internal list of Leaves.
@@ -46,14 +46,14 @@ public class Sheet implements BookElement {
 	public List<Leaf> getLeaves() {
 		return new ArrayList<>(leaves);
 	}
-	
+
 	/**
 	 * Adds a Leaf to this Sheet.
 	 */
 	public void addLeaf(Leaf leaf) {
 		leaves.add(leaf);
 	}
-	
+
 	/**
 	 * A clone method.
 	 * Creates a new blank Sheet with the same dimensions as this one.
@@ -63,7 +63,7 @@ public class Sheet implements BookElement {
 	public Sheet cloneBlank() {
 		return new Sheet(this.width, this.height);
 	}
-	
+
 	/**
 	 * Prints the front side of this Sheet onto a new virtual page.
 	 * The page is not added to any document automatically.
@@ -79,19 +79,19 @@ public class Sheet implements BookElement {
 			/** The page to be imposed */
 			Page page = leaf.getFrontPage();
 			if (!page.isBlank()) {
-				Contents contents = page.getContents();
+				TransformableContents contents = page.getContents();
 				contents.transform(leaf.getFrontPosition());
 				paper.addContent(contents);
 			}
 		}
 		return paper.build();
 	}
-	
+
 	/**
 	 * Prints the back side of this Sheet onto a new virtual page
 	 * with the given relationship between the front and back side
 	 * of the medium.
-	 * 
+	 *
 	 * TODO Enable both ways of flipping the back side. Currently,
 	 * the backside is always printed as if it was flipped about the vertical
 	 * axis, while sometimes it may be desirable to flip it horizontally.
@@ -103,7 +103,7 @@ public class Sheet implements BookElement {
 	 * is independent of rendering.
 	 * NOTE This implementation covers only documents composed of Signatures,
 	 * not single Pages.
-	 * 
+	 *
 	 * @param flip the orientation of the back side with respect to front
 	 * @return A new VirtualPage object with the front side of this Sheet.
 	 */
@@ -120,7 +120,7 @@ public class Sheet implements BookElement {
 			/** The page to be imposed */
 			Page page = leaf.getBackPage();
 			if (!page.isBlank()) {
-				Contents contents = page.getContents();
+				TransformableContents contents = page.getContents();
 				contents.transform(leaf.getBackPosition());
 				contents.transform(backside);
 				paper.addContent(contents);
@@ -128,7 +128,7 @@ public class Sheet implements BookElement {
 		}
 		return paper.build();
 	}
-	
+
 	/**
 	 * Prints the back side of this Sheet onto a new virtual page,
 	 * assuming the backside is flipped around vertical axis with respect
@@ -139,7 +139,7 @@ public class Sheet implements BookElement {
 	public VirtualPage renderBack() {
 		return renderBack(FlipDirection.AROUND_Y);
 	}
-	
+
 	/**
 	 * Calculates the transformation of the back side given the sheet
 	 * dimensions and flip directions.
@@ -160,7 +160,7 @@ public class Sheet implements BookElement {
 		backside.concatenate(flip.getBackOrientation());
 		return backside;
 	}
-	
+
 	/**
 	 * Iterates through the leaves.
 	 * @return A new Iterator object starting at the first Leaf.
@@ -168,7 +168,7 @@ public class Sheet implements BookElement {
 	public Iterator<Leaf> leafIterator() {
 		return leaves.iterator();
 	}
-	
+
 	/**
 	 * Wraps this object to iterate through the Leaves in their order.
 	 * @see {@link #leafIterator}
@@ -182,7 +182,7 @@ public class Sheet implements BookElement {
 			}
 		};
 	}
-	
+
 	/**
 	 * Wraps this object to iterate through the pages in the order of the
 	 * Leaves and with the recto of each Leaf coming right before its verso.
@@ -197,7 +197,7 @@ public class Sheet implements BookElement {
 			}
 		};
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Sheet@" + hashCode();

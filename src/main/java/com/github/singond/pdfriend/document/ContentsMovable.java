@@ -3,7 +3,6 @@ package com.github.singond.pdfriend.document;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
-import com.github.singond.pdfriend.document.Content.Movable;
 
 /**
  * Represents the whole content in a document page.
@@ -19,37 +18,36 @@ import com.github.singond.pdfriend.document.Content.Movable;
  * @author Singon
  *
  */
-class ContentsMovable extends Contents {
+class ContentsMovable implements TransformableContents {
 
-	private final List<Content.Movable> contents;
-	
+	private final List<MovableContent> contents;
+
 	/**
 	 * Constructs a new instance by shallowly copying the given content.
 	 * @param contents all content of the page, wrapped in an object with
 	 *        mutable position
 	 */
-	ContentsMovable(List<Content.Movable> contents) {
+	ContentsMovable(List<MovableContent> contents) {
 		this.contents = new ArrayList<>(contents);
 	}
-	
+
 	@Override
 	public List<Content> get() {
 		List<Content> result = new ArrayList<>(contents.size());
-		for (Content.Movable cm : contents) {
+		for (MovableContent cm : contents) {
 			result.add(cm.transformed());
 		}
 		return result;
 	}
-	
+
 	@Override
 	public void transform(AffineTransform transform) {
-		for (Content.Movable cm : contents) {
+		for (MovableContent cm : contents) {
 			cm.getTransform().preConcatenate(transform);
 		}
 	}
 
-	@Override
-	List<Movable> getMovable() {
+	List<MovableContent> getMovable() {
 		return contents;
 	}
 

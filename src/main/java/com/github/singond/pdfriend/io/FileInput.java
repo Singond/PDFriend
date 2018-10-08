@@ -50,4 +50,9 @@ class FileInput implements InputElement {
 			throw new FileNotFoundException("Cannot check the status of file " + file);
 		}
 	}
+
+	@Override
+	public String getName() {
+		return FileNameHandler.normalizeFileName(file.getFileName().toString());
+	}
 }

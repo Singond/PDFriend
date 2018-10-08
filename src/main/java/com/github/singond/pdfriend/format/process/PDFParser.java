@@ -16,6 +16,7 @@ import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.format.Parser;
 import com.github.singond.pdfriend.format.ParsingException;
 import com.github.singond.pdfriend.format.content.PDFPage;
+import com.github.singond.pdfriend.io.InputElement;
 
 public class PDFParser implements Parser, AutoCloseable {
 
@@ -38,8 +39,31 @@ public class PDFParser implements Parser, AutoCloseable {
 			logger.info("parse_pdf");
 			sourceDoc = PDDocument.load(in);
 			openDocs.add(sourceDoc);
-			VirtualDocument result = parseDocument(sourceDoc);
+			VirtualDocument result = parseDocument(sourceDoc, "untitled").build();
 			return result;
+		} catch (IOException e) {
+			logger.error("Error when parsing the file", e);
+			throw new ParsingException("Error when parsing the PDF file", e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * Imports the file given in constructor, if it is a PDF file.
+	 */
+	@SuppressWarnings("resource") // Resources are closed later in close() method
+	@Override
+	public VirtualDocument parseDocument(InputElement in)
+			throws ParsingException {
+		PDDocument sourceDoc = null;
+		try {
+			logger.info("parse_pdf");
+			sourceDoc = PDDocument.load(in.getInputStream());
+			openDocs.add(sourceDoc);
+			String name = in.getName();
+			VirtualDocument.Builder result = parseDocument(sourceDoc, name);
+			result.setName(name);
+			return result.build();
 		} catch (IOException e) {
 			logger.error("Error when parsing the file", e);
 			throw new ParsingException("Error when parsing the PDF file", e);
@@ -49,8 +73,10 @@ public class PDFParser implements Parser, AutoCloseable {
 	/**
 	 * Converts the given PDF document into a virtual document.
 	 */
-	private VirtualDocument parseDocument(PDDocument sourceDoc) throws ParsingException {
+	private VirtualDocument.Builder parseDocument(PDDocument sourceDoc,
+			String docDescription) throws ParsingException {
 		VirtualDocument.Builder result = new VirtualDocument.Builder();
+		int pageNo = 1;
 		for (PDPage sourcePage : sourceDoc.getPages()) {
 			VirtualPage.Builder page = new VirtualPage.Builder();
 			double pageWidth, pageHeight;
@@ -74,10 +100,11 @@ public class PDFParser implements Parser, AutoCloseable {
 			}
 			page.setWidth(pageWidth);
 			page.setHeight(pageHeight);
-			page.addContent(new PDFPage(sourceDoc, sourcePage));
-			result.addPage(page.build());
+			page.addContent(new PDFPage(sourceDoc, sourcePage,
+			                docDescription + "-" + pageNo++));
+			result.addPage(page);
 		}
-		return result.build();
+		return result;
 	}
 
 	/**

@@ -4,6 +4,7 @@ import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 
@@ -21,13 +22,13 @@ import com.github.singond.pdfriend.format.process.PDFRenderer;
  *
  */
 public class MultipleImposition2 {
-	
+
 	private static class MyMultiPage extends MultiPage {
-		
+
 		MyMultiPage(double w, double h) {
 			super(w, h);
 		}
-		
+
 		public void addPage(VirtualPage page, AffineTransform position) {
 			Pagelet p = new AutoPagelet(page.getWidth(), page.getHeight(), position);
 			p.setSource(page);
@@ -37,7 +38,8 @@ public class MultipleImposition2 {
 
 	public static void main(String[] args) throws InvalidPasswordException, IOException {
 		PDDocument source = PDDocument.load(new File("test/lorem-letter.pdf"));
-		VirtualPage one = new VirtualPage(612, 792, Arrays.asList(new PDFPage(source, 0)));
+		VirtualPage one = new VirtualPage(612, 792, Arrays.asList(
+				new PDFPage(source, 0, "page-1")));
 
 		MyMultiPage page1 = new MyMultiPage(612, 792);
 		AffineTransform pagelet1Position = new AffineTransform();
@@ -46,7 +48,7 @@ public class MultipleImposition2 {
 //		pagelet1Position.rotate(0.02);
 		page1.addPage(one, pagelet1Position);
 		VirtualPage vpage1 = page1.render();
-		
+
 		MyMultiPage page2 = new MyMultiPage(612, 792);
 		AffineTransform pagelet2Position = new AffineTransform();
 		pagelet2Position.translate(0, 0);

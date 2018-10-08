@@ -14,7 +14,7 @@ public class EmptyPages {
 		doc.addPage(new VirtualPage(595, 842));
 		doc.addPage(new VirtualPage(595, 842));
 		doc.addPage(new VirtualPage(595, 842));
-		
+
 		File output = new File("test/blank.pdf");
 		new PDFRenderer().renderAndSave(doc.build(), output);
 	}
