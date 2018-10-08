@@ -147,10 +147,22 @@ public final class VirtualPage {
 		return content.isEmpty();
 	}
 
+	/**
+	 * Returns a short description of the page.
+	 * <p>
+	 * The specific value may change, but is typically a list of
+	 * content units in the page.
+	 */
 	@Override
 	public String toString() {
+		/*
+		 * Consistency between invocations is achieved by using LinkedHashSet
+		 * for contents.
+		 */
+		// TODO Return abbreviated content if too long
 //		return "Virtualpage@"+hashCode()+" ("+content.size()+" pieces of content)";
-		return "VirtualPage@"+hashCode();
+//		return width + "x" + height + " " + content.toString();
+		return content.toString();
 	}
 
 	/**
