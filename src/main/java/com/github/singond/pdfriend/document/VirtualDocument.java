@@ -26,6 +26,12 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 	 */
 	private final List<VirtualPage> pages;
 
+	/**
+	 * An optional name of the document to be used e.g. in logs.
+	 * Allowed to be null.
+	 */
+	private final String name;
+
 	private static ExtendedLogger logger = Log.logger(VirtualDocument.class);
 
 
@@ -34,8 +40,18 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 	 *
 	 * @param pages
 	 */
-	public VirtualDocument(List<VirtualPage> pages) {
+	public VirtualDocument(List<VirtualPage> pages, String name) {
 		this.pages = new ArrayList<>(pages);
+		this.name = name;
+	}
+
+	/**
+	 * Constructs a new document composed of the given pages.
+	 *
+	 * @param pages
+	 */
+	public VirtualDocument(List<VirtualPage> pages) {
+		this(pages, null);
 	}
 
 
@@ -165,7 +181,24 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 
 	@Override
 	public String toString() {
-		return "VirtualDocument@"+hashCode()+" ("+pages.size()+" pages)";
+		if (name != null) {
+			return name;
+		} else {
+//			return "VirtualDocument@"+hashCode()+" ("+pages.size()+" pages)";
+			return makeString().toString();
+		}
+	}
+
+	private StringBuilder makeString() {
+		StringBuilder sb = new StringBuilder("document");
+		if (pages.size() <= 4) {
+			sb.append(pages.toString());
+		} else {
+			sb.append(pages.subList(0, 4).toString());
+			sb.setLength(sb.length() - 1);
+			sb.append("... (" + (pages.size() - 4) + " more)]");
+		}
+		return sb;
 	}
 
 	public ListIterator<VirtualPage> iterator(int index) {
