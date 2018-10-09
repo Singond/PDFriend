@@ -56,7 +56,10 @@ jar {
 			it.isDirectory() ? it : zipTree(it)
 		}
 	}
+	baseName 'pdfriend-standalone'
+	destinationDir file("$buildDir/distributions")
 }
+
 
 /** Auxiliary files to be used during the installation */
 def auxFiles = "build/installers"
