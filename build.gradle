@@ -27,7 +27,6 @@ repositories {
 dependencies {
 	implementation 'com.github.singond:collections:0.4.+'
 	implementation 'com.github.singond:geometry:0.6.+'
-
 	implementation 'org.apache.pdfbox:pdfbox:2.0.6'
 	implementation 'org.apache.logging.log4j:log4j-api:2.8.2'
 	implementation 'org.apache.logging.log4j:log4j-core:2.8.2'
@@ -45,6 +44,19 @@ eclipse {
 	}
 }
 
+jar {
+	manifest {
+		attributes (
+			'Main-Class': 'com.github.singond.pdfriend.Application',
+			'Built-By': 'singon'
+		)
+	}
+	from {
+		configurations.compileClasspath.collect {
+			it.isDirectory() ? it : zipTree(it)
+		}
+	}
+}
 
 /** Auxiliary files to be used during the installation */
 def auxFiles = "build/installers"
