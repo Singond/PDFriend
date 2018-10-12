@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'eclipse'
@@ -16,6 +18,12 @@ buildscript {
 
 sourceSets {
 	dev
+	main {
+		java {
+			srcDir ("$buildDir/src/main/java")
+		}
+	}
+
 }
 
 
@@ -42,6 +50,13 @@ eclipse {
 	classpath {
 		downloadJavadoc = true
 	}
+}
+
+task prepareSource(type: Copy) {
+	from "src/main/java/com/github/singond/pdfriend/Version.java"
+	into "$buildDir/src/main/java/com/github/singond/pdfriend"
+	filter(ReplaceTokens, tokens: [version: project.version])
+	rename {String filename -> filename.replace("template.java")}
 }
 
 jar {
