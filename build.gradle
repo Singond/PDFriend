@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'eclipse'
@@ -44,6 +46,25 @@ eclipse {
 	}
 }
 
+task prepareSource(type: Copy) {
+	description = "Prepares the source files for compilation"
+	from "src/main/java"
+	into "${buildDir}/src/main/java"
+	filter(ReplaceTokens, tokens: [version: project.version])
+	doFirst {
+		logger.info "Copying and filtering Java source files"
+	}
+
+}
+
+compileJava {
+	source = "${buildDir}/src/main/java"
+	dependsOn prepareSource
+}
+
+/** Auxiliary files to be used during the installation */
+def distFiles = "${projectDir}/dist"
+
 jar {
 	manifest {
 		attributes (
@@ -56,17 +77,35 @@ jar {
 			it.isDirectory() ? it : zipTree(it)
 		}
 	}
+	baseName 'pdfriend-standalone'
+	destinationDir file("${distFiles}")
 }
 
+task deleteDist (type: Delete) {
+	description = "Deletes the distribution directory"
+	delete distFiles
+}
+
+clean.dependsOn deleteDist
+
+/** IzPack working directory */
+def izpackDir = "${buildDir}/tools/izpack"
 /** Auxiliary files to be used during the installation */
-def auxFiles = "build/installers"
+def auxFiles = "${izpackDir}/installers"
 /** The files to be installed */
-def instFiles = "build/distfiles"
+def instFiles = "${izpackDir}/distfiles"
 
 izpack {
-	baseDir = file("build")
-	installFile = file("install.xml")
-	outputFile = file("dist/pdfriend-installer.jar")
+	baseDir = file("${izpackDir}")
+	installFile = file("${izpackDir}/install.xml")
+	outputFile = file("${distFiles}/pdfriend-installer-${version}.jar")
+}
+
+task izpackSource (type: Copy) {
+	description = "Prepares the script file for izpack"
+	from "install.xml"
+	into "${izpackDir}"
+	filter(ReplaceTokens, tokens: [version: project.version])
 }
 
 task installerScripts (type: Copy) {
@@ -81,6 +120,7 @@ task launchers (type: Copy) {
 	into instFiles
 }
 
+izPackCreateInstaller.dependsOn izpackSource
 izPackCreateInstaller.dependsOn installerScripts
 izPackCreateInstaller.dependsOn launchers
 
