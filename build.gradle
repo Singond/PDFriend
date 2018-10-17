@@ -18,12 +18,6 @@ buildscript {
 
 sourceSets {
 	dev
-	main {
-		java {
-			srcDir ("$buildDir/src/main/java")
-		}
-	}
-
 }
 
 
@@ -53,10 +47,19 @@ eclipse {
 }
 
 task prepareSource(type: Copy) {
-	from "src/main/java/com/github/singond/pdfriend/Version.java"
-	into "$buildDir/src/main/java/com/github/singond/pdfriend"
+	description = "Prepares the source files for compilation"
+	from "src/main/java"
+	into "$buildDir/src/main/java"
 	filter(ReplaceTokens, tokens: [version: project.version])
-	rename {String filename -> filename.replace("template.java")}
+	doFirst {
+		logger.info "Copying and filtering Java source files"
+	}
+
+}
+
+compileJava {
+	source = "$buildDir/src/main/java"
+	dependsOn prepareSource
 }
 
 jar {
