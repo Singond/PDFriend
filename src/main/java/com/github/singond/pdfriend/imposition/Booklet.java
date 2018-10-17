@@ -4,6 +4,8 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.singond.geometry.plane.Line;
+import com.github.singond.geometry.plane.Point;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.book.BoundBook;
@@ -11,16 +13,14 @@ import com.github.singond.pdfriend.book.FlipDirection;
 import com.github.singond.pdfriend.book.Leaf;
 import com.github.singond.pdfriend.book.Signature;
 import com.github.singond.pdfriend.book.Stack;
-import com.github.singond.pdfriend.book.Volume;
 import com.github.singond.pdfriend.book.Stack.Flip;
+import com.github.singond.pdfriend.book.Volume;
 import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.Length;
 import com.github.singond.pdfriend.geometry.LengthUnit;
 import com.github.singond.pdfriend.geometry.Margins;
 import com.github.singond.pdfriend.imposition.Preprocessor.Resizing;
-import com.github.singond.geometry.plane.Line;
-import com.github.singond.geometry.plane.Point;
 
 /**
  * A booklet with one page of input per one page of output.
@@ -28,13 +28,13 @@ import com.github.singond.geometry.plane.Point;
  * by a simple Stack of sheets folded in half.
  * <p>
  * Instances of this class are immutable.
- * 
+ *
  * @author Singon
  *
  */
 public class Booklet extends AbstractImposable<BoundBook>
 		implements Imposable<BoundBook> {
-	
+
 	/** The internal name of this imposable document type */
 	private static final String NAME = "booklet";
 	/** Logger */
@@ -45,7 +45,7 @@ public class Booklet extends AbstractImposable<BoundBook>
 	private final Preprocessor.Settings preprocess;
 	private final CommonSettings common;
 	private final LengthUnit unit = Imposition.LENGTH_UNIT;
-	
+
 	private Booklet(Edge binding, boolean versoOpposite,
 	                Preprocessor.Settings preprocess, CommonSettings common) {
 		if (binding == null)
@@ -54,7 +54,7 @@ public class Booklet extends AbstractImposable<BoundBook>
 			throw new IllegalArgumentException("Preprocessor settings must not be null");
 		if (common == null)
 			throw new IllegalArgumentException("Common settings must not be null");
-		
+
 		this.binding = binding;
 		this.versoOpposite = versoOpposite;
 		this.preprocess = preprocess.copy();
@@ -74,13 +74,13 @@ public class Booklet extends AbstractImposable<BoundBook>
 		 * it will be increased to the first integer multiple automatically.
 		 */
 		int pageCount = common.getPageCount();
-		
+
 		if (logger.isDebugEnabled()) {
 			logger.debug("imposition_preprocessSettings", preprocess);
 			logger.debug("imposition_commonSettings", common);
 //			logger.debug("imposition_imposableSettings", NAME, );
 		}
-		
+
 		/*
 		 * Resolve the margins into a valid value.
 		 */
@@ -90,12 +90,12 @@ public class Booklet extends AbstractImposable<BoundBook>
 		} else {
 			margins = Margins.NONE;
 		}
-		
+
 		/*
 		 * If the margins are not to be mirrored, they should be set
 		 * to the preprocessor. This will apply the margins to each page
 		 * individually without considering whether they are verso or recto.
-		 * 
+		 *
 		 * However, if they are to be mirrored, we resort to a hack:
 		 * The {@code Page} object will have the dimensions of the content
 		 * area only, ie. the whole page minus the mirrored margins.
@@ -107,7 +107,7 @@ public class Booklet extends AbstractImposable<BoundBook>
 		 * margins to be of correct widths at all edges.
 		 * This translation is applied to the Leaf prior to putting it onto
 		 * the folded stack.
-		 * 
+		 *
 		 * HACK: This is not the intended way to use {@object Page} objects.
 		 * Providing a Leaf which covers the whole physical page, yet keeps
 		 * the mirroring relationship between the margins on its opposite
@@ -121,18 +121,18 @@ public class Booklet extends AbstractImposable<BoundBook>
 			preprocess.setCellMargins(margins);
 			mirroredMargins = Margins.NONE;
 		}
-		
+
 		/*
 		 * Determine the size of the sheet before folding and the size
 		 * of a single page after folding.
-		 * 
+		 *
 		 * If only the sheet size is given, use it as such, if only the
 		 * page size is given, double it (either horizontally or vertically,
 		 * depending on the binding edge) and use the resulting rectangle
 		 * as the sheet size.
 		 * Specifying both sheet size and page size to non-automatic value
 		 * is a conflict. In this case, throw an exception.
-		 * 
+		 *
 		 * Start by validating the page and sheet size.
 		 */
 		DimensionSettings pageSize = common.getPageSize();
@@ -143,10 +143,10 @@ public class Booklet extends AbstractImposable<BoundBook>
 		if (sheetSize == null) {
 			throw new IllegalStateException("Sheet size is null");
 		}
-		
+
 		boolean autoPage = pageSize == DimensionSettings.AUTO;
 		boolean autoSheet = sheetSize == DimensionSettings.AUTO;
-		
+
 		if (!autoPage && autoSheet) {
 			// Do nothing
 		} else if (autoPage && !autoSheet) {
@@ -165,10 +165,10 @@ public class Booklet extends AbstractImposable<BoundBook>
 		 * Finally, make the preprocessor aware of the page size.
 		 * In booklet imposition, the "cell" of the preprocessor corresponds
 		 * to one page in the output booklet shrunk by margins.
-		 * 
+		 *
 		 * If the page size is auto, no configuration is needed, because
 		 * automatic page sizing is the default behaviour of Preprocessor.
-		 * 
+		 *
 		 * If, however, a certain page size is desired, that size must
 		 * be passed to the preprocessor as the cell size.
 		 * Note that mirrored margins must be applied during the construction
@@ -196,7 +196,7 @@ public class Booklet extends AbstractImposable<BoundBook>
 				preprocess.setResizing(Resizing.FIT);
 			}
 		}
-		
+
 		/*
 		 * Now preprocess the pages and store the page dimensions,
 		 * if they are still unknown.
@@ -211,10 +211,10 @@ public class Booklet extends AbstractImposable<BoundBook>
 				logger.trace("Page size = preprocessor cell size + margins");
 		}
 		doc = preprocessor.processAll();
-		
+
 		// TODO: Fix this, sometimes shows -1
 		logger.info("booklet_constructing", pageCount);
-		
+
 		/*
 		 * Determine the number of pages in output.
 		 * If the number is given explicitly, honor its value, otherwise
@@ -235,7 +235,7 @@ public class Booklet extends AbstractImposable<BoundBook>
 			logger.warn("booklet_padding", pageCount-oldPages);
 		}
 		assert (pageCount >= 1) && (pageCount % 4 == 0) : pageCount;
-		
+
 		/*
 		 * Build the volume.
 		 */
@@ -246,15 +246,15 @@ public class Booklet extends AbstractImposable<BoundBook>
 		Signature signature = maker.makeSignature();
 		signature.numberPagesFrom(1);
 		volume.add(signature);
-		
+
 		/*
 		 * Fill the volume with content.
 		 */
 		PageFillers.fillSequentially(volume.pages(), source);
-		
+
 		return volume;
 	}
-	
+
 	/**
 	 * Calculates the size of page resulting from folding the given sheet
 	 * in half along the edge given by {@code binding}, and further shrinking
@@ -272,7 +272,7 @@ public class Booklet extends AbstractImposable<BoundBook>
 	                                 Margins margins) {
 		Length width = sheet.width();
 		Length height = sheet.height();
-		
+
 		switch (binding) {
 			case TOP: case BOTTOM:
 				height = height.times(1d/2);
@@ -283,10 +283,10 @@ public class Booklet extends AbstractImposable<BoundBook>
 			default:
 				throw new AssertionError("Invalid 'binding' value");
 		}
-		
+
 		return new Dimensions(width, height);
 	}
-	
+
 	/**
 	 * Calculates the size of sheet necessary to produce the given page size
 	 * by folding the sheet in half along the edge given by {@code binding},
@@ -304,7 +304,7 @@ public class Booklet extends AbstractImposable<BoundBook>
 	                                 Margins margins) {
 		Length width = page.width();
 		Length height = page.height();
-		
+
 		switch (binding) {
 			case TOP: case BOTTOM:
 				height = height.times(2);
@@ -315,7 +315,7 @@ public class Booklet extends AbstractImposable<BoundBook>
 			default:
 				throw new AssertionError("Invalid binding value");
 		}
-		
+
 		return new Dimensions(width, height);
 	}
 
@@ -346,7 +346,7 @@ public class Booklet extends AbstractImposable<BoundBook>
 	public BoundBook impose(List<VirtualDocument> sources) {
 		return impose(VirtualDocument.concatenate(sources));
 	}
-	
+
 	/**
 	 * A builder for Booklet objects.
 	 */
@@ -354,9 +354,7 @@ public class Booklet extends AbstractImposable<BoundBook>
 			implements ImposableBuilder<Booklet> {
 		private Edge binding = Edge.LEFT;
 		private boolean versoOpposite = false;
-		private Preprocessor.Settings preprocess = Preprocessor.Settings.auto();
-		private CommonSettings common = CommonSettings.auto();
-		
+
 		/**
 		 * Returns the edge at which the binding is located.
 		 * @return the edge of a Page where the binding will be placed
@@ -411,7 +409,7 @@ public class Booklet extends AbstractImposable<BoundBook>
 			return ImpositionTaskFactory.twoSided(build(), flip);
 		}
 	}
-	
+
 	/**
 	 * <h2>Note</h2>
 	 * The margins applied by this class are mirrored with respect to the
@@ -427,14 +425,14 @@ public class Booklet extends AbstractImposable<BoundBook>
 		private final double contentHeight;
 		private final double totalWidth;
 		private final double totalHeight;
-		
+
 		private final double leftMargin;
 		private final double rightMargin;
 		private final double bottomMargin;
 		private final double topMargin;
-		
+
 		private final int pages;
-		
+
 		/**
 		 * Constructs a new {@code SignatureMaker} object.
 		 * @param page total dimensions of the page (including margins)
@@ -450,7 +448,7 @@ public class Booklet extends AbstractImposable<BoundBook>
 				throw new IllegalArgumentException
 						("The number of pages must be divisible by four");
 			}
-			
+
 			this.leftMargin = margins.left().in(unit);
 			this.rightMargin = margins.right().in(unit);
 			this.bottomMargin = margins.bottom().in(unit);
@@ -481,7 +479,7 @@ public class Booklet extends AbstractImposable<BoundBook>
 					throw new AssertionError("Unknown binding value: " + binding);
 			}
 		}
-		
+
 		/**
 		 * Returns a new Signature object representing a stack of sheets
 		 * folded in half at the left edge.
@@ -495,7 +493,7 @@ public class Booklet extends AbstractImposable<BoundBook>
 			manipulations.add(new Stack.Fold(foldAxis, Stack.Fold.Direction.UNDER));
 			manipulations.add(Flip.horizontal(totalWidth));
 			stack.performManipulations(manipulations);
-			
+
 			return stack.buildSignature(bookletLeaf());
 		}
 
@@ -516,10 +514,10 @@ public class Booklet extends AbstractImposable<BoundBook>
 			Line foldAxis = new Line(new Point(totalWidth, 0), new Point(totalWidth, 1));
 			manipulations.add(new Stack.Fold(foldAxis, Stack.Fold.Direction.UNDER));
 			stack.performManipulations(manipulations);
-			
+
 			return stack.buildSignature(bookletLeaf());
 		}
-		
+
 		/**
 		 * Returns a new Signature object representing a stack of sheets
 		 * folded in half at the top edge.
@@ -538,10 +536,10 @@ public class Booklet extends AbstractImposable<BoundBook>
 			Line foldAxis = new Line(new Point(0, totalHeight), new Point(1, totalHeight));
 			manipulations.add(new Stack.Fold(foldAxis, Stack.Fold.Direction.UNDER));
 			stack.performManipulations(manipulations);
-			
+
 			return stack.buildSignature(verticalBookletLeaf());
 		}
-		
+
 		/**
 		 * Returns a new Signature object representing a stack of sheets
 		 * folded in half at the bottom edge.
@@ -561,10 +559,10 @@ public class Booklet extends AbstractImposable<BoundBook>
 			manipulations.add(new Stack.Fold(foldAxis, Stack.Fold.Direction.UNDER));
 			manipulations.add(Flip.vertical(totalHeight));
 			stack.performManipulations(manipulations);
-			
+
 			return stack.buildSignature(verticalBookletLeaf());
 		}
-		
+
 		private Leaf bookletLeaf() {
 			Leaf leaf = new Leaf(contentWidth, contentHeight);
 			AffineTransform position = AffineTransform.getTranslateInstance
@@ -572,7 +570,7 @@ public class Booklet extends AbstractImposable<BoundBook>
 			leaf.setAsFrontPosition(position);
 			return leaf;
 		}
-		
+
 		/**
 		 * Returns the same as {@link #bookletLeaf}, but further flipped
 		 * if {@code versoOpposite} is set to false.
