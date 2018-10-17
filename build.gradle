@@ -98,7 +98,7 @@ def instFiles = "${izpackDir}/distfiles"
 izpack {
 	baseDir = file("${izpackDir}")
 	installFile = file("${izpackDir}/install.xml")
-	outputFile = file("${distFiles}/pdfriend-installer.jar")
+	outputFile = file("${distFiles}/pdfriend-installer-${version}.jar")
 }
 
 task izpackSource (type: Copy) {
