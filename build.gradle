@@ -49,7 +49,7 @@ eclipse {
 task prepareSource(type: Copy) {
 	description = "Prepares the source files for compilation"
 	from "src/main/java"
-	into "$buildDir/src/main/java"
+	into "${buildDir}/src/main/java"
 	filter(ReplaceTokens, tokens: [version: project.version])
 	doFirst {
 		logger.info "Copying and filtering Java source files"
@@ -58,9 +58,12 @@ task prepareSource(type: Copy) {
 }
 
 compileJava {
-	source = "$buildDir/src/main/java"
+	source = "${buildDir}/src/main/java"
 	dependsOn prepareSource
 }
+
+/** Auxiliary files to be used during the installation */
+def distFiles = "${projectDir}/dist"
 
 jar {
 	manifest {
@@ -75,19 +78,25 @@ jar {
 		}
 	}
 	baseName 'pdfriend-standalone'
-	destinationDir file("$buildDir/distributions")
+	destinationDir file("${distFiles}")
 }
 
+task deleteDist (type: Delete) {
+	description = "Deletes the distribution directory"
+	delete distFiles
+}
+
+clean.dependsOn deleteDist
 
 /** Auxiliary files to be used during the installation */
-def auxFiles = "build/installers"
+def auxFiles = "${buildDir}/installers"
 /** The files to be installed */
-def instFiles = "build/distfiles"
+def instFiles = "${buildDir}/distfiles"
 
 izpack {
-	baseDir = file("build")
+	baseDir = file("${buildDir}")
 	installFile = file("install.xml")
-	outputFile = file("dist/pdfriend-installer.jar")
+	outputFile = file("${distFiles}/pdfriend-installer.jar")
 }
 
 task installerScripts (type: Copy) {
