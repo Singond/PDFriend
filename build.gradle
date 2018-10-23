@@ -90,35 +90,12 @@ clean.dependsOn deleteDist
 
 /** IzPack working directory */
 def izpackDir = "${buildDir}/tools/izpack"
-///** Auxiliary files to be used during the installation */
-//def auxFiles = "${izpackDir}/installers"
-///** The files to be installed */
-//def instFiles = "${izpackDir}/distfiles"
 
 izpack {
 	baseDir = file("${izpackDir}")
 	installFile = file("${izpackDir}/install.xml")
 	outputFile = file("${distFiles}/pdfriend-installer-${version}.jar")
 }
-
-//task izpackSource (type: Copy) {
-//	description = "Prepares the script file for izpack"
-//	from "src/izpack/install.xml"
-//	into "${izpackDir}"
-//	filter(ReplaceTokens, tokens: [version: project.version])
-//}
-
-//task installerScripts (type: Copy) {
-//	description = "Copies the auxiliary installer scripts into the directory used by installer"
-//	from ("src/izpack/installers")
-//	into auxFiles
-//}
-//
-//task launchers (type: Copy) {
-//	description = "Copies the launcher scripts into the directory used by installer"
-//	from ("src/izpack/launchers")
-//	into instFiles
-//}
 
 task izpackSourceFiles (type: Copy) {
 	description = "Prepares source files for building the IzPack installer"
@@ -139,9 +116,6 @@ task izpackSources {
 	dependsOn izpackSourceFiles
 }
 
-//izPackCreateInstaller.dependsOn izpackSource
-//izPackCreateInstaller.dependsOn installerScripts
-//izPackCreateInstaller.dependsOn launchers
 izPackCreateInstaller.dependsOn izpackSources
 
 /**
