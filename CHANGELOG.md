@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.6.3] - 2018-10-23
+### Changed
+- Fixed the installer which did not contain the PDFriend jar.
+
 ## [0.6.2] - 2018-10-18
 ### Changed
 - Change in the build procedure. This should not affect users.
