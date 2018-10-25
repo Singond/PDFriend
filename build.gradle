@@ -1,0 +1,129 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
+apply plugin: 'com.bmuschko.izpack'
+
+buildscript {
+	repositories {
+		jcenter()
+		mavenLocal()
+	}
+
+	dependencies {
+		classpath 'com.bmuschko:gradle-izpack-plugin:2.1'
+	}
+}
+
+sourceSets {
+	dev
+}
+
+
+repositories {
+	jcenter()
+	mavenLocal()
+}
+
+dependencies {
+	implementation 'com.github.singond:collections:0.4.+'
+	implementation 'com.github.singond:geometry:0.6.+'
+	implementation 'org.apache.pdfbox:pdfbox:2.0.6'
+	implementation 'org.apache.logging.log4j:log4j-api:2.8.2'
+	implementation 'org.apache.logging.log4j:log4j-core:2.8.2'
+	implementation 'org.apache.commons:commons-collections4:4.1'
+	implementation 'com.beust:jcommander:1.72'
+
+	testCompile 'junit:junit:4.12'
+
+	izpack 'org.codehaus.izpack:izpack-standalone-compiler:4.3.4'
+}
+
+eclipse {
+	classpath {
+		downloadJavadoc = true
+	}
+}
+
+task prepareSource(type: Copy) {
+	description = "Prepares the source files for compilation"
+	from "src/main/java"
+	into "${buildDir}/src/main/java"
+	filter(ReplaceTokens, tokens: [version: project.version])
+	doFirst {
+		logger.info "Copying and filtering Java source files"
+	}
+
+}
+
+compileJava {
+	source = "${buildDir}/src/main/java"
+	dependsOn prepareSource
+}
+
+/** Auxiliary files to be used during the installation */
+def distFiles = "${projectDir}/dist"
+
+jar {
+	manifest {
+		attributes (
+			'Main-Class': 'com.github.singond.pdfriend.Application',
+			'Built-By': 'singon'
+		)
+	}
+	from {
+		configurations.compileClasspath.collect {
+			it.isDirectory() ? it : zipTree(it)
+		}
+	}
+	baseName 'pdfriend-standalone'
+	destinationDir file("${distFiles}")
+}
+
+task deleteDist (type: Delete) {
+	description = "Deletes the distribution directory"
+	delete distFiles
+}
+
+clean.dependsOn deleteDist
+
+/** IzPack working directory */
+def izpackDir = "${buildDir}/tools/izpack"
+
+izpack {
+	baseDir = file("${izpackDir}")
+	installFile = file("${izpackDir}/install.xml")
+	outputFile = file("${distFiles}/pdfriend-installer-${version}.jar")
+}
+
+task izpackSourceFiles (type: Copy) {
+	description = "Prepares source files for building the IzPack installer"
+	from "src/izpack"
+	into "${izpackDir}"
+	filter(ReplaceTokens, tokens: [version: project.version])
+}
+
+task izpackCoreFiles (type: Copy) {
+	description = "Prepares core files for building the IzPack installer"
+	from tasks.jar
+	into "${izpackDir}/core"
+}
+
+task izpackSources {
+	description = "Prepares all files for building the IzPack installer"
+	dependsOn izpackCoreFiles
+	dependsOn izpackSourceFiles
+}
+
+izPackCreateInstaller.dependsOn izpackSources
+
+/**
+ * Creates an installer from the build/distfiles directory.
+ */
+task installer(dependsOn: izPackCreateInstaller) {
+	description = "Create a standalone offline installer"
+	group = "Distribution"
+}
+
+build.dependsOn installer

@@ -1,0 +1,55 @@
+<installation version="1.0">
+	<info>
+		<appname>PDFriend</appname>
+		<appversion>@version@</appversion>
+		<authors>
+			 <author name="Singon" email="slanyj@centrum.cz"/>
+		</authors>
+		<javaversion>1.8</javaversion>
+	</info>
+	
+	<locale>
+		<langpack iso3="eng"/>
+	</locale>
+	
+	<guiprefs width="400" height="300" resizable="yes">
+		<laf name="substance">
+			<os family="windows"/>
+			<os family="unix"/>
+			<os family="mac"/>
+			<param name="variant" value="moderate"/>
+		</laf>
+		<modifier key="allXGap" value="8"/>
+		<modifier key="allYGap" value="8"/>
+	</guiprefs>
+	
+	<panels>
+		<panel classname="TargetPanel"/>
+		<panel classname="PacksPanel"/>
+		<panel classname="InstallPanel"/>
+		<panel classname="FinishPanel"/>
+	</panels>
+	
+	<packs>
+		<pack name="PDFriend" required="yes">
+			<description>The core files needed for the application</description>
+			<fileset dir="core" targetdir="${INSTALL_PATH}" override="true"/>
+		</pack>
+		<pack name="Windows launcher" required="no" os="windows">
+			<description>Wraps the application into a launchable script</description>
+			<file src="launchers/pdfriend.bat" targetdir="${INSTALL_PATH}"/>
+			<parsable targetfile="${INSTALL_PATH}/pdfriend.bat">
+				<os family="windows"/>
+			</parsable>
+		</pack>
+		<pack name="Unix launcher" required="no" os="unix">
+			<description>Wraps the application into a launchable script</description>
+			<file src="launchers/pdfriend" targetdir="${INSTALL_PATH}"/>
+			<file src="installers/setup-personal.sh" targetdir="${INSTALL_PATH}"/>
+			<parsable targetfile="${INSTALL_PATH}/pdfriend"/>
+			<parsable type="shell" targetfile="${INSTALL_PATH}/setup-personal.sh"/>
+			<executable targetfile="${INSTALL_PATH}/setup-personal.sh"
+			            stage="postinstall" keep="false" failure="warn"/>
+		</pack>
+	</packs>
+</installation>

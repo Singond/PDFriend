@@ -2,7 +2,9 @@
          xmlns:ivy="antlib:org.apache.ivy.ant"
          xmlns:if="ant:if"
          xmlns:unless="ant:unless">
-<!-- Requires Ant version 1.9.1+ (xmlns:if, xmlns:unless) -->
+<!-- Requires Ant version 1.9.1+ (xmlns:if, xmlns:unless)
+	Ant build is deprecated for this project. This file is kept only for reference.
+	For building PDFriend, use Gradle. -->
 	
 	<property file="version.properties" prefix="version"/>
 	<property name="version" value="${version.major}.${version.minor}.${version.revision}"/>
