@@ -22,18 +22,22 @@ public class CompacterTest {
 		for (int slot = 1; slot <= slots; slot++) {
 			int slotPartialSum = slot * slotSize;
 			boolean noOverflow = compactedSums.contains(slotPartialSum);
-			if (noOverflow) {
-				System.out.format("Compacted %s into slots of size %d: %s%n",
-				                  sizes, slotSize, compacted);
-			} else {
-				fail(String.format("Overflow at slot %d", slot));
+			if (!noOverflow) {
+				String msg = String.format(
+						"Compacting %s into %d slots failed due to"
+						+ " overflow at slot %d: %s",
+						sizes, slotSize, slot, compacted);
+				System.out.println(msg);
+				fail(msg);
 			}
 		}
+		System.out.format("Compacted %s into slots of size %d: %s%n",
+		                  sizes, slotSize, compacted);
 	}
 
 	@Test
 	public void fixedSlotNoRemainder() {
-		fixedNoRemainder(2, 2, 2, 2, 3, 1, 1, 3);
+		fixedNoRemainder(2, 2, 1, 3, 1, 1, 2, 2, 3, 3);
 	}
 
 	private static List<Integer> partialSums(List<Integer> sequence) {
