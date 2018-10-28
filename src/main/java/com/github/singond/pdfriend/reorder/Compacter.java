@@ -1,5 +1,9 @@
 package com.github.singond.pdfriend.reorder;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.function.ToIntFunction;
+
 /**
  * A compacter for arbitrary objects. This takes a sequence of 'slots'
  * with integer length and a number of objects with specified 'size',
@@ -16,10 +20,11 @@ package com.github.singond.pdfriend.reorder;
 interface Compacter<T> {
 
 	/**
-	 * Adds an element to the collection of objects to be compacted.
+	 * Orders the elements in the given collection in order to compact them
+	 * as described in the interface description.
 	 *
-	 * @param element the object to be added
-	 * @param size the 'size' taken up by the object in slot
+	 * @param objects the objects to be ordered
+	 * @param size a function providing the 'size' of elements in {@code objects}
 	 */
-	public void add(T element, int size);
+	public List<T> process(Collection<T> objects, ToIntFunction<T> size);
 }

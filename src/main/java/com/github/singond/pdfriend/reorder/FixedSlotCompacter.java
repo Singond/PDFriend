@@ -1,7 +1,9 @@
 package com.github.singond.pdfriend.reorder;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.function.ToIntFunction;
 
 /**
  * An implementation of {@code Compacter} in which all slots are of equal size.
@@ -32,7 +34,12 @@ class FixedSlotCompacter<T> implements Compacter<T> {
 	}
 
 	@Override
-	public void add(T element, int size) {
+	public List<T> process(Collection<T> objects, ToIntFunction<T> size) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented yet");
+	}
+
+	private void add(T element, int size) {
 		if (size < 0) {
 			throw new IllegalArgumentException("Size must not be negative");
 		}
