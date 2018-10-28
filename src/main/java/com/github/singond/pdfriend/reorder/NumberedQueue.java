@@ -1,7 +1,10 @@
 package com.github.singond.pdfriend.reorder;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.SortedMap;
@@ -51,6 +54,23 @@ class NumberedQueue<T> {
 			}
 		}
 		return total;
+	}
+
+	/**
+	 * Returns a list where each element stored is represented by the number
+	 * with which it was added.
+	 *
+	 * @return a list of all elements represented by their associated number
+	 */
+	public List<Integer> numbers() {
+		List<Integer> result = new ArrayList<>(size());
+		for (Entry<Integer, Queue<T>> e : data.entrySet()) {
+			Integer number = e.getKey();
+			for (int i = 0; i < e.getValue().size(); i++) {
+				result.add(number);
+			}
+		}
+		return result;
 	}
 
 	/**
