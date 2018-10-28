@@ -1,5 +1,6 @@
 package com.github.singond.pdfriend.reorder;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,21 +30,56 @@ class Combiner {
 			// No solution for picked values: return null to indicate this
 			return null;
 		}
-//		ListIterator<Integer> it = values.listIterator(values.size() + 1);
-//		while (it.hasPrevious()) {
-//			int val = it.previous().intValue();
-//			// Add the value and solve the rest
-//			List<Integer> rem = combine(sum - val, values.subList(0, values.size()));
-//			if rem
-//		}
+		int index = 0;
 		for (int val : values) {
-    		// Add the value and solve the rest
-			List<Integer> rem = combine(sum - val, values.subList(1, values.size()));
-    		if (rem != null) {
-    			rem.add(Integer.valueOf(val));
-    			return rem;
-    		}
+			// Add the value and solve the rest without the added value
+			List<Integer> rem = combine(sum - val, new GapList<>(values, index));
+			if (rem != null) {
+				rem.add(Integer.valueOf(val));
+				return rem;
+			}
+			index++;
 		}
 		return null;
+	}
+
+	/**
+	 * A view of a list with one element removed.
+	 *
+	 * @author Singon
+	 * @param <T> the type of elements contained in this list
+	 */
+	private static class GapList<T> extends AbstractList<T> {
+		/** Backing list. */
+		private final List<T> wholeList;
+		/** Index of the missing element in the backing list. */
+		private final int missingElement;
+
+		GapList(List<T> list, int missingElement) {
+			if (list == null) {
+				throw new NullPointerException("The list is null");
+			} else if (list.isEmpty()) {
+				throw new IllegalArgumentException("The list is empty");
+			}
+			this.wholeList = list;
+			this.missingElement = missingElement;
+		}
+
+		@Override
+		public T get(int index) {
+			if (index >= size()) {
+				throw new IndexOutOfBoundsException
+						("index: " + index + ", size: " + size());
+			} else if (index < missingElement) {
+				return wholeList.get(index);
+			} else {
+				return wholeList.get(index + 1);
+			}
+		}
+
+		@Override
+		public int size() {
+			return wholeList.size() - 1;
+		}
 	}
 }

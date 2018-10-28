@@ -1,6 +1,7 @@
 package com.github.singond.pdfriend.reorder;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +28,7 @@ public class CoinChangeProblem {
 
 	private void unsolvable(int sum, Integer... values) {
 		List<Integer> s = combiner.combineToSum(sum, Arrays.asList(values));
-		assertEquals("Found solution where none exists", null, s);
+		assertNull("Found solution where none exists", s);
 		System.out.format("Picking from %s to a total of %d: no solution%n",
 		                  Arrays.asList(values), sum);
 	}
@@ -42,5 +43,6 @@ public class CoinChangeProblem {
 	@Test
 	public void findingNoSolution() {
 		unsolvable(6, 1, 3);
+		unsolvable(2, 1, 3);
 	}
 }
