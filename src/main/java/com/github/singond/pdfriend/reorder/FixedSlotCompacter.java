@@ -2,6 +2,7 @@ package com.github.singond.pdfriend.reorder;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.ToIntFunction;
 
@@ -26,6 +27,9 @@ class FixedSlotCompacter<T> implements Compacter<T> {
 
 	private Combiner combiner;
 
+	/** Indicates that this object has already been used. */
+	private boolean used;
+
 	FixedSlotCompacter(int slotSize) {
 		this.slotSize = slotSize;
 		placed = new ArrayList<>();
@@ -35,11 +39,73 @@ class FixedSlotCompacter<T> implements Compacter<T> {
 
 	@Override
 	public List<T> process(Collection<T> objects, ToIntFunction<T> size) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not implemented yet");
+		if (used) {
+			throw new IllegalStateException
+					("This compacter cannot be used more than once");
+		} else if (objects == null) {
+			throw new NullPointerException("The collection of objects is null");
+		} else if (size == null) {
+			throw new NullPointerException("The size function is null");
+		} else if (objects.isEmpty()) {
+			return Collections.emptyList();
+		}
+		processAll(objects, size);
+		used = true;
+		return placed;
 	}
 
-	private void add(T element, int size) {
+	private void processAll(Collection<T> objects, ToIntFunction<T> size) {
+		for (T t : objects) {
+			boolean added = add(t, size.applyAsInt(t));
+			// If the object was not added to result, it was stored among
+			// other unplaced objects. This may have enabled a valid
+			// combination of objects to fill a slot.
+			// If any such combination exists, it will be placed now.
+			if (!added) {
+				while (tryFlush(1));
+				// (Do nothing, everything happened in the test clause)
+			}
+		}
+
+		// Try placing unplaced pages into slots.
+		// Once no more pages can be placed, add one slot size to the current
+		// and repeat. Finish if the increased slot size exceeds number
+		// of unplaced elements.
+		int slotsToFill = 1;
+		int remaining = -1;
+//		while (remaining > 0 && slotsToFill * slotSize <= remaining) {
+////			while(tryFlush(slotsToFill)) {
+////				remaining = unplaced.size();
+////			}
+//			boolean flushed = tryFlush(slotsToFill);
+//			remaining = unplaced.size();
+//			if (!flushed) slotsToFill++;
+//		}
+//		if (remaining <= 0) {
+//			return placed;
+//		}
+
+		do {
+			remaining = unplaced.size();
+			if (remaining <= 0) {
+				return;         // Finished
+			}
+			boolean flushed = tryFlush(slotsToFill);
+			if (!flushed) slotsToFill++;
+		} while (slotsToFill * slotSize <= remaining);
+
+		// Flush the rest
+		List<Element> toBePlaced = new ArrayList<>(unplaced.size());
+		for (Element element : unplaced.getAllAscending()) {
+			toBePlaced.add(element);
+		}
+		Collections.sort(toBePlaced);
+		for (Element e : toBePlaced) {
+			placed.add(e.value());
+		}
+	}
+
+	private boolean add(T element, int size) {
 		if (size < 0) {
 			throw new IllegalArgumentException("Size must not be negative");
 		}
@@ -51,8 +117,10 @@ class FixedSlotCompacter<T> implements Compacter<T> {
 		// else store it away for later placement
 		if (size % slotSize == 0) {
 			placed.add(element);
+			return true;
 		} else {
 			unplaced.add(new Element(element), size);
+			return false;
 		}
 	}
 
@@ -61,14 +129,20 @@ class FixedSlotCompacter<T> implements Compacter<T> {
 	 * If any combination of unplaced objects can be made that has size
 	 * equal to the size of n slots, place it now.
 	 */
-	private void tryFlush(int slots) {
+	private boolean tryFlush(int slots) {
 		List<Integer> sizes = unplaced.numbers();
 		List<Integer> sizeComb = combiner.combineToSum(slots * slotSize, sizes);
 		if (sizeComb != null) {
+			List<Element> toBePlaced = new ArrayList<>(sizeComb.size());
 			for (int length : sizeComb) {
-				placed.add(unplaced.nextInQueue(length).value());
+				toBePlaced.add(unplaced.nextInQueue(length));
 			}
-		}
+			Collections.sort(toBePlaced);
+			for (Element e : toBePlaced) {
+				placed.add(e.value());
+			}
+			return true;
+		} else return false;
 	}
 
 	/**

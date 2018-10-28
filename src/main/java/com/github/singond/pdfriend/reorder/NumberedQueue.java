@@ -87,6 +87,20 @@ class NumberedQueue<T> {
 		return getBucket(queueNumber).remove();
 	}
 
+	/**
+	 * Returns all non-null elements, iterating the queues in ascending order.
+	 */
+	public List<T> getAllAscending() {
+		List<T> result = new ArrayList<>(size());
+		for (Queue<T> q : data.values()) {
+			while (!q.isEmpty()) {
+				T t = q.remove();
+				if (t != null) result.add(t);
+			}
+		}
+		return result;
+	}
+
 	private Queue<T> getBucket(int number) {
 		Integer n = Integer.valueOf(number);
 		if (data.containsKey(n)) {
