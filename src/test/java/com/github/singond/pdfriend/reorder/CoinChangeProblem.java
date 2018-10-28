@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Test;
 
 public class CoinChangeProblem {
 
@@ -20,10 +21,14 @@ public class CoinChangeProblem {
 		List<Integer> s = combiner.combineToSum(sum, Arrays.asList(values));
 		int foundsum = s.stream().mapToInt(Integer::intValue).sum();
 		assertEquals("Bad sum of solution returned", sum, foundsum);
-		System.out.format("Picking from %s to a total of %d: %s", values, sum, s);
+		System.out.format("Picking from %s to a total of %d: %s%n",
+		                  Arrays.asList(values), sum, s);
 	}
 
+	@Test
 	public void findingSolution() {
 		combine(5, 1, 2, 3);
+		combine(13, 1, 1, 2, 3, 6, 8);
+		combine(37, 1, 1, 2, 3, 6, 8, 4, 4, 9, 7, 16, 10);
 	}
 }

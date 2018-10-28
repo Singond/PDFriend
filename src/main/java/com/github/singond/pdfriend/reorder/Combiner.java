@@ -38,7 +38,7 @@ class Combiner {
 //		}
 		for (int val : values) {
     		// Add the value and solve the rest
-			List<Integer> rem = combine(sum - val, values.subList(1, values.size() + 1));
+			List<Integer> rem = combine(sum - val, values.subList(1, values.size()));
     		if (rem != null) {
     			rem.add(Integer.valueOf(val));
     			return rem;
