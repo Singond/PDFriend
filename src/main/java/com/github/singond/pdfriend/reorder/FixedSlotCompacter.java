@@ -4,19 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * An compacter for arbitrary objects. This takes a sequence of 'slots'
- * with integer length and a number of objects with specified 'size',
- * which is an integer number indicating how many units they take up
- * in the slot length.
- *
- * It then attempts to order the objects so that when placed one after another
- * into the slots, the number of cases where an object overlaps slot boundary
- * is minimized. It is not required to find the optimal solution.
+ * An implementation of {@code Compacter} in which all slots are of equal size.
  *
  * @author Singon
  * @param <T> the type of the objects being compacted
  */
-class FixedSlotCompacter<T> {
+class FixedSlotCompacter<T> implements Compacter<T> {
 
 	private final int slotSize;
 
@@ -35,6 +28,7 @@ class FixedSlotCompacter<T> {
 		unplaced = new NumberedQueue<>();
 	}
 
+	@Override
 	public void add(T element, int size) {
 
 	}
