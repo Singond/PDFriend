@@ -12,7 +12,7 @@ import java.util.function.ToIntFunction;
  * @author Singon
  * @param <T> the type of the objects being compacted
  */
-class FixedSlotCompacter<T> implements Compacter<T> {
+class GreedyFixedSlotCompacter<T> implements Compacter<T> {
 
 	private final int slotSize;
 
@@ -30,7 +30,7 @@ class FixedSlotCompacter<T> implements Compacter<T> {
 	/** Indicates that this object has already been used. */
 	private boolean used;
 
-	FixedSlotCompacter(int slotSize) {
+	GreedyFixedSlotCompacter(int slotSize) {
 		this.slotSize = slotSize;
 		placed = new ArrayList<>();
 		unplaced = new NumberedQueue<>();
@@ -73,17 +73,6 @@ class FixedSlotCompacter<T> implements Compacter<T> {
 		// of unplaced elements.
 		int slotsToFill = 1;
 		int remaining = -1;
-//		while (remaining > 0 && slotsToFill * slotSize <= remaining) {
-////			while(tryFlush(slotsToFill)) {
-////				remaining = unplaced.size();
-////			}
-//			boolean flushed = tryFlush(slotsToFill);
-//			remaining = unplaced.size();
-//			if (!flushed) slotsToFill++;
-//		}
-//		if (remaining <= 0) {
-//			return placed;
-//		}
 
 		do {
 			remaining = unplaced.size();

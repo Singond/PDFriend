@@ -16,7 +16,7 @@ public class CompacterTest {
 		List<Integer> sizes = Arrays.asList(objectSizes);
 		int totalLength = sizes.stream().mapToInt(Integer::intValue).sum();
 		int slots = (totalLength + slotSize - 1)/slotSize;
-		FixedSlotCompacter<Integer> fsc = new FixedSlotCompacter<>(slotSize);
+		GreedyFixedSlotCompacter<Integer> fsc = new GreedyFixedSlotCompacter<>(slotSize);
 		List<Integer> compacted = fsc.process(sizes, (e) -> e.intValue());
 		SortedSet<Integer> compactedSums = new TreeSet<>(partialSums(compacted));
 		for (int slot = 1; slot <= slots; slot++) {
