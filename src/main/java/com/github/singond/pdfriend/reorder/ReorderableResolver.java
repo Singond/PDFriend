@@ -19,14 +19,17 @@ class ReorderableResolver implements ParameterDelegate {
 
 	@ParametersDelegate
 	private ReverseCli reverse = new ReverseCli();
-	
+
+	@ParametersDelegate
+	private CompactCli compact = new CompactCli();
+
 	/**
 	 * All options for the reordering type should be here.
 	 * If any is omitted from this set, it will be ignored in the command line.
 	 */
 	private final Set<? extends ReorderableCli<?>> taskTypes =
-			new HashSet<>(Arrays.asList(reverse));
-	
+			new HashSet<>(Arrays.asList(reverse, compact));
+
 	/**
 	 * Resolves the type of imposed document from the command line
 	 * arguments, creates an instance of an implementing class
@@ -36,7 +39,7 @@ class ReorderableResolver implements ParameterDelegate {
 	 * {@code --nup 2x4 --booklet}), this method will throw an
 	 * {@code IllegalStateException}. To avoid this, clients should check
 	 * integrity by calling {@code postParse};
-	 * 
+	 *
 	 * @throws IllegalStateException when none or more than one imposable
 	 *         types is given
 	 */
@@ -74,7 +77,7 @@ class ReorderableResolver implements ParameterDelegate {
 			throw new ParameterConsistencyException("The type of reordering must be given", null);
 		}
 	}
-	
+
 	/**
 	 * Counts how many reorderable types are given in the command line.
 	 */
