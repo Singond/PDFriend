@@ -37,7 +37,7 @@ public class CompacterTest {
 
 	@Test
 	public void fixedSlotNoRemainder() {
-		fixedNoRemainder(2, 2, 1, 3, 1, 1, 2, 2, 3, 3);
+		fixedNoRemainder(4, 2, 2, 1, 3, 1, 1, 2, 2, 3, 3);
 	}
 
 	private static List<Integer> partialSums(List<Integer> sequence) {
