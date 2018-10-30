@@ -16,7 +16,7 @@ class CompactCli implements ReorderableCli<Compact> {
 			description="Reorders pages to minimize breaks",
 			validateWith = PositiveInteger.class)
 	// TODO: Enable specifying a list of numbers
-	private int slots = -1;
+	private int sectionLength = -1;
 
 	@Override
 	public void postParse() throws ParameterConsistencyException {
@@ -25,11 +25,11 @@ class CompactCli implements ReorderableCli<Compact> {
 
 	@Override
 	public boolean isSet() {
-		return slots != -1;
+		return sectionLength != -1;
 	}
 
 	@Override
 	public Compact getReorderable() {
-		return new Compact(slots);
+		return new Compact(sectionLength);
 	}
 }

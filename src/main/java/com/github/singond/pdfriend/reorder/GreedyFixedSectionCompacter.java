@@ -3,26 +3,22 @@ package com.github.singond.pdfriend.reorder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.ToIntFunction;
 
 /**
- * An implementation of {@code Compacter} in which all slots are of equal size,
- * and which attempts to keep close to the original order, where possible.
+ * An implementation of {@code Compacter} in which all sections are of equal size.
  *
  * @author Singon
  * @param <T> the type of the objects being compacted
  */
-class OptimizingFixedSlotCompacter<T> implements Compacter<T> {
+class GreedyFixedSectionCompacter<T> implements Compacter<T> {
 
-	private final int slotSize;
+	private final int sectionSize;
 
-	ToIntFunction<T> sizeFunction;
+	private final ToIntFunction<T> sizeFunction;
 
 	private final List<T> placed;
-
-	private final List<List<Element>> slots;
 
 	/**
 	 * A buffer of unplaced objects, sorted by their size.
@@ -36,17 +32,17 @@ class OptimizingFixedSlotCompacter<T> implements Compacter<T> {
 	/** Indicates that this object has already been used. */
 	private boolean used;
 
-	OptimizingFixedSlotCompacter(int slotSize, ToIntFunction<T> sizeFunction) {
-		if (slotSize < 1) {
+	public GreedyFixedSectionCompacter(int sectionSize,
+			ToIntFunction<T> sizeFunction) {
+		if (sectionSize < 1) {
 			throw new IllegalArgumentException
-					("Slot size must be a positive number");
+					("Section size must be a positive number");
 		} else if (sizeFunction == null) {
 			throw new NullPointerException("The size function is null");
 		}
-		this.slotSize = slotSize;
+		this.sectionSize = sectionSize;
 		this.sizeFunction = sizeFunction;
 		placed = new ArrayList<>();
-		slots = new ArrayList<>();
 		unplaced = new NumberedQueue<>();
 		combiner = new CoinChangeSolver();
 	}
@@ -68,14 +64,22 @@ class OptimizingFixedSlotCompacter<T> implements Compacter<T> {
 
 	private void processAll(Collection<T> objects) {
 		for (T t : objects) {
-			add(t, sizeFunction.applyAsInt(t));
+			boolean added = add(t, sizeFunction.applyAsInt(t));
+			// If the object was not added to result, it was stored among
+			// other unplaced objects. This may have enabled a valid
+			// combination of objects to fill a section.
+			// If any such combination exists, it will be placed now.
+			if (!added) {
+				while (tryFlush(1));
+				// (Do nothing, everything happened in the test clause)
+			}
 		}
 
-		// Try placing unplaced pages into slots.
-		// Once no more pages can be placed, add one slot size to the current
-		// and repeat. Finish if the increased slot size exceeds number
+		// Try placing unplaced pages into sections.
+		// Once no more pages can be placed, add one section size to the current
+		// and repeat. Finish if the increased section size exceeds number
 		// of unplaced elements.
-		int slotsToFill = 1;
+		int sectionsToFill = 1;
 		int remaining = -1;
 
 		do {
@@ -83,9 +87,9 @@ class OptimizingFixedSlotCompacter<T> implements Compacter<T> {
 			if (remaining <= 0) {
 				return;         // Finished
 			}
-			boolean flushed = tryFlush(slotsToFill);
-			if (!flushed) slotsToFill++;
-		} while (slotsToFill * slotSize <= remaining);
+			boolean flushed = tryFlush(sectionsToFill);
+			if (!flushed) sectionsToFill++;
+		} while (sectionsToFill * sectionSize <= remaining);
 
 		// Flush the rest
 		List<Element> toBePlaced = new ArrayList<>(unplaced.size());
@@ -93,13 +97,8 @@ class OptimizingFixedSlotCompacter<T> implements Compacter<T> {
 			toBePlaced.add(element);
 		}
 		Collections.sort(toBePlaced);
-		Collections.sort(slots, new SlotComparator());
-		slots.add(toBePlaced);
-
-		for (List<Element> s : slots) {
-			for (Element e : s) {
-				placed.add(e.value());
-			}
+		for (Element e : toBePlaced) {
+			placed.add(e.value());
 		}
 	}
 
@@ -110,26 +109,35 @@ class OptimizingFixedSlotCompacter<T> implements Compacter<T> {
 		if (element == null) {
 			throw new NullPointerException("The element to be added is null");
 		}
-		return unplaced.add(new Element(element), size);
+
+		// If the size is an integer number of sections, place it now,
+		// else store it away for later placement
+		if (size % sectionSize == 0) {
+			placed.add(element);
+			return true;
+		} else {
+			unplaced.add(new Element(element), size);
+			return false;
+		}
 	}
 
 	/**
-	 * Attempts to place the unplaced objects now into n slots.
+	 * Attempts to place the unplaced objects now into n sections.
 	 * If any combination of unplaced objects can be made that has size
-	 * equal to the size of n slots, place it now.
-	 *
-	 * @param n the number of slots to fill
+	 * equal to the size of n sections, place it now.
 	 */
-	private boolean tryFlush(int n) {
+	private boolean tryFlush(int sects) {
 		List<Integer> sizes = unplaced.numbers();
-		List<Integer> sizeComb = combiner.combineToSum(n * slotSize, sizes);
+		List<Integer> sizeComb = combiner.combineToSum(sects * sectionSize, sizes);
 		if (sizeComb != null) {
 			List<Element> toBePlaced = new ArrayList<>(sizeComb.size());
 			for (int length : sizeComb) {
 				toBePlaced.add(unplaced.nextInQueue(length));
 			}
 			Collections.sort(toBePlaced);
-			slots.add(toBePlaced);
+			for (Element e : toBePlaced) {
+				placed.add(e.value());
+			}
 			return true;
 		} else return false;
 	}
@@ -151,23 +159,9 @@ class OptimizingFixedSlotCompacter<T> implements Compacter<T> {
 			return value;
 		}
 
-		public int ordinal() {
-			return order;
-		}
-
 		@Override
 		public int compareTo(Element o) {
 			return Integer.compare(order, o.order);
-		}
-	}
-
-	private class SlotComparator implements Comparator<List<Element>> {
-
-		@Override
-		public int compare(List<Element> o1, List<Element> o2) {
-			int s1 = o1.stream().mapToInt(i -> i.ordinal()).sum();
-			int s2 = o2.stream().mapToInt(i -> i.ordinal()).sum();
-			return Integer.compare(s1/o1.size(), s2/o2.size());
 		}
 	}
 }

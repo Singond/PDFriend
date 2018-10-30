@@ -12,34 +12,34 @@ import org.junit.Test;
 
 public class CompacterTest {
 
-	private void fixedNoRemainder(int slotSize, Compacter<Integer> compacter,
+	private void fixedNoRemainder(int sectSize, Compacter<Integer> compacter,
 			Integer... objectSizes) {
 		List<Integer> sizes = Arrays.asList(objectSizes);
 		int totalLength = sizes.stream().mapToInt(Integer::intValue).sum();
-		int slots = (totalLength + slotSize - 1)/slotSize;
+		int sects = (totalLength + sectSize - 1)/sectSize;
 		List<Integer> compacted = compacter.process(sizes);
 		SortedSet<Integer> compactedSums = new TreeSet<>(partialSums(compacted));
-		for (int slot = 1; slot <= slots; slot++) {
-			int slotPartialSum = slot * slotSize;
-			boolean noOverflow = compactedSums.contains(slotPartialSum);
+		for (int sect = 1; sect <= sects; sect++) {
+			int sectPartialSum = sect * sectSize;
+			boolean noOverflow = compactedSums.contains(sectPartialSum);
 			if (!noOverflow) {
 				String msg = String.format(
-						"Compacting %s into %d slots failed due to"
-						+ " overflow at slot %d: %s",
-						sizes, slotSize, slot, compacted);
+						"Compacting %s into %d sections failed due to"
+						+ " overflow at section %d: %s",
+						sizes, sectSize, sect, compacted);
 				System.out.println(msg);
 				fail(msg);
 			}
 		}
-		System.out.format("Compacted %s into slots of size %d: %s%n",
-		                  sizes, slotSize, compacted);
+		System.out.format("Compacted %s into sections of size %d: %s%n",
+		                  sizes, sectSize, compacted);
 	}
 
 	@Test
-	public void fixedSlotNoRemainder() {
-//		fixedNoRemainder(4, greedyFixedSlot(4),
+	public void fixedSectNoRemainder() {
+//		fixedNoRemainder(4, greedyFixedSect(4),
 //				2, 2, 1, 3, 1, 1, 2, 2, 3, 3);
-		fixedNoRemainder(4, optimizingFixedSlot(4),
+		fixedNoRemainder(4, optimizingFixedSect(4),
 				2, 2, 1, 3, 1, 1, 2, 2, 3, 3);
 	}
 
@@ -53,11 +53,11 @@ public class CompacterTest {
 		return result;
 	}
 
-	private static Compacter<Integer> greedyFixedSlot(int slotSize) {
-		return new GreedyFixedSlotCompacter<>(slotSize, e -> e.intValue());
+	private static Compacter<Integer> greedyFixedSect(int sectSize) {
+		return new GreedyFixedSectionCompacter<>(sectSize, e -> e.intValue());
 	}
 
-	private static Compacter<Integer> optimizingFixedSlot(int slotSize) {
-		return new OptimizingFixedSlotCompacter<>(slotSize, e -> e.intValue());
+	private static Compacter<Integer> optimizingFixedSect(int sectSize) {
+		return new OptimizingFixedSectionCompacter<>(sectSize, e -> e.intValue());
 	}
 }

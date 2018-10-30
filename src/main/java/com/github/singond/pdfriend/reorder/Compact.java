@@ -14,10 +14,14 @@ public class Compact implements Reorderable {
 	/** Logger */
 	private static ExtendedLogger logger = Log.logger(Compact.class);
 
+	private final int sectionLength;
+
 	private final Compacter<VirtualDocument> compacter;
 
-	public Compact(int size) {
-		compacter = new OptimizingFixedSlotCompacter<>(size, d -> d.getLength());
+	public Compact(int sectionLength) {
+		this.sectionLength = sectionLength;
+		compacter = new OptimizingFixedSectionCompacter<>
+				(sectionLength, d -> d.getLength());
 	}
 
 	@Override
