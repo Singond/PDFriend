@@ -11,11 +11,11 @@ import org.junit.Test;
 
 public class CoinChangeProblem {
 
-	private Combiner combiner;
+	private CoinChangeSolver combiner;
 
 	@Before
 	public void init() {
-		combiner = new Combiner();
+		combiner = new CoinChangeSolver();
 	}
 
 	private void solvable(int sum, Integer... values) {

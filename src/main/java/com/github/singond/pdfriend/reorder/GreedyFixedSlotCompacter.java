@@ -27,7 +27,7 @@ class GreedyFixedSlotCompacter<T> implements Compacter<T> {
 
 	private int elementCounter = 0;
 
-	private Combiner combiner;
+	private CoinChangeSolver combiner;
 
 	/** Indicates that this object has already been used. */
 	private boolean used;
@@ -43,7 +43,7 @@ class GreedyFixedSlotCompacter<T> implements Compacter<T> {
 		this.sizeFunction = sizeFunction;
 		placed = new ArrayList<>();
 		unplaced = new NumberedQueue<>();
-		combiner = new Combiner();
+		combiner = new CoinChangeSolver();
 	}
 
 	@Override

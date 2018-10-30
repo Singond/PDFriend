@@ -31,7 +31,7 @@ class OptimizingFixedSlotCompacter<T> implements Compacter<T> {
 
 	private int elementCounter = 0;
 
-	private Combiner combiner;
+	private CoinChangeSolver combiner;
 
 	/** Indicates that this object has already been used. */
 	private boolean used;
@@ -48,7 +48,7 @@ class OptimizingFixedSlotCompacter<T> implements Compacter<T> {
 		placed = new ArrayList<>();
 		slots = new ArrayList<>();
 		unplaced = new NumberedQueue<>();
-		combiner = new Combiner();
+		combiner = new CoinChangeSolver();
 	}
 
 	@Override

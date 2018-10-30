@@ -7,11 +7,11 @@ import java.util.List;
 
 /**
  * A helper object for combining numbers into a given sum,
- * essentially solving a variation of the Coin Change Problem.
+ * essentially solving a variation of the so-called "coin change problem".
  *
  * @author Singon
  */
-class Combiner {
+class CoinChangeSolver {
 
 	public List<Integer> combineToSum(int sum, List<Integer> values) {
 		values = new ArrayList<>(values);
