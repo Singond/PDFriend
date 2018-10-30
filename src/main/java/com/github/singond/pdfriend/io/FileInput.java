@@ -40,7 +40,7 @@ class FileInput implements InputElement {
 	public InputStream getInputStream() throws FileNotFoundException, IOException {
 		if (Files.exists(file)) {
 			// The file is verified to exist
-			logger.info("readFile", file);
+			if (logger.isDebugEnabled()) logger.debug("readFile", file);
 			return Files.newInputStream(file);
 		} else if (Files.notExists(file)) {
 			// The file is verified not to exist

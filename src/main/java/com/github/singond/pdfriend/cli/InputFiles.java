@@ -20,16 +20,16 @@ import com.github.singond.pdfriend.io.InputFactory;
 public class InputFiles implements ParameterDelegate {
 
 	private static ExtendedLogger logger = Log.logger(InputFiles.class);
-	
+
 	@Parameter(description="The list of input files")
 	private List<File> files = new ArrayList<>();
-	
+
 	@Override
 	public void postParse() {
-		if (!files.isEmpty())
-			logger.verbose(listFiles(files));
+		if (!files.isEmpty() && logger.isDebugEnabled())
+			logger.debug(listFiles(files));
 	}
-	
+
 	/**
 	 * Returns the input files wrapped in one Input object.
 	 */
@@ -39,7 +39,7 @@ public class InputFiles implements ParameterDelegate {
 				.collect(Collectors.toList());
 		return InputFactory.of(paths);
 	}
-	
+
 	/**
 	 * Provides a textual list of the input files received.
 	 * @param files the list of files to be printed into string

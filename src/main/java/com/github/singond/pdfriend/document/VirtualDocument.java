@@ -324,9 +324,8 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 		 * Creates a new Document instance from this builder.
 		 */
 		public VirtualDocument build() {
-			logger.verbose("Building VirtualDocument {} pages long", pages.size());
 			if (logger.isDebugEnabled())
-				logger.debug("Assembling page builders into pages");
+				logger.debug("Building virtual document {} pages long", pages.size());
 			return new VirtualDocument(pages.stream()
 					.map(VirtualPage.Builder::build)
 					.collect(Collectors.toList()), name);

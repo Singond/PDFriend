@@ -36,7 +36,7 @@ public class PDFParser implements Parser, AutoCloseable {
 	public VirtualDocument parseDocument(InputStream in) throws ParsingException {
 		PDDocument sourceDoc = null;
 		try {
-			logger.info("parse_pdf");
+			if (logger.isDebugEnabled()) logger.debug("parse_pdf");
 			sourceDoc = PDDocument.load(in);
 			openDocs.add(sourceDoc);
 			VirtualDocument result = parseDocument(sourceDoc, "untitled").build();
@@ -57,7 +57,7 @@ public class PDFParser implements Parser, AutoCloseable {
 			throws ParsingException {
 		PDDocument sourceDoc = null;
 		try {
-			logger.info("parse_pdf");
+			if (logger.isDebugEnabled()) logger.debug("parse_pdf");
 			sourceDoc = PDDocument.load(in.getInputStream());
 			openDocs.add(sourceDoc);
 			String name = in.getName();
@@ -76,6 +76,7 @@ public class PDFParser implements Parser, AutoCloseable {
 	private VirtualDocument.Builder parseDocument(PDDocument sourceDoc,
 			String docDescription) throws ParsingException {
 		VirtualDocument.Builder result = new VirtualDocument.Builder();
+		result.setName(docDescription);
 		int pageNo = 1;
 		for (PDPage sourcePage : sourceDoc.getPages()) {
 			VirtualPage.Builder page = new VirtualPage.Builder();
