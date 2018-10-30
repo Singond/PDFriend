@@ -16,6 +16,8 @@ class GreedyFixedSlotCompacter<T> implements Compacter<T> {
 
 	private final int slotSize;
 
+	private final ToIntFunction<T> sizeFunction;
+
 	private final List<T> placed;
 
 	/**
@@ -30,33 +32,38 @@ class GreedyFixedSlotCompacter<T> implements Compacter<T> {
 	/** Indicates that this object has already been used. */
 	private boolean used;
 
-	GreedyFixedSlotCompacter(int slotSize) {
+	GreedyFixedSlotCompacter(int slotSize, ToIntFunction<T> sizeFunction) {
+		if (slotSize < 1) {
+			throw new IllegalArgumentException
+					("Slot size must be a positive number");
+		} else if (sizeFunction == null) {
+			throw new NullPointerException("The size function is null");
+		}
 		this.slotSize = slotSize;
+		this.sizeFunction = sizeFunction;
 		placed = new ArrayList<>();
 		unplaced = new NumberedQueue<>();
 		combiner = new Combiner();
 	}
 
 	@Override
-	public List<T> process(Collection<T> objects, ToIntFunction<T> size) {
+	public List<T> process(Collection<T> objects) {
 		if (used) {
 			throw new IllegalStateException
 					("This compacter cannot be used more than once");
 		} else if (objects == null) {
 			throw new NullPointerException("The collection of objects is null");
-		} else if (size == null) {
-			throw new NullPointerException("The size function is null");
 		} else if (objects.isEmpty()) {
 			return Collections.emptyList();
 		}
-		processAll(objects, size);
+		processAll(objects);
 		used = true;
 		return placed;
 	}
 
-	private void processAll(Collection<T> objects, ToIntFunction<T> size) {
+	private void processAll(Collection<T> objects) {
 		for (T t : objects) {
-			boolean added = add(t, size.applyAsInt(t));
+			boolean added = add(t, sizeFunction.applyAsInt(t));
 			// If the object was not added to result, it was stored among
 			// other unplaced objects. This may have enabled a valid
 			// combination of objects to fill a slot.

@@ -17,7 +17,7 @@ public class Compact implements Reorderable {
 	private final Compacter<VirtualDocument> compacter;
 
 	Compact(int size) {
-		compacter = new OptimizingFixedSlotCompacter<>(size);
+		compacter = new OptimizingFixedSlotCompacter<>(size, d -> d.getLength());
 	}
 
 	@Override
@@ -27,7 +27,7 @@ public class Compact implements Reorderable {
 
 	@Override
 	public VirtualDocument reorder(List<VirtualDocument> sources) {
-		List<VirtualDocument> compacted = compacter.process(sources, d -> d.getLength());
+		List<VirtualDocument> compacted = compacter.process(sources);
 		for (VirtualDocument doc : compacted) {
 			logger.verbose("compact_appendDoc", doc, doc.getLength());
 		}
