@@ -6,7 +6,6 @@ import com.github.singond.pdfriend.document.VirtualDocument;
 import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.RenderingManager;
 import com.github.singond.pdfriend.io.Output;
-import com.github.singond.pdfriend.io.OutputException;
 
 /**
  * A pipe output provider which accepts all data as one unit.
@@ -16,7 +15,7 @@ class SimpleOutput implements PipeOutput {
 	private Output output;
 	private boolean written = false;
 	private RenderingManager rmgr = new RenderingManager();
-	
+
 	SimpleOutput(Output output) {
 		this.output = output;
 	}
@@ -29,7 +28,7 @@ class SimpleOutput implements PipeOutput {
 		List<VirtualDocument> docs = data.getModuleData().asMultipleDocuments();
 		try {
 			rmgr.renderDocuments(docs, output);
-		} catch (OutputException | RenderingException e) {
+		} catch (RenderingException e) {
 			throw new PipeException(e);
 		}
 	}

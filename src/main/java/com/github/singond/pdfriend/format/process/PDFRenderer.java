@@ -23,6 +23,8 @@ import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.format.Renderer;
 import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.content.PDFPage;
+import com.github.singond.pdfriend.io.Output;
+import com.github.singond.pdfriend.io.OutputException;
 
 public class PDFRenderer extends Renderer<PDDocument> {
 
@@ -45,19 +47,25 @@ public class PDFRenderer extends Renderer<PDDocument> {
 	@Override
 	public byte[] renderBinary(VirtualDocument document) throws RenderingException {
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		render(document, bytes);
+		render(document, new Output() {
+			@Override
+			public OutputStream getOutputStream() throws OutputException {
+				return bytes;
+			}});
 		return bytes.toByteArray();
 	}
 
 	@Override
-	public void render(VirtualDocument document, OutputStream out)
+	public void render(VirtualDocument document, Output out)
 			throws RenderingException {
 		try (PDDocument doc = render(document)) {
 			logger.info("writeFile");
-			doc.save(out);
+			doc.save(out.getOutputStream());
 			logger.info("writeFile_done");
+		} catch (OutputException e) {
+			throw new RenderingException("Error opening the output", e);
 		} catch (IOException e) {
-			throw new RenderingException("Error writing the document", e);
+			throw new RenderingException("Cannot write to output", e);
 		}
 	}
 
