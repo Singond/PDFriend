@@ -16,7 +16,7 @@ public class Compact implements Reorderable {
 
 	private final Compacter<VirtualDocument> compacter;
 
-	Compact(int size) {
+	public Compact(int size) {
 		compacter = new OptimizingFixedSlotCompacter<>(size, d -> d.getLength());
 	}
 
