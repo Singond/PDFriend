@@ -30,7 +30,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 
 	@Override
 	public PDDocument render(VirtualDocument document) throws RenderingException {
-		logger.verbose("render_doc", document);
+		if (logger.isDebugEnabled()) logger.debug("render_doc", document);
 
 		PDDocument targetDoc = new PDDocument();
 		LayerUtility lutil = new LayerUtility(targetDoc);
@@ -62,7 +62,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 	}
 
 	private PDPage renderPage(VirtualPage page, DocumentController docCtrl) throws RenderingException {
-		logger.verbose("render_page", page);
+		if (logger.isDebugEnabled()) logger.debug("render_page", page);
 		PDPage targetPage = new PDPage();
 		targetPage.setMediaBox(new PDRectangle((float) page.getWidth(), (float) page.getHeight()));
 		ContentRenderer contentRndr = new ContentRenderer();

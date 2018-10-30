@@ -105,13 +105,15 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 
 	/**
 	 * Joins several virtual document into one in the order they are given.
+	 *
 	 * @param docs a list of virtual documents to be joined, listed in the
 	 *        order they should appear in the output
 	 * @return a new instance of VirtualDocument containing all input
 	 *         documents merged into one
 	 */
 	public static VirtualDocument concatenate(List<VirtualDocument> docs) {
-		logger.debug("vdoc_concatenating", docs.size());
+		if (logger.isDebugEnabled())
+			logger.debug("vdoc_concatenating", docs.size());
 		final List<VirtualPage> pages = new ArrayList<>();
 		for (VirtualDocument doc : docs) {
 			pages.addAll(doc.getPages());
@@ -121,12 +123,15 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 
 	/**
 	 * Joins several virtual document into one in the order they are given.
+	 *
 	 * @param docs virtual documents to be joined, listed in the order they
 	 *        should appear in the output
 	 * @return a new instance of VirtualDocument containing all input
 	 *         documents merged into one
 	 */
 	public static VirtualDocument concatenate(VirtualDocument... docs) {
+		if (logger.isDebugEnabled())
+			logger.debug("vdoc_concatenating", docs.length);
 		final List<VirtualPage> pages = new ArrayList<>();
 		for (VirtualDocument doc : docs) {
 			pages.addAll(doc.getPages());
