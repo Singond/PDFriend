@@ -42,7 +42,7 @@ public class Reordering implements Module {
 		if (task == null) {
 			throw new NullPointerException("No reordering type has been specified");
 		}
-		logger.verbose("Selected imposition type is: " + task.getName());
+		logger.verbose("Selected reordering type is: " + task.getName());
 
 		VirtualDocument document;
 		document = task.reorder(data.asMultipleDocuments());
