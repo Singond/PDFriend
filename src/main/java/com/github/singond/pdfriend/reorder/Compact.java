@@ -16,7 +16,7 @@ public class Compact implements Reorderable {
 
 	private final int sectionLength;
 
-	private final Compacter<VirtualDocument> compacter;
+	private final SingleUseCompacter<VirtualDocument> compacter;
 
 	public Compact(int sectionLength) {
 		this.sectionLength = sectionLength;
@@ -35,6 +35,11 @@ public class Compact implements Reorderable {
 		for (VirtualDocument doc : compacted) {
 			logger.verbose("compact_appendDoc", doc, doc.getLength());
 		}
-		return VirtualDocument.concatenate(compacted);
+		VirtualDocument result = VirtualDocument.concatenate(compacted);
+		logger.info("compact_summary", compacted.size(), sectionLength);
+		logger.info("compact_numberOfSplitDocs", compacter.splitObjects());
+		logger.info("compact_numberOfSuboptimDocs",
+		            compacter.suboptimSplitObjects());
+		return result;
 	}
 }

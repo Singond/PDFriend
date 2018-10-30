@@ -14,7 +14,7 @@ import java.util.function.ToIntFunction;
  * @author Singon
  * @param <T> the type of the objects being compacted
  */
-class OptimizingFixedSectionCompacter<T> implements Compacter<T> {
+class OptimizingFixedSectionCompacter<T> implements SingleUseCompacter<T> {
 
 	private final int sectionSize;
 
@@ -32,6 +32,10 @@ class OptimizingFixedSectionCompacter<T> implements Compacter<T> {
 	private int elementCounter = 0;
 
 	private CoinChangeSolver combiner;
+
+	private int split = -1;
+
+	private int suboptSplit = -1;
 
 	/** Indicates that this object has already been used. */
 	private boolean used;
@@ -97,11 +101,26 @@ class OptimizingFixedSectionCompacter<T> implements Compacter<T> {
 		Collections.sort(sections, new SectionComparator());
 		sections.add(toBePlaced);
 
+		// Add elements to resultant list while counting overflows
+		int split = 0;      // Elements spanning multiple sections
+		int subopt = 0;     // Elements spanning more sections than minimum
+		int length = 0;
+		int elementLength, startSect, endSect, sectsSpan, minSectsSpan;
 		for (List<Element> s : sections) {
 			for (Element e : s) {
+				startSect = length / sectionSize;
 				placed.add(e.value());
+				elementLength = sizeFunction.applyAsInt(e.value());
+				length += elementLength;
+				endSect = (length - 1) / sectionSize;
+				sectsSpan = endSect + 1 - startSect;
+				minSectsSpan = (elementLength + sectionSize - 1) / sectionSize;
+				if (sectsSpan > 1) split++;
+				if (sectsSpan > minSectsSpan) subopt++;
 			}
 		}
+		this.split = split;
+		this.suboptSplit = subopt;
 	}
 
 	private boolean add(T element, int size) {
@@ -133,6 +152,20 @@ class OptimizingFixedSectionCompacter<T> implements Compacter<T> {
 			sections.add(toBePlaced);
 			return true;
 		} else return false;
+	}
+
+	@Override
+	public int splitObjects() {
+		if (split == -1)
+			throw new IllegalStateException("'process()' must be called first");
+		else return split;
+	}
+
+	@Override
+	public int suboptimSplitObjects() {
+		if (suboptSplit == -1)
+			throw new IllegalStateException("'process()' must be called first");
+		else return suboptSplit;
 	}
 
 	/**
