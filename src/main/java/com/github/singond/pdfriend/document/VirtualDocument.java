@@ -329,7 +329,7 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 				logger.debug("Assembling page builders into pages");
 			return new VirtualDocument(pages.stream()
 					.map(VirtualPage.Builder::build)
-					.collect(Collectors.toList()));
+					.collect(Collectors.toList()), name);
 		}
 	}
 }
