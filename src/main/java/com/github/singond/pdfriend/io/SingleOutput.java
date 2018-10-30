@@ -17,4 +17,9 @@ class SingleOutput implements Output {
 	public OutputStream getOutputStream() throws OutputException {
 		return output.getOutputStream();
 	}
+
+	@Override
+	public String toString() {
+		return output.toString();
+	}
 }

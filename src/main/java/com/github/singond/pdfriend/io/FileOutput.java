@@ -38,8 +38,12 @@ class FileOutput implements OutputElement {
 		return out;
 	}
 
+	public String getFile() {
+		return file.toString();
+	}
+
 	@Override
 	public String toString() {
-		return "Output to " + file;
+		return file.toString();
 	}
 }

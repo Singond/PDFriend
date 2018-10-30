@@ -61,7 +61,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 		try (PDDocument doc = render(document)) {
 			logger.info("writeFile");
 			doc.save(out.getOutputStream());
-			logger.info("writeFile_done");
+			logger.info("writeFile_done", out);
 		} catch (OutputException e) {
 			throw new RenderingException("Error opening the output", e);
 		} catch (IOException e) {
