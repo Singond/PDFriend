@@ -76,7 +76,7 @@ class OptimizingFixedSectionCompacter<T> implements Compacter<T> {
 		// Once no more pages can be placed, add one section size to the current
 		// and repeat. Finish if the increased section size exceeds number
 		// of unplaced elements.
-		int sectionssToFill = 1;
+		int sectionsToFill = 1;
 		int remaining = -1;
 
 		do {
@@ -84,9 +84,9 @@ class OptimizingFixedSectionCompacter<T> implements Compacter<T> {
 			if (remaining <= 0) {
 				return;         // Finished
 			}
-			boolean flushed = tryFlush(sectionssToFill);
-			if (!flushed) sectionssToFill++;
-		} while (sectionssToFill * sectionSize <= remaining);
+			boolean flushed = tryFlush(sectionsToFill);
+			if (!flushed) sectionsToFill++;
+		} while (sectionsToFill * sectionSize <= remaining);
 
 		// Flush the rest
 		List<Element> toBePlaced = new ArrayList<>(unplaced.size());
