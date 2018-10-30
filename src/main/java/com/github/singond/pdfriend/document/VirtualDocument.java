@@ -213,8 +213,6 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 
 	/**
 	 * Mutable class for constructing Document objects easily and incrementally.
-	 * @author Singon
-	 *
 	 */
 	public static class Builder {
 
@@ -276,6 +274,28 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 		 */
 		public void addPage(VirtualPage.Builder page) {
 			pages.add(page);
+		}
+
+		/**
+		 * Appends all pages of the given document into this document
+		 * in the order they appear in {@code doc}.
+		 *
+		 * @param doc the document whose pages are to be added
+		 */
+		public void appendDocument(VirtualDocument doc) {
+			for (VirtualPage p : doc) {
+				pages.add(new VirtualPage.Builder(p));
+			}
+		}
+
+		/**
+		 * Appends all pages of the given document builder into this document
+		 * in the order they appear in {@code doc}.
+		 *
+		 * @param doc the document builder whose pages are to be added
+		 */
+		public void appendDocument(VirtualDocument.Builder doc) {
+			pages.addAll(doc.pages);
 		}
 
 		/**

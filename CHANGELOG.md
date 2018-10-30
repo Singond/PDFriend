@@ -1,5 +1,8 @@
 # Changelog
 
+### Added
+- Added a new `--compact` option to the `reorder` command
+
 ## [0.6.3] - 2018-10-23
 ### Changed
 - Fixed the installer which did not contain the PDFriend jar.

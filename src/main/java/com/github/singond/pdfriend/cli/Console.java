@@ -22,6 +22,7 @@ import com.github.singond.pdfriend.modules.Module;
 import com.github.singond.pdfriend.modules.ModuleException;
 import com.github.singond.pdfriend.pipe.Pipe;
 import com.github.singond.pdfriend.pipe.PipeException;
+import com.github.singond.pdfriend.reorder.ReorderCommand;
 
 /**
  * The root of the command-line interface.
@@ -50,6 +51,7 @@ public class Console {
 		{
 			put("transform", new SimpleTransformCommand());
 			put("impose", new ImposeCommand());
+			put("reorder", new ReorderCommand());
 		}
 		
 		/**
