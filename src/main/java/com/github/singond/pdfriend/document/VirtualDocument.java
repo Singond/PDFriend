@@ -184,13 +184,12 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 		if (name != null) {
 			return name;
 		} else {
-//			return "VirtualDocument@"+hashCode()+" ("+pages.size()+" pages)";
 			return makeString().toString();
 		}
 	}
 
 	private StringBuilder makeString() {
-		StringBuilder sb = new StringBuilder("document");
+		StringBuilder sb = new StringBuilder();
 		if (pages.size() <= 4) {
 			sb.append(pages.toString());
 		} else {
