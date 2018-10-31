@@ -1,6 +1,7 @@
 package com.github.singond.pdfriend.cli;
 
 import java.io.File;
+
 import com.beust.jcommander.Parameter;
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
@@ -12,19 +13,19 @@ import com.github.singond.pdfriend.io.OutputFactory;
  * @author Singon
  */
 public class OutputFile implements ParameterDelegate {
-	
+
 	private static ExtendedLogger logger = Log.logger(OutputFile.class);
 
 	/** The output file. */
 	@Parameter(names={"-o", "--output"}, description="Output file name")
 	private File outputFile;
-	
+
 	@Override
 	public void postParse() {
-		if (outputFile != null)
-			logger.verbose("The output file:" + outputFile.getAbsolutePath());
+		if (outputFile != null && logger.isDebugEnabled())
+			logger.debug("The output file:" + outputFile.getAbsolutePath());
 	}
-	
+
 	/**
 	 * Returns the output file wrapped in one Output object.
 	 */

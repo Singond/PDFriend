@@ -1,6 +1,7 @@
 package com.github.singond.pdfriend.document;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.stream.Collectors;
@@ -34,6 +35,7 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 
 	private static ExtendedLogger logger = Log.logger(VirtualDocument.class);
 
+	private static final int CONCAT_TO_STRING_LIMIT = 4;
 
 	/**
 	 * Constructs a new document composed of the given pages.
@@ -105,33 +107,40 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 
 	/**
 	 * Joins several virtual document into one in the order they are given.
+	 *
 	 * @param docs a list of virtual documents to be joined, listed in the
 	 *        order they should appear in the output
 	 * @return a new instance of VirtualDocument containing all input
 	 *         documents merged into one
 	 */
 	public static VirtualDocument concatenate(List<VirtualDocument> docs) {
-		logger.debug("vdoc_concatenating", docs.size());
+		if (logger.isDebugEnabled())
+			logger.debug("vdoc_concatenating", docs.size());
 		final List<VirtualPage> pages = new ArrayList<>();
 		for (VirtualDocument doc : docs) {
 			pages.addAll(doc.getPages());
 		}
-		return new VirtualDocument(pages);
+		return new VirtualDocument(pages,
+				listDigest(docs, CONCAT_TO_STRING_LIMIT).toString());
 	}
 
 	/**
 	 * Joins several virtual document into one in the order they are given.
+	 *
 	 * @param docs virtual documents to be joined, listed in the order they
 	 *        should appear in the output
 	 * @return a new instance of VirtualDocument containing all input
 	 *         documents merged into one
 	 */
 	public static VirtualDocument concatenate(VirtualDocument... docs) {
+		if (logger.isDebugEnabled())
+			logger.debug("vdoc_concatenating", docs.length);
 		final List<VirtualPage> pages = new ArrayList<>();
 		for (VirtualDocument doc : docs) {
 			pages.addAll(doc.getPages());
 		}
-		return new VirtualDocument(pages);
+		return new VirtualDocument(pages, listDigest(
+				Arrays.asList(docs), CONCAT_TO_STRING_LIMIT).toString());
 	}
 
 	/**
@@ -179,24 +188,41 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 		return max;
 	}
 
+	/**
+	 * Returns the optional name of this virtual document.
+	 *
+	 * @return the name of this document (if any), or {@code null}
+	 */
+	public String name() {
+		return name;
+	}
+
+	/**
+	 * Returns a short description of this document's contents.
+	 *
+	 * @return the names of this document's contents
+	 */
+	public String contentToString() {
+		return listDigest(pages, 4).toString();
+	}
+
 	@Override
 	public String toString() {
 		if (name != null) {
 			return name;
 		} else {
-//			return "VirtualDocument@"+hashCode()+" ("+pages.size()+" pages)";
-			return makeString().toString();
+			return contentToString();
 		}
 	}
 
-	private StringBuilder makeString() {
-		StringBuilder sb = new StringBuilder("document");
-		if (pages.size() <= 4) {
-			sb.append(pages.toString());
+	private static StringBuilder listDigest(List<?> list, int limit) {
+		StringBuilder sb = new StringBuilder();
+		if (list.size() <= limit) {
+			sb.append(list.toString());
 		} else {
-			sb.append(pages.subList(0, 4).toString());
+			sb.append(list.subList(0, limit).toString());
 			sb.setLength(sb.length() - 1);
-			sb.append("... (" + (pages.size() - 4) + " more)]");
+			sb.append("... (" + (list.size() - limit) + " more)]");
 		}
 		return sb;
 	}
@@ -324,12 +350,11 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 		 * Creates a new Document instance from this builder.
 		 */
 		public VirtualDocument build() {
-			logger.verbose("Building VirtualDocument {} pages long", pages.size());
 			if (logger.isDebugEnabled())
-				logger.debug("Assembling page builders into pages");
+				logger.debug("Building virtual document {} pages long", pages.size());
 			return new VirtualDocument(pages.stream()
 					.map(VirtualPage.Builder::build)
-					.collect(Collectors.toList()));
+					.collect(Collectors.toList()), name);
 		}
 	}
 }

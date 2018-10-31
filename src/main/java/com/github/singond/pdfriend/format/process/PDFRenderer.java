@@ -23,6 +23,8 @@ import com.github.singond.pdfriend.document.VirtualPage;
 import com.github.singond.pdfriend.format.Renderer;
 import com.github.singond.pdfriend.format.RenderingException;
 import com.github.singond.pdfriend.format.content.PDFPage;
+import com.github.singond.pdfriend.io.Output;
+import com.github.singond.pdfriend.io.OutputException;
 
 public class PDFRenderer extends Renderer<PDDocument> {
 
@@ -30,7 +32,7 @@ public class PDFRenderer extends Renderer<PDDocument> {
 
 	@Override
 	public PDDocument render(VirtualDocument document) throws RenderingException {
-		logger.verbose("render_doc", document);
+		if (logger.isDebugEnabled()) logger.debug("render_doc", document);
 
 		PDDocument targetDoc = new PDDocument();
 		LayerUtility lutil = new LayerUtility(targetDoc);
@@ -45,24 +47,30 @@ public class PDFRenderer extends Renderer<PDDocument> {
 	@Override
 	public byte[] renderBinary(VirtualDocument document) throws RenderingException {
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		render(document, bytes);
+		render(document, new Output() {
+			@Override
+			public OutputStream getOutputStream() throws OutputException {
+				return bytes;
+			}});
 		return bytes.toByteArray();
 	}
 
 	@Override
-	public void render(VirtualDocument document, OutputStream out)
+	public void render(VirtualDocument document, Output out)
 			throws RenderingException {
 		try (PDDocument doc = render(document)) {
 			logger.info("writeFile");
-			doc.save(out);
-			logger.info("writeFile_done");
+			doc.save(out.getOutputStream());
+			logger.info("writeFile_done", out);
+		} catch (OutputException e) {
+			throw new RenderingException("Error opening the output", e);
 		} catch (IOException e) {
-			throw new RenderingException("Error writing the document", e);
+			throw new RenderingException("Cannot write to output", e);
 		}
 	}
 
 	private PDPage renderPage(VirtualPage page, DocumentController docCtrl) throws RenderingException {
-		logger.verbose("render_page", page);
+		if (logger.isDebugEnabled()) logger.debug("render_page", page);
 		PDPage targetPage = new PDPage();
 		targetPage.setMediaBox(new PDRectangle((float) page.getWidth(), (float) page.getHeight()));
 		ContentRenderer contentRndr = new ContentRenderer();

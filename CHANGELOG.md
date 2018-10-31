@@ -2,6 +2,9 @@
 
 ### Added
 - Added a new `--compact` option to the `reorder` command
+- Improved readability of logs at levels `verbose` and below.
+  Most of the log output for loading, parsing, rendering and writing the files
+  has been moved to the `debug` level. 
 
 ## [0.6.3] - 2018-10-23
 ### Changed
