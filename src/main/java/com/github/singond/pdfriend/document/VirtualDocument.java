@@ -1,6 +1,7 @@
 package com.github.singond.pdfriend.document;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.stream.Collectors;
@@ -34,6 +35,7 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 
 	private static ExtendedLogger logger = Log.logger(VirtualDocument.class);
 
+	private static final int CONCAT_TO_STRING_LIMIT = 4;
 
 	/**
 	 * Constructs a new document composed of the given pages.
@@ -118,7 +120,8 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 		for (VirtualDocument doc : docs) {
 			pages.addAll(doc.getPages());
 		}
-		return new VirtualDocument(pages);
+		return new VirtualDocument(pages,
+				listDigest(docs, CONCAT_TO_STRING_LIMIT).toString());
 	}
 
 	/**
@@ -136,7 +139,8 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 		for (VirtualDocument doc : docs) {
 			pages.addAll(doc.getPages());
 		}
-		return new VirtualDocument(pages);
+		return new VirtualDocument(pages, listDigest(
+				Arrays.asList(docs), CONCAT_TO_STRING_LIMIT).toString());
 	}
 
 	/**
@@ -184,23 +188,41 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 		return max;
 	}
 
+	/**
+	 * Returns the optional name of this virtual document.
+	 *
+	 * @return the name of this document (if any), or {@code null}
+	 */
+	public String name() {
+		return name;
+	}
+
+	/**
+	 * Returns a short description of this document's contents.
+	 *
+	 * @return the names of this document's contents
+	 */
+	public String contentToString() {
+		return listDigest(pages, 4).toString();
+	}
+
 	@Override
 	public String toString() {
 		if (name != null) {
 			return name;
 		} else {
-			return makeString().toString();
+			return contentToString();
 		}
 	}
 
-	private StringBuilder makeString() {
+	private static StringBuilder listDigest(List<?> list, int limit) {
 		StringBuilder sb = new StringBuilder();
-		if (pages.size() <= 4) {
-			sb.append(pages.toString());
+		if (list.size() <= limit) {
+			sb.append(list.toString());
 		} else {
-			sb.append(pages.subList(0, 4).toString());
+			sb.append(list.subList(0, limit).toString());
 			sb.setLength(sb.length() - 1);
-			sb.append("... (" + (pages.size() - 4) + " more)]");
+			sb.append("... (" + (list.size() - limit) + " more)]");
 		}
 		return sb;
 	}
