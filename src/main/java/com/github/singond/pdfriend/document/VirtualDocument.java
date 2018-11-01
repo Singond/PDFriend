@@ -362,7 +362,7 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 		 */
 		public VirtualDocument build() {
 			if (logger.isDebugEnabled())
-				logger.debug("Building virtual document wiht {} pages", pages.size());
+				logger.debug("Building virtual document with {} pages", pages.size());
 			return new VirtualDocument(pages.stream()
 					.map(VirtualPage.Builder::build)
 					.collect(Collectors.toList()), name);
