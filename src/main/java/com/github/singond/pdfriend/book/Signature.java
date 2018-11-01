@@ -16,64 +16,69 @@ import com.github.singond.pdfriend.document.VirtualPage;
 
 /**
  * A signature of a document, made by folding one or more Sheets.
- * @author Singon
  *
+ * @author Singon
  */
 public class Signature implements BookElement {
 
 	/** The sheets comprising this Signature */
 	private final List<Sheet> sheets;
+
 	/**
 	 * An object keeping the order of Leaves in this Signature.
 	 * This represents the order the Leaves will be numbered in.
 	 */
 	private Order<Leaf> leafOrder;
-	
+
 	private static ExtendedLogger logger = Log.logger(Signature.class);
-	
+
 	public Signature() {
 		this.sheets = SetUniqueList.setUniqueList(new LinkedList<Sheet>());
 	}
-	
+
 	/**
-	 * Provides access to the Sheets in this Signature.
-	 * @return A shallow copy of the internal list of Sheets.
+	 * Provides access to the sheets in this signature.
+	 *
+	 * @return a shallow copy of the internal list of sheets
 	 */
 	public List<Sheet> getSheets() {
 		return new ArrayList<>(sheets);
 	}
-	
+
 	/**
-	 * Adds a Sheet to this Signature (optional operation).
-	 * @param sheet The Sheet to be added.
-	 * @return False if the Sheet is already present in this Signature.
+	 * Adds a sheet to this signature (optional operation).
+	 *
+	 * @param sheet the sheet to be added
+	 * @return {@code false} if the sheet is already present in this signature
 	 */
 	public boolean add(Sheet sheet) {
 		return sheets.add(sheet);
 	}
-	
+
 	/**
 	 * Sets the Leaf order to be used when numbering Leaves in this Signature.
-	 * @param lo The order as a LeafOrder object.
+	 *
+	 * @param lo the order as a LeafOrder object
 	 */
 	public void setLeafOrder(Order<Leaf> lo) {
 		this.leafOrder = lo;
 	}
-	
+
 	/**
-	 * Assigns Page numbers to all Pages.
+	 * Assigns page numbers to all pages.
 	 * Issues page numbers sequentially starting from the given number,
 	 * while respecting the leaf order given as argument. Pages with order
 	 * specified in the argument will be placed in this order and the
 	 * remaining, unordered, pages (if any) will be placed to the end in
 	 * the order they are encountered.
-	 * @param number The number to number pages from. The recto of the first
-	 * Leaf in current order will receive this page number.
-	 * @param order The Leaf order to be used. To ensure correct results,
-	 * it should contain all Leaves in this Signature.
-	 * @return The next available page number, ie. the number of last page
-	 * plus one.
-	 * @throw {@code NullPointerException} when Leaf order is null.
+	 *
+	 * @param number the number to number pages from. The recto of the first
+	 *        leaf in current order will receive this page number
+	 * @param order the leaf order to be used. To ensure correct results,
+	 *        it should contain all Leaves in this signature
+	 * @return the next available page number, ie. the number of last page
+	 *         plus one
+	 * @throw {@code NullPointerException} when {@code order} is null
 	 */
 	public int numberPagesFrom(int number, Order<Leaf> order) {
 		if (logger.isDebugEnabled())
@@ -103,20 +108,21 @@ public class Signature implements BookElement {
 			})
 			// Get the next available page number (used as return value)
 			.reduce(0, Integer::max);
-		return (int) (nextPage);
+		return (nextPage);
 	}
 	/**
-	 * Assigns Page numbers to all Pages.
+	 * Assigns page numbers to all pages.
 	 * Issues page numbers sequentially starting from the given number,
 	 * while respecting the leaf order given by current value of the
 	 * {@code leafOrder} field. Pages with order specified in the argument
 	 * will be placed in this order and the remaining, unordered, pages
 	 * (if any) will be placed to the end in the order they are encountered.
-	 * @param number The number to number pages from. The recto of the first
-	 * Leaf in current order will receive this page number.
-	 * @return The next available page number, ie. the number of last page
-	 * plus one.
-	 * @throw {@code IllegalStateException} when Leaf order has not been set.
+	 *
+	 * @param number the number to number pages from. The recto of the first
+	 *        leaf in current order will receive this page number
+	 * @return the next available page number, ie. the number of last page
+	 *         plus one
+	 * @throw {@code IllegalStateException} when leaf order has not been set
 	 */
 	public int numberPagesFrom(int number) {
 		if (leafOrder == null) {
@@ -125,10 +131,11 @@ public class Signature implements BookElement {
 			return numberPagesFrom(number, leafOrder);
 		}
 	}
-	
+
 	/**
 	 * Iterates through the leaves in the currently set order.
-	 * @return A new Iterator object starting at the first Leaf.
+	 *
+	 * @return a new Iterator object starting at the first Leaf
 	 */
 	public Iterator<Leaf> leafIterator() {
 		Order<Leaf> order;
@@ -137,7 +144,7 @@ public class Signature implements BookElement {
 		} else {
 			order = leafOrder;
 		}
-		
+
 		List<Leaf> sheetList = sheets.stream()
 				.flatMap(s -> s.getLeaves().stream())
 				// Sort by order and put unordered Leaves to the end
@@ -151,11 +158,12 @@ public class Signature implements BookElement {
 				.collect(Collectors.toList());
 		return sheetList.iterator();
 	}
-	
+
 	/**
 	 * Wraps this object to iterate through all Leaves in the current order.
-	 * @see {@link #leafIterator}
-	 * @return This object wrapped as an Iterable<Leaf>.
+	 *
+	 * @see #leafIterator
+	 * @return this object wrapped as an Iterable<Leaf>
 	 */
 	public Iterable<Leaf> leaves() {
 		return new Iterable<Leaf>() {
@@ -165,12 +173,13 @@ public class Signature implements BookElement {
 			}
 		};
 	}
-	
+
 	/**
 	 * Wraps this object to iterate through the pages in the order of the
 	 * Leaves and with the recto of each Leaf coming right before its verso.
-	 * @see {@link #leafIterator}
-	 * @return This object wrapped as an Iterable<Page>.
+	 *
+	 * @see #leafIterator
+	 * @return this object wrapped as an Iterable<Page>
 	 */
 	public Iterable<Page> pages() {
 		return new Iterable<Page>() {
@@ -180,12 +189,10 @@ public class Signature implements BookElement {
 			}
 		};
 	}
-	
+
 	/**
 	 * Renders the given sheet into the given document as two new pages
 	 * (recto first, verso second).
-	 * @param i
-	 * @param doc
 	 */
 	private void renderSheet(Sheet sheet, VirtualDocument.Builder doc,
 	                         Volume.RenderingSettings settings) {
@@ -196,7 +203,7 @@ public class Signature implements BookElement {
 		VirtualPage back = sheet.renderBack(settings.getFlip());
 		doc.addPage(back);
 	}
-	
+
 	/**
 	 * Renders all Sheets in this signature into the given document,
 	 * each as two new pages (recto first, verso second).
@@ -209,7 +216,7 @@ public class Signature implements BookElement {
 			renderSheet(s, doc, settings);
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Signature@" + hashCode();
