@@ -96,7 +96,7 @@ public abstract class Page implements BookElement {
 	 * @return a new VirtualPage object representing this page
 	 */
 	public VirtualPage render() {
-		logger.verbose("page_rendering", this);
+		if (logger.isDebugEnabled()) logger.debug("page_rendering", this);
 		/** Front side of this sheet compiled into page */
 		VirtualPage.Builder paper = new VirtualPage.Builder();
 		paper.setWidth(width);
@@ -121,7 +121,8 @@ public abstract class Page implements BookElement {
 	 *         rotated by {@code rotation}
 	 */
 	public VirtualPage render(Rotation rotation) {
-		logger.verbose("page_renderingRotated", this, rotation);
+		if (logger.isDebugEnabled())
+			logger.debug("page_renderingRotated", this, rotation);
 		/** Front side of this sheet compiled into page */
 		VirtualPage.Builder paper = new VirtualPage.Builder();
 		final double outputWidth, outputHeight;

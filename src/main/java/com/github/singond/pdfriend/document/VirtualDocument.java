@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
+import com.github.singond.pdfriend.util.Formatting;
 
 /**
  * Represents an output document.
@@ -15,8 +16,8 @@ import com.github.singond.pdfriend.Log;
  * This is a part of the uniform document interface shared between modules.
  * If the used implementation of Content is immutable, this document
  * itself is immutable.
- * @author Singon
  *
+ * @author Singon
  */
 public final class VirtualDocument implements Iterable<VirtualPage> {
 
@@ -38,9 +39,10 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 	private static final int CONCAT_TO_STRING_LIMIT = 4;
 
 	/**
-	 * Constructs a new document composed of the given pages.
+	 * Constructs a new named document composed of the given pages.
 	 *
-	 * @param pages
+	 * @param pages the pages of the document to be created
+	 * @param name the name to be given to the document
 	 */
 	public VirtualDocument(List<VirtualPage> pages, String name) {
 		this.pages = new ArrayList<>(pages);
@@ -50,7 +52,7 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 	/**
 	 * Constructs a new document composed of the given pages.
 	 *
-	 * @param pages
+	 * @param pages the pages of the document to be created
 	 */
 	public VirtualDocument(List<VirtualPage> pages) {
 		this(pages, null);
@@ -61,6 +63,7 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 	 * Returns a list of all pages in this document.
 	 * Note that the document pages are numbered from one, therefore their
 	 * numbers do not correspond to their indices in this internal list!
+	 *
 	 * @return A defensive copy of the list of pages.
 	 */
 	public List<VirtualPage> getPages() {
@@ -69,6 +72,7 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 
 	/**
 	 * Returns a specific page of the document.
+	 *
 	 * @param index The number of the page, starting from number one.
 	 * @return The document page.
 	 */
@@ -78,7 +82,8 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 
 	/**
 	 * Returns the number of pages in this document.
-	 * @return
+	 *
+	 * @return the number of pages in this document
 	 */
 	public int getLength() {
 		return pages.size();
@@ -87,6 +92,7 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 	/**
 	 * Returns the dimensions of the minimal rectangle into which all pages
 	 * of this document can fit.
+	 *
 	 * @return the pair of dimensions [width, height]
 	 */
 	public double[] maxPageDimensions() {
@@ -107,21 +113,31 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 
 	/**
 	 * Joins several virtual document into one in the order they are given.
+	 * If only one document is given, it returns the original document.
 	 *
 	 * @param docs a list of virtual documents to be joined, listed in the
 	 *        order they should appear in the output
 	 * @return a new instance of VirtualDocument containing all input
-	 *         documents merged into one
+	 *         documents merged into one,
+	 *         or the original, if it was the only document
 	 */
 	public static VirtualDocument concatenate(List<VirtualDocument> docs) {
+		if (docs == null) {
+			throw new NullPointerException("The list of documents is null");
+		}
+
+		if (docs.size() == 1) {
+			return docs.get(0);
+		}
+
 		if (logger.isDebugEnabled())
 			logger.debug("vdoc_concatenating", docs.size());
 		final List<VirtualPage> pages = new ArrayList<>();
 		for (VirtualDocument doc : docs) {
 			pages.addAll(doc.getPages());
 		}
-		return new VirtualDocument(pages,
-				listDigest(docs, CONCAT_TO_STRING_LIMIT).toString());
+		return new VirtualDocument(pages, Formatting.listDigest(
+				docs, CONCAT_TO_STRING_LIMIT).toString());
 	}
 
 	/**
@@ -130,22 +146,32 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 	 * @param docs virtual documents to be joined, listed in the order they
 	 *        should appear in the output
 	 * @return a new instance of VirtualDocument containing all input
-	 *         documents merged into one
+	 *         documents merged into one,
+	 *         or the original, if it was the only document
 	 */
 	public static VirtualDocument concatenate(VirtualDocument... docs) {
+		if (docs == null) {
+			throw new NullPointerException("The array of documents is null");
+		}
+
+		if (docs.length == 1) {
+			return docs[0];
+		}
+
 		if (logger.isDebugEnabled())
 			logger.debug("vdoc_concatenating", docs.length);
 		final List<VirtualPage> pages = new ArrayList<>();
 		for (VirtualDocument doc : docs) {
 			pages.addAll(doc.getPages());
 		}
-		return new VirtualDocument(pages, listDigest(
+		return new VirtualDocument(pages, Formatting.listDigest(
 				Arrays.asList(docs), CONCAT_TO_STRING_LIMIT).toString());
 	}
 
 	/**
 	 * Returns the dimensions of the minimal rectangle into which any page
 	 * of the given documents can fit.
+	 *
 	 * @return the pair of dimensions [width, height]
 	 */
 	public static double[] maxPageDimensions(List<VirtualDocument> docs) {
@@ -162,7 +188,8 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 
 	/**
 	 * Returns the total number of pages in the given documents.
-	 * @param docs
+	 *
+	 * @param docs the total number of pages in the given documents
 	 * @return the sum of lengths of the given documents
 	 */
 	public static int totalLength(List<VirtualDocument> docs) {
@@ -175,6 +202,7 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 
 	/**
 	 * Returns the length of the longest document from the list.
+	 *
 	 * @param docs the list of document to be searched
 	 * @return the length of the longest document
 	 */
@@ -203,7 +231,7 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 	 * @return the names of this document's contents
 	 */
 	public String contentToString() {
-		return listDigest(pages, 4).toString();
+		return Formatting.listDigest(pages, 4).toString();
 	}
 
 	@Override
@@ -213,18 +241,6 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 		} else {
 			return contentToString();
 		}
-	}
-
-	private static StringBuilder listDigest(List<?> list, int limit) {
-		StringBuilder sb = new StringBuilder();
-		if (list.size() <= limit) {
-			sb.append(list.toString());
-		} else {
-			sb.append(list.subList(0, limit).toString());
-			sb.setLength(sb.length() - 1);
-			sb.append("... (" + (list.size() - limit) + " more)]");
-		}
-		return sb;
 	}
 
 	public ListIterator<VirtualPage> iterator(int index) {
@@ -238,7 +254,8 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 	}
 
 	/**
-	 * Mutable class for constructing Document objects easily and incrementally.
+	 * Mutable class for constructing {@code VirtualDocument} objects
+	 * easily and incrementally.
 	 */
 	public static class Builder {
 
@@ -258,6 +275,8 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 		/**
 		 * Constructs a new builder initialized from an existing
 		 * document object.
+		 *
+		 * @param doc the document whose pages are to be copied to this builder
 		 */
 		public Builder(VirtualDocument doc) {
 			pages = new ArrayList<>(doc.pages.size());
@@ -290,6 +309,8 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 
 		/**
 		 * Adds a page to the end of the document.
+		 *
+		 * @param page the page to be added
 		 */
 		public void addPage(VirtualPage page) {
 			pages.add(new VirtualPage.Builder(page));
@@ -297,6 +318,8 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 
 		/**
 		 * Adds a page builder to the end of the document.
+		 *
+		 * @param page the page builder to be added
 		 */
 		public void addPage(VirtualPage.Builder page) {
 			pages.add(page);
@@ -326,6 +349,8 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 
 		/**
 		 * Removes the first occurence of the given page from the list.
+		 *
+		 * @param page the page to be removed
 		 */
 		public void removePage(VirtualPage.Builder page) {
 			pages.remove(page);
@@ -342,6 +367,11 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 			return pages;
 		}
 
+		/**
+		 * Sets the name of the document.
+		 *
+		 * @param name name to be given to the document
+		 */
 		public void setName(String name) {
 			this.name = name;
 		}
@@ -351,7 +381,7 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 		 */
 		public VirtualDocument build() {
 			if (logger.isDebugEnabled())
-				logger.debug("Building virtual document {} pages long", pages.size());
+				logger.debug("Building virtual document with {} pages", pages.size());
 			return new VirtualDocument(pages.stream()
 					.map(VirtualPage.Builder::build)
 					.collect(Collectors.toList()), name);

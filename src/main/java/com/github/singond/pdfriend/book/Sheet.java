@@ -70,7 +70,8 @@ public class Sheet implements BookElement {
 	 * @return A new VirtualPage object with the front side of this Sheet.
 	 */
 	public VirtualPage renderFront() {
-		logger.verbose("sheet_renderingFront", this);
+		if (logger.isDebugEnabled())
+			logger.debug("sheet_renderingFront", this);
 		/** Front side of this sheet compiled into page */
 		VirtualPage.Builder paper = new VirtualPage.Builder();
 		paper.setWidth(width);
@@ -108,7 +109,8 @@ public class Sheet implements BookElement {
 	 * @return A new VirtualPage object with the front side of this Sheet.
 	 */
 	public VirtualPage renderBack(FlipDirection flip) {
-		logger.verbose("sheet_renderingBack", this);
+		if (logger.isDebugEnabled())
+			logger.debug("sheet_renderingBack", this);
 		/** Back side of this sheet compiled into page */
 		VirtualPage.Builder paper = new VirtualPage.Builder();
 		paper.setWidth(width);
@@ -171,7 +173,8 @@ public class Sheet implements BookElement {
 
 	/**
 	 * Wraps this object to iterate through the Leaves in their order.
-	 * @see {@link #leafIterator}
+	 *
+	 * @see #leafIterator
 	 * @return This object wrapped as an Iterable<Leaf>.
 	 */
 	public Iterable<Leaf> leaves() {
@@ -186,7 +189,8 @@ public class Sheet implements BookElement {
 	/**
 	 * Wraps this object to iterate through the pages in the order of the
 	 * Leaves and with the recto of each Leaf coming right before its verso.
-	 * @see {@link #leafIterator}
+	 *
+	 * @see #leafIterator
 	 * @return This object wrapped as an Iterable<Page>.
 	 */
 	public Iterable<Page> pages() {
