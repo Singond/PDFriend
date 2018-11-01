@@ -171,7 +171,8 @@ public class Sheet implements BookElement {
 
 	/**
 	 * Wraps this object to iterate through the Leaves in their order.
-	 * @see {@link #leafIterator}
+	 *
+	 * @see #leafIterator
 	 * @return This object wrapped as an Iterable<Leaf>.
 	 */
 	public Iterable<Leaf> leaves() {
@@ -186,7 +187,8 @@ public class Sheet implements BookElement {
 	/**
 	 * Wraps this object to iterate through the pages in the order of the
 	 * Leaves and with the recto of each Leaf coming right before its verso.
-	 * @see {@link #leafIterator}
+	 *
+	 * @see #leafIterator
 	 * @return This object wrapped as an Iterable<Page>.
 	 */
 	public Iterable<Page> pages() {
