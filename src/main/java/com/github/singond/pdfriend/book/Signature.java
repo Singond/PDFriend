@@ -76,7 +76,8 @@ public class Signature implements BookElement {
 	 * @throw {@code NullPointerException} when Leaf order is null.
 	 */
 	public int numberPagesFrom(int number, Order<Leaf> order) {
-		logger.verbose("signature_numbering", this, number);
+		if (logger.isDebugEnabled())
+			logger.debug("signature_numbering", this, number);
 		if (order == null) {
 			throw new NullPointerException("The leaf order cannot be null");
 		}
@@ -188,7 +189,8 @@ public class Signature implements BookElement {
 	 */
 	private void renderSheet(Sheet sheet, VirtualDocument.Builder doc,
 	                         Volume.RenderingSettings settings) {
-		logger.verbose("signature_renderingSheet", sheet);
+		if (logger.isDebugEnabled())
+			logger.debug("signature_renderingSheet", sheet);
 		VirtualPage front = sheet.renderFront();
 		doc.addPage(front);
 		VirtualPage back = sheet.renderBack(settings.getFlip());
@@ -201,7 +203,8 @@ public class Signature implements BookElement {
 	 */
 	public void renderAllSheets(VirtualDocument.Builder doc,
 	                            Volume.RenderingSettings settings) {
-		logger.verbose("signature_rendering", this);
+		if (logger.isDebugEnabled())
+			logger.debug("signature_rendering", this);
 		for (Sheet s : sheets) {
 			renderSheet(s, doc, settings);
 		}

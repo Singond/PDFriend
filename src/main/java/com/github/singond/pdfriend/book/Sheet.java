@@ -70,7 +70,8 @@ public class Sheet implements BookElement {
 	 * @return A new VirtualPage object with the front side of this Sheet.
 	 */
 	public VirtualPage renderFront() {
-		logger.verbose("sheet_renderingFront", this);
+		if (logger.isDebugEnabled())
+			logger.debug("sheet_renderingFront", this);
 		/** Front side of this sheet compiled into page */
 		VirtualPage.Builder paper = new VirtualPage.Builder();
 		paper.setWidth(width);
@@ -108,7 +109,8 @@ public class Sheet implements BookElement {
 	 * @return A new VirtualPage object with the front side of this Sheet.
 	 */
 	public VirtualPage renderBack(FlipDirection flip) {
-		logger.verbose("sheet_renderingBack", this);
+		if (logger.isDebugEnabled())
+			logger.debug("sheet_renderingBack", this);
 		/** Back side of this sheet compiled into page */
 		VirtualPage.Builder paper = new VirtualPage.Builder();
 		paper.setWidth(width);
