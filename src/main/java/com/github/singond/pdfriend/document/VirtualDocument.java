@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
+import com.github.singond.pdfriend.util.Formatting;
 
 /**
  * Represents an output document.
@@ -120,8 +121,8 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 		for (VirtualDocument doc : docs) {
 			pages.addAll(doc.getPages());
 		}
-		return new VirtualDocument(pages,
-				listDigest(docs, CONCAT_TO_STRING_LIMIT).toString());
+		return new VirtualDocument(pages, Formatting.listDigest(
+				docs, CONCAT_TO_STRING_LIMIT).toString());
 	}
 
 	/**
@@ -139,7 +140,7 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 		for (VirtualDocument doc : docs) {
 			pages.addAll(doc.getPages());
 		}
-		return new VirtualDocument(pages, listDigest(
+		return new VirtualDocument(pages, Formatting.listDigest(
 				Arrays.asList(docs), CONCAT_TO_STRING_LIMIT).toString());
 	}
 
@@ -203,7 +204,7 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 	 * @return the names of this document's contents
 	 */
 	public String contentToString() {
-		return listDigest(pages, 4).toString();
+		return Formatting.listDigest(pages, 4).toString();
 	}
 
 	@Override
@@ -213,18 +214,6 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 		} else {
 			return contentToString();
 		}
-	}
-
-	private static StringBuilder listDigest(List<?> list, int limit) {
-		StringBuilder sb = new StringBuilder();
-		if (list.size() <= limit) {
-			sb.append(list.toString());
-		} else {
-			sb.append(list.subList(0, limit).toString());
-			sb.setLength(sb.length() - 1);
-			sb.append("... (" + (list.size() - limit) + " more)]");
-		}
-		return sb;
 	}
 
 	public ListIterator<VirtualPage> iterator(int index) {
