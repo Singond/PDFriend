@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
+import com.github.singond.pdfriend.util.Formatting;
 
 /**
  * A generalized representation of a page in a document.
@@ -26,6 +27,8 @@ public final class VirtualPage {
 	private final double height;
 	/** A collection of all content elements along with their positions. */
 	private final Set<Content> content;
+
+	private static final int TO_STRING_LIMIT = 4;
 
 	private static ExtendedLogger logger = Log.logger(VirtualPage.class);
 
@@ -159,10 +162,7 @@ public final class VirtualPage {
 		 * Consistency between invocations is achieved by using LinkedHashSet
 		 * for contents.
 		 */
-		// TODO Return abbreviated content if too long
-//		return "Virtualpage@"+hashCode()+" ("+content.size()+" pieces of content)";
-//		return width + "x" + height + " " + content.toString();
-		return content.toString();
+		return Formatting.listDigest(content, TO_STRING_LIMIT).toString();
 	}
 
 	/**
@@ -255,7 +255,8 @@ public final class VirtualPage {
 		 */
 		public VirtualPage build() {
 			if (logger.isDebugEnabled())
-				logger.debug("vpage_building", width, height, content.size());
+				logger.debug("vpage_building", width, height,
+						Formatting.listDigest(content, TO_STRING_LIMIT));
 			return new VirtualPage(width, height, content);
 		}
 	}
