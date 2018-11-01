@@ -16,8 +16,8 @@ import com.github.singond.pdfriend.util.Formatting;
  * This is a part of the uniform document interface shared between modules.
  * If the used implementation of Content is immutable, this VirtualPage
  * itself is immutable.
- * @author Singon
  *
+ * @author Singon
  */
 public final class VirtualPage {
 
@@ -35,6 +35,7 @@ public final class VirtualPage {
 
 	/**
 	 * Creates a blank new VirtualPage with the given dimensions.
+	 *
 	 * @param width the width of the output sheet
 	 * @param height the height of the output sheet
 	 */
@@ -47,10 +48,11 @@ public final class VirtualPage {
 	/**
 	 * Creates a new instance of VirtualPage with the given dimensions
 	 * and content.
-	 * The content (given as a collection of content elements), is
-	 * defensively copied into the internal collection of content.
-	 * @param width the width of the output sheet
-	 * @param height the height of the output sheet
+	 * The collection of content elements is defensively copied into the
+	 * internal collection of content.
+	 *
+	 * @param width the width of the new page
+	 * @param height the height of the new page
 	 * @param content the content of the sheet, given as collection of
 	 *        content elements
 	 */
@@ -64,8 +66,9 @@ public final class VirtualPage {
 	 * Creates a new instance of VirtualPage with the given dimensions
 	 * and content.
 	 * The piece of content is automatically put into the internal collection.
-	 * @param width the width of the output sheet
-	 * @param height the height of the output sheet
+	 *
+	 * @param width the width of the new page
+	 * @param height the height of the new page
 	 * @param content the single piece of content on the page
 	 */
 	public VirtualPage(double width, double height, Content content) {
@@ -78,7 +81,9 @@ public final class VirtualPage {
 	/**
 	 * A copy constructor.
 	 * Creates a new instance of VirtualPagae which is a copy of the given
-	 * VirtualPage, including all its content.
+	 * VirtualPage, including all of its content.
+	 *
+	 * @param original the page to be copied
 	 */
 	public VirtualPage(VirtualPage original) {
 		this.width = original.width;
@@ -98,11 +103,12 @@ public final class VirtualPage {
 	/**
 	 * Returns an object representing all content elements of this page.
 	 * The returned object allows transforming the content using arbitrary
-	 * affine transform, but this ability is associated with some overhead
-	 * in both object construction and method execution.
-	 * In case that transformable content is not required, the method
-	 * {@link #getContentStatic} should be preferred for better performance.
-	 * @return a non-live view (but see {@link #Contents}) of the content
+	 * affine transform, but this ability is associated with some overhead.
+	 * <p>
+	 * In case that transformable content is not required, the object returned
+	 * by {@link #getContentStatic} is expected to perform better.
+	 *
+	 * @return a non-live view (but see {@link Contents}) of the content
 	 */
 	public TransformableContents getContents() {
 		return new ContentsMovable(getMovableContent());
@@ -113,10 +119,11 @@ public final class VirtualPage {
 	 * The returned object does not permit transformations and throws
 	 * {@code UnsupportedOperationException} on invocation of the
 	 * {@link Content#transform} method.
+	 * <p>
 	 * The object returned by this method is expected to perform better when
-	 * compared to that returned by {@link #getContents}, both in instance
-	 * creation and method execution.
-	 * @return a non-live view (but see {@link #Contents}) of the content
+	 * compared to that returned by {@link #getContents}.
+	 *
+	 * @return a non-live view (but see {@link Contents}) of the content
 	 */
 	public Contents getContentStatic() {
 		return new ContentsStatic(new ArrayList<>(content));
@@ -125,6 +132,7 @@ public final class VirtualPage {
 	/**
 	 * Returns the content of the sheet as a collection of all content
 	 * elements, wrapped in a builder object to facilitate transforming.
+	 *
 	 * @return a shallow copy of the internal collection of content
 	 *         elements, each converted to a new Content.Movable
 	 */
@@ -142,7 +150,7 @@ public final class VirtualPage {
 	 * While individual pieces of content may themselves be invisible
 	 * or empty, this method currently only checks whether the number of
 	 * content elements is zero.
-	 * </p>
+	 *
 	 * @return {@code true} if skipping the page in rendering would not
 	 *         make any visible changes to the output
 	 */
@@ -175,7 +183,7 @@ public final class VirtualPage {
 		private List<Content> content;
 
 		/**
-		 * Constructs a new page builder with a default page size.
+		 * Constructs a new page builder with a default page size and no conent.
 		 * The default size of the page is 595x842 pt, which is roughly
 		 * equivalent to an A4 page. These dimensions can be changed any time.
 		 */
@@ -188,6 +196,8 @@ public final class VirtualPage {
 		/**
 		 * Constructs a new page builder initialized from an existing
 		 * virtual page object.
+		 *
+		 * @param page the page to be copied in the new instance
 		 */
 		public Builder(VirtualPage page) {
 			width = page.width;
@@ -221,7 +231,7 @@ public final class VirtualPage {
 		 * <p><b>Warning:</b> This removes all previously set content
 		 * in this page!</p>
 		 *
-		 * @param contents
+		 * @param contents the contents to be set to this page
 		 */
 		public void setContent(Contents contents) {
 			if (!this.content.isEmpty()) {
@@ -233,7 +243,7 @@ public final class VirtualPage {
 		/**
 		 * Adds a single piece of content.
 		 *
-		 * @param content
+		 * @param content the piece of content to be added
 		 */
 		public void addContent(Content content) {
 			this.content.add(content);
@@ -242,7 +252,7 @@ public final class VirtualPage {
 		/**
 		 * Adds all given contents.
 		 *
-		 * @param contents
+		 * @param contents the contents to be added
 		 */
 		public void addContent(Contents contents) {
 			this.content.addAll(contents.get());
