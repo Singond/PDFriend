@@ -113,13 +113,23 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 
 	/**
 	 * Joins several virtual document into one in the order they are given.
+	 * If only one document is given, it returns the original document.
 	 *
 	 * @param docs a list of virtual documents to be joined, listed in the
 	 *        order they should appear in the output
 	 * @return a new instance of VirtualDocument containing all input
-	 *         documents merged into one
+	 *         documents merged into one,
+	 *         or the original, if it was the only document
 	 */
 	public static VirtualDocument concatenate(List<VirtualDocument> docs) {
+		if (docs == null) {
+			throw new NullPointerException("The list of documents is null");
+		}
+
+		if (docs.size() == 1) {
+			return docs.get(0);
+		}
+
 		if (logger.isDebugEnabled())
 			logger.debug("vdoc_concatenating", docs.size());
 		final List<VirtualPage> pages = new ArrayList<>();
@@ -136,9 +146,18 @@ public final class VirtualDocument implements Iterable<VirtualPage> {
 	 * @param docs virtual documents to be joined, listed in the order they
 	 *        should appear in the output
 	 * @return a new instance of VirtualDocument containing all input
-	 *         documents merged into one
+	 *         documents merged into one,
+	 *         or the original, if it was the only document
 	 */
 	public static VirtualDocument concatenate(VirtualDocument... docs) {
+		if (docs == null) {
+			throw new NullPointerException("The array of documents is null");
+		}
+
+		if (docs.length == 1) {
+			return docs[0];
+		}
+
 		if (logger.isDebugEnabled())
 			logger.debug("vdoc_concatenating", docs.length);
 		final List<VirtualPage> pages = new ArrayList<>();
