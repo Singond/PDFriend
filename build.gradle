@@ -78,7 +78,7 @@ jar {
 			it.isDirectory() ? it : zipTree(it)
 		}
 	}
-	baseName 'pdfriend-standalone'
+	classifier = 'standalone'
 	destinationDir file("${distFiles}")
 }
 
@@ -95,7 +95,7 @@ def izpackDir = "${buildDir}/tools/izpack"
 izpack {
 	baseDir = file("${izpackDir}")
 	installFile = file("${izpackDir}/install.xml")
-	outputFile = file("${distFiles}/pdfriend-installer-${version}.jar")
+	outputFile = file("${distFiles}/pdfriend-${version}-installer.jar")
 }
 
 task izpackSourceFiles (type: Copy) {
