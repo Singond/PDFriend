@@ -49,7 +49,6 @@ public class PDFParser implements Parser, AutoCloseable {
 
 	/**
 	 * {@inheritDoc}
-	 * Imports the file given in constructor, if it is a PDF file.
 	 */
 	@SuppressWarnings("resource") // Resources are closed later in close() method
 	@Override
@@ -57,8 +56,8 @@ public class PDFParser implements Parser, AutoCloseable {
 			throws ParsingException {
 		PDDocument sourceDoc = null;
 		try {
-			if (logger.isDebugEnabled()) logger.debug("parse_pdf");
 			sourceDoc = PDDocument.load(in.getInputStream());
+			if (logger.isDebugEnabled()) logger.debug("parse_pdf");
 			openDocs.add(sourceDoc);
 			String name = in.getName();
 			VirtualDocument.Builder result = parseDocument(sourceDoc, name);

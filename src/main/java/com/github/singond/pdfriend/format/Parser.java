@@ -8,8 +8,8 @@ import com.github.singond.pdfriend.io.InputElement;
 public interface Parser {
 
 	/**
-	 * Process the given binary data into a new VirtualDocument.
-	 * For each page of the input, create a new VirtualPage with the
+	 * Process the given binary data into a new {@code VirtualDocument}.
+	 * For each page of the input, create a new {@code VirtualPage} with the
 	 * input page set as its only content in the default position.
 	 *
 	 * @param in the stream of data to import
@@ -19,8 +19,8 @@ public interface Parser {
 			throws ParsingException;
 
 	/**
-	 * Process the given input into a new VirtualDocument.
-	 * For each page of the input, create a new VirtualPage with the
+	 * Process the given input into a new {@code VirtualDocument}.
+	 * For each page of the input, create a new {@code VirtualPage} with the
 	 * input page set as its only content in the default position.
 	 *
 	 * @param in an input element containing the data to import
