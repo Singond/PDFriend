@@ -3,9 +3,9 @@ package com.github.singond.pdfriend.imposition;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.validators.PositiveInteger;
-import com.github.singond.pdfriend.cli.ParameterConsistencyException;
 import com.github.singond.pdfriend.cli.DimensionsConverter;
 import com.github.singond.pdfriend.cli.MarginsConverter;
+import com.github.singond.pdfriend.cli.ParameterConsistencyException;
 import com.github.singond.pdfriend.cli.ParameterDelegate;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.Margins;
@@ -17,7 +17,7 @@ import com.github.singond.pdfriend.imposition.CommonSettings.MarginSettings;
  * Provides configuration settings for the imposition module which affect
  * the output document. The settings include page size, sheet size, number
  * of pages etc.
- * 
+ *
  * @author Singon
  */
 @Parameters(resourceBundle="Help", separators="=")
@@ -29,21 +29,21 @@ class CommonSettingsCli implements ParameterDelegate {
 	           descriptionKey = "param-pageCount",
 	           validateWith = PositiveInteger.class)
 	private int pages = -1;
-	
+
 	/** How many times to repeat each page */
 	@Parameter(names = "--repeat-page",
 	           description = "How many times to repeat each page",
 	           descriptionKey = "param-repeatPage",
 	           validateWith = PositiveInteger.class)
 	private int repeatPage = 1;
-	
+
 	/** How many times to repeat each document */
 	@Parameter(names = "--repeat-doc",
 	           description = "How many times to repeat each document",
 	           descriptionKey = "param-repeatDoc",
 	           validateWith = PositiveInteger.class)
 	private int repeatDocument = 1;
-	
+
 	/**
 	 * Size of a single page of the assembled output document.
 	 * This is the dimensions of the document page in its final form,
@@ -55,7 +55,7 @@ class CommonSettingsCli implements ParameterDelegate {
 	           descriptionKey = "param-pageSize",
 	           converter = DimensionsConverter.class)
 	private Dimensions pageSize = null;
-	
+
 	/**
 	 * Size of the output sheet before assembling the document.
 	 * This is the dimensions of the output document in its raw form,
@@ -69,7 +69,7 @@ class CommonSettingsCli implements ParameterDelegate {
 	           descriptionKey = "param-pageSize",
 	           converter = DimensionsConverter.class)
 	private Dimensions sheetSize = null;
-	
+
 	/**
 	 * Interprets paper formats as landscape.
 	 */
@@ -77,7 +77,7 @@ class CommonSettingsCli implements ParameterDelegate {
 	           description="Interpret named paper formats (such as A4) as landscape",
 	           descriptionKey="param-landscape")
 	private boolean landscape = false;
-	
+
 	/**
 	 * Interprets paper formats as portrait.
 	 */
@@ -85,7 +85,7 @@ class CommonSettingsCli implements ParameterDelegate {
 	           description="Interpret named paper formats (such as A4) as portrait",
 	           descriptionKey="param-portrait")
 	private boolean portrait = false;
-	
+
 	/**
 	 * Margins of the output page.
 	 * This argument takes one of the following forms:
@@ -103,7 +103,7 @@ class CommonSettingsCli implements ParameterDelegate {
 	           descriptionKey="param-margins",
 	           converter=MarginsConverter.class)
 	private Margins margins = null;
-	
+
 	@Parameter(names="--mirror-margins",
 	           arity=1,
 	           description="Whether verso margins should be mirrored",
@@ -117,40 +117,35 @@ class CommonSettingsCli implements ParameterDelegate {
 					"Cannot set both landscape and portrait orientation");
 		}
 	}
-	
+
 	public boolean isSet() {
 		return pages > 0
 				|| pageSize != null
 				|| sheetSize != null
 				|| margins != null;
 	}
-	
+
 	public CommonSettings getCommonSettings() {
 		boolean isLandscape = landscape;
-		
+
 		CommonSettings.Builder sb = new CommonSettings.Builder();
 		sb.setPageCount(pages);
 		sb.setRepeatPage(repeatPage);
 		sb.setRepeatDocument(repeatDocument);
-		sb.setPageSize(dimSettings(flipFormat(pageSize, isLandscape)));
-		sb.setSheetSize(dimSettings(flipFormat(sheetSize, isLandscape)));
+		sb.setPageSize(dimSettings(pageSize, isLandscape));
+		sb.setSheetSize(dimSettings(sheetSize, isLandscape));
 		sb.setMargins(margins == null ? MarginSettings.AUTO : MarginSettings.of(margins));
 		sb.setMirrorMargins(marginsMirrored);
 		return sb.build();
 	}
-	
-	private Dimensions flipFormat(Dimensions dims, boolean flip) {
-		if (flip) {
-			return dims.changeOrientation();
-		} else {
-			return dims;
-		}
-	}
-	
-	private DimensionSettings dimSettings(Dimensions dims) {
+
+	private DimensionSettings dimSettings(Dimensions dims, boolean flip) {
 		if (dims == null) {
 			return DimensionSettings.AUTO;
 		} else {
+			if (flip) {
+				dims = dims.changeOrientation();
+			}
 			return DimensionSettings.of(dims);
 		}
 	}
