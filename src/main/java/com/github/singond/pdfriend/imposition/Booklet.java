@@ -212,9 +212,6 @@ public class Booklet extends AbstractImposable<BoundBook>
 		}
 		doc = preprocessor.processAll();
 
-		// TODO: Fix this, sometimes shows -1
-		logger.info("booklet_constructing", pageCount);
-
 		/*
 		 * Determine the number of pages in output.
 		 * If the number is given explicitly, honor its value, otherwise
@@ -239,6 +236,7 @@ public class Booklet extends AbstractImposable<BoundBook>
 		/*
 		 * Build the volume.
 		 */
+		logger.info("booklet_constructing", pageCount);
 		Volume volume = new Volume();
 		assert pageSize.isValue();
 		SignatureMaker maker = new SignatureMaker
