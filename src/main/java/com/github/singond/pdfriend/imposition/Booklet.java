@@ -232,7 +232,7 @@ public class Booklet extends AbstractImposable<BoundBook>
 		if (pageCount % 4 != 0) {
 			int oldPages = pageCount;
 			pageCount = ((pageCount / 4) + 1) * 4;
-			logger.warn("booklet_padding", pageCount-oldPages);
+			logger.warn("booklet_padding", oldPages, pageCount-oldPages);
 		}
 		assert (pageCount >= 1) && (pageCount % 4 == 0) : pageCount;
 
