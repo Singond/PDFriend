@@ -1,5 +1,7 @@
 # Changelog
+This is a changelog for _PDFriend_.
 
+## [0.7.0] - 2019-05-09
 ### Added
 - Added a new `--compact` option to the `reorder` command
 - Improved readability of logs at levels `verbose` and below.
@@ -9,6 +11,10 @@
 ### Changed
 - Changed the names of the application archives
   to `pdfriend-<version>-standalone.jar`
+- Improved some log messages to make their meaning clearer.
+
+### Fixed
+- Fixed an error when the `--landscape` option caused PDFriend to crash.
 
 ## [0.6.3] - 2018-10-23
 ### Changed
