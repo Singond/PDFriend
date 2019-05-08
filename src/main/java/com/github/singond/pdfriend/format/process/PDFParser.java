@@ -64,8 +64,8 @@ public class PDFParser implements Parser, AutoCloseable {
 			result.setName(name);
 			return result.build();
 		} catch (IOException e) {
-			logger.error("Error when parsing the file", e);
-			throw new ParsingException("Error when parsing the PDF file", e);
+			logger.error("Error reading input", e);
+			throw new ParsingException("Error reading input", e);
 		}
 	}
 
