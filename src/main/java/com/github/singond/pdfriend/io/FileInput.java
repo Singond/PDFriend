@@ -44,10 +44,12 @@ class FileInput implements InputElement {
 			return Files.newInputStream(file);
 		} else if (Files.notExists(file)) {
 			// The file is verified not to exist
+			logger.error("File not found: {}", file);
 			throw new FileNotFoundException("Cannot find file " + file);
 		} else {
 			// The file's status is unknown
-			throw new FileNotFoundException("Cannot check the status of file " + file);
+			logger.error("Cannot check file status: {}", file);
+			throw new IOException("Cannot check the status of file " + file);
 		}
 	}
 
