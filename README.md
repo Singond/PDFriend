@@ -19,10 +19,12 @@ Manual installation
 -------------------
 Standalone executable jars are provided at the
 [releases page](https://github.com/Singond/PDFriend/releases).
-Download the `pdfriend-standalone-*.jar` and put it anywhere on your computer.
+Download the `pdfriend-*-standalone.jar` and put it anywhere on your computer.
 You can then run the application like any other executable jar:
 
-    java -jar pdfriend-standalone.jar [arguments]
+    java -jar pdfriend-???-standalone.jar <arguments>
+
+where `???` is the version number.
 
 You can simplify this by creating a script called `pdfriend`,
 where you call the command above and pass any arguments given
@@ -30,13 +32,13 @@ to the script into the command.
 If you put the script somewhere in your `PATH` and make it executable,
 you can then invoke pdfriend by simply issuing:
 
-    pdfriend [arguments]
+    pdfriend <arguments>
 
 Using the installer
 -------------------
 An experimental cross-platform installer is available from
 the [releases page](https://github.com/Singond/PDFriend/releases)
-as the `pdfriend-installer-*.jar` file.
+as the `pdfriend-*-installer.jar` file.
 This installer requires Java to be installed. It will unpack PDFriend
 into a directory of your choice.
 On Linux, it will also install a shell script and add it to the `PATH`
