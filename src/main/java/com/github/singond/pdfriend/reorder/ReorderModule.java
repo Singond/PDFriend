@@ -13,26 +13,26 @@ import com.github.singond.pdfriend.modules.ModuleException;
  * @author Singon
  *
  */
-public class Reordering implements Module {
+public class ReorderModule implements Module {
 
 	/**
 	 * The imposition task containing all settings needed.
 	 * These include preprocessor settings and settings specific to this
 	 * imposition type.
 	 */
-	private Reorderable task;
+	private ReorderTask task;
 
 	/** The name of this module */
 	private static final String MODULE_NAME = "Reordering";
 
 	/** Logger instance */
-	private static ExtendedLogger logger = Log.logger(Reordering.class);
+	private static ExtendedLogger logger = Log.logger(ReorderModule.class);
 
-	public Reorderable getTask() {
+	public ReorderTask getTask() {
 		return task;
 	}
 
-	public void setTask(Reorderable task) {
+	public void setTask(ReorderTask task) {
 		this.task = task;
 	}
 

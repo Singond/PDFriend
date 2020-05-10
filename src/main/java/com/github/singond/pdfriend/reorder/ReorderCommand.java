@@ -1,11 +1,13 @@
 package com.github.singond.pdfriend.reorder;
 
 import com.beust.jcommander.Parameters;
-import com.beust.jcommander.ParametersDelegate;
+
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
+
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
-import com.github.singond.pdfriend.cli.ParameterConsistencyException;
-import com.github.singond.pdfriend.cli.SubCommand;
+import com.github.singond.pdfriend.cli.CliCommand;
 import com.github.singond.pdfriend.modules.Module;
 
 /**
@@ -16,30 +18,38 @@ import com.github.singond.pdfriend.modules.Module;
  */
 @Parameters(separators="=",
 		commandDescription="Reorder the pages of the source document")
-public class ReorderCommand extends SubCommand {
+@Command(name="reorder", description="Reorder the pages of the source document")
+public class ReorderCommand extends CliCommand {
 	@SuppressWarnings("unused")
 	private static ExtendedLogger logger = Log.logger(ReorderCommand.class);
-	
-	/** The imposition task */
-	@ParametersDelegate
-	private ReorderableResolver reorderable = new ReorderableResolver();
+
+	@Option(names="--reverse",
+			description="Reverse the order of pages in the document")
+	private boolean reverse = false;
+
+	@Option(names="--compact",
+			description="Reorders pages to minimize breaks")
+//			validateWith = PositiveInteger.class)
+	// TODO: Enable specifying a list of numbers
+	private int sectionLength = -1;
 
 	@Override
-	public ReorderCommand newInstance() {
-		return new ReorderCommand();
-	}
-	
-	@Override
-	protected void postParseSpecific() throws ParameterConsistencyException {
-		reorderable.postParse();
-	}
-	
-	@Override
 	public Module getModule() {
-		Reordering reordering = new Reordering();
-		Reorderable task = reorderable.getReorderingTask();
+		ReorderTask task;
+		boolean compact = sectionLength > 0;
+		if (reverse && compact) {
+			// TODO: Enable setting both
+			task = null;
+		} else if (reverse) {
+			task = new Reverse();
+		} else if (compact) {
+			task = new Compact(sectionLength);
+		} else {
+			task = null;
+		}
+		ReorderModule reordering = new ReorderModule();
 		reordering.setTask(task);
 		return reordering;
 	}
-	
+
 }

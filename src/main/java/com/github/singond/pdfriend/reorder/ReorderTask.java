@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.github.singond.pdfriend.document.VirtualDocument;
 
-public interface Reorderable {
+public interface ReorderTask {
 
 	/**
 	 * Returns a name of this reordering task.

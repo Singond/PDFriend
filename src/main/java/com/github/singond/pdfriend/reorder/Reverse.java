@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.github.singond.pdfriend.document.VirtualDocument;
 
-public class Reverse implements Reorderable {
+public class Reverse implements ReorderTask {
 
 	/** The internal name of this reordering task */
 	private static final String NAME = "reverse";

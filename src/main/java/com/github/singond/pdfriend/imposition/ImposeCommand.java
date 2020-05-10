@@ -2,10 +2,13 @@ package com.github.singond.pdfriend.imposition;
 
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
+
+import picocli.CommandLine.Command;
+
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.cli.ParameterConsistencyException;
-import com.github.singond.pdfriend.cli.SubCommand;
+import com.github.singond.pdfriend.cli.SubCommandOld;
 import com.github.singond.pdfriend.modules.Module;
 
 /**
@@ -16,22 +19,23 @@ import com.github.singond.pdfriend.modules.Module;
  */
 @Parameters(separators="=",
 		commandDescription="Lay out pages of the source documents onto pages of a new document")
-public class ImposeCommand extends SubCommand {
+@Command(name="impose")
+public class ImposeCommand extends SubCommandOld {
 	@SuppressWarnings("unused")
 	private static ExtendedLogger logger = Log.logger(ImposeCommand.class);
 
 	/** Page pre-processing settings */
 	@ParametersDelegate
 	private PreprocessorSettingsCli pageOpts = new PreprocessorSettingsCli();
-	
+
 	/** Common imposition settings */
 	@ParametersDelegate
 	private CommonSettingsCli commonOpts = new CommonSettingsCli();
-	
+
 	/** Common imposition settings */
 	@ParametersDelegate
 	private RenderingSettingsCli renderOpts = new RenderingSettingsCli();
-	
+
 	/** The imposition task */
 	@ParametersDelegate
 	private ImposableResolver imposable = new ImposableResolver();
@@ -40,7 +44,7 @@ public class ImposeCommand extends SubCommand {
 	public ImposeCommand newInstance() {
 		return new ImposeCommand();
 	}
-	
+
 	@Override
 	protected void postParseSpecific() throws ParameterConsistencyException {
 		pageOpts.postParse();
@@ -48,7 +52,7 @@ public class ImposeCommand extends SubCommand {
 		renderOpts.postParse();
 		imposable.postParse();
 	}
-	
+
 	@Override
 	public Module getModule() {
 		Imposition impose = new Imposition();
@@ -59,5 +63,5 @@ public class ImposeCommand extends SubCommand {
 		impose.setTask(taskBuilder.buildTask());
 		return impose;
 	}
-	
+
 }

@@ -3,7 +3,7 @@ package com.github.singond.pdfriend.cli;
 import com.beust.jcommander.ParametersDelegate;
 import com.github.singond.pdfriend.modules.Module;
 
-public abstract class SubCommand {
+public abstract class SubCommandOld {
 
 	/**
 	 * The input files.
@@ -42,7 +42,7 @@ public abstract class SubCommand {
 	/**
 	 * Creates a new instance of this SubCommand.
 	 */
-	public abstract SubCommand newInstance();
+	public abstract SubCommandOld newInstance();
 	
 	/**
 	 * Method to be invoked after this SubCommand object is built
@@ -60,7 +60,7 @@ public abstract class SubCommand {
 	 * Method to be invoked after the SubCommand subclass object is built
 	 * and initialized with values from the command line.
 	 * This is a subclass-specific implementation which is invoked by
-	 * {@code postParseDefault} in {@link SubCommand}.
+	 * {@code postParseDefault} in {@link SubCommandOld}.
 	 * @throws ParameterConsistencyException if the parsed values put the object
 	 *         into an invalid state
 	 */

@@ -6,7 +6,7 @@ import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.document.VirtualDocument;
 
-public class Compact implements Reorderable {
+public class Compact implements ReorderTask {
 
 	/** The internal name of this reordering task */
 	private static final String NAME = "compact";
