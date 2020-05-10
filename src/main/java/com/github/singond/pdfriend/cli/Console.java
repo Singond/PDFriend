@@ -59,7 +59,11 @@ public class Console {
 	public ExitStatus execute(String[] args) {
 		CommandLine cmdline = new CommandLine(this);
 		try {
+			// Parse all arguments
 			ParseResult parsed = cmdline.parseArgs(args);
+			// Set verbosity level as early as possible
+			setVerbosity(global.verbosity());
+			// Log basic info
 			if (logger.isVerboseEnabled()) {
 				logger.verbose("PDFriend version {}", Version.current().toString());
 			}
@@ -68,6 +72,7 @@ public class Console {
 				logger.debug("Application directory: {}", Util.getApplicationDir());
 				logger.debug("Arguments: " + String.join(" ", args));
 			}
+			// Run
     		if (cmdline.isUsageHelpRequested()) {
     			cmdline.usage(cmdline.getOut());
     			return ExitStatus.SIMPLE;
@@ -91,11 +96,11 @@ public class Console {
     		}
 		} catch (ParameterException e) {
 			cmdline.getErr().println(e.getMessage());
-			logger.error(e);
+//			logger.error("Invalid usage", e);   // Already printed by picocli
 			// TODO: Change to "invalid arguments" or smth.
 			return ExitStatus.INPUT_FAILURE;
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Error when running PDFriend", e);
 			return ExitStatus.FAILURE;
 		}
 	}
@@ -127,21 +132,27 @@ public class Console {
 	}
 
 	/**
-	 * Sets the verbosity level to use in this application instance.
-	 * <p>
-	 * TODO If more than one flag is set to true, issue a warning or error.
-	 * </p>
-	 * @param quiet Toggles WARN level on.
-	 * @param verbose Toggles VERBOSE level on.
-	 * @param debug Toggles DEBUG level on.
+	 * Sets the verbosity level. Higher numbers mean more output.
+	 * Negative values are allowed, they decrease the level of verbosity
+	 * below the normal value.
+	 *
+	 * @param level verbosity level (0 is the normal logging level)
 	 */
-	private void setVerbosity(boolean quiet, boolean verbose, boolean debug) {
-		if (quiet) {
+	private void setVerbosity(int level) {
+		if (level < -2) {
+			Log.setLevel(Level.OFF);
+		} else if (level == -2) {
+			Log.setLevel(Level.ERROR);
+		} else if (level == -1) {
 			Log.setLevel(Level.WARN);
-		} else if (verbose) {
+		} else if (level == 0) {
+			Log.setLevel(Level.INFO);
+		} else if (level == 1) {
 			Log.setLevel(Log.VERBOSE);
-		} else if (debug) {
+		} else if (level == 2) {
 			Log.setLevel(Level.DEBUG);
+		} else if (level > 2) {
+			Log.setLevel(Level.ALL);
 		}
 	}
 

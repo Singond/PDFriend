@@ -1,6 +1,13 @@
 # Changelog
 This is a changelog for _PDFriend_.
 
+## [Unreleased]
+### Added
+- Support for clustered short options.
+
+### Removed
+- The `--debug` option. Use `-vv`.
+
 ## [0.7.0] - 2019-05-09
 ### Added
 - Added a new `--compact` option to the `reorder` command

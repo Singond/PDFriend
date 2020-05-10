@@ -1,72 +1,28 @@
 package com.github.singond.pdfriend.cli;
 
-import com.beust.jcommander.Parameter;
-
+import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Option;
 
 public class GlobalOptions {
-	/** Print version info and exit */
-//	@Parameter(names={"-V", "--version"}, description="Print version info and exit", order=0)
-//	@Option(names={"-V", "--version"}, description="Print version info and exit", order=0)
-//	private boolean version = false;
-//
-//	/** Print help info and exit */
-//	@Parameter(names={"-h", "-?", "--help"}, description="Print this help page and exit", order=1)
-//	@Option(names={"-h", "-?", "--help"}, description="Print this help page and exit", order=1)
-//	private boolean help = false;
 
-	/** Set Log4j to VERBOSE level */
-	@Parameter(names={"-v", "--verbose"}, description="Verbose output", order=4)
-	@Option(names={"-v", "--verbose"}, description="Verbose output", order=4)
-	private boolean verbose = false;
+	@ArgGroup(exclusive = true)
+	private VerbosityOptions verbosity;
 
-	/** Set Log4j to DEBUG level */
-	@Parameter(names={"-vv", "--debug"}, description="Extra verbose output, used for debugging", order=5)
-	@Option(names={"-vv", "--debug"}, description="Extra verbose output, used for debugging", order=5)
-	private boolean debug = false;
-
-	/** Set Log4j to WARN level */
-	@Parameter(names={"-q", "--quiet"}, description="Be less verbose than normal, display only warnings", order=6)
-	@Option(names={"-q", "--quiet"}, description="Less verbose output, display only warnings", order=6)
-	private boolean quiet = false;
-
-//	/**
-//	 * Print version info and exit.
-//	 * @return true if this flag has been set
-//	 */
-//	public boolean version() {
-//		return version;
-//	}
-//
-//	/**
-//	 * Print help page and exit.
-//	 * @return true if this flag has been set
-//	 */
-//	public boolean help() {
-//		return help;
-//	}
-
-	/**
-	 * Set Log4j to VERBOSE level.
-	 * @return true if this flag has been set
-	 */
-	public boolean verbose() {
-		return verbose;
+	public int verbosity() {
+		if (verbosity != null) {
+			return verbosity.verbose.length - verbosity.quiet.length;
+		} else {
+			return 0;
+		}
 	}
 
-	/**
-	 * Set Log4j to DEBUG level.
-	 * @return true if this flag has been set
-	 */
-	public boolean debug() {
-		return debug;
-	}
+	// TODO: The -v -q exclusion does not work.
+	public static class VerbosityOptions {
 
-	/**
-	 * Set Log4j to WARN level.
-	 * @return true if this flag has been set
-	 */
-	public boolean quiet() {
-		return quiet;
+		@Option(names={"-v", "--verbose"}, description="Increase verbosity level")
+		private boolean[] verbose = new boolean[0];
+
+		@Option(names={"-q", "--quiet"}, description="Decrease verbosity level")
+		private boolean[] quiet = new boolean[0];
 	}
 }
