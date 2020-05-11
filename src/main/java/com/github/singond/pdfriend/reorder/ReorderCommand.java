@@ -3,7 +3,10 @@ package com.github.singond.pdfriend.reorder;
 import com.beust.jcommander.Parameters;
 
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.ParameterException;
+import picocli.CommandLine.Spec;
 
 import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
@@ -27,11 +30,22 @@ public class ReorderCommand extends CliCommand {
 			description="Reverse the order of pages in the document")
 	private boolean reverse = false;
 
+	private int sectionLength = -1;
+
+	@Spec
+	private CommandSpec cmdspec;
+
+	// TODO: Enable specifying a list of numbers
 	@Option(names="--compact",
 			description="Reorders pages to minimize breaks")
-//			validateWith = PositiveInteger.class)
-	// TODO: Enable specifying a list of numbers
-	private int sectionLength = -1;
+	public void setSectionLength(int n) {
+		if (n > 0) {
+			this.sectionLength = n;
+		} else {
+			throw new ParameterException(cmdspec.commandLine(),
+					"The argument is not a positive integer: --compact=" + n);
+		}
+	}
 
 	@Override
 	public Module getModule() {
