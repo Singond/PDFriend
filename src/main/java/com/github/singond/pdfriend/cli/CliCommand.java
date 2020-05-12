@@ -10,7 +10,7 @@ import com.github.singond.pdfriend.modules.Module;
 
 public abstract class CliCommand {
 
-	@Parameters
+	@Parameters(arity="1..*")
 	private List<Path> inputFiles;
 
 	@Option(names={"-o", "--output"})
