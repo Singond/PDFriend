@@ -21,13 +21,12 @@ import com.github.singond.pdfriend.modules.Module;
  */
 @Parameters(separators="=",
 		commandDescription="Reorder the pages of the source document")
-@Command(name="reorder", description="Reorder the pages of the source document")
+@Command(name="reorder", mixinStandardHelpOptions = true)
 public class ReorderCommand extends CliCommand {
 	@SuppressWarnings("unused")
 	private static ExtendedLogger logger = Log.logger(ReorderCommand.class);
 
-	@Option(names="--reverse",
-			description="Reverse the order of pages in the document")
+	@Option(names="--reverse")
 	private boolean reverse = false;
 
 	private int sectionLength = -1;

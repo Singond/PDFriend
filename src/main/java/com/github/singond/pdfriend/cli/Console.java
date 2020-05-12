@@ -35,6 +35,7 @@ import com.github.singond.pdfriend.reorder.ReorderCommand;
  */
 @Command(name="pdfriend",
 	mixinStandardHelpOptions = true,
+	resourceBundle = "Help",
 	subcommandsRepeatable = true,
 	subcommands = {
 		SimpleTransformCommand.class,

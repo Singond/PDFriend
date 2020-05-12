@@ -19,10 +19,10 @@ public class GlobalOptions {
 	// TODO: The -v -q exclusion does not work.
 	public static class VerbosityOptions {
 
-		@Option(names={"-v", "--verbose"}, description="Increase verbosity level")
+		@Option(names={"-v", "--verbose"})
 		private boolean[] verbose = new boolean[0];
 
-		@Option(names={"-q", "--quiet"}, description="Decrease verbosity level")
+		@Option(names={"-q", "--quiet"})
 		private boolean[] quiet = new boolean[0];
 	}
 }
