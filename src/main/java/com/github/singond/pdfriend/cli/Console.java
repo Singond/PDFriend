@@ -57,10 +57,10 @@ public class Console {
 	 * @param args the whole argument array passed into the program
 	 */
 	public ExitStatus execute(String[] args) {
-		CommandLine cmdline = new CommandLine(this);
+		CommandLine maincmdl = new CommandLine(this);
 		try {
 			// Parse all arguments
-			ParseResult parsed = cmdline.parseArgs(args);
+			ParseResult parsed = maincmdl.parseArgs(args);
 			// Set verbosity level as early as possible
 			setVerbosity(global.verbosity());
 			// Log basic info
@@ -73,29 +73,41 @@ public class Console {
 				logger.debug("Arguments: " + String.join(" ", args));
 			}
 			// Run
-    		if (cmdline.isUsageHelpRequested()) {
-    			cmdline.usage(cmdline.getOut());
-    			return ExitStatus.SIMPLE;
-    		} else if (cmdline.isVersionHelpRequested()) {
-    			cmdline.printVersionHelp(cmdline.getOut());
-    			return ExitStatus.SIMPLE;
-    		} else {
-    			List<CommandLine> parsedCmds = parsed.asCommandLineList();
-    			logger.trace(parsedCmds);
-    			Deque<CliCommand> cmds = new ArrayDeque<>(parsedCmds.size());
-    			for (ParseResult c : parsed.subcommands()) {
-    				logger.trace(c);
-    				List<CommandLine> cll = c.asCommandLineList();
-    				logger.trace(cll);
-    				if (!cll.isEmpty()) {
-    					cmds.add(cll.get(cll.size() - 1).getCommand());
-    				}
-    				c.asCommandLineList().get(0);
-    			}
-    			return executeCommands(cmds);
-    		}
+			if (maincmdl.isUsageHelpRequested()) {
+				// Display global help (pdfriend --help)
+				maincmdl.usage(maincmdl.getOut());
+				return ExitStatus.SIMPLE;
+			} else if (maincmdl.isVersionHelpRequested()) {
+				// Display version (pdfriend --version)
+				maincmdl.printVersionHelp(maincmdl.getOut());
+				return ExitStatus.SIMPLE;
+			} else {
+				// Run commands
+				List<ParseResult> cmds = parsed.subcommands();
+				Deque<CliCommand> exe = new ArrayDeque<>(cmds.size());
+				for (ParseResult cmd : cmds) {
+					List<CommandLine> subcmdl = cmd.asCommandLineList();
+					if (!subcmdl.isEmpty()) {
+						// The last item is the innermost command
+						CommandLine cmdl = subcmdl.get(subcmdl.size() - 1);
+						if (cmdl.isUsageHelpRequested()) {
+							// Display command help
+							cmdl.usage(cmdl.getOut());
+							return ExitStatus.SIMPLE;
+						} else if (cmdl.isVersionHelpRequested()) {
+							// Command version makes no sense,
+							// display app version
+							maincmdl.printVersionHelp(cmdl.getOut());
+							return ExitStatus.SIMPLE;
+						} else {
+							exe.add(cmdl.getCommand());
+						}
+					}
+				}
+				return executeCommands(exe);
+			}
 		} catch (ParameterException e) {
-			cmdline.getErr().println(e.getMessage());
+			maincmdl.getErr().println(e.getMessage());
 //			logger.error("Invalid usage", e);   // Already printed by picocli
 			// TODO: Change to "invalid arguments" or smth.
 			return ExitStatus.INPUT_FAILURE;
