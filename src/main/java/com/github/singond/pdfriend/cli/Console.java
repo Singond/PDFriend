@@ -130,8 +130,7 @@ public class Console {
 				}
 			}
 		} catch (ParameterException e) {
-			maincmdl.getErr().println(e.getMessage());
-//			logger.error("Invalid usage", e);   // Already printed by picocli
+			logger.error(e.getMessage());
 			return ExitStatus.INVALID_ARGUMENT;
 		} catch (Exception e) {
 			logger.error("Error when running PDFriend", e);
