@@ -25,6 +25,10 @@ public enum ExitStatus {
 	 */
 	UNKNOWN_COMMAND(false, 2),
 	/**
+	 * Failure due to no argument given.
+	 */
+	NO_ARGUMENT(false, 2),
+	/**
 	 * A generic error in program arguments.
 	 */
 	INVALID_ARGUMENT(false, 2),

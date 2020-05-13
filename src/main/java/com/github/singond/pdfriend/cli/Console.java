@@ -119,15 +119,14 @@ public class Console {
 				if (!exe.isEmpty()) {
 					// Found valid command (or more): execute it now
 					return executeCommands(exe);
-				} else if (!unmatched.isEmpty()) {
+				} else if (unmatched != null && !unmatched.isEmpty()) {
 					// Unknown argument
 					logger.error("unknownCommand", unmatched.get(0));
 					return ExitStatus.UNKNOWN_COMMAND;
 				} else {
 					// No argument
 					maincmdl.usage(maincmdl.getOut());
-					// TODO: Change to "missing command" or something
-					return ExitStatus.INVALID_ARGUMENT;
+					return ExitStatus.NO_ARGUMENT;
 				}
 			}
 		} catch (ParameterException e) {
