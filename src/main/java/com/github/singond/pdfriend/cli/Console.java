@@ -83,11 +83,11 @@ public class Console {
 			if (maincmdl.isUsageHelpRequested()) {
 				// Display global help (pdfriend --help)
 				maincmdl.usage(maincmdl.getOut());
-				return ExitStatus.SIMPLE;
+				return ExitStatus.NOOP;
 			} else if (maincmdl.isVersionHelpRequested()) {
 				// Display version (pdfriend --version)
 				maincmdl.printVersionHelp(maincmdl.getOut());
-				return ExitStatus.SIMPLE;
+				return ExitStatus.NOOP;
 			} else {
 				// Run commands
 				List<ParseResult> cmds = parsed.subcommands();
@@ -97,8 +97,7 @@ public class Console {
 					if (subcmdl.isEmpty()) {
 						// No subcommand given: print usage
 						maincmdl.usage(maincmdl.getOut());
-						// TODO: Change to "missing command" or something
-						return ExitStatus.INPUT_FAILURE;
+						return ExitStatus.MISSING_COMMAND;
 					} else {
 						// Subcommand given: execute the innermost command
 						// (assume it is the last in the list)
@@ -106,12 +105,12 @@ public class Console {
 						if (cmdl.isUsageHelpRequested()) {
 							// Display command help
 							cmdl.usage(cmdl.getOut());
-							return ExitStatus.SIMPLE;
+							return ExitStatus.NOOP;
 						} else if (cmdl.isVersionHelpRequested()) {
 							// Command version makes no sense,
 							// display app version
 							maincmdl.printVersionHelp(cmdl.getOut());
-							return ExitStatus.SIMPLE;
+							return ExitStatus.NOOP;
 						} else {
 							exe.add(cmdl.getCommand());
 						}
@@ -128,17 +127,16 @@ public class Console {
 					// No argument
 					maincmdl.usage(maincmdl.getOut());
 					// TODO: Change to "missing command" or something
-					return ExitStatus.INPUT_FAILURE;
+					return ExitStatus.INVALID_ARGUMENT;
 				}
 			}
 		} catch (ParameterException e) {
 			maincmdl.getErr().println(e.getMessage());
 //			logger.error("Invalid usage", e);   // Already printed by picocli
-			// TODO: Change to "invalid arguments" or smth.
-			return ExitStatus.INPUT_FAILURE;
+			return ExitStatus.INVALID_ARGUMENT;
 		} catch (Exception e) {
 			logger.error("Error when running PDFriend", e);
-			return ExitStatus.FAILURE;
+			return ExitStatus.OTHER_ERROR;
 		}
 	}
 
@@ -159,12 +157,12 @@ public class Console {
 		} catch (ModuleException e) {
 			logger.error("Exception in " + e.getModule().name() + " module:",
 			             e.getCause());
-			return ExitStatus.FAILURE;
+			return ExitStatus.OTHER_ERROR;
 		} catch (PipeException e) {
 			// Show the cause, hide PipeException from the user
 			Throwable cause = e.getCause();
 			logger.error(cause.getMessage(), cause);
-			return ExitStatus.FAILURE;
+			return ExitStatus.OTHER_ERROR;
 		}
 	}
 

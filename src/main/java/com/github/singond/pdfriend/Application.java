@@ -4,16 +4,6 @@ import com.github.singond.pdfriend.cli.Console;
 
 /**
  * The main class; this represents a single instance of PDFriend.
- * 
- * <p>Exit codes:
- * <ul>
- *     <li>-1: General error</li>
- *     <li> 0: Success</li>
- *     <li> 1: Unknown command</li>
- * </ul></p>
- * 
- * @author Singon
- *
  */
 public class Application {
 
@@ -24,7 +14,7 @@ public class Application {
 	 */
 	private void execute(String[] args) {
 		long start = System.currentTimeMillis();
-		
+
 		if (args.length <= 0) {
 			// GUI (to be added later). For now, just print version.
 			Out.line("This is PDFriend version %s", Version.current().toString());
@@ -35,9 +25,10 @@ public class Application {
 				long end = System.currentTimeMillis();
 				logger.info("total_time", end-start);
 			}
+			System.exit(status.exitCode());
 		}
 	}
-	
+
 	/**
 	 * Runs PDFriend.
 	 */
