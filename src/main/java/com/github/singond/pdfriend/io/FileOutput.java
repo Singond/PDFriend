@@ -29,8 +29,13 @@ class FileOutput implements OutputElement {
 	public OutputStream getOutputStream() throws OutputException {
 		OutputStream out;
 		try {
-			logger.debug("outputFileStream", file);
-			out = Files.newOutputStream(file);
+			if (file == null) {
+				logger.debug("outputStreamDefault");
+				out = System.out;
+			} else {
+				logger.debug("outputStreamFile", file);
+				out = Files.newOutputStream(file);
+			}
 		} catch (IOException e) {
 			throw new OutputException("Error when obtaining output file "
 					+ file.toAbsolutePath(), this, e);
