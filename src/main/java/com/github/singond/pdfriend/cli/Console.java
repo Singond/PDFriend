@@ -11,6 +11,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.ParameterException;
 import picocli.CommandLine.ParseResult;
+import picocli.CommandLine.Unmatched;
 
 import com.github.singond.pdfriend.ExitStatus;
 import com.github.singond.pdfriend.ExtendedLogger;
@@ -36,6 +37,8 @@ import com.github.singond.pdfriend.reorder.ReorderCommand;
 @Command(name="pdfriend",
 	mixinStandardHelpOptions = true,
 	resourceBundle = "Help",
+	abbreviateSynopsis = true,
+	synopsisSubcommandLabel = "COMMAND",
 	subcommandsRepeatable = true,
 	subcommands = {
 		SimpleTransformCommand.class,
@@ -48,6 +51,9 @@ public class Console {
 	/** Object to receive parsed global options */
 	@Mixin
 	private GlobalOptions global;
+
+	@Unmatched
+	private List<String> unmatched;
 
 	/** Logger */
 	private static ExtendedLogger logger = Log.logger(Console.class);
@@ -88,8 +94,14 @@ public class Console {
 				Deque<CliCommand> exe = new ArrayDeque<>(cmds.size());
 				for (ParseResult cmd : cmds) {
 					List<CommandLine> subcmdl = cmd.asCommandLineList();
-					if (!subcmdl.isEmpty()) {
-						// The last item is the innermost command
+					if (subcmdl.isEmpty()) {
+						// No subcommand given: print usage
+						maincmdl.usage(maincmdl.getOut());
+						// TODO: Change to "missing command" or something
+						return ExitStatus.INPUT_FAILURE;
+					} else {
+						// Subcommand given: execute the innermost command
+						// (assume it is the last in the list)
 						CommandLine cmdl = subcmdl.get(subcmdl.size() - 1);
 						if (cmdl.isUsageHelpRequested()) {
 							// Display command help
@@ -105,7 +117,19 @@ public class Console {
 						}
 					}
 				}
-				return executeCommands(exe);
+				if (!exe.isEmpty()) {
+					// Found valid command (or more): execute it now
+					return executeCommands(exe);
+				} else if (!unmatched.isEmpty()) {
+					// Unknown argument
+					logger.error("unknownCommand", unmatched.get(0));
+					return ExitStatus.UNKNOWN_COMMAND;
+				} else {
+					// No argument
+					maincmdl.usage(maincmdl.getOut());
+					// TODO: Change to "missing command" or something
+					return ExitStatus.INPUT_FAILURE;
+				}
 			}
 		} catch (ParameterException e) {
 			maincmdl.getErr().println(e.getMessage());
