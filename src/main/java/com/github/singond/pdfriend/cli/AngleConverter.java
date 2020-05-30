@@ -2,6 +2,9 @@ package com.github.singond.pdfriend.cli;
 
 import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.ParameterException;
+
+import picocli.CommandLine.ITypeConverter;
+
 import com.github.singond.pdfriend.geometry.Angle;
 import com.github.singond.pdfriend.geometry.AngularUnit;
 import com.github.singond.pdfriend.geometry.AngularUnits;
@@ -12,11 +15,11 @@ import com.github.singond.pdfriend.geometry.AngularUnits;
  *
  * @author Singon
  */
-public class AngleConverter implements IStringConverter<Angle> {
+public class AngleConverter implements IStringConverter<Angle>, ITypeConverter<Angle> {
 
 	private static DimensionsParser dimsParser = new DimensionsParser();
 	private static AngularUnit dfltUnit = AngularUnits.DEGREE;
-	
+
 	@Override
 	public Angle convert(String arg) {
 		ParsingResult<Angle> angle = dimsParser.parseAngle(arg, dfltUnit);

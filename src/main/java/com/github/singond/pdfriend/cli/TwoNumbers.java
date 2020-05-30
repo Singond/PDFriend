@@ -5,10 +5,12 @@ import java.util.regex.Pattern;
 import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.ParameterException;
 
+import picocli.CommandLine.ITypeConverter;
+
 public class TwoNumbers {
 	private final double first;
 	private final double second;
-	
+
     public TwoNumbers(double first, double second) {
 		this.first = first;
 		this.second = second;
@@ -22,9 +24,9 @@ public class TwoNumbers {
 		return second;
 	}
 
-	public static class Converter implements IStringConverter<TwoNumbers> {
+	public static class Converter implements IStringConverter<TwoNumbers>, ITypeConverter<TwoNumbers> {
     	private static final Pattern TWO_NUMBERS = Pattern.compile("-?\\d*,-?\\d*");
-    	
+
     	@Override
     	public TwoNumbers convert(String arg) {
     		if (!TWO_NUMBERS.matcher(arg).matches()) {
