@@ -18,6 +18,9 @@ import com.github.singond.pdfriend.ExtendedLogger;
 import com.github.singond.pdfriend.Log;
 import com.github.singond.pdfriend.Util;
 import com.github.singond.pdfriend.Version;
+import com.github.singond.pdfriend.geometry.Angle;
+import com.github.singond.pdfriend.geometry.Dimensions;
+import com.github.singond.pdfriend.geometry.Margins;
 import com.github.singond.pdfriend.imposition.ImposeCommand;
 import com.github.singond.pdfriend.imposition.SimpleTransformCommand;
 import com.github.singond.pdfriend.io.InputFactory;
@@ -34,7 +37,7 @@ import com.github.singond.pdfriend.reorder.ReorderCommand;
  * @author Singon
  *
  */
-@Command(name="pdfriend",
+@Command(name = "pdfriend",
 	mixinStandardHelpOptions = true,
 	resourceBundle = "Help",
 	abbreviateSynopsis = true,
@@ -58,13 +61,22 @@ public class Console {
 	/** Logger */
 	private static ExtendedLogger logger = Log.logger(Console.class);
 
+	private static CommandLine initParser(Console maincmd) {
+		CommandLine c = new CommandLine(maincmd);
+		c.registerConverter(TwoNumbers.class, new TwoNumbers.Converter());
+		c.registerConverter(Dimensions.class, new DimensionsConverter());
+		c.registerConverter(Angle.class, new AngleConverter());
+		c.registerConverter(Margins.class, new MarginsConverter());
+		return c;
+	}
+
 	/**
 	 * Run PDFriend in command-line mode with the given arguments.
 	 *
 	 * @param args the whole argument array passed into the program
 	 */
 	public ExitStatus execute(String[] args) {
-		CommandLine maincmdl = new CommandLine(this);
+		CommandLine maincmdl = initParser(this);
 		try {
 			// Parse all arguments
 			ParseResult parsed = maincmdl.parseArgs(args);
