@@ -3,9 +3,12 @@ package com.github.singond.pdfriend.imposition;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.validators.PositiveInteger;
-import com.github.singond.pdfriend.cli.ParameterConsistencyException;
+
+import picocli.CommandLine.Option;
+
 import com.github.singond.pdfriend.cli.DimensionsConverter;
 import com.github.singond.pdfriend.cli.MarginsConverter;
+import com.github.singond.pdfriend.cli.ParameterConsistencyException;
 import com.github.singond.pdfriend.cli.ParameterDelegate;
 import com.github.singond.pdfriend.geometry.Dimensions;
 import com.github.singond.pdfriend.geometry.Margins;
@@ -19,7 +22,7 @@ import com.github.singond.pdfriend.imposition.CommonSettings.MarginSettings;
  * Provides configuration settings for the imposition module which affect
  * the output document. The settings include page size, sheet size, number
  * of pages etc.
- * 
+ *
  * @author Singon
  */
 @Parameters(resourceBundle="Help", separators="=")
@@ -31,21 +34,23 @@ class CommonSettingsCliSimple implements ParameterDelegate {
 //	           descriptionKey = "param-pageCount",
 //	           validateWith = PositiveInteger.class)
 //	private int pages = -1;
-	
+
 	/** How many times to repeat each page */
 	@Parameter(names = "--repeat-page",
 	           description = "How many times to repeat each page",
 	           descriptionKey = "param-repeatPage",
 	           validateWith = PositiveInteger.class)
+	@Option(names = "--repeat-page")
 	private int repeatPage = 1;
-	
+
 	/** How many times to repeat each document */
 	@Parameter(names = "--repeat-doc",
 	           description = "How many times to repeat each document",
 	           descriptionKey = "param-repeatDoc",
 	           validateWith = PositiveInteger.class)
+	@Option(names = "--repeat-doc")
 	private int repeatDocument = 1;
-	
+
 	/**
 	 * Size of a single page of the assembled output document.
 	 * This is the dimensions of the document page in its final form,
@@ -56,24 +61,27 @@ class CommonSettingsCliSimple implements ParameterDelegate {
 	           description = "Size of a single page of the assembled output document",
 	           descriptionKey = "param-pageSize",
 	           converter = DimensionsConverter.class)
+	@Option(names = {"--page-size", "--sheet-size"})
 	private Dimensions pageSize = null;
-	
+
 	/**
 	 * Interprets paper formats as landscape.
 	 */
 	@Parameter(names="--landscape",
 	           description="Interpret named paper formats (such as A4) as landscape",
 	           descriptionKey="param-landscape")
+	@Option(names = "--landscape")
 	private boolean landscape = false;
-	
+
 	/**
 	 * Interprets paper formats as portrait.
 	 */
 	@Parameter(names="--portrait",
 	           description="Interpret named paper formats (such as A4) as portrait",
 	           descriptionKey="param-portrait")
+	@Option(names = "--portrait")
 	private boolean portrait = false;
-	
+
 	/**
 	 * Margins of the output page.
 	 * This argument takes one of the following forms:
@@ -90,8 +98,9 @@ class CommonSettingsCliSimple implements ParameterDelegate {
 	           description="Margins of the output page",
 	           descriptionKey="param-margins",
 	           converter=MarginsConverter.class)
+	@Option(names = "--margins")
 	private Margins margins = null;
-	
+
 //	@Parameter(names="--mirror-margins",
 //	           arity=1,
 //	           description="Whether verso margins should be mirrored",
@@ -105,7 +114,7 @@ class CommonSettingsCliSimple implements ParameterDelegate {
 					"Cannot set both landscape and portrait orientation");
 		}
 	}
-	
+
 	public boolean isSet() {
 //		return pages > 0
 //				|| pageSize != null
@@ -113,10 +122,10 @@ class CommonSettingsCliSimple implements ParameterDelegate {
 //				|| margins != null;
 		return pageSize != null || margins != null;
 	}
-	
+
 	public CommonSettings getCommonSettings() {
 		boolean isLandscape = landscape;
-		
+
 		CommonSettings.Builder sb = new CommonSettings.Builder();
 //		sb.setPageCount(pages);
 		sb.setRepeatPage(repeatPage);
@@ -127,7 +136,7 @@ class CommonSettingsCliSimple implements ParameterDelegate {
 		sb.setMirrorMargins(false);
 		return sb.build();
 	}
-	
+
 	private Dimensions flipFormat(Dimensions dims, boolean flip) {
 		if (flip) {
 			return dims.changeOrientation();
@@ -135,7 +144,7 @@ class CommonSettingsCliSimple implements ParameterDelegate {
 			return dims;
 		}
 	}
-	
+
 	private DimensionSettings dimSettings(Dimensions dims) {
 		if (dims == null) {
 			return DimensionSettings.AUTO;
